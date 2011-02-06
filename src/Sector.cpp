@@ -11,6 +11,10 @@ static const char *sys_names[SYS_NAME_FRAGS] =
 
 const float Sector::SIZE = 8;
 
+void Sector::Init()
+{
+	printf("in sector init\n");
+}
 
 void Sector::GetCustomSystems()
 {

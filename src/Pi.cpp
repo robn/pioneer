@@ -9,6 +9,7 @@
 #include "Frame.h"
 #include "ShipCpanel.h"
 #include "ShipType.h"
+#include "Sector.h"
 #include "SectorView.h"
 #include "SystemView.h"
 #include "SystemInfoView.h"
@@ -211,22 +212,23 @@ void Pi::Init()
 	Galaxy::Init();
 	draw_progress(0.2f);
 	NameGenerator::Init();
+	draw_progress(0.3f);
+	Sector::Init();
 	if (config.Int("DisableShaders")) Render::ToggleShaders();
 	if (config.Int("EnableHDR")) Render::ToggleHDR();
 
-	draw_progress(0.3f);
-	LmrModelCompilerInit();
 	draw_progress(0.4f);
-	ShipType::Init();
+	LmrModelCompilerInit();
 	draw_progress(0.5f);
-	GeoSphere::Init();
+	ShipType::Init();
 	draw_progress(0.6f);
-	Space::Init();
+	GeoSphere::Init();
 	draw_progress(0.7f);
-	Polit::Init();
+	Space::Init();
 	draw_progress(0.8f);
-	SpaceStation::Init();
+	Polit::Init();
 	draw_progress(0.9f);
+	SpaceStation::Init();
 
 	if (!config.Int("DisableSound")) {
 		Sound::Init();
