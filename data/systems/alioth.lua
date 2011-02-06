@@ -1,10 +1,10 @@
 define_system('Alioth', {
     bodies = { },
-    type = { 'star_k' },
+    type = { TYPE_STAR_K },
     sector = { 0, 4 },
     pos = v(0.629,0.880,1.045),
     seed = 5,
-    gov = 'cis_lib_dem',
+    gov = GOV_CISLIBDEM,
     summary = 'Liberal Democracy',
     description = [[Alioth comes from the ancient Arabic word alyat - fat tail of sheep
 The two massive ark ships bound for Alioth were the first of many such sub-light vessels designed specifically for the kind of lengthy journeys required to spread to the stars.
