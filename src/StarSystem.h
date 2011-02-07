@@ -10,8 +10,6 @@
 #include <string>
 #include "mylua.h"
 
-struct CustomSBody;
-struct CustomSystem;
 class SBody;
 
 // doubles: all masses in Kg, all lengths in meters
@@ -290,5 +288,5 @@ private:
 	std::string m_shortDesc, m_longDesc;
 	SysPolit m_polit;
 };
-	
+
 #endif /* _STARSYSTEM_H */
