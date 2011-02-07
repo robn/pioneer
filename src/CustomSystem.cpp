@@ -163,5 +163,5 @@ const std::list<CustomSystem*> CustomSystem::GetCustomSystemsForSector(int secto
 		}
 	}
 
-    return sector_systems;
+	return sector_systems;
 }
