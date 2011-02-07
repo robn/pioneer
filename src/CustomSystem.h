@@ -27,7 +27,7 @@ public:
 class CustomSystem {
 public:
 	static void Init();
-	static const std::list<CustomSystem*> GetCustomSystemsForSector(int sectorX, int sectorY);
+	static const std::list<const CustomSystem*> GetCustomSystemsForSector(int sectorX, int sectorY);
 
 	std::string            name;
 	std::list<CustomSBody> sBodies;
