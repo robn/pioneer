@@ -32,7 +32,8 @@ static int define_system(lua_State *L)
 		return 0;
 	}
 	if (lua_istable(L, 3)) {
-		for (int i = 0; i < 4; i++) {
+		int i;
+		for (i = 0; i < 4; i++) {
 			lua_pushinteger(L, i+1);
 			lua_gettable(L, 3);
 			if (lua_isnil(L, 4)) {
@@ -47,6 +48,9 @@ static int define_system(lua_State *L)
 				return 0;
 			}
 			lua_pop(L, 1);
+		}
+		for (; i < 4; i++) {
+			cs.primaryType[i] = SBody::TYPE_GRAVPOINT;
 		}
 	} else {
 		luaL_error(L, "define_system: value for field 'type' must be a table");
