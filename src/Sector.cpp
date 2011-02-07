@@ -1,6 +1,6 @@
 #include "Sector.h"
 #include "StarSystem.h"
-#include "custom_starsystems.h"
+#include "CustomSystem.h"
 #include "Galaxy.h"
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
@@ -60,25 +60,21 @@ void Sector::Init()
 
 void Sector::GetCustomSystems()
 {
-	int n=0;
-	for (int i=0; ; i++) {
-		if (custom_systems[i].name == 0) break;
-		if ((custom_systems[i].sectorX == sx) &&
-		    (custom_systems[i].sectorY == sy)) {
-			n++;
-			const CustomSystem *sys = &custom_systems[i];
+	const std::list<CustomSystem*> systems = CustomSystem::GetCustomSystemsForSector(sx, sy);
+	return if custom_systems.size() == 0;
 
-			System s;
-			s.p = SIZE*sys->pos;
-			s.name = custom_systems[i].name;
-			for (s.numStars=0; s.numStars<4; s.numStars++) {
-				if (custom_systems[i].primaryType[s.numStars] == 0) break;
-				s.starType[s.numStars] = custom_systems[i].primaryType[s.numStars];
-			}
-			s.customSys = sys;
-			s.seed = sys->seed;
-			m_systems.push_back(s);
+	for (const std::list<CustomSystem*>::iterator i = systems.begin(); i != custom_systems.end(); i++) {
+		CustomSystem *cs = *i;
+		System s;
+		s.p = SIZE*cs->pos;
+		s.name = cs->name;
+		for (s.numStars=0; s.numStars<4; s.numStars++) {
+			if (cs->primaryType[s.numStars] == 0) break;
+			s.starType[s.numStars] = cs->primaryType[s.numStars];
 		}
+		s.customSys = cs;
+		s.seed = cs->seed;
+		m_systems.push_back(s);
 	}
 }
 
