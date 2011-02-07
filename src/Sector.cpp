@@ -61,9 +61,9 @@ void Sector::Init()
 void Sector::GetCustomSystems()
 {
 	const std::list<CustomSystem*> systems = CustomSystem::GetCustomSystemsForSector(sx, sy);
-	return if custom_systems.size() == 0;
+	if (systems.size() == 0) return;
 
-	for (const std::list<CustomSystem*>::iterator i = systems.begin(); i != custom_systems.end(); i++) {
+	for (std::list<CustomSystem*>::const_iterator i = systems.begin(); i != systems.end(); i++) {
 		CustomSystem *cs = *i;
 		System s;
 		s.p = SIZE*cs->pos;

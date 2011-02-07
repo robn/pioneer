@@ -39,7 +39,7 @@ public:
 	std::string            shortDesc;
 	std::string            longDesc;
 
-	bool IsRandom() { return sBodies.size() > 0; } const;
+	bool IsRandom() const { return sBodies.size() > 0; };
 };
 
 #endif /* _CUSTOMSYSTEH */

@@ -10,6 +10,9 @@
 #include <string>
 #include "mylua.h"
 
+class CustomSystem;
+class CustomSBody;
+
 class SBody;
 
 // doubles: all masses in Kg, all lengths in meters

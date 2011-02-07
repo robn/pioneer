@@ -1,6 +1,5 @@
 #include "StarSystem.h"
 #include "Sector.h"
-#include "custom_starsystems.h"
 #include "Serializer.h"
 #include "NameGenerator.h"
 
@@ -513,6 +512,7 @@ struct CustomSBody {
 */
 void StarSystem::CustomGetKidsOf(SBody *parent, const CustomSBody *customDef, const int primaryIdx, int *outHumanInfestedness, MTRand &rand)
 {
+#if 0
 	const CustomSBody *c = customDef;
 	for (int i=0; c->name; c++, i++) {
 		if (c->primaryIdx != primaryIdx) continue;
@@ -556,10 +556,12 @@ void StarSystem::CustomGetKidsOf(SBody *parent, const CustomSBody *customDef, co
 
 		CustomGetKidsOf(kid, customDef, i, outHumanInfestedness, rand);
 	}
+#endif
 }
 
 void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 {
+#if 0
 	// find primary
 	const CustomSBody *csbody = customSys->sbodies;
 
@@ -580,7 +582,7 @@ void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 	int humanInfestedness = 0;
 	CustomGetKidsOf(rootBody, customSys->sbodies, idx, &humanInfestedness, rand);
 	Populate(false);
-
+#endif
 }
 
 void StarSystem::MakeStarOfType(SBody *sbody, SBody::BodyType type, MTRand &rand)
@@ -678,9 +680,9 @@ StarSystem::StarSystem(int sector_x, int sector_y, int system_idx)
 
 	if (s.m_systems[system_idx].customSys) {
 		const CustomSystem *custom = s.m_systems[system_idx].customSys;
-		if (custom->shortDesc) m_shortDesc = custom->shortDesc;
-		if (custom->longDesc) m_longDesc = custom->longDesc;
-		if (custom->sbodies) {
+		if (custom->shortDesc.length() > 0) m_shortDesc = custom->shortDesc;
+		if (custom->longDesc.length() > 0) m_longDesc = custom->longDesc;
+		if (custom->sBodies.size() > 0) {
 			GenerateFromCustom(s.m_systems[system_idx].customSys, rand);
 			return;
 		}
