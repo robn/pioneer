@@ -2,8 +2,6 @@
 #include "StarSystem.h"
 #include "CustomSystem.h"
 #include "Galaxy.h"
-#include "MyLuaMathTypes.h"
-#include "LuaUtilFuncs.h"
 
 #define SYS_NAME_FRAGS	32
 static const char *sys_names[SYS_NAME_FRAGS] =
@@ -12,51 +10,6 @@ static const char *sys_names[SYS_NAME_FRAGS] =
   "ex", "io", "ce", "ze", "fa", "ay", "wa", "da", "ack", "gre" };
 
 const float Sector::SIZE = 8;
-
-static int define_system(lua_State *L)
-{
-	int n = lua_gettop(L);
-	if (n != 2) {
-		luaL_error(L, "define_system takes 2 arguments");
-		return 0;
-	}
-
-	const char *system_name = luaL_checkstring(L, 1);
-
-	if (!lua_istable(L, 2)) {
-		luaL_error(L, "define_system 2nd argument must be a table");
-		return 0;
-	}
-
-	printf("define_system: %s\n", system_name);
-
-	return 0;
-}
-
-void Sector::Init()
-{
-	lua_State *L = lua_open();
-	luaL_openlibs(L);
-
-	MyLuaVec::Vec_register(L);
-	lua_pop(L, 1);
-
-	lua_register(L, "v", MyLuaVec::Vec_new);
-	lua_register(L, "define_system", define_system);
-	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
-
-	lua_pushstring(L, PIONEER_DATA_DIR);
-	lua_setglobal(L, "CurrentDirectory");
-
-	lua_pushcfunction(L, mylua_panic);
-	if (luaL_loadfile(L, (std::string(PIONEER_DATA_DIR) + "/pisystems.lua").c_str())) {
-		mylua_panic(L);
-	} else {
-		lua_pcall(L, 0, LUA_MULTRET, -2);
-	}
-
-	lua_close(L);
-}
 
 void Sector::GetCustomSystems()
 {

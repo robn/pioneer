@@ -26,7 +26,7 @@ public:
 
 class CustomSystem {
 public:
-	static void AddCustomSystem(const CustomSystem *cs);
+    static void Init();
 	static const std::list<CustomSystem*> GetCustomSystemsForSector(int sectorX, int sectorY);
 
 	std::string            name;

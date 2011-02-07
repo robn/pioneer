@@ -9,7 +9,7 @@
 #include "Frame.h"
 #include "ShipCpanel.h"
 #include "ShipType.h"
-#include "Sector.h"
+#include "CustomSystem.h"
 #include "SectorView.h"
 #include "SystemView.h"
 #include "SystemInfoView.h"
@@ -213,7 +213,7 @@ void Pi::Init()
 	draw_progress(0.2f);
 	NameGenerator::Init();
 	draw_progress(0.3f);
-	Sector::Init();
+	CustomSystem::Init();
 	if (config.Int("DisableShaders")) Render::ToggleShaders();
 	if (config.Int("EnableHDR")) Render::ToggleHDR();
 
