@@ -114,6 +114,12 @@ jupiter_children = {
 		eccentricity = fixed(41,10000),
 		latitude = deg2rad(2.21),
 		rotation_period = fixed(177,100),
+		children = { {
+			name = 'Dante\'s Base',
+			type = STARPORT_SURFACE,
+			latitude = deg2rad(-0.5),
+			longitude = deg2rad(26.2),
+		} },
 	}, {
 		name = 'Europa',
 		type = PLANET_WATER,
@@ -139,6 +145,11 @@ jupiter_children = {
 		eccentricity = fixed(13,10000),
 		latitude = deg2rad(0.2),
 		rotation_period = fixed(72,10),
+		children = { {
+			name = 'Enki Catena',
+			type = STARPORT_SURFACE,
+			latitude = deg2rad(84),
+			longitude = deg2rad(96),
 	}, {
 		name = 'Callisto',
 		type = PLANET_DWARF,
@@ -149,6 +160,11 @@ jupiter_children = {
 		eccentricity = fixed(74,10000),
 		latitude = deg2rad(0.192),
 		rotation_period = fixed(167,10),
+	}, {
+		name = 'Discovery Base',
+		type = STARPORT_ORBITAL,
+		semi_major_axis = fixed(7,1000),
+		rotation_period = fixed(11,1),
 	},
 }
 
@@ -173,6 +189,12 @@ saturn_children = {
 			type = STARPORT_SURFACE,
 			latitude = deg2rad(1),
 			longitude = deg2rad(14),
+		}, {
+			name = 'Daniel\'s Haven',
+			type = STARPORT_ORBITAL,
+			semi_major_axis = fixed(12,500000),
+			eccentricity = fixed(50,1000),
+			rotation_period = fixed(11,9),
 		} },
 	}, {
 		name = 'Rhea',
@@ -262,6 +284,12 @@ neptune_children = {
 		eccentricity = fixed(16,1000000),
 		latitude = deg2rad(156.885),
 		rotation_period = fixed(141,24),
+		children = { {
+			name = 'Poseidon Station',
+			type = STARPORT_ORBITAL,
+			semi_major_axis = fixed(12,500000),
+			rotation_period = fixed(11,7),
+		} },
 	}, {
 		name = 'Nereid',
 		type = PLANET_ASTEROID,
