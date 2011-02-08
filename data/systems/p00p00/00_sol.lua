@@ -104,9 +104,107 @@ mars_children = {
 }
 
 jupiter_children = {
+	{
+		name = 'Io',
+		type = PLANET_HIGHLY_VOLCANIC,
+		radius = fixed(286,1000),
+		mass = fixed(15,1000),
+		temp = 130,
+		semi_major_axis = fixed(282,100000),
+		eccentricity = fixed(41,10000),
+		latitude = deg2rad(2.21),
+		rotation_period = fixed(177,100),
+	}, {
+		name = 'Europa',
+		type = PLANET_WATER,
+		radius = fixed(245,1000),
+		mass = fixed(8,1000),
+		temp = 102,
+		semi_major_axis = fixed(441,100000),
+		eccentricity = fixed(9,10000),
+		rotation_period = fixed(355,100),
+		children = { {
+			name = 'Clarke\'s Station',
+			type = STARPORT_ORBITAL,
+			semi_major_axis = fixed(12,500000),
+			rotation_period = fixed(1,24*60*3),
+		} },
+	}, {
+		name = 'Ganymede',
+		type = PLANET_SMALL,
+		radius = fixed(413,1000),
+		mass = fixed(25,1000),
+		temp = 110,
+		semi_major_axis = fixed(72,10000),
+		eccentricity = fixed(13,10000),
+		latitude = deg2rad(0.2),
+		rotation_period = fixed(72,10),
+	}, {
+		name = 'Callisto',
+		type = PLANET_DWARF,
+		radius = fixed(378,1000),
+		mass = fixed(18,1000),
+		temp = 134,
+		semi_major_axis = fixed(126,10000),
+		eccentricity = fixed(74,10000),
+		latitude = deg2rad(0.192),
+		rotation_period = fixed(167,10),
+	},
 }
 
 saturn_children = {
+	{
+		name = 'Titan',
+		type = PLANET_METHANE_THICK_ATMOS,
+		radius = fixed(400,1000),
+		mass = fixed(225,10000),
+		temp = 94,
+		semi_major_axis = fixed(82,10000),
+		eccentricity = fixed(288,10000),
+		latitude = deg2rad(0.34854),
+		rotation_period = fixed(15945,1000),
+		children = { {
+			name = 'Oasis City',
+			type = STARPORT_SURFACE,
+			latitude = deg2rad(18.4),
+			longitude = deg2rad(196),
+		}, {
+			name = 'Port Makenzie',
+			type = STARPORT_SURFACE,
+			latitude = deg2rad(1),
+			longitude = deg2rad(14),
+		} },
+	}, {
+		name = 'Rhea',
+		type = PLANET_DWARF,
+		radius = fixed(12,100),
+		mass = fixed(39,10000),
+		temp = 81,
+		semi_major_axis = fixed(441,100000),
+		eccentricity = fixed(126,100000),
+		latitude = deg2rad(0.345),
+		rotation_period = fixed(452,100),
+	}, {
+		name = 'Iapetus',
+		type = PLANET_DWARF,
+		radius = fixed(1155,10000),
+		mass = fixed(3,10000),
+		temp = 115,
+		semi_major_axis = fixed(238,10000),
+		eccentricity = fixed(29,1000),
+		latitude = deg2rad(15.47),
+		rotation_period = fixed(7932,100),
+	}, {
+		name = 'Dione',
+		type = PLANET_DWARF,
+		radius = fixed(881,10000),
+		mass = fixed(328,1000000),
+		temp = 87,
+		semi_major_axis = fixed(252,100000),
+		eccentricity = fixed(22,10000),
+		latitude = deg2rad(0.019),
+		rotation_period = fixed(2737,1000),
+	},
 }
 
 uranus_children = {
