@@ -208,6 +208,47 @@ saturn_children = {
 }
 
 uranus_children = {
+	{
+		name = 'Titania',
+		type = PLANET_DWARF,
+		radius = fixed(1235,10000),
+		mass = fixed(5908,10000000),
+		temp = 70,
+		semi_major_axis = fixed(2913,1000000),
+		eccentricity = fixed(11,10000),
+		latitude = deg2rad(0.34),
+		rotation_period = fixed(87,10),
+	}, {
+		name = 'Oberon',
+		type = PLANET_DWARF,
+		radius = fixed(1194,10000),
+		mass = fixed(5046,10000000),
+		temp = 75,
+		semi_major_axis = fixed(39,10000),
+		eccentricity = fixed(14,10000),
+		latitude = deg2rad(0.58),
+		rotation_period = fixed(135,10),
+	}, {
+		name = 'Umbriel',
+		type = PLANET_DWARF,
+		radius = fixed(92,1000),
+		mass = fixed(2,10000),
+		temp = 75,
+		semi_major_axis = fixed(178,100000),
+		eccentricity = fixed(39,10000),
+		latitude = deg2rad(0.128),
+		rotation_period = fixed(4144,1000),
+	}, {
+		name = 'Ariel',
+		type = PLANET_DWARF,
+		radius = fixed(908,10000),
+		mass = fixed(226,1000000),
+		temp = 60,
+		semi_major_axis = fixed(1277,1000000),
+		eccentricity = fixed(12,10000),
+		latitude = deg2rad(0.26),
+		rotation_period = fixed(252,100),
+	},
 }
 
 neptune_children = {
