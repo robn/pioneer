@@ -252,9 +252,46 @@ uranus_children = {
 }
 
 neptune_children = {
+	{
+		name = 'Triton',
+		type = PLANET_WATER,
+		radius = fixed(2122,10000),
+		mass = fixed(359,100000),
+		temp = 38,
+		semi_major_axis = fixed(2371,100000),
+		eccentricity = fixed(16,1000000),
+		latitude = deg2rad(156.885),
+		rotation_period = fixed(141,24),
+	}, {
+		name = 'Nereid',
+		type = PLANET_ASTEROID,
+		radius = fixed(267,10000),
+		mass = fixed(519,100000000),
+		temp = 50,
+		semi_major_axis = fixed(3685,100000),
+		eccentricity = fixed(75,100),
+		latitude = deg2rad(32.55),
+		rotation_period = fixed(115,240),
+	}, {
+		name = 'Proteus',
+		type = PLANET_LARGE_ASTEROID,
+		radius = fixed(310,10000),
+		mass = fixed(710,100000000),
+		temp = 51,
+		semi_major_axis = fixed(786,1000000),
+		eccentricity = fixed(53,100000),
+		latitude = deg2rad(0.524),
+		rotation_period = fixed(1122,1000),
+	}, {
 }
 
 pluto_children = {
+	{
+		name = 'Pluto Research Base',
+		type = STARPORT_SURFACE,
+		latitude = deg2rad(84),
+		longitude = deg2rad(96),
+	},
 }
 
 sol_children = {
