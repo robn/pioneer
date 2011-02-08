@@ -747,7 +747,7 @@ void Pi::Start()
 
 	if (choice == 1) {
 		/* Earth start point */
-		SBodyPath path(0,0,0);
+		SBodyPath path = CustomSystem::GetSBodyPathForCustomSystem("Sol");
 		Space::DoHyperspaceTo(&path);
 		//Frame *pframe = *(++(++(Space::rootFrame->m_children.begin())));
 		//player->SetFrame(pframe);
@@ -763,7 +763,7 @@ void Pi::Start()
 		MainLoop();
 	} else if (choice == 2) {
 		/* Epsilon Eridani start point */
-		SBodyPath path(1,0,2);
+		SBodyPath path = CustomSystem::GetSBodyPathForCustomSystem("Epsilon Eridani");
 		Space::DoHyperspaceTo(&path);
 		// XXX there isn't a sensible way to find stations for a planet.
 		SpaceStation *station = 0;
@@ -780,7 +780,7 @@ void Pi::Start()
 		MainLoop();
 	} else if (choice == 3) {
 		/* debug start point */
-		SBodyPath path(1,0,2);
+		SBodyPath path = CustomSystem::GetSBodyPathForCustomSystem("Epsilon Eridani");
 		path.sbodyId = 6;
 		Space::DoHyperspaceTo(&path);
 		player->SetPosition(vector3d(2*EARTH_RADIUS,0,0));

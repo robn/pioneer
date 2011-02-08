@@ -166,3 +166,29 @@ const std::list<const CustomSystem*> CustomSystem::GetCustomSystemsForSector(int
 
 	return sector_systems;
 }
+
+const CustomSystem* CustomSystem::GetCustomSystem(const char *name)
+{
+	for (std::list<CustomSystem>::iterator i = custom_systems.begin(); i != custom_systems.end(); i++) {
+		CustomSystem *cs = &(*i);
+		if (!cs->name.compare(name)) return cs;
+	}
+	return NULL;
+}
+
+const SBodyPath CustomSystem::GetSBodyPathForCustomSystem(const CustomSystem* cs)
+{
+	const std::list<const CustomSystem*> cslist = GetCustomSystemsForSector(cs->sectorX, cs->sectorY);
+	int idx = 0;
+	for (std::list<const CustomSystem*>::const_iterator i = cslist.begin(); i != cslist.end(); i++) {
+		if (!(*i)->name.compare(cs->name)) break;
+			idx++;
+	}
+	assert(idx < static_cast<int>(cslist.size()));
+	return SBodyPath(cs->sectorX, cs->sectorY, idx);
+}
+
+const SBodyPath CustomSystem::GetSBodyPathForCustomSystem(const char* name)
+{
+	return GetSBodyPathForCustomSystem(GetCustomSystem(name));
+}
