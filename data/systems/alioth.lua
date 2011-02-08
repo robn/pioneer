@@ -1,5 +1,4 @@
 define_system('Alioth', {
-    bodies = { },
     type = { TYPE_STAR_K },
     sector = { 0, 4 },
     pos = v(0.629,0.880,1.045),
