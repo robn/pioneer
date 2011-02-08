@@ -150,6 +150,7 @@ jupiter_children = {
 			type = STARPORT_SURFACE,
 			latitude = deg2rad(84),
 			longitude = deg2rad(96),
+		} },
 	}, {
 		name = 'Callisto',
 		type = PLANET_DWARF,
@@ -310,7 +311,7 @@ neptune_children = {
 		eccentricity = fixed(53,100000),
 		latitude = deg2rad(0.524),
 		rotation_period = fixed(1122,1000),
-	}, {
+	},
 }
 
 pluto_children = {
@@ -444,10 +445,10 @@ sol_bodies = {
 }
 
 define_system('Sol', {
-	bodies = sol_bodies,
 	type = { TYPE_STAR_G },
 	sector = { 0, 0 },
 	pos = v(0.5,0.5,0),
+	bodies = sol_bodies,
 	short_desc = 'The historical birthplace of humankind',
 	long_desc = [[Sol is a fine joint]],
 })
