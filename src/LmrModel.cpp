@@ -606,7 +606,7 @@ public:
 			m.specular[1] = mat[5];
 			m.specular[2] = mat[6];
 			m.specular[3] = 1.0f;
-			m.shininess = CLAMP(mat[7], 1.0f, 100.0f);
+			m.shininess = Clamp(mat[7], 1.0f, 100.0f);
 			m.emissive[0] = mat[8];
 			m.emissive[1] = mat[9];
 			m.emissive[2] = mat[10];
@@ -716,8 +716,8 @@ private:
 		m_ops.push_back(curOp);
 	}
 	void PushIdx(Uint16 v) {
-		curOp.elems.elemMin = MIN(v, curOp.elems.elemMin);
-		curOp.elems.elemMax = MAX(v, curOp.elems.elemMax);
+		curOp.elems.elemMin = std::min<int>(v, curOp.elems.elemMin);
+		curOp.elems.elemMax = std::max<int>(v, curOp.elems.elemMax);
 		m_indices.push_back(v);
 	}
 
@@ -776,7 +776,7 @@ LmrModel::LmrModel(const char *model_name)
 			for(int i=1;; i++) {
 				lua_pushinteger(sLua, i);
 				lua_gettable(sLua, -2);
-				bool is_num = lua_isnumber(sLua, -1);
+				bool is_num = lua_isnumber(sLua, -1) != 0;
 				if (is_num) {
 					m_lodPixelSize[i-1] = luaL_checknumber(sLua, -1);
 					m_numLods++;
@@ -798,7 +798,7 @@ LmrModel::LmrModel(const char *model_name)
 			for(int i=1;; i++) {
 				lua_pushinteger(sLua, i);
 				lua_gettable(sLua, -2);
-				bool is_string = lua_isstring(sLua, -1);
+				bool is_string = lua_isstring(sLua, -1) != 0;
 				if (is_string) {
 					const char *mat_name = luaL_checkstring(sLua, -1);
 					m_materialLookup[mat_name] = m_materials.size();
@@ -919,7 +919,7 @@ bool LmrModel::GetBoolAttribute(const char *attr_name) const
 	if (lua_isnil(sLua, -1)) {
 		result = false;
 	} else {
-		result = lua_toboolean(sLua, -1);
+		result = lua_toboolean(sLua, -1) != 0;
 	}	
 	lua_pop(sLua, 2);
 	return result;
@@ -1096,14 +1096,14 @@ namespace ModelFuncs {
 
 	static int set_local_lighting(lua_State *L)
 	{
-		const bool doIt = lua_toboolean(L, 1);
+		const bool doIt = lua_toboolean(L, 1) != 0;
 		s_curBuf->PushSetLocalLighting(doIt);
 		return 0;
 	}
 
 	static int insideout(lua_State *L)
 	{
-		const bool doIt = lua_toboolean(L, 1);
+		const bool doIt = lua_toboolean(L, 1) != 0;
 		s_curBuf->SetInsideOut(doIt);
 		return 0;
 	}
@@ -1721,7 +1721,7 @@ namespace ModelFuncs {
 		if (lua_istable(L, 6)) {
 			lua_pushstring(L, "center");
 			lua_gettable(L, 6);
-			do_center = lua_toboolean(L, -1);
+			do_center = lua_toboolean(L, -1) != 0;
 			lua_pop(L, 1);
 
 			lua_pushstring(L, "xoffset");
@@ -2180,7 +2180,7 @@ namespace ModelFuncs {
 		const float power = luaL_checknumber(L, 3);
 		bool linear_only = false;
 		if (lua_isboolean(L, 4)) {
-			linear_only = lua_toboolean(L, 4);
+			linear_only = lua_toboolean(L, 4) != 0;
 		}
 		s_curBuf->PushThruster(*pos, *dir, power, linear_only);
 		return 0;
@@ -2193,7 +2193,7 @@ namespace ModelFuncs {
 		const float power = luaL_checknumber(L, 3);
 		bool linear_only = false;
 		if (lua_isboolean(L, 4)) {
-			linear_only = lua_toboolean(L, 4);
+			linear_only = lua_toboolean(L, 4) != 0;
 		}
 		s_curBuf->PushThruster(pos, *dir, power, linear_only);
 		pos.x = -pos.x;
