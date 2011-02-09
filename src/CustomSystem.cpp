@@ -15,7 +15,7 @@ static CustomSBody define_sbody(lua_State *L)
 		return csbody;
 	}
 	if (!lua_isstring(L, -1)) {
-		luaL_error(L, "define_system: value for field 'name' must be a string");
+		luaL_error(L, "define_sbody: value for field 'name' must be a string");
 		return csbody;
 	}
 	csbody.name = luaL_checkstring(L, -1);
@@ -28,7 +28,7 @@ static CustomSBody define_sbody(lua_State *L)
 		return csbody;
 	}
 	if (!lua_isnumber(L, -1)) {
-		luaL_error(L, "define_system: value for field 'type' must be an integer");
+		luaL_error(L, "define_sbody: value for field 'type' must be an integer");
 		return csbody;
 	}
 	csbody.type = static_cast<SBody::BodyType>(luaL_checkinteger(L, -1));
@@ -114,6 +114,29 @@ static CustomSBody define_sbody(lua_State *L)
 	}
 	lua_pop(L, 1);
 
+	lua_getfield(L, -1, "children");
+	if (lua_istable(L, -1)) {
+		for (int i = 0;; i++) {
+			lua_pushinteger(L, i+1);
+			lua_gettable(L, -2);
+			if (lua_isnil(L, -1)) {
+				lua_pop(L, 1);
+				break;
+			}
+			if (!lua_istable(L, -1)) {
+				luaL_error(L, "define_sbody: position %d in field 'children' is not a table", i);
+				return csbody;
+			}
+			csbody.children.push_back(define_sbody(L));
+			lua_pop(L, 1);
+		}
+	}
+	else if (!lua_isnil(L, -1)) {
+		luaL_error(L, "define_sbody: value for field 'children' must be a table");
+		return csbody;
+	}
+	lua_pop(L, 1);
+
 	return csbody;
 }
 
@@ -139,7 +162,7 @@ static int define_system(lua_State *L)
 	cs.name = system_name;
 
 	lua_getfield(L, -1, "type");
-	if (lua_isnil(L, -1)) {
+	if (lua_isnone(L, -1)) {
 		luaL_error(L, "define_system: required field 'type' not provided");
 		return 0;
 	}

@@ -8,20 +8,21 @@
 
 class CustomSBody {
 public:
-	std::string     name;
-	SBody::BodyType type;
-	int             primaryIdx;  // -1 for primary
-	fixed           radius; // in earth radii for planets, sol radii for stars
-	fixed           mass; // earth masses or sol masses
-	int             averageTemp; // kelvin
-	fixed           semiMajorAxis; // in AUs
-	fixed           eccentricity;
+	std::string            name;
+	SBody::BodyType        type;
+	int                    primaryIdx;  // -1 for primary
+	fixed                  radius; // in earth radii for planets, sol radii for stars
+	fixed                  mass; // earth masses or sol masses
+	int                    averageTemp; // kelvin
+	fixed                  semiMajorAxis; // in AUs
+	fixed                  eccentricity;
 	// for orbiting things, latitude = inclination
-	float           latitude, longitude; // radians
-	fixed           rotationPeriod; // in days
-	fixed           axialTilt; // in radians
-	int             econType; // StarSystem.cpp enum ECON_XXX
-	std::string     heightMapFilename;
+	float                  latitude, longitude; // radians
+	fixed                  rotationPeriod; // in days
+	fixed                  axialTilt; // in radians
+	int                    econType; // StarSystem.cpp enum ECON_XXX
+	std::string            heightMapFilename;
+	std::list<CustomSBody> children;
 };
 
 class CustomSystem {
