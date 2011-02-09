@@ -4,9 +4,11 @@
 #include "mylua.h"
 #include "vector3.h"
 #include "matrix4x4.h"
+#include "fixed.h"
 
 #define MYLUA_VEC "Vec"
 #define MYLUA_MATRIX "Matrix"
+#define MYLUA_FIXED "Fixed"
 
 namespace MyLuaVec {
 	int Vec_new(lua_State *L);
@@ -22,6 +24,14 @@ namespace MyLuaMatrix {
 	matrix4x4f *pushMatrix(lua_State *L);
 	int Matrix_register (lua_State *L);
 }; /* namespace MyLuaMatrix */
+
+namespace MyLuaFixed {
+	int Fixed_new (lua_State *L);
+	bool isFixed (lua_State *L, int index);
+	fixed *checkFixed (lua_State *L, int index);
+	fixed *pushFixed(lua_State *L);
+	int Fixed_register (lua_State *L);
+}; /* namespace MuLuaFixed */
 
 // i'll just throw them in here...
 static inline const char *luaPi_gettable_checkstring(lua_State *L, int table, int idx)
