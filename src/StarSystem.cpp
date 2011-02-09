@@ -510,8 +510,51 @@ struct CustomSBody {
 	fixed eccentricity;
 };
 */
-void StarSystem::CustomGetKidsOf(SBody *parent, const CustomSBody *customDef, const int primaryIdx, int *outHumanInfestedness, MTRand &rand)
+void StarSystem::CustomGetKidsOf(SBody *parent, const std::list<CustomSBody> *children, int *outHumanInfestedness, MTRand &rand)
 {
+	for (std::list<CustomSBody>::const_iterator i = children->begin(); i != children->end(); i++) {
+		const CustomSBody *csbody = &(*i);
+
+		SBody *kid = NewBody();
+		kid->type = csbody->type;
+		kid->parent = parent;
+		kid->seed = rand.Int32();
+		kid->radius = csbody->radius;
+		kid->mass = csbody->mass;
+		kid->averageTemp = csbody->averageTemp;
+		kid->name = csbody->name;
+
+		kid->rotationPeriod = csbody->rotationPeriod;
+		kid->eccentricity = csbody->eccentricity;
+		kid->axialTilt = csbody->axialTilt;
+		kid->semiMajorAxis = csbody->semiMajorAxis;
+		kid->orbit.eccentricity = csbody->eccentricity.ToDouble();
+		kid->orbit.semiMajorAxis = csbody->semiMajorAxis.ToDouble() * AU;
+		kid->orbit.period = calc_orbital_period(kid->orbit.semiMajorAxis, parent->GetMass());
+		kid->heightMapFilename = csbody->heightMapFilename.c_str();
+
+		if (kid->type == SBody::TYPE_STARPORT_SURFACE) {
+			kid->orbit.rotMatrix = matrix4x4d::RotateYMatrix(csbody->longitude) *
+				matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
+		} else {
+			if (kid->orbit.semiMajorAxis < 1.2 * parent->GetRadius()) {
+				Error("%s's orbit is too close to its parent", csbody->name.c_str());
+			}
+			kid->orbit.rotMatrix = matrix4x4d::RotateYMatrix(rand.Double(2*M_PI)) *
+				matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
+		}
+		if (kid->GetSuperType() == SBody::SUPERTYPE_STARPORT) {
+			(*outHumanInfestedness)++;
+		}
+		parent->children.push_back(kid);
+
+		// perihelion and aphelion (in AUs)
+		kid->orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
+		kid->orbMax = 2*csbody->semiMajorAxis - kid->orbMin;
+
+		CustomGetKidsOf(kid, &csbody->children, outHumanInfestedness, rand);
+	}
+
 #if 0
 	const CustomSBody *c = customDef;
 	for (int i=0; c->name; c++, i++) {
@@ -561,6 +604,21 @@ void StarSystem::CustomGetKidsOf(SBody *parent, const CustomSBody *customDef, co
 
 void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 {
+	const CustomSBody *csbody = &customSys->sBody;
+
+	rootBody = NewBody();
+	rootBody->type = csbody->type;
+	rootBody->parent = NULL;
+	rootBody->seed = rand.Int32();
+	rootBody->radius = csbody->radius;
+	rootBody->mass = csbody->mass;
+	rootBody->averageTemp = csbody->averageTemp;
+	rootBody->name = csbody->name;
+
+	int humanInfestedness = 0;
+	CustomGetKidsOf(rootBody, &csbody->children, &humanInfestedness, rand);
+	Populate(false);
+
 #if 0
 	// find primary
 	const CustomSBody *csbody = customSys->sbodies;
