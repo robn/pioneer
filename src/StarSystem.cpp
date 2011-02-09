@@ -531,7 +531,7 @@ void StarSystem::CustomGetKidsOf(SBody *parent, const std::list<CustomSBody> *ch
 		kid->orbit.eccentricity = csbody->eccentricity.ToDouble();
 		kid->orbit.semiMajorAxis = csbody->semiMajorAxis.ToDouble() * AU;
 		kid->orbit.period = calc_orbital_period(kid->orbit.semiMajorAxis, parent->GetMass());
-		kid->heightMapFilename = csbody->heightMapFilename.c_str();
+		if (csbody->heightMapFilename.length() > 0) kid->heightMapFilename = csbody->heightMapFilename.c_str();
 
 		if (kid->type == SBody::TYPE_STARPORT_SURFACE) {
 			kid->orbit.rotMatrix = matrix4x4d::RotateYMatrix(csbody->longitude) *
