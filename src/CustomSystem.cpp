@@ -7,9 +7,35 @@ static std::list<CustomSystem> custom_systems;
 
 static CustomSBody define_sbody(lua_State *L)
 {
-	printf("custom bodies!\n");
+	CustomSBody csbody;
 
-	return CustomSBody();
+	lua_getfield(L, -1, "name");
+	if (lua_isnone(L, -1)) {
+		luaL_error(L, "define_sbody: required field 'name' not provided");
+		return csbody;
+	}
+	if (!lua_isstring(L, -1)) {
+		luaL_error(L, "define_system: value for field 'name' must be a string");
+		return csbody;
+	}
+	csbody.name = luaL_checkstring(L, -1);
+	printf("define_sbody: name: %s\n", csbody.name.c_str());
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "type");
+	if (lua_isnone(L, -1)) {
+		luaL_error(L, "define_sbody: required field 'type' not provided");
+		return csbody;
+	}
+	if (!lua_isnumber(L, -1)) {
+		luaL_error(L, "define_system: value for field 'name' must be an integer");
+		return csbody;
+	}
+	csbody.type = static_cast<SBody::BodyType>(luaL_checkinteger(L, -1));
+	printf("define_sbody: type: %d\n", csbody.type);
+	lua_pop(L, 1);
+
+	return csbody;
 }
 
 static int define_system(lua_State *L)
