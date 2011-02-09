@@ -10,7 +10,6 @@ class CustomSBody {
 public:
 	std::string            name;
 	SBody::BodyType        type;
-	int                    primaryIdx;  // -1 for primary
 	fixed                  radius; // in earth radii for planets, sol radii for stars
 	fixed                  mass; // earth masses or sol masses
 	int                    averageTemp; // kelvin
