@@ -58,6 +58,62 @@ static CustomSBody define_sbody(lua_State *L)
 	}
 	lua_pop(L, 1);
 
+	lua_getfield(L, -1, "semi_major_axis");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.semiMajorAxis = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: semi_major_axis: %f\n", csbody.semiMajorAxis.ToFloat());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "eccentricity");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.eccentricity = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: eccentricity: %f\n", csbody.eccentricity.ToFloat());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "latitude");
+	if (lua_isnumber(L, -1)) {
+		csbody.latitude = lua_tonumber(L, -1);
+		printf("define_sbody: latitude: %f\n", csbody.latitude);
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "longitude");
+	if (lua_isnumber(L, -1)) {
+		csbody.longitude = lua_tonumber(L, -1);
+		printf("define_sbody: longitude: %f\n", csbody.longitude);
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "rotation_period");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.rotationPeriod = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: rotation_period: %f\n", csbody.rotationPeriod.ToFloat());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "axial_tilt");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.axialTilt = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: axial_tilt: %f\n", csbody.axialTilt.ToFloat());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "economy");
+	if (lua_isnumber(L, -1)) {
+		csbody.econType = lua_tointeger(L, -1);
+		printf("define_sbody: economy: %d\n", csbody.econType);
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "height_map");
+	if (lua_isstring(L, -1)) {
+		csbody.heightMapFilename = luaL_checkstring(L, -1);
+		printf("define_sbody: height_map: %s\n", csbody.heightMapFilename.c_str());
+	}
+	lua_pop(L, 1);
+
 	return csbody;
 }
 
