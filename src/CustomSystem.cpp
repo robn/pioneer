@@ -187,7 +187,11 @@ void CustomSystem::Init()
 	MyLuaVec::Vec_register(L);
 	lua_pop(L, 1);
 
+	MyLuaFixed::Fixed_register(L);
+	lua_pop(L, 1);
+
 	lua_register(L, "v", MyLuaVec::Vec_new);
+	lua_register(L, "fixed", MyLuaFixed::Fixed_new);
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 
