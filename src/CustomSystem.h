@@ -42,7 +42,7 @@ public:
 	std::string            shortDesc;
 	std::string            longDesc;
 
-	bool IsRandom() const { return sBody.type == SBody::TYPE_GRAVPOINT; };
+	bool IsRandom() const { return sBody.name.length() == 0; }
 };
 
 #endif /* _CUSTOMSYSTEH */
