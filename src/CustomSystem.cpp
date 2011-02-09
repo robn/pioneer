@@ -28,11 +28,34 @@ static CustomSBody define_sbody(lua_State *L)
 		return csbody;
 	}
 	if (!lua_isnumber(L, -1)) {
-		luaL_error(L, "define_system: value for field 'name' must be an integer");
+		luaL_error(L, "define_system: value for field 'type' must be an integer");
 		return csbody;
 	}
 	csbody.type = static_cast<SBody::BodyType>(luaL_checkinteger(L, -1));
 	printf("define_sbody: type: %d\n", csbody.type);
+	lua_pop(L, 1);
+
+	// XXX make sure we have the right fields for the right body types, etc
+
+	lua_getfield(L, -1, "radius");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.radius = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: radius: %f\n", csbody.radius.ToFloat());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "mass");
+	if (MyLuaFixed::isFixed(L, -1)) {
+		csbody.mass = *MyLuaFixed::checkFixed(L, -1);
+		printf("define_sbody: mass: %f\n", csbody.mass.ToFloat());
+	}
+	lua_pop(L, 1);
+	
+	lua_getfield(L, -1, "temp");
+	if (lua_isnumber(L, -1)) {
+		csbody.averageTemp = lua_tointeger(L, -1);
+		printf("define_sbody: temp: %d\n", csbody.averageTemp);
+	}
 	lua_pop(L, 1);
 
 	return csbody;
