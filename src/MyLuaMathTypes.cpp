@@ -222,6 +222,14 @@ namespace MyLuaMatrix {
 } /* namespace MyLuaMatrix */
 
 namespace MyLuaVec {
+	bool isVec (lua_State *L, int index)
+	{
+		vector3f *v;
+		if (lua_type(L, index) != LUA_TUSERDATA) return NULL;
+		v = (vector3f *)luaL_checkudata(L, index, MYLUA_VEC);
+		return v == NULL ? false : true;
+	}
+
 	vector3f *checkVec (lua_State *L, int index)
 	{
 		vector3f *v;

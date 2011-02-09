@@ -11,6 +11,7 @@
 namespace MyLuaVec {
 	int Vec_new(lua_State *L);
 	int Vec_newNormalized(lua_State *L);
+	bool isVec (lua_State *L, int index);
 	vector3f *checkVec (lua_State *L, int index);
 	vector3f *pushVec(lua_State *L);
 	int Vec_register (lua_State *L);

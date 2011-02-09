@@ -90,6 +90,10 @@ static int define_system(lua_State *L)
 		luaL_error(L, "define_system: required field 'pos' not provided");
 		return 0;
 	}
+	if (!MyLuaVec::isVec(L, 3)) {
+		luaL_error(L, "define_system: value for field 'pos' must be a vector (use v() to make one");
+		return 0;
+	}
 	cs.pos = *MyLuaVec::checkVec(L, 3);
 	printf("define_system: pos: (%f,%f,%f)\n", cs.pos.x, cs.pos.y, cs.pos.z);
 	lua_pop(L, 1);
