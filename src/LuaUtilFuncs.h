@@ -6,6 +6,8 @@
 namespace LuaUtilFuncs {
 	int noise(lua_State *L);
 	int load_lua(lua_State *L);
+	int deg2rad(lua_State *L);
+	int fixed_deg2rad(lua_State *L);
 } /* LuaUtilFuncs */
 
 #endif /* _LUAUTILFUNCS_H */

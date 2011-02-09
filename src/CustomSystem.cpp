@@ -194,6 +194,8 @@ void CustomSystem::Init()
 	lua_register(L, "fixed", MyLuaFixed::Fixed_new);
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
+	lua_register(L, "deg2rad", LuaUtilFuncs::deg2rad);
+	lua_register(L, "fixed_deg2rad", LuaUtilFuncs::fixed_deg2rad);
 
 	lua_pushstring(L, PIONEER_DATA_DIR);
 	lua_setglobal(L, "CurrentDirectory");

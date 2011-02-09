@@ -29,8 +29,4 @@ GOV_COMMUNIST     = 14
 GOV_PLUTOCRATIC   = 15
 GOV_DISORDER      = 16
 
-function deg2rad () end
-function fixed () end
-function fixed_deg2rad () end
-
 load_lua(CurrentDirectory .. "/systems")
