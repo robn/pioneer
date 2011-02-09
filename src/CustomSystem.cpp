@@ -13,9 +13,9 @@ static int define_system(lua_State *L)
 		return 0;
 	}
 
-	const char *system_name = luaL_checkstring(L, 1);
+	const char *system_name = luaL_checkstring(L, -2);
 
-	if (!lua_istable(L, 2)) {
+	if (!lua_istable(L, -1)) {
 		luaL_error(L, "define_system 2nd argument must be a table");
 		return 0;
 	}
@@ -26,22 +26,22 @@ static int define_system(lua_State *L)
 
 	cs.name = system_name;
 
-	lua_getfield(L, 2, "type");
-	if (lua_isnil(L, 3)) {
+	lua_getfield(L, -1, "type");
+	if (lua_isnil(L, -1)) {
 		luaL_error(L, "define_system: required field 'type' not provided");
 		return 0;
 	}
-	if (lua_istable(L, 3)) {
+	if (lua_istable(L, -1)) {
 		int i;
 		for (i = 0; i < 4; i++) {
 			lua_pushinteger(L, i+1);
-			lua_gettable(L, 3);
-			if (lua_isnil(L, 4)) {
+			lua_gettable(L, -2);
+			if (lua_isnil(L, -1)) {
 				lua_pop(L, 1);
 				break;
 			}
-			if (lua_isnumber(L, 4)) {
-				printf("define_system: type: %d\n", luaL_checkinteger(L, 4));
+			if (lua_isnumber(L, -1)) {
+				printf("define_system: type: %d\n", luaL_checkinteger(L, -1));
 				cs.primaryType[i] = static_cast<SBody::BodyType>(luaL_checkinteger(L, 4));
 			} else {
 				luaL_error(L, "define_system: position %d in field 'type' is not an integer", i);
@@ -58,18 +58,18 @@ static int define_system(lua_State *L)
 	}
 	lua_pop(L, 1);
 
-	lua_getfield(L, 2, "sector");
-	if (lua_isnone(L, 3)) {
+	lua_getfield(L, -1, "sector");
+	if (lua_isnone(L, -1)) {
 		luaL_error(L, "define_system: required field 'sector' not provided");
 		return 0;
 	}
-	if (lua_istable(L, 3)) {
+	if (lua_istable(L, -1)) {
 		int sector[2];
 		for (int i = 0; i < 2; i++) {
 			lua_pushinteger(L, i+1);
-			lua_gettable(L, 3);
-			if (lua_isnumber(L, 4)) {
-				sector[i] = luaL_checkinteger(L, 4);
+			lua_gettable(L, -2);
+			if (lua_isnumber(L, -1)) {
+				sector[i] = luaL_checkinteger(L, -1);
 			} else {
 				luaL_error(L, "define_system: position %d in field 'sector' is not an integer", i);
 				return 0;
@@ -85,45 +85,45 @@ static int define_system(lua_State *L)
 	}
 	lua_pop(L, 1);
 
-	lua_getfield(L, 2, "pos");
-	if (lua_isnone(L, 3)) {
+	lua_getfield(L, -1, "pos");
+	if (lua_isnone(L, -1)) {
 		luaL_error(L, "define_system: required field 'pos' not provided");
 		return 0;
 	}
-	if (!MyLuaVec::isVec(L, 3)) {
+	if (!MyLuaVec::isVec(L, -1)) {
 		luaL_error(L, "define_system: value for field 'pos' must be a vector (use v() to make one");
 		return 0;
 	}
-	cs.pos = *MyLuaVec::checkVec(L, 3);
+	cs.pos = *MyLuaVec::checkVec(L, -1);
 	printf("define_system: pos: (%f,%f,%f)\n", cs.pos.x, cs.pos.y, cs.pos.z);
 	lua_pop(L, 1);
 
-	lua_getfield(L, 2, "seed");
-	if (lua_isnumber(L, 3))
-		cs.seed = luaL_checkinteger(L, 3);
+	lua_getfield(L, -1, "seed");
+	if (lua_isnumber(L, -1))
+		cs.seed = luaL_checkinteger(L, -1);
 	else
 		cs.seed = 0;
 	lua_pop(L, 1);
 	printf("define_system: seed: %d\n", cs.seed);
 
-	lua_getfield(L, 2, "govtype");
-	if (lua_isnumber(L, 3))
-		cs.govType = static_cast<Polit::GovType>(luaL_checkinteger(L, 3));
+	lua_getfield(L, -1, "govtype");
+	if (lua_isnumber(L, -1))
+		cs.govType = static_cast<Polit::GovType>(luaL_checkinteger(L, -1));
 	else
 		cs.govType = Polit::GOV_NONE;
 	lua_pop(L, 1);
 	printf("define_system: govtype: %d\n", cs.govType);
 
-	lua_getfield(L, 2, "short_desc");
-	if (lua_isstring(L, 3)) {
-		cs.shortDesc = luaL_checkstring(L, 3);
+	lua_getfield(L, -1, "short_desc");
+	if (lua_isstring(L, -1)) {
+		cs.shortDesc = luaL_checkstring(L, -1);
 		printf("define_system: short_desc: %s\n", cs.shortDesc.c_str());
 	}
 	lua_pop(L, 1);
 
-	lua_getfield(L, 2, "long_desc");
-	if (lua_isstring(L, 3)) {
-		cs.longDesc = luaL_checkstring(L, 3);
+	lua_getfield(L, -1, "long_desc");
+	if (lua_isstring(L, -1)) {
+		cs.longDesc = luaL_checkstring(L, -1);
 		printf("define_system: long_desc: %s\n", cs.longDesc.c_str());
 	}
 	lua_pop(L, 1);
