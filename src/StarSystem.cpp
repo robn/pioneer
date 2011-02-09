@@ -682,7 +682,7 @@ StarSystem::StarSystem(int sector_x, int sector_y, int system_idx)
 		const CustomSystem *custom = s.m_systems[system_idx].customSys;
 		if (custom->shortDesc.length() > 0) m_shortDesc = custom->shortDesc;
 		if (custom->longDesc.length() > 0) m_longDesc = custom->longDesc;
-		if (custom->sBodies.size() > 0) {
+		if (!custom->IsRandom()) {
 			GenerateFromCustom(s.m_systems[system_idx].customSys, rand);
 			return;
 		}

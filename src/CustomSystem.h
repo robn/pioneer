@@ -33,7 +33,7 @@ public:
 	static const SBodyPath GetSBodyPathForCustomSystem(const char* name);
 
 	std::string            name;
-	std::list<CustomSBody> sBodies;
+    CustomSBody            sBody;
 	SBody::BodyType        primaryType[4];
 	int                    sectorX, sectorY;
 	vector3f               pos;
@@ -42,7 +42,7 @@ public:
 	std::string            shortDesc;
 	std::string            longDesc;
 
-	bool IsRandom() const { return sBodies.size() > 0; };
+	bool IsRandom() const { return sBody.type == SBody::TYPE_GRAVPOINT; };
 };
 
 #endif /* _CUSTOMSYSTEH */

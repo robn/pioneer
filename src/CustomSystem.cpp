@@ -5,6 +5,13 @@
 
 static std::list<CustomSystem> custom_systems;
 
+static CustomSBody define_sbody(lua_State *L)
+{
+	printf("custom bodies!\n");
+
+	return CustomSBody();
+}
+
 static int define_system(lua_State *L)
 {
 	int n = lua_gettop(L);
@@ -125,6 +132,19 @@ static int define_system(lua_State *L)
 	if (lua_isstring(L, -1)) {
 		cs.longDesc = luaL_checkstring(L, -1);
 		printf("define_system: long_desc: %s\n", cs.longDesc.c_str());
+	}
+	lua_pop(L, 1);
+
+	lua_getfield(L, -1, "bodies");
+	if (lua_istable(L, -1)) {
+		cs.sBody = define_sbody(L);
+		if (cs.sBody.type != cs.primaryType[0]) {
+			luaL_error(L, "define_system: primary body has different type to first star\n");
+			return 0;
+		}
+	} else if(!lua_isnil(L, -1)) {
+		luaL_error(L, "define_system: value for field 'bodies' must be a table");
+		return 0;
 	}
 	lua_pop(L, 1);
 
