@@ -356,7 +356,7 @@ sol_children = {
 		eccentricity = fixed(167,10000),
 		rotation_period = fixed(1,1),
 		axial_tilt = fixed_deg2rad(2344,100),
-		economy = INDUSTRY,
+		economy = ECON_INDUSTRY,
 		height_map = 'data/earth.hmap',
 		children = earth_children,
 	}, {
@@ -370,7 +370,7 @@ sol_children = {
 		latitude = deg2rad(1.85),
 		rotation_period = fixed(1027,1000),
 		axial_tilt = fixed_deg2rad(2519,100),
-		economy = INDUSTRY,
+		economy = ECON_INDUSTRY,
 		children = mars_children,
 	}, {
 		name = 'Jupiter',
