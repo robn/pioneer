@@ -478,6 +478,9 @@ namespace MyLuaFixed {
 	{
 		luaL_openlib(L, MYLUA_FIXED, Fixed_methods, 0);  /* create methods table,
 						    add it to the globals */
+		luaL_newmetatable(L, MYLUA_FIXED);          /* create metatable for Vec,
+						 and add it to the Lua registry */
+		lua_pop(L, 1);                      /* drop metatable */
 		return 1;                           /* return methods on the stack */
 	}
 } /* namespace MyLuaVec */
