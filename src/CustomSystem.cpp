@@ -16,21 +16,16 @@ static CustomSBody define_sbody(lua_State *L)
 	}
 	printf("define_sbody: name: %s\n", csbody.name.c_str());
 
-	lua_getfield(L, -1, "type");
-	if (lua_isnone(L, -1)) {
-		luaL_error(L, "define_sbody: required field 'type' not provided");
+	int type;
+	if (! pi_lua_get_int_attr(L, "type", type, 0)) {
+		luaL_error(L, "define_sbody: required field 'type' missing or invalid");
 		return csbody;
 	}
-	if (!lua_isnumber(L, -1)) {
-		luaL_error(L, "define_sbody: value for field 'type' must be an integer");
-		return csbody;
-	}
-	csbody.type = static_cast<SBody::BodyType>(luaL_checkinteger(L, -1));
+	csbody.type = static_cast<SBody::BodyType>(type);
 	printf("define_sbody: type: %d\n", csbody.type);
-	lua_pop(L, 1);
 
 	// XXX make sure we have the right fields for the right body types, etc
-
+	
 	lua_getfield(L, -1, "radius");
 	if (MyLuaFixed::isFixed(L, -1)) {
 		csbody.radius = *MyLuaFixed::checkFixed(L, -1);
