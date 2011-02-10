@@ -2,6 +2,7 @@
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
 #include "Polit.h"
+#include "lua_support.h"
 
 static std::list<CustomSystem> custom_systems;
 
@@ -9,18 +10,11 @@ static CustomSBody define_sbody(lua_State *L)
 {
 	CustomSBody csbody;
 
-	lua_getfield(L, -1, "name");
-	if (lua_isnone(L, -1)) {
-		luaL_error(L, "define_sbody: required field 'name' not provided");
+	if (! pi_lua_get_string_attr(L, "name", csbody.name, NULL)) {
+		luaL_error(L, "define_sbody: required field 'name' missing or invalid");
 		return csbody;
 	}
-	if (!lua_isstring(L, -1)) {
-		luaL_error(L, "define_sbody: value for field 'name' must be a string");
-		return csbody;
-	}
-	csbody.name = luaL_checkstring(L, -1);
 	printf("define_sbody: name: %s\n", csbody.name.c_str());
-	lua_pop(L, 1);
 
 	lua_getfield(L, -1, "type");
 	if (lua_isnone(L, -1)) {
