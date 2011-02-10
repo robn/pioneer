@@ -14,7 +14,7 @@ static CustomSBody define_sbody(lua_State *L)
 		luaL_error(L, "define_sbody: required field 'name' missing or invalid");
 		return csbody;
 	}
-	printf("define_sbody: name: %s\n", csbody.name.c_str());
+	printf("define_sbody: %s\n", csbody.name.c_str());
 
 	int type;
 	if (! pi_lua_get_int_attr(L, "type", type, 0)) {
@@ -22,86 +22,20 @@ static CustomSBody define_sbody(lua_State *L)
 		return csbody;
 	}
 	csbody.type = static_cast<SBody::BodyType>(type);
-	printf("define_sbody: type: %d\n", csbody.type);
 
 	// XXX make sure we have the right fields for the right body types, etc
 	
-	lua_getfield(L, -1, "radius");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.radius = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: radius: %f\n", csbody.radius.ToFloat());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "mass");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.mass = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: mass: %f\n", csbody.mass.ToFloat());
-	}
-	lua_pop(L, 1);
-	
-	lua_getfield(L, -1, "temp");
-	if (lua_isnumber(L, -1)) {
-		csbody.averageTemp = lua_tointeger(L, -1);
-		printf("define_sbody: temp: %d\n", csbody.averageTemp);
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "semi_major_axis");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.semiMajorAxis = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: semi_major_axis: %f\n", csbody.semiMajorAxis.ToFloat());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "eccentricity");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.eccentricity = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: eccentricity: %f\n", csbody.eccentricity.ToFloat());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "latitude");
-	if (lua_isnumber(L, -1)) {
-		csbody.latitude = lua_tonumber(L, -1);
-		printf("define_sbody: latitude: %f\n", csbody.latitude);
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "longitude");
-	if (lua_isnumber(L, -1)) {
-		csbody.longitude = lua_tonumber(L, -1);
-		printf("define_sbody: longitude: %f\n", csbody.longitude);
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "rotation_period");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.rotationPeriod = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: rotation_period: %f\n", csbody.rotationPeriod.ToFloat());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "axial_tilt");
-	if (MyLuaFixed::isFixed(L, -1)) {
-		csbody.axialTilt = *MyLuaFixed::checkFixed(L, -1);
-		printf("define_sbody: axial_tilt: %f\n", csbody.axialTilt.ToFloat());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "economy");
-	if (lua_isnumber(L, -1)) {
-		csbody.econType = lua_tointeger(L, -1);
-		printf("define_sbody: economy: %d\n", csbody.econType);
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "height_map");
-	if (lua_isstring(L, -1)) {
-		csbody.heightMapFilename = luaL_checkstring(L, -1);
-		printf("define_sbody: height_map: %s\n", csbody.heightMapFilename.c_str());
-	}
-	lua_pop(L, 1);
+	pi_lua_get_fixed_attr (L, "radius",          csbody.radius,            0);
+	pi_lua_get_fixed_attr (L, "mass",            csbody.mass,              0);
+	pi_lua_get_int_attr   (L, "temp",            csbody.averageTemp,       0);
+	pi_lua_get_fixed_attr (L, "semi_major_axis", csbody.semiMajorAxis,     0);
+	pi_lua_get_fixed_attr (L, "eccentricity",    csbody.eccentricity,      0);
+	pi_lua_get_float_attr (L, "latitude",        csbody.latitude,          0);
+	pi_lua_get_float_attr (L, "longitude",       csbody.longitude,         0);
+	pi_lua_get_fixed_attr (L, "rotation_period", csbody.rotationPeriod,    0);
+	pi_lua_get_fixed_attr (L, "axial_tilt",      csbody.axialTilt,         0);
+	pi_lua_get_int_attr   (L, "economy",         csbody.econType,          0);
+	pi_lua_get_string_attr(L, "height_map",      csbody.heightMapFilename, 0);
 
 	lua_getfield(L, -1, "children");
 	if (lua_istable(L, -1)) {
@@ -165,7 +99,6 @@ static int define_system(lua_State *L)
 				break;
 			}
 			if (lua_isnumber(L, -1)) {
-				printf("define_system: type: %d\n", luaL_checkinteger(L, -1));
 				cs.primaryType[i] = static_cast<SBody::BodyType>(luaL_checkinteger(L, 4));
 			} else {
 				luaL_error(L, "define_system: position %d in field 'type' is not an integer", i);
@@ -202,55 +135,27 @@ static int define_system(lua_State *L)
 		}
 		cs.sectorX = sector[0];
 		cs.sectorY = sector[1];
-		printf("define_system: sector [%d,%d]\n", cs.sectorX, cs.sectorY);
 	} else {
 		luaL_error(L, "define_system: value for field 'sector' must be a table");
 		return 0;
 	}
 	lua_pop(L, 1);
 
-	lua_getfield(L, -1, "pos");
-	if (lua_isnone(L, -1)) {
-		luaL_error(L, "define_system: required field 'pos' not provided");
+	if (! pi_lua_get_vector_attr(L, "pos", cs.pos, vector3f())) {
+		luaL_error(L, "define_system: required field 'pos' missing or invalid");
 		return 0;
 	}
-	if (!MyLuaVec::isVec(L, -1)) {
-		luaL_error(L, "define_system: value for field 'pos' must be a vector (use v() to make one");
-		return 0;
-	}
-	cs.pos = *MyLuaVec::checkVec(L, -1);
-	printf("define_system: pos: (%f,%f,%f)\n", cs.pos.x, cs.pos.y, cs.pos.z);
-	lua_pop(L, 1);
 
-	lua_getfield(L, -1, "seed");
-	if (lua_isnumber(L, -1))
-		cs.seed = luaL_checkinteger(L, -1);
-	else
-		cs.seed = 0;
-	lua_pop(L, 1);
-	printf("define_system: seed: %d\n", cs.seed);
+	int seed;
+	pi_lua_get_int_attr(L, "seed", seed, 0);
+	cs.seed = seed;
 
-	lua_getfield(L, -1, "govtype");
-	if (lua_isnumber(L, -1))
-		cs.govType = static_cast<Polit::GovType>(luaL_checkinteger(L, -1));
-	else
-		cs.govType = Polit::GOV_NONE;
-	lua_pop(L, 1);
-	printf("define_system: govtype: %d\n", cs.govType);
+	int govtype;
+	pi_lua_get_int_attr(L, "govtype", govtype, 0);
+	cs.govType = static_cast<Polit::GovType>(govtype);
 
-	lua_getfield(L, -1, "short_desc");
-	if (lua_isstring(L, -1)) {
-		cs.shortDesc = luaL_checkstring(L, -1);
-		printf("define_system: short_desc: %s\n", cs.shortDesc.c_str());
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "long_desc");
-	if (lua_isstring(L, -1)) {
-		cs.longDesc = luaL_checkstring(L, -1);
-		printf("define_system: long_desc: %s\n", cs.longDesc.c_str());
-	}
-	lua_pop(L, 1);
+	pi_lua_get_string_attr(L, "short_desc", cs.shortDesc, 0);
+	pi_lua_get_string_attr(L, "long_desc",  cs.longDesc,  0);
 
 	lua_getfield(L, -1, "bodies");
 	if (lua_istable(L, -1)) {
