@@ -127,7 +127,7 @@ jupiter_children = {
 		mass = fixed(8,1000),
 		temp = 102,
 		semi_major_axis = fixed(441,100000),
-		eccentricity = fixed(9,10000),
+		eccentricity = fixed(9,1000),
 		rotation_period = fixed(355,100),
 		children = { {
 			name = 'Clarke\'s Station',
@@ -249,7 +249,7 @@ uranus_children = {
 		temp = 75,
 		semi_major_axis = fixed(39,10000),
 		eccentricity = fixed(14,10000),
-		latitude = deg2rad(0.58),
+		latitude = deg2rad(0.058),
 		rotation_period = fixed(135,10),
 	}, {
 		name = 'Umbriel',
