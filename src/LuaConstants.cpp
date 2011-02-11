@@ -1,7 +1,7 @@
 #include "LuaConstants.h"
 #include "StarSystem.h"
 
-#define _setfield(v,k) do { lua_pushinteger(L, v); lua_setfield(L, -1, k); } while(0)
+#define _setfield(v,k) do { lua_pushinteger(L, v); lua_setfield(L, -2, k); } while(0)
 
 void LuaConstants::RegisterConstants(lua_State *L)
 {
