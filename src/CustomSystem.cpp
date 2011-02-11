@@ -1,4 +1,5 @@
 #include "CustomSystem.h"
+#include "LuaConstants.h"
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
 #include "Polit.h"
@@ -179,6 +180,8 @@ void CustomSystem::Init()
 {
 	lua_State *L = lua_open();
 	luaL_openlibs(L);
+
+	LuaConstants::RegisterConstants(L);
 
 	MyLuaVec::Vec_register(L);
 	lua_pop(L, 1);
