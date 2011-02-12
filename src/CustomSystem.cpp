@@ -34,7 +34,6 @@ static CustomSBody define_sbody(lua_State *L)
 	pi_lua_get_float_attr (L, "longitude",       csbody.longitude,         0);
 	pi_lua_get_fixed_attr (L, "rotation_period", csbody.rotationPeriod,    0);
 	pi_lua_get_fixed_attr (L, "axial_tilt",      csbody.axialTilt,         0);
-	pi_lua_get_int_attr   (L, "economy",         csbody.econType,          0);
 	pi_lua_get_string_attr(L, "height_map",      csbody.heightMapFilename, 0);
 
 	lua_getfield(L, -1, "children");
