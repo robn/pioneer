@@ -1,5 +1,6 @@
 #include "LuaConstants.h"
 #include "StarSystem.h"
+#include "Polit.h"
 
 #define _setfield(v,k) do { lua_pushinteger(L, v); lua_setfield(L, -2, k); } while(0)
 
@@ -45,5 +46,65 @@ void LuaConstants::RegisterConstants(lua_State *L)
 	_setfield(SBody::TYPE_STAR_MAX,                     "TYPE_STAR_MAX");
 	lua_setfield(L, -2, "BodyType");
 
+	lua_newtable(L); // BodySuperType
+	_setfield(SBody::SUPERTYPE_NONE,         "SUPERTYPE_NONE");
+	_setfield(SBody::SUPERTYPE_STAR,         "SUPERTYPE_STAR");
+	_setfield(SBody::SUPERTYPE_ROCKY_PLANET, "SUPERTYPE_ROCKY_PLANET");
+	_setfield(SBody::SUPERTYPE_GAS_GIANT,    "SUPERTYPE_GAS_GIANT");
+	_setfield(SBody::SUPERTYPE_STARPORT,     "SUPERTYPE_STARPORT");
+	lua_setfield(L, -2, "BodySuperType");
+
 	lua_setfield(L, LUA_GLOBALSINDEX, "SBody");
+
+
+	lua_newtable(L); // Polit
+
+	lua_newtable(L); // Crime
+	_setfield(Polit::CRIME_TRADING_ILLEGAL_GOODS, "CRIME_TRADING_ILLEGAL_GOODS");
+	_setfield(Polit::CRIME_WEAPON_DISCHARGE,      "CRIME_WEAPON_DISCHARGE");
+	_setfield(Polit::CRIME_PIRACY,                "CRIME_PIRACY");
+	_setfield(Polit::CRIME_MURDER,                "CRIME_MURDER");
+	lua_setfield(L, -2, "Crime");
+
+	lua_newtable(L); // Bloc
+	_setfield(Polit::BLOC_NONE,     "BLOC_NONE");
+	_setfield(Polit::BLOC_EARTHFED, "BLOC_EARTHFED");
+	_setfield(Polit::BLOC_CIS,      "BLOC_CIS");
+	_setfield(Polit::BLOC_EMPIRE,   "BLOC_EMPIRE");
+	_setfield(Polit::BLOC_EMPIRE,   "BLOC_MAX");
+	lua_setfield(L, -2, "Bloc");
+
+	lua_newtable(L); // EconType
+	_setfield(Polit::ECON_NONE,            "ECON_NONE");
+	_setfield(Polit::ECON_VERY_CAPITALIST, "ECON_VERY_CAPITALIST");
+	_setfield(Polit::ECON_CAPITALIST,      "ECON_CAPITALIST");
+	_setfield(Polit::ECON_MIXED,           "ECON_MIXED");
+	_setfield(Polit::ECON_PLANNED,         "ECON_PLANNED");
+	_setfield(Polit::ECON_MAX,             "ECON_MAX");
+	lua_setfield(L, -2, "EconType");
+
+	lua_newtable(L); // GovType
+	_setfield(Polit::GOV_INVALID,       "GOV_INVALID,");
+	_setfield(Polit::GOV_NONE,          "GOV_NONE,");
+	_setfield(Polit::GOV_EARTHCOLONIAL, "GOV_EARTHCOLONIAL,");
+	_setfield(Polit::GOV_EARTHDEMOC,    "GOV_EARTHDEMOC,");
+	_setfield(Polit::GOV_EMPIRERULE,    "GOV_EMPIRERULE,");
+	_setfield(Polit::GOV_CISLIBDEM,     "GOV_CISLIBDEM,");
+	_setfield(Polit::GOV_CISSOCDEM,     "GOV_CISSOCDEM,");
+	_setfield(Polit::GOV_LIBDEM,        "GOV_LIBDEM,");
+	_setfield(Polit::GOV_CORPORATE,     "GOV_CORPORATE,");
+	_setfield(Polit::GOV_SOCDEM,        "GOV_SOCDEM,");
+	_setfield(Polit::GOV_EARTHMILDICT,  "GOV_EARTHMILDICT,");
+	_setfield(Polit::GOV_MILDICT1,      "GOV_MILDICT1,");
+	_setfield(Polit::GOV_MILDICT2,      "GOV_MILDICT2,");
+	_setfield(Polit::GOV_EMPIREMILDICT, "GOV_EMPIREMILDICT,");
+	_setfield(Polit::GOV_COMMUNIST,     "GOV_COMMUNIST,");
+	_setfield(Polit::GOV_PLUTOCRATIC,   "GOV_PLUTOCRATIC,");
+	_setfield(Polit::GOV_DISORDER,      "GOV_DISORDER,");
+	_setfield(Polit::GOV_MAX,           "GOV_MAX,");
+	_setfield(Polit::GOV_RAND_MIN,      "GOV_RAND_MIN");
+	_setfield(Polit::GOV_RAND_MAX,      "GOV_RAND_MAX");
+	lua_setfield(L, -2, "GovType");
+
+	lua_setfield(L, LUA_GLOBALSINDEX, "Polit");
 }
