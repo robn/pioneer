@@ -52,15 +52,15 @@ Module:new {
 		else
 			self.ads[ad_ref].stock = {}
 			self.ads[ad_ref].price = {}
-			for e = Equip.FIRST_COMMODITY, Equip.LAST_COMMODITY do
+			for e = Equip.Type.FIRST_COMMODITY, Equip.Type.LAST_COMMODITY do
 				if not Pi.GetCurrentSystem():IsCommodityLegal(e) then
 					self.ads[ad_ref].stock[e] = Pi.rand:Int(1,50)
 					-- going rate on the black market will be twice normal
-					self.ads[ad_ref].price[e] = 2*ad.bb:GetEquipmentPrice(e)
+					self.ads[ad_ref].price[e] = 2*ad.bb:GetEquip.TypementPrice(e)
 				end
 			end
-		--	self.ads[ad_ref].stock = {[Equip.WATER]=20, [Equip.HYDROGEN]=15, [Equip.NERVE_GAS]=0}
-		--	self.ads[ad_ref].price = {[Equip.WATER]=120, [Equip.HYDROGEN]=130, [Equip.NERVE_GAS]=1000}
+		--	self.ads[ad_ref].stock = {[Equip.Type.WATER]=20, [Equip.Type.HYDROGEN]=15, [Equip.Type.NERVE_GAS]=0}
+		--	self.ads[ad_ref].price = {[Equip.Type.WATER]=120, [Equip.Type.HYDROGEN]=130, [Equip.Type.NERVE_GAS]=1000}
 			dialog:Clear()
 			dialog:SetTitle(ad.desc)
 			dialog:SetMessage(_("Welcome to %1.", {ad.desc}))

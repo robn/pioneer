@@ -177,8 +177,6 @@ function unserialize(val, addtotable, start)
 	end
 end
 
-dofile "data/pienums.lua"
-
 -- The following enums haven't been put in pienums because
 -- pienums is also included from the pioneer model lua context,
 -- which doesn't have the Pi & SBody objects.
