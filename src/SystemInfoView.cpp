@@ -96,9 +96,9 @@ void SystemInfoView::UpdateEconomyTab()
 		data = "Economy: ";
 
 		std::vector<std::string> v;
-		if (s->m_econType & ECON_AGRICULTURE) v.push_back("Agricultural");
-		if (s->m_econType & ECON_MINING) v.push_back("Mining");
-		if (s->m_econType & ECON_INDUSTRY) v.push_back("Industrial");
+		if (s->m_econType & StarSystem::PROD_AGRICULTURE) v.push_back("Agricultural");
+		if (s->m_econType & StarSystem::PROD_MINING) v.push_back("Mining");
+		if (s->m_econType & StarSystem::PROD_INDUSTRY) v.push_back("Industrial");
 		data += string_join(v, ", ");
 		data += "\n";
 	}

@@ -18,10 +18,6 @@ class SBody;
 // doubles: all masses in Kg, all lengths in meters
 // fixed: any mad scheme
 
-enum {  ECON_MINING = (1<<0), 
-	ECON_AGRICULTURE = (1<<1), 
-	ECON_INDUSTRY = (1<<2) };	
-
 class StarSystem;
 
 struct Orbit {
@@ -268,6 +264,13 @@ public:
 	int GetCommodityBasePriceModPercent(int t) {
 		return m_tradeLevel[t];
 	}
+
+	enum Production {
+		PROD_MINING      = (1<<0), 
+		PROD_AGRICULTURE = (1<<1), 
+		PROD_INDUSTRY    = (1<<2)
+	};
+
 private:
 	SBody *NewBody() {
 		SBody *body = new SBody;
