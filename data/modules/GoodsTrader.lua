@@ -56,7 +56,7 @@ Module:new {
 				if not Pi.GetCurrentSystem():IsCommodityLegal(e) then
 					self.ads[ad_ref].stock[e] = Pi.rand:Int(1,50)
 					-- going rate on the black market will be twice normal
-					self.ads[ad_ref].price[e] = 2*ad.bb:GetEquip.TypementPrice(e)
+					self.ads[ad_ref].price[e] = 2*ad.bb:GetEquipmentPrice(e)
 				end
 			end
 		--	self.ads[ad_ref].stock = {[Equip.Type.WATER]=20, [Equip.Type.HYDROGEN]=15, [Equip.Type.NERVE_GAS]=0}
