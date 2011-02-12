@@ -36,7 +36,7 @@ pioneer_SOURCES	= main.cpp glfreetype.cpp Body.cpp Space.cpp Ship.cpp Player.cpp
 pioneer_LDADD =  lua/liblua.a oolua/liboolua.a collider/libcollider.a libgui.a
 
 modelviewer_SOURCES = LuaModelViewer.cpp glfreetype.cpp LmrModel.cpp perlin.cpp Render.cpp utils.cpp MyLuaMathTypes.cpp \
-		      mylua.cpp LuaUtilFuncs.cpp
+		      mylua.cpp LuaUtilFuncs.cpp LuaConstants.cpp
 modelviewer_LDADD = collider/libcollider.a lua/liblua.a libgui.a
 
 check_PROGRAMS = tests
