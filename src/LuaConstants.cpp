@@ -198,6 +198,11 @@ void LuaConstants::RegisterConstants(lua_State *L)
 	_setfield(Equip::MININGCANNON_17MW,     "MININGCANNON_17MW");
 	_setfield(Equip::SMALL_PLASMA_ACCEL,    "SMALL_PLASMA_ACCEL");
 	_setfield(Equip::LARGE_PLASMA_ACCEL,    "LARGE_PLASMA_ACCEL");
+
+	_setfield(Equip::FIRST_COMMODITY,       "FIRST_COMMODITY");
+	_setfield(Equip::LAST_COMMODITY,        "LAST_COMMODITY");
+	_setfield(Equip::FIRST_SHIPEQUIP,       "FIRST_SHIPEQUIP");
+	_setfield(Equip::LAST_SHIPEQUIP,        "LAST_SHIPEQUIP");
 	lua_setfield(L, -2, "Type");
 
 	lua_setfield(L, LUA_GLOBALSINDEX, "Equip");
