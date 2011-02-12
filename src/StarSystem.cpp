@@ -1266,11 +1266,11 @@ void StarSystem::MakeShortDescription(MTRand &rand)
 {
 	m_econType = 0;
 	if ((m_industrial > m_metallicity) && (m_industrial > m_agricultural)) {
-		m_econType = ECON_INDUSTRY;
+		m_econType = StarSystem::PROD_INDUSTRY;
 	} else if (m_metallicity > m_agricultural) {
-		m_econType = ECON_MINING;
+		m_econType = StarSystem::PROD_MINING;
 	} else {
-		m_econType = ECON_AGRICULTURE;
+		m_econType = StarSystem::PROD_AGRICULTURE;
 	}
 
 	/* Total population is in billions */
@@ -1283,27 +1283,27 @@ void StarSystem::MakeShortDescription(MTRand &rand)
 		}
 	} else if (m_totalPop < fixed(1,10)) {
 		switch (m_econType) {
-			case ECON_INDUSTRY: m_shortDesc = "Small industrial outpost."; break;
-			case ECON_MINING: m_shortDesc = "Some established mining."; break;
-			case ECON_AGRICULTURE: m_shortDesc = "Young farming colony."; break;
+			case StarSystem::PROD_INDUSTRY: m_shortDesc = "Small industrial outpost."; break;
+			case StarSystem::PROD_MINING: m_shortDesc = "Some established mining."; break;
+			case StarSystem::PROD_AGRICULTURE: m_shortDesc = "Young farming colony."; break;
 		}
 	} else if (m_totalPop < fixed(1,2)) {
 		switch (m_econType) {
-			case ECON_INDUSTRY: m_shortDesc = "Industrial colony."; break;
-			case ECON_MINING: m_shortDesc = "Mining colony."; break;
-			case ECON_AGRICULTURE: m_shortDesc = "Outdoor agricultural world."; break;
+			case StarSystem::PROD_INDUSTRY: m_shortDesc = "Industrial colony."; break;
+			case StarSystem::PROD_MINING: m_shortDesc = "Mining colony."; break;
+			case StarSystem::PROD_AGRICULTURE: m_shortDesc = "Outdoor agricultural world."; break;
 		}
 	} else if (m_totalPop < fixed(5,1)) {
 		switch (m_econType) {
-			case ECON_INDUSTRY: m_shortDesc = "Heavy industry."; break;
-			case ECON_MINING: m_shortDesc = "Extensive mining operations."; break;
-			case ECON_AGRICULTURE: m_shortDesc = "Thriving outdoor world."; break;
+			case StarSystem::PROD_INDUSTRY: m_shortDesc = "Heavy industry."; break;
+			case StarSystem::PROD_MINING: m_shortDesc = "Extensive mining operations."; break;
+			case StarSystem::PROD_AGRICULTURE: m_shortDesc = "Thriving outdoor world."; break;
 		}
 	} else {
 		switch (m_econType) {
-			case ECON_INDUSTRY: m_shortDesc = "Industrial hub system."; break;
-			case ECON_MINING: m_shortDesc = "Vast strip-mining colony."; break;
-			case ECON_AGRICULTURE: m_shortDesc = "High population outdoor world."; break;
+			case StarSystem::PROD_INDUSTRY: m_shortDesc = "Industrial hub system."; break;
+			case StarSystem::PROD_MINING: m_shortDesc = "Vast strip-mining colony."; break;
+			case StarSystem::PROD_AGRICULTURE: m_shortDesc = "High population outdoor world."; break;
 		}
 	}
 }
@@ -1322,7 +1322,7 @@ void StarSystem::Populate(bool addSpaceStations)
 	m_metallicity = rand.Fixed();
 	m_techlevel = (m_humanProx*5).ToInt32() + rand.Int32(-2,2);
 	m_techlevel = Clamp(m_techlevel, 1, 5);
-	m_econType = ECON_INDUSTRY;
+	m_econType = StarSystem::PROD_INDUSTRY;
 	m_industrial = rand.Fixed();
 	m_agricultural = 0;
 
@@ -1428,12 +1428,12 @@ void SBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		if (type.techLevel > system->m_techlevel) continue;
 
 		fixed affinity = fixed(1,1);
-		if (type.econType & ECON_AGRICULTURE) {
+		if (type.econType & StarSystem::PROD_AGRICULTURE) {
 			affinity *= 2*m_agricultural;
 		}
-		if (type.econType & ECON_INDUSTRY) affinity *= system->m_industrial;
+		if (type.econType & StarSystem::PROD_INDUSTRY) affinity *= system->m_industrial;
 		// make industry after we see if agriculture and mining are viable
-		if (type.econType & ECON_MINING) {
+		if (type.econType & StarSystem::PROD_MINING) {
 			affinity *= m_metallicity;
 		}
 		affinity *= rand.Fixed();
