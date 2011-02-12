@@ -7,6 +7,7 @@
 #include "PiLuaModules.h"
 #include "mylua.h"
 #include "PiLuaAPI.h"
+#include "LuaConstants.h"
 #ifdef _WIN32
 #include "win32-dirent.h"
 #else
@@ -309,6 +310,7 @@ void Init()
 		lua_register(L, "PiModule", register_module);
 
 		RegisterPiLuaAPI(L);
+		LuaConstants::RegisterConstants(L);
 
 		if (luaL_dofile(L, "data/pimodule.lua")) {
 			Error("%s", lua_tostring(L, -1));
