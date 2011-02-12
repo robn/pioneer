@@ -1,5 +1,5 @@
 define_system('Epsilon Eridani', {
-	type = { TYPE_STAR_K },
+	type = { Body.Type.STAR_K },
 	sector = { 1, 0 },
 	pos = v(0.351,0.735,-0.999),
 	seed = 5,

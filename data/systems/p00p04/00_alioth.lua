@@ -1,5 +1,5 @@
 define_system('Alioth', {
-	type = { TYPE_STAR_K },
+	type = { Body.Type.STAR_K },
 	sector = { 0, 4 },
 	pos = v(0.629,0.880,1.045),
 	seed = 5,

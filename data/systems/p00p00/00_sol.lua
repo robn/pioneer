@@ -1,42 +1,42 @@
 earth_children = {
 	{
 		name = 'Shanghai',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(31),
 		longitude = deg2rad(-121),
 	}, {
 		name = 'Mexico City',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(19),
 		longitude = deg2rad(99),
 	}, {
 		name = 'London',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(51),
 		longitude = 0,
 	}, {
 		name = 'Moscow',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(55),
 		longitude = deg2rad(-37.5),
 	}, {
 		name = 'Brasilia',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(-15.5),
 		longitude = deg2rad(48),
 	}, {
 		name = 'Los Angeles',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(34),
 		longitude = deg2rad(118),
 	}, {
 		name = 'Gates Spaceport',
-		type = TYPE_STARPORT_ORBITAL,
+		type = Body.Type.STARPORT_ORBITAL,
 		semi_major_axis = fixed(100,100000),
 		rotation_period = fixed(1,24*60*3)
 	}, {
 		name = 'Moon',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(273,1000),
 		mass = fixed(12,1000),
 		temp = 220,
@@ -47,7 +47,7 @@ earth_children = {
 		axial_tilt = fixed_deg2rad(668,100),
 		children = { {
 			name = 'Lunar City',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(19),
 			longitude = deg2rad(99),
 		} },
@@ -57,22 +57,22 @@ earth_children = {
 mars_children = {
 	{
 		name = 'Cydonia',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(-29),
 		longitude = deg2rad(124),
 	}, {
 		name = 'Olympus Mons',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(30),
 		longitude = deg2rad(-37),
 	}, {
 		name = 'Mars High',
-		type = TYPE_STARPORT_ORBITAL,
+		type = Body.Type.STARPORT_ORBITAL,
 		semi_major_axis = fixed(5068,100000000),
 		rotation_period = fixed(11,24),
 	}, {
 		name = 'Phobos',
-		type = TYPE_PLANET_LARGE_ASTEROID,
+		type = Body.Type.PLANET_LARGE_ASTEROID,
 		radius = fixed(21,10000),
 		mass = fixed(18,10000000000),
 		temp = 233,
@@ -82,13 +82,13 @@ mars_children = {
 		rotation_period = fixed(11,24),
 		children = { {
 			name = 'Phobos Base',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(5),
 			longitude = deg2rad(-5),
 		} },
 	}, {
 		name = 'Deimos',
-		type = TYPE_PLANET_ASTEROID,
+		type = Body.Type.PLANET_ASTEROID,
 		radius = fixed(12,10000),
 		mass = fixed(25,100000000000),
 		temp = 233,
@@ -98,7 +98,7 @@ mars_children = {
 		rotation_period = fixed(30,24),
 		children = { {
 			name = 'Tomm\'s Sanctuary',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 		} },
 	},
 }
@@ -106,7 +106,7 @@ mars_children = {
 jupiter_children = {
 	{
 		name = 'Io',
-		type = TYPE_PLANET_HIGHLY_VOLCANIC,
+		type = Body.Type.PLANET_HIGHLY_VOLCANIC,
 		radius = fixed(286,1000),
 		mass = fixed(15,1000),
 		temp = 130,
@@ -116,13 +116,13 @@ jupiter_children = {
 		rotation_period = fixed(177,100),
 		children = { {
 			name = 'Dante\'s Base',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(-0.5),
 			longitude = deg2rad(26.2),
 		} },
 	}, {
 		name = 'Europa',
-		type = TYPE_PLANET_WATER,
+		type = Body.Type.PLANET_WATER,
 		radius = fixed(245,1000),
 		mass = fixed(8,1000),
 		temp = 102,
@@ -131,13 +131,13 @@ jupiter_children = {
 		rotation_period = fixed(355,100),
 		children = { {
 			name = 'Clarke\'s Station',
-			type = TYPE_STARPORT_ORBITAL,
+			type = Body.Type.STARPORT_ORBITAL,
 			semi_major_axis = fixed(12,500000),
 			rotation_period = fixed(1,24*60*3),
 		} },
 	}, {
 		name = 'Ganymede',
-		type = TYPE_PLANET_SMALL,
+		type = Body.Type.PLANET_SMALL,
 		radius = fixed(413,1000),
 		mass = fixed(25,1000),
 		temp = 110,
@@ -147,13 +147,13 @@ jupiter_children = {
 		rotation_period = fixed(72,10),
 		children = { {
 			name = 'Enki Catena',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(84),
 			longitude = deg2rad(96),
 		} },
 	}, {
 		name = 'Callisto',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(378,1000),
 		mass = fixed(18,1000),
 		temp = 134,
@@ -163,7 +163,7 @@ jupiter_children = {
 		rotation_period = fixed(167,10),
 	}, {
 		name = 'Discovery Base',
-		type = TYPE_STARPORT_ORBITAL,
+		type = Body.Type.STARPORT_ORBITAL,
 		semi_major_axis = fixed(7,1000),
 		rotation_period = fixed(11,1),
 	},
@@ -172,7 +172,7 @@ jupiter_children = {
 saturn_children = {
 	{
 		name = 'Titan',
-		type = TYPE_PLANET_METHANE_THICK_ATMOS,
+		type = Body.Type.PLANET_METHANE_THICK_ATMOS,
 		radius = fixed(400,1000),
 		mass = fixed(225,10000),
 		temp = 94,
@@ -182,24 +182,24 @@ saturn_children = {
 		rotation_period = fixed(15945,1000),
 		children = { {
 			name = 'Oasis City',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(18.4),
 			longitude = deg2rad(196),
 		}, {
 			name = 'Port Makenzie',
-			type = TYPE_STARPORT_SURFACE,
+			type = Body.Type.STARPORT_SURFACE,
 			latitude = deg2rad(1),
 			longitude = deg2rad(14),
 		}, {
 			name = 'Daniel\'s Haven',
-			type = TYPE_STARPORT_ORBITAL,
+			type = Body.Type.STARPORT_ORBITAL,
 			semi_major_axis = fixed(12,500000),
 			eccentricity = fixed(50,1000),
 			rotation_period = fixed(11,9),
 		} },
 	}, {
 		name = 'Rhea',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(12,100),
 		mass = fixed(39,10000),
 		temp = 81,
@@ -209,7 +209,7 @@ saturn_children = {
 		rotation_period = fixed(452,100),
 	}, {
 		name = 'Iapetus',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(1155,10000),
 		mass = fixed(3,10000),
 		temp = 115,
@@ -219,7 +219,7 @@ saturn_children = {
 		rotation_period = fixed(7932,100),
 	}, {
 		name = 'Dione',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(881,10000),
 		mass = fixed(328,1000000),
 		temp = 87,
@@ -233,7 +233,7 @@ saturn_children = {
 uranus_children = {
 	{
 		name = 'Titania',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(1235,10000),
 		mass = fixed(5908,10000000),
 		temp = 70,
@@ -243,7 +243,7 @@ uranus_children = {
 		rotation_period = fixed(87,10),
 	}, {
 		name = 'Oberon',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(1194,10000),
 		mass = fixed(5046,10000000),
 		temp = 75,
@@ -253,7 +253,7 @@ uranus_children = {
 		rotation_period = fixed(135,10),
 	}, {
 		name = 'Umbriel',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(92,1000),
 		mass = fixed(2,10000),
 		temp = 75,
@@ -263,7 +263,7 @@ uranus_children = {
 		rotation_period = fixed(4144,1000),
 	}, {
 		name = 'Ariel',
-		type = TYPE_PLANET_DWARF,
+		type = Body.Type.PLANET_DWARF,
 		radius = fixed(908,10000),
 		mass = fixed(226,1000000),
 		temp = 60,
@@ -277,7 +277,7 @@ uranus_children = {
 neptune_children = {
 	{
 		name = 'Triton',
-		type = TYPE_PLANET_WATER,
+		type = Body.Type.PLANET_WATER,
 		radius = fixed(2122,10000),
 		mass = fixed(359,100000),
 		temp = 38,
@@ -287,13 +287,13 @@ neptune_children = {
 		rotation_period = fixed(141,24),
 		children = { {
 			name = 'Poseidon Station',
-			type = TYPE_STARPORT_ORBITAL,
+			type = Body.Type.STARPORT_ORBITAL,
 			semi_major_axis = fixed(12,500000),
 			rotation_period = fixed(11,7),
 		} },
 	}, {
 		name = 'Nereid',
-		type = TYPE_PLANET_ASTEROID,
+		type = Body.Type.PLANET_ASTEROID,
 		radius = fixed(267,10000),
 		mass = fixed(519,100000000),
 		temp = 50,
@@ -303,7 +303,7 @@ neptune_children = {
 		rotation_period = fixed(115,240),
 	}, {
 		name = 'Proteus',
-		type = TYPE_PLANET_LARGE_ASTEROID,
+		type = Body.Type.PLANET_LARGE_ASTEROID,
 		radius = fixed(310,10000),
 		mass = fixed(710,100000000),
 		temp = 51,
@@ -317,7 +317,7 @@ neptune_children = {
 pluto_children = {
 	{
 		name = 'Pluto Research Base',
-		type = TYPE_STARPORT_SURFACE,
+		type = Body.Type.STARPORT_SURFACE,
 		latitude = deg2rad(84),
 		longitude = deg2rad(96),
 	},
@@ -326,7 +326,7 @@ pluto_children = {
 sol_children = {
 	{
 		name = 'Mercury',
-		type = TYPE_PLANET_SMALL,
+		type = Body.Type.PLANET_SMALL,
 		radius = fixed(38,100),
 		mass = fixed(55,1000),
 		temp = 340,
@@ -337,7 +337,7 @@ sol_children = {
 		axial_tilt = fixed_deg2rad(1,100),
 	}, {
 		name = 'Venus',
-		type = TYPE_PLANET_CO2_THICK_ATMOS,
+		type = Body.Type.PLANET_CO2_THICK_ATMOS,
 		radius = fixed(95,100),
 		mass = fixed(815,1000),
 		temp = 735,
@@ -348,7 +348,7 @@ sol_children = {
 		axial_tilt = fixed_deg2rad(26,10),
 	}, {
 		name = 'Earth',
-		type = TYPE_PLANET_INDIGENOUS_LIFE,
+		type = Body.Type.PLANET_INDIGENOUS_LIFE,
 		radius = fixed(1,1),
 		mass = fixed(1,1),
 		temp = 288,
@@ -361,7 +361,7 @@ sol_children = {
 		children = earth_children,
 	}, {
 		name = 'Mars',
-		type = TYPE_PLANET_TERRAFORMED_GOOD,
+		type = Body.Type.PLANET_TERRAFORMED_GOOD,
 		radius = fixed(533,1000),
 		mass = fixed(107,1000),
 		temp = 274,
@@ -374,7 +374,7 @@ sol_children = {
 		children = mars_children,
 	}, {
 		name = 'Jupiter',
-		type = TYPE_PLANET_LARGE_GAS_GIANT,
+		type = Body.Type.PLANET_LARGE_GAS_GIANT,
 		radius = fixed(11,1),
 		mass = fixed(3178,10),
 		temp = 165,
@@ -386,7 +386,7 @@ sol_children = {
 		children = jupiter_children,
 	}, {
 		name = 'Saturn',
-		type = TYPE_PLANET_MEDIUM_GAS_GIANT,
+		type = Body.Type.PLANET_MEDIUM_GAS_GIANT,
 		radius = fixed(9,1),
 		mass = fixed(95152,1000),
 		temp = 134,
@@ -398,7 +398,7 @@ sol_children = {
 		children = saturn_children,
 	}, {
 		name = 'Uranus',
-		type = TYPE_PLANET_SMALL_GAS_GIANT,
+		type = Body.Type.PLANET_SMALL_GAS_GIANT,
 		radius = fixed(4,1),
 		mass = fixed(145,10),
 		temp = 76,
@@ -410,7 +410,7 @@ sol_children = {
 		children = uranus_children,
 	}, {
 		name = 'Neptune',
-		type = TYPE_PLANET_SMALL_GAS_GIANT,
+		type = Body.Type.PLANET_SMALL_GAS_GIANT,
 		radius = fixed(38,10),
 		mass = fixed(17147,100),
 		temp = 72,
@@ -422,7 +422,7 @@ sol_children = {
 		children = neptune_children,
 	}, {
 		name = 'Pluto',
-		type = TYPE_PLANET_WATER,
+		type = Body.Type.PLANET_WATER,
 		radius = fixed(18,100),
 		mass = fixed(21,10000),
 		temp = 44,
@@ -437,7 +437,7 @@ sol_children = {
 
 sol_bodies = {
 	name = 'Sol',
-	type = TYPE_STAR_G,
+	type = Body.Type.STAR_G,
 	radius = fixed(1,1),
 	mass = fixed(1,1),
 	temp = 5700,
@@ -445,7 +445,7 @@ sol_bodies = {
 }
 
 define_system('Sol', {
-	type = { TYPE_STAR_G },
+	type = { Body.Type.STAR_G },
 	sector = { 0, 0 },
 	pos = v(0.5,0.5,0),
 	bodies = sol_bodies,

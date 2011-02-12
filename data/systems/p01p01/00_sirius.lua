@@ -1,5 +1,5 @@
 define_system('Sirius', {
-	type = { TYPE_STAR_A, TYPE_WHITE_DWARF },
+	type = { Body.Type.STAR_A, Body.Type.WHITE_DWARF },
 	sector = { 1, 1 },
 	pos = v(0.222,0.273,-0.173),
 	seed = 5,

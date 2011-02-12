@@ -1,5 +1,5 @@
 define_system('Sigma Draconis', {
-	type = { TYPE_STAR_K },
+	type = { Body.Type.STAR_K },
 	sector = { 0, -2 },
 	pos = v(0.914,0.420,0.859),
 	seed = 2,

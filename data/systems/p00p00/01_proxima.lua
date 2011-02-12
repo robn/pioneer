@@ -1,5 +1,5 @@
 define_system('Proxima', {
-	type = { TYPE_STAR_M },
+	type = { Body.Type.STAR_M },
 	sector = { 0, 0 },
 	pos = v(0.135,0.882,-0.017),
 	seed = 17,
