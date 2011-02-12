@@ -19,7 +19,6 @@ public:
 	float                  latitude, longitude; // radians
 	fixed                  rotationPeriod; // in days
 	fixed                  axialTilt; // in radians
-	int                    econType; // StarSystem.cpp enum ECON_XXX
 	std::string            heightMapFilename;
 	std::list<CustomSBody> children;
 };
