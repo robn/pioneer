@@ -105,21 +105,21 @@ void LuaConstants::RegisterConstants(lua_State *L)
 	lua_newtable(L); // Equip
 
 	lua_newtable(L); // Slot
-	_setfield(Equip::SLOT_CARGO,            "SLOT_CARGO");
-	_setfield(Equip::SLOT_ENGINE,           "SLOT_ENGINE");
-	_setfield(Equip::SLOT_LASER,            "SLOT_LASER");
-	_setfield(Equip::SLOT_MISSILE,          "SLOT_MISSILE");
-	_setfield(Equip::SLOT_ECM,              "SLOT_ECM");
-	_setfield(Equip::SLOT_SCANNER,          "SLOT_SCANNER");
-	_setfield(Equip::SLOT_RADARMAPPER,      "SLOT_RADARMAPPER");
-	_setfield(Equip::SLOT_HYPERCLOUD,       "SLOT_HYPERCLOUD");
-	_setfield(Equip::SLOT_HULLAUTOREPAIR,   "SLOT_HULLAUTOREPAIR");
-	_setfield(Equip::SLOT_ENERGYBOOSTER,    "SLOT_ENERGYBOOSTER");
-	_setfield(Equip::SLOT_ATMOSHIELD,       "SLOT_ATMOSHIELD");
-	_setfield(Equip::SLOT_FUELSCOOP,        "SLOT_FUELSCOOP");
-	_setfield(Equip::SLOT_LASERCOOLER,      "SLOT_LASERCOOLER");
-	_setfield(Equip::SLOT_CARGOLIFESUPPORT, "SLOT_CARGOLIFESUPPORT");
-	_setfield(Equip::SLOT_AUTOPILOT,        "SLOT_AUTOPILOT");
+	_setfield(Equip::SLOT_CARGO,            "CARGO");
+	_setfield(Equip::SLOT_ENGINE,           "ENGINE");
+	_setfield(Equip::SLOT_LASER,            "LASER");
+	_setfield(Equip::SLOT_MISSILE,          "MISSILE");
+	_setfield(Equip::SLOT_ECM,              "ECM");
+	_setfield(Equip::SLOT_SCANNER,          "SCANNER");
+	_setfield(Equip::SLOT_RADARMAPPER,      "RADARMAPPER");
+	_setfield(Equip::SLOT_HYPERCLOUD,       "HYPERCLOUD");
+	_setfield(Equip::SLOT_HULLAUTOREPAIR,   "HULLAUTOREPAIR");
+	_setfield(Equip::SLOT_ENERGYBOOSTER,    "ENERGYBOOSTER");
+	_setfield(Equip::SLOT_ATMOSHIELD,       "ATMOSHIELD");
+	_setfield(Equip::SLOT_FUELSCOOP,        "FUELSCOOP");
+	_setfield(Equip::SLOT_LASERCOOLER,      "LASERCOOLER");
+	_setfield(Equip::SLOT_CARGOLIFESUPPORT, "CARGOLIFESUPPORT");
+	_setfield(Equip::SLOT_AUTOPILOT,        "AUTOPILOT");
 	lua_setfield(L, -2, "Slot");
 
 	lua_newtable(L); // Type
