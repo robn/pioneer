@@ -50,3 +50,6 @@ void MTRand_int32::seed(const unsigned long* array, int size) { // init by array
   state[0] = 0x80000000UL; // MSB is 1; assuring non-zero initial array
   p = n; // force gen_state() to be called for next random number
 }
+
+EXPORT_OOLUA_FUNCTIONS_0_CONST(MTRand)
+EXPORT_OOLUA_FUNCTIONS_2_NON_CONST(MTRand, Real, Int)

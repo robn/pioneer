@@ -45,6 +45,7 @@
 #ifndef MTRAND_H
 #define MTRAND_H
 
+#include "oolua/oolua.h"
 #include "fixed.h"
 #include <assert.h>
 
@@ -147,5 +148,14 @@ private:
   MTRand(const MTRand&); // copy constructor not defined
   void operator=(const MTRand&); // assignment operator not defined
 };
+
+OOLUA_CLASS_NO_BASES(MTRand)
+	OOLUA_NO_TYPEDEFS
+	OOLUA_CONSTRUCTORS_BEGIN
+		OOLUA_CONSTRUCTOR_1(unsigned long)
+	OOLUA_CONSTRUCTORS_END
+	OOLUA_MEM_FUNC_2_RENAME(Real, double, Double, double, double)
+	OOLUA_MEM_FUNC_2_RENAME(Int, unsigned int, Int32, int, int)
+OOLUA_CLASS_END
 
 #endif // MTRAND_H
