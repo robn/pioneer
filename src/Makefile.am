@@ -32,12 +32,13 @@ pioneer_SOURCES	= main.cpp glfreetype.cpp Body.cpp Space.cpp Ship.cpp Player.cpp
 		Projectile.cpp Render.cpp Sound.cpp CommodityTradeWidget.cpp GenericChatForm.cpp PoliceChatForm.cpp \
 		SysLoc.cpp GalacticView.cpp Galaxy.cpp GameMenuView.cpp Missile.cpp HyperspaceCloud.cpp \
 		LmrModel.cpp MyLuaMathTypes.cpp PiLuaModules.cpp LuaChatForm.cpp PiLuaAPI.cpp IniConfig.cpp \
-		GeoSphereStyle.cpp AmbientSounds.cpp KeyBindings.cpp mylua.cpp ShipAICmd.cpp LuaUtilFuncs.cpp CustomSystem.cpp LuaConstants.cpp
+		GeoSphereStyle.cpp AmbientSounds.cpp KeyBindings.cpp mylua.cpp ShipAICmd.cpp LuaUtilFuncs.cpp \
+		CustomSystem.cpp LuaConstants.cpp vector3.cpp
 pioneer_LDADD =  lua/liblua.a oolua/liboolua.a collider/libcollider.a libgui.a
 
 modelviewer_SOURCES = LuaModelViewer.cpp glfreetype.cpp LmrModel.cpp perlin.cpp Render.cpp utils.cpp MyLuaMathTypes.cpp \
-		      mylua.cpp LuaUtilFuncs.cpp LuaConstants.cpp
-modelviewer_LDADD = collider/libcollider.a lua/liblua.a libgui.a
+		      mylua.cpp LuaUtilFuncs.cpp LuaConstants.cpp vector3.cpp
+modelviewer_LDADD =  lua/liblua.a oolua/liboolua.a collider/libcollider.a libgui.a
 
 check_PROGRAMS = tests
 tests_SOURCES = tests.cpp glfreetype.cpp Body.cpp Space.cpp Ship.cpp Player.cpp DynamicBody.cpp Planet.cpp \

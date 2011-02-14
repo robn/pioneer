@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include "oolua/oolua.h"
 
 // Need this pragma due to operator[] implementation.
 #pragma pack(4)
@@ -53,6 +54,10 @@ public:
 	vector3 Normalized() const { const T l = 1.0f / sqrt(x*x + y*y + z*z); return vector3(x*l, y*l, z*l); }
 
 	void Print() const { printf("v(%f,%f,%f)\n", x, y, z); }
+
+	T GetX() const { return x; }
+	T GetY() const { return y; }
+	T GetZ() const { return z; }
 
 	/* Rotate this vector about point o, in axis defined by v. */
 	void ArbRotateAroundPoint(const vector3 &o, const vector3 &__v, T ang) {
@@ -118,5 +123,29 @@ template<> inline vector3<double>::vector3(const double vals[3]): x(vals[0]), y(
 
 typedef vector3<float > vector3f;
 typedef vector3<double> vector3d;
+
+typedef vector3<float> vector;
+
+OOLUA_CLASS_NO_BASES(vector)
+	OOLUA_TYPEDEFS
+		Equal_op,
+		Not_equal_op,
+		Add_op,
+		Sub_op,
+		Mul_op,
+		Div_op
+	OOLUA_END_TYPES
+	OOLUA_CONSTRUCTORS_BEGIN
+		OOLUA_CONSTRUCTOR_3(float, float, float)
+	OOLUA_CONSTRUCTORS_END
+	OOLUA_MEM_FUNC_0_CONST_RENAME(print, void, Print)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(norm, vector, Normalized)
+	OOLUA_MEM_FUNC_1_CONST_RENAME(dot, float, Dot, vector)
+	OOLUA_MEM_FUNC_1_CONST_RENAME(cross, vector, Cross, vector)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(len, float, Length)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(x, float, GetX)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(y, float, GetY)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(z, float, GetZ)
+OOLUA_CLASS_END
 
 #endif /* _VECTOR3_H */
