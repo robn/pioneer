@@ -141,9 +141,16 @@ static int define_system(lua_State *L)
 	}
 	lua_pop(L, 1);
 
-	if (! pi_lua_get_vector_attr(L, "pos", cs.pos, vector3f())) {
-		luaL_error(L, "define_system: required field 'pos' missing or invalid");
-		return 0;
+	{
+		vector3f *v;
+		lua_pushstring(L, "pos");
+		lua_gettable(L, -2);
+		OOLUA::pull2cpp(L, v);
+		if (!v) {
+	        luaL_error(L, "define_system: value for field 'pos' must be a vector");
+		    return 0;
+	    }
+		cs.pos = *v;
 	}
 
 	int seed;
@@ -180,15 +187,14 @@ void CustomSystem::Init()
 	lua_State *L = lua_open();
 	luaL_openlibs(L);
 
-	LuaConstants::RegisterConstants(L);
+	OOLUA::setup_user_lua_state(L);
+	OOLUA::register_class<vector3f>(L);
 
-	MyLuaVec::Vec_register(L);
-	lua_pop(L, 1);
+	LuaConstants::RegisterConstants(L);
 
 	MyLuaFixed::Fixed_register(L);
 	lua_pop(L, 1);
 
-	lua_register(L, "v", MyLuaVec::Vec_new);
 	lua_register(L, "fixed", MyLuaFixed::Fixed_new);
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
