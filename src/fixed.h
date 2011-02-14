@@ -2,6 +2,7 @@
 #define _FIXED_H
 
 #include <SDL_stdinc.h>
+#include "oolua/oolua.h"
 
 template <int FRAC_BITS>
 class fixedf {
@@ -145,6 +146,9 @@ public:
 		else return fixedf<NEW_FRAC_BITS>(v>>(-shift));
 	}
 
+	fixedf Sqrt() const { return SqrtOf(this->v); }
+	fixedf CubeRoot() const { return CubeRootOf(this->v); }
+
 	static fixedf SqrtOf(fixedf a) {
 		/* only works on even-numbered fractional bits */
 		assert(!(FRAC & 1));
@@ -179,5 +183,23 @@ public:
 };
 
 typedef fixedf<32> fixed;
+
+OOLUA_CLASS_NO_BASES(fixed)
+	OOLUA_TYPEDEFS
+		Equal_op,
+		Not_equal_op,
+		Add_op,
+		Sub_op,
+		Mul_op,
+		Div_op
+	OOLUA_END_TYPES
+	OOLUA_CONSTRUCTORS_BEGIN
+		OOLUA_CONSTRUCTOR_2(int, int)
+	OOLUA_CONSTRUCTORS_END
+	OOLUA_MEM_FUNC_0_CONST_RENAME(to_int, int, ToInt32)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(to_real, float, ToFloat)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(sqrt, fixed, Sqrt)
+	OOLUA_MEM_FUNC_0_CONST_RENAME(cbrt, fixed, CubeRoot)
+OOLUA_CLASS_END
 
 #endif /* _FIXED_H */
