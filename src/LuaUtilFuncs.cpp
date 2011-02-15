@@ -87,24 +87,4 @@ int load_lua(lua_State *L) {
 	return 0;
 }
 
-// XXX these almost certainly shouldn't be here, but I don't see a better spot
-// right now and I'm contemplating rebuilding all the lua stuff anyway so this
-// will do for now
-
-int deg2rad(lua_State *L) {
-	float f = lua_tonumber(L, 1);
-	lua_pushnumber(L, DEG2RAD(f));
-	return 1;
-}
-
-#define FIXED_DEG2RAD(n,d) (fixed(n,d) * fixed(31416, 1800000))
-
-int fixed_deg2rad(lua_State *L) {
-	Uint32 num = lua_tointeger(L, 1);
-	Uint32 denom = lua_tointeger(L, 2);
-	fixed *f = MyLuaFixed::pushFixed(L);
-	*f = FIXED_DEG2RAD(num, denom);
-	return 1;
-}
-
 } /* LuaUtilFuncs */
