@@ -33,7 +33,7 @@ pioneer_SOURCES	= main.cpp glfreetype.cpp Body.cpp Space.cpp Ship.cpp Player.cpp
 		SysLoc.cpp GalacticView.cpp Galaxy.cpp GameMenuView.cpp Missile.cpp HyperspaceCloud.cpp \
 		LmrModel.cpp MyLuaMathTypes.cpp PiLuaModules.cpp LuaChatForm.cpp PiLuaAPI.cpp IniConfig.cpp \
 		GeoSphereStyle.cpp AmbientSounds.cpp KeyBindings.cpp mylua.cpp ShipAICmd.cpp LuaUtilFuncs.cpp \
-		CustomSystem.cpp LuaConstants.cpp fixed.cpp PiLuaClasses.cpp
+		CustomSystem.cpp LuaConstants.cpp PiLuaClasses.cpp
 pioneer_LDADD =  lua/liblua.a oolua/liboolua.a collider/libcollider.a libgui.a
 
 modelviewer_SOURCES = LuaModelViewer.cpp glfreetype.cpp LmrModel.cpp perlin.cpp Render.cpp utils.cpp MyLuaMathTypes.cpp \

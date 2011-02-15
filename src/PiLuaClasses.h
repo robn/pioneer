@@ -1,6 +1,44 @@
 #include "oolua/oolua.h"
 
+#include "fixed.h"
 #include "vector3.h"
+
+class pi_fixed {
+public:
+	pi_fixed(): f(0,0) { }
+	pi_fixed(int n, int d): f(n,d) { }
+	pi_fixed(const pi_fixed &a) { f = a.to_fixed(); }
+	pi_fixed(const fixed &a) { f = a; }
+
+	inline fixed to_fixed() const { return f; }
+
+	inline float tonumber () const { return f.ToFloat(); }
+
+	inline bool operator== (const pi_fixed &a) const { return f == a.to_fixed(); }
+	inline bool operator!= (const pi_fixed &a) const { return f != a.to_fixed(); }
+	inline pi_fixed operator+ (const pi_fixed &a) const { return f + a.to_fixed(); }
+	inline pi_fixed operator- (const pi_fixed &a) const { return f - a.to_fixed(); }
+	inline pi_fixed operator* (const pi_fixed &a) const { return f * a.to_fixed(); }
+	inline pi_fixed operator/ (const pi_fixed &a) const { return f / a.to_fixed(); }
+	
+private:
+	fixed f;
+};
+
+OOLUA_CLASS_NO_BASES(pi_fixed)
+	OOLUA_TYPEDEFS
+		Equal_op,
+		Not_equal_op,
+		Add_op,
+		Sub_op,
+		Mul_op,
+		Div_op
+	OOLUA_END_TYPES
+	OOLUA_CONSTRUCTORS_BEGIN
+		OOLUA_CONSTRUCTOR_2(int, int)
+	OOLUA_CONSTRUCTORS_END
+	OOLUA_MEM_FUNC_0_CONST(float, tonumber)
+OOLUA_CLASS_END
 
 class pi_vector {
 public:
