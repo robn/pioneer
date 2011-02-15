@@ -7,108 +7,47 @@
 
 static std::list<CustomSystem> custom_systems;
 
-static CustomSBody define_sbody(lua_State *L)
+static CustomSBody define_sbody(lua_State *L, OOLUA::Lua_table &body_def)
 {
 	CustomSBody csbody;
 
-	if (! pi_lua_get_string_attr(L, "name", csbody.name, NULL)) {
-		luaL_error(L, "define_sbody: required field 'name' missing or invalid");
+	if (! body_def.safe_at("name", csbody.name)) {
+		luaL_error(L, "define_sbody: value for field 'name' must be a string");
 		return csbody;
 	}
+
 	printf("define_sbody: %s\n", csbody.name.c_str());
 
 	int type;
-	if (! pi_lua_get_int_attr(L, "type", type, 0)) {
-		luaL_error(L, "define_sbody: required field 'type' missing or invalid");
+	if (! body_def.safe_at("type", type)) {
+		luaL_error(L, "define_sbody: value for field 'name' missing or invalid");
 		return csbody;
 	}
 	csbody.type = static_cast<SBody::BodyType>(type);
 
-	// XXX make sure we have the right fields for the right body types, etc
-	
 	fixed *f;
+	csbody.radius         = body_def.safe_at("radius",          f) ? *f : 0;
+	csbody.mass           = body_def.safe_at("mass",            f) ? *f : 0;
+	csbody.semiMajorAxis  = body_def.safe_at("semi_major_axis", f) ? *f : 0;
+	csbody.eccentricity   = body_def.safe_at("eccentricity",    f) ? *f : 0;
+	csbody.rotationPeriod = body_def.safe_at("rotation_period", f) ? *f : 0;
+	csbody.axialTilt      = body_def.safe_at("axial_tilt",      f) ? *f : 0;
 
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "radius");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.radius = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "mass");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.mass = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "semi_major_axis");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.semiMajorAxis = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "eccentricity");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.eccentricity = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "rotation_period");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.rotationPeriod = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-{
-	LUA_DEBUG_START(L);
-	lua_pushstring(L, "axial_tilt");
-	lua_gettable(L, -2);
-	OOLUA::pull2cpp(L, f);
-	if (f) csbody.axialTilt = *f;
-	else lua_pop(L, 1);
-	LUA_DEBUG_END(L, 0);
-}
-	pi_lua_get_int_attr   (L, "temp",            csbody.averageTemp,       0);
-	pi_lua_get_float_attr (L, "latitude",        csbody.latitude,          0);
-	pi_lua_get_float_attr (L, "longitude",       csbody.longitude,         0);
-	pi_lua_get_string_attr(L, "height_map",      csbody.heightMapFilename, 0);
+	if (! body_def.safe_at("temp",      csbody.averageTemp)) csbody.averageTemp = 0;
+	if (! body_def.safe_at("latitude",  csbody.latitude))    csbody.latitude = 0;
+	if (! body_def.safe_at("longitude", csbody.longitude))   csbody.longitude = 0;
 
-	lua_getfield(L, -1, "children");
-	if (lua_istable(L, -1)) {
+	body_def.at("height_map", csbody.heightMapFilename);
+
+	OOLUA::Lua_table children, child_def;
+	if (body_def.safe_at("children", children)) {
 		for (int i = 0;; i++) {
-			lua_pushinteger(L, i+1);
-			lua_gettable(L, -2);
-			if (lua_isnil(L, -1)) {
-				lua_pop(L, 1);
+			if (! children.safe_at(i+1, child_def))
 				break;
-			}
-			if (!lua_istable(L, -1)) {
-				luaL_error(L, "define_sbody: position %d in field 'children' is not a table", i);
-				return csbody;
-			}
-			csbody.children.push_back(define_sbody(L));
-			lua_pop(L, 1);
+
+			csbody.children.push_back(define_sbody(L, child_def));
 		}
 	}
-	else if (!lua_isnil(L, -1)) {
-		luaL_error(L, "define_sbody: value for field 'children' must be a table");
-		return csbody;
-	}
-	lua_pop(L, 1);
 
 	return csbody;
 }
@@ -178,20 +117,14 @@ static int define_system(lua_State *L)
 	t.at("short_desc", cs.shortDesc);
 	t.at("long_desc", cs.longDesc);
 
-/*
-	lua_getfield(L, -1, "bodies");
-	if (lua_istable(L, -1)) {
-		cs.sBody = define_sbody(L);
+	OOLUA::Lua_table body_def;
+	if (t.safe_at("bodies", body_def)) {
+		cs.sBody = define_sbody(L, body_def);
 		if (cs.sBody.type != cs.primaryType[0]) {
-			luaL_error(L, "define_system: primary body has different type to first star\n");
+			luaL_error(L, "define_system: primary body must be of same type as first star");
 			return 0;
 		}
-	} else if(!lua_isnil(L, -1)) {
-		luaL_error(L, "define_system: value for field 'bodies' must be a table");
-		return 0;
 	}
-	lua_pop(L, 1);
-*/
 
 	custom_systems.push_back(cs);
 
@@ -215,7 +148,6 @@ void CustomSystem::Init()
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 	lua_register(L, "deg2rad", LuaUtilFuncs::deg2rad);
-	lua_register(L, "fixed_deg2rad", LuaUtilFuncs::fixed_deg2rad);
 
 	lua_pushstring(L, PIONEER_DATA_DIR);
 	lua_setglobal(L, "CurrentDirectory");
