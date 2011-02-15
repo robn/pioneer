@@ -3,7 +3,6 @@
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
 #include "Polit.h"
-#include "lua_support.h"
 
 static std::list<CustomSystem> custom_systems;
 
