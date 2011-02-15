@@ -1,4 +1,5 @@
 #include "CustomSystem.h"
+#include "PiLuaClasses.h"
 #include "LuaConstants.h"
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
@@ -100,12 +101,12 @@ static int define_system(lua_State *L)
 		return 0;
 	}
 
-	vector3f *v;
+	pi_vector *v;
 	if (! t.safe_at("pos", v)) {
 		luaL_error(L, "define_system: value for field 'pos' must be a vector");
 		return 0;
 	}
-	cs.pos = *v;
+	cs.pos = v->to_vector3f();
 
 	if (! t.safe_at("seed", cs.seed)) cs.seed = 0;
 
@@ -136,7 +137,7 @@ void CustomSystem::Init()
 	luaL_openlibs(L);
 
 	OOLUA::setup_user_lua_state(L);
-	OOLUA::register_class<vector3f>(L);
+	OOLUA::register_class<pi_vector>(L);
 	OOLUA::register_class<fixed>(L);
 
 	LuaConstants::RegisterConstants(L);

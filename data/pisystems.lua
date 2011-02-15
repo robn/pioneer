@@ -1,8 +1,8 @@
 -- XXX this is where I do my lua hacks until I'm settled on how I want libs
 --    and things like that to work
 
--- vector is much more readable
-vector = vector3f
+-- rename wrapper classes into something prettier
+vector = pi_vector
 
 -- convenience constructors
 function v (x,y,z) return vector:new(x,y,z) end
