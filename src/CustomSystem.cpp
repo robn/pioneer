@@ -25,13 +25,13 @@ static CustomSBody define_sbody(lua_State *L, OOLUA::Lua_table &body_def)
 	}
 	csbody.type = static_cast<SBody::BodyType>(type);
 
-	fixed *f;
-	csbody.radius         = body_def.safe_at("radius",          f) ? *f : 0;
-	csbody.mass           = body_def.safe_at("mass",            f) ? *f : 0;
-	csbody.semiMajorAxis  = body_def.safe_at("semi_major_axis", f) ? *f : 0;
-	csbody.eccentricity   = body_def.safe_at("eccentricity",    f) ? *f : 0;
-	csbody.rotationPeriod = body_def.safe_at("rotation_period", f) ? *f : 0;
-	csbody.axialTilt      = body_def.safe_at("axial_tilt",      f) ? *f : 0;
+	pi_fixed *f;
+	csbody.radius         = body_def.safe_at("radius",          f) ? f->to_fixed() : 0;
+	csbody.mass           = body_def.safe_at("mass",            f) ? f->to_fixed() : 0;
+	csbody.semiMajorAxis  = body_def.safe_at("semi_major_axis", f) ? f->to_fixed() : 0;
+	csbody.eccentricity   = body_def.safe_at("eccentricity",    f) ? f->to_fixed() : 0;
+	csbody.rotationPeriod = body_def.safe_at("rotation_period", f) ? f->to_fixed() : 0;
+	csbody.axialTilt      = body_def.safe_at("axial_tilt",      f) ? f->to_fixed() : 0;
 
 	if (! body_def.safe_at("temp",      csbody.averageTemp)) csbody.averageTemp = 0;
 	if (! body_def.safe_at("latitude",  csbody.latitude))    csbody.latitude = 0;
@@ -138,7 +138,7 @@ void CustomSystem::Init()
 
 	OOLUA::setup_user_lua_state(L);
 	OOLUA::register_class<pi_vector>(L);
-	OOLUA::register_class<fixed>(L);
+	OOLUA::register_class<pi_fixed>(L);
 
 	LuaConstants::RegisterConstants(L);
 

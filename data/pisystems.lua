@@ -2,6 +2,7 @@
 --    and things like that to work
 
 -- rename wrapper classes into something prettier
+fixed = pi_fixed
 vector = pi_vector
 
 -- convenience constructors
