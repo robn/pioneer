@@ -142,9 +142,6 @@ void CustomSystem::Init()
 
 	LuaConstants::RegisterConstants(L);
 
-	MyLuaFixed::Fixed_register(L);
-	lua_pop(L, 1);
-
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 
