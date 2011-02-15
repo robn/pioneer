@@ -115,105 +115,70 @@ static CustomSBody define_sbody(lua_State *L)
 
 static int define_system(lua_State *L)
 {
-	int n = lua_gettop(L);
-	if (n != 2) {
-		luaL_error(L, "define_system takes 2 arguments");
-		return 0;
-	}
-
-	const char *system_name = luaL_checkstring(L, -2);
-
-	if (!lua_istable(L, -1)) {
-		luaL_error(L, "define_system 2nd argument must be a table");
-		return 0;
-	}
-
-	printf("define_system: %s\n", system_name);
-
 	CustomSystem cs;
 
-	cs.name = system_name;
-
-	lua_getfield(L, -1, "type");
-	if (lua_isnone(L, -1)) {
-		luaL_error(L, "define_system: required field 'type' not provided");
+	if (lua_gettop(L) != 2) {
+		luaL_error(L, "define_system: expected 2 arguments");
 		return 0;
 	}
-	if (lua_istable(L, -1)) {
-		int i;
-		for (i = 0; i < 4; i++) {
-			lua_pushinteger(L, i+1);
-			lua_gettable(L, -2);
-			if (lua_isnil(L, -1)) {
-				lua_pop(L, 1);
-				break;
-			}
-			if (lua_isnumber(L, -1)) {
-				cs.primaryType[i] = static_cast<SBody::BodyType>(luaL_checkinteger(L, 4));
-			} else {
-				luaL_error(L, "define_system: position %d in field 'type' is not an integer", i);
-				return 0;
-			}
-			lua_pop(L, 1);
-		}
-		for (; i < 4; i++) {
+
+	OOLUA::Lua_table t;
+	if (! OOLUA::pull2cpp(L, t)) {
+		luaL_error(L, "define_system: 2nd argument must be a table");
+		return 0;
+	}
+
+	if (! OOLUA::pull2cpp(L, cs.name)) {
+		luaL_error(L, "define_system: 1st argument must be a string");
+		return 0;
+	}
+
+	printf("define_system: %s\n", cs.name.c_str());
+
+	OOLUA::Lua_table star_types;
+	if (! t.safe_at("type", star_types)) {
+		luaL_error(L, "define_system: required field 'type' must be a table");
+		return 0;
+	}
+	for (int i = 0; i < 4; i++) {
+		int type;
+		if (star_types.safe_at(i+1, type))
+			cs.primaryType[i] = static_cast<SBody::BodyType>(type);
+		else
 			cs.primaryType[i] = SBody::TYPE_GRAVPOINT;
-		}
-	} else {
-		luaL_error(L, "define_system: value for field 'type' must be a table");
-		return 0;
-	}
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "sector");
-	if (lua_isnone(L, -1)) {
-		luaL_error(L, "define_system: required field 'sector' not provided");
-		return 0;
-	}
-	if (lua_istable(L, -1)) {
-		int sector[2];
-		for (int i = 0; i < 2; i++) {
-			lua_pushinteger(L, i+1);
-			lua_gettable(L, -2);
-			if (lua_isnumber(L, -1)) {
-				sector[i] = luaL_checkinteger(L, -1);
-			} else {
-				luaL_error(L, "define_system: position %d in field 'sector' is not an integer", i);
-				return 0;
-			}
-			lua_pop(L, 1);
-		}
-		cs.sectorX = sector[0];
-		cs.sectorY = sector[1];
-	} else {
-		luaL_error(L, "define_system: value for field 'sector' must be a table");
-		return 0;
-	}
-	lua_pop(L, 1);
-
-	{
-		vector3f *v;
-		lua_pushstring(L, "pos");
-		lua_gettable(L, -2);
-		OOLUA::pull2cpp(L, v);
-		if (!v) {
-	        luaL_error(L, "define_system: value for field 'pos' must be a vector");
-		    return 0;
-	    }
-		cs.pos = *v;
 	}
 
-	int seed;
-	pi_lua_get_int_attr(L, "seed", seed, 0);
-	cs.seed = seed;
+	OOLUA::Lua_table sector;
+	if (! t.safe_at("sector", sector)) {
+		luaL_error(L, "define_system: required field 'sector' must be a table");
+		return 0;
+	}
+	if (! sector.safe_at(1, cs.sectorX)) {
+		luaL_error(L, "define_system: position 1 in field 'sector' is not an integer");
+		return 0;
+	}
+	if (! sector.safe_at(2, cs.sectorY)) {
+		luaL_error(L, "define_system: position 2 in field 'sector' is not an integer");
+		return 0;
+	}
+
+	vector3f *v;
+	if (! t.safe_at("pos", v)) {
+		luaL_error(L, "define_system: value for field 'pos' must be a vector");
+		return 0;
+	}
+	cs.pos = *v;
+
+	if (! t.safe_at("seed", cs.seed)) cs.seed = 0;
 
 	int govtype;
-	pi_lua_get_int_attr(L, "govtype", govtype, 0);
+	if (! t.safe_at("govtype", govtype)) govtype = static_cast<int>(Polit::GOV_NONE);
 	cs.govType = static_cast<Polit::GovType>(govtype);
 
-	pi_lua_get_string_attr(L, "short_desc", cs.shortDesc, 0);
-	pi_lua_get_string_attr(L, "long_desc",  cs.longDesc,  0);
+	t.at("short_desc", cs.shortDesc);
+	t.at("long_desc", cs.longDesc);
 
+/*
 	lua_getfield(L, -1, "bodies");
 	if (lua_istable(L, -1)) {
 		cs.sBody = define_sbody(L);
@@ -226,6 +191,7 @@ static int define_system(lua_State *L)
 		return 0;
 	}
 	lua_pop(L, 1);
+*/
 
 	custom_systems.push_back(cs);
 
