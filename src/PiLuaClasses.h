@@ -12,14 +12,14 @@ public:
 
 	inline fixed to_fixed() const { return f; }
 
-	inline float tonumber () const { return f.ToFloat(); }
+	inline float tonumber() const { return f.ToFloat(); }
 
-	inline bool operator== (const pi_fixed &a) const { return f == a.to_fixed(); }
-	inline bool operator!= (const pi_fixed &a) const { return f != a.to_fixed(); }
-	inline pi_fixed operator+ (const pi_fixed &a) const { return f + a.to_fixed(); }
-	inline pi_fixed operator- (const pi_fixed &a) const { return f - a.to_fixed(); }
-	inline pi_fixed operator* (const pi_fixed &a) const { return f * a.to_fixed(); }
-	inline pi_fixed operator/ (const pi_fixed &a) const { return f / a.to_fixed(); }
+	inline bool operator==(const pi_fixed &a) const { return f == a.to_fixed(); }
+	inline bool operator!=(const pi_fixed &a) const { return f != a.to_fixed(); }
+	inline pi_fixed operator+(const pi_fixed &a) const { return f + a.to_fixed(); }
+	inline pi_fixed operator-(const pi_fixed &a) const { return f - a.to_fixed(); }
+	inline pi_fixed operator*(const pi_fixed &a) const { return f * a.to_fixed(); }
+	inline pi_fixed operator/(const pi_fixed &a) const { return f / a.to_fixed(); }
 	
 private:
 	fixed f;
@@ -49,21 +49,21 @@ public:
 
 	inline vector3f to_vector3f() const { return v; }
 
-	inline bool operator== (const pi_vector &a) const { return v == a.to_vector3f(); }
-	inline bool operator!= (const pi_vector &a) const { return v != a.to_vector3f(); }
-	inline pi_vector operator+ (const pi_vector &a) const { return v + a.to_vector3f(); }
-	inline pi_vector operator- (const pi_vector &a) const { return v - a.to_vector3f(); }
+	inline bool operator==(const pi_vector &a) const { return v == a.to_vector3f(); }
+	inline bool operator!=(const pi_vector &a) const { return v != a.to_vector3f(); }
+	inline pi_vector operator+(const pi_vector &a) const { return v + a.to_vector3f(); }
+	inline pi_vector operator-(const pi_vector &a) const { return v - a.to_vector3f(); }
 
-	inline float x () const { return v.x; }
-	inline float y () const { return v.y; }
-	inline float z () const { return v.z; }
+	inline float x() const { return v.x; }
+	inline float y() const { return v.y; }
+	inline float z() const { return v.z; }
 
-	inline pi_vector norm () const { return v.Normalized(); }
-	inline float dot (const pi_vector &a) const { return v.Dot(a.to_vector3f()); }
-	inline pi_vector cross (const pi_vector &a) const { return pi_vector(v.Cross(a.to_vector3f())); }
-	inline float len () const { return v.Length(); }
+	inline pi_vector norm() const { return v.Normalized(); }
+	inline float dot(const pi_vector &a) const { return v.Dot(a.to_vector3f()); }
+	inline pi_vector cross(const pi_vector &a) const { return v.Cross(a.to_vector3f()); }
+	inline float len() const { return v.Length(); }
 
-	inline void print () const { v.Print(); }
+	inline void print() const { v.Print(); }
 	
 private:
 	vector3f v;
