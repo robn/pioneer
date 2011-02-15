@@ -26,15 +26,65 @@ static CustomSBody define_sbody(lua_State *L)
 
 	// XXX make sure we have the right fields for the right body types, etc
 	
-	pi_lua_get_fixed_attr (L, "radius",          csbody.radius,            0);
-	pi_lua_get_fixed_attr (L, "mass",            csbody.mass,              0);
+	fixed *f;
+
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "radius");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.radius = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "mass");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.mass = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "semi_major_axis");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.semiMajorAxis = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "eccentricity");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.eccentricity = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "rotation_period");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.rotationPeriod = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
+{
+	LUA_DEBUG_START(L);
+	lua_pushstring(L, "axial_tilt");
+	lua_gettable(L, -2);
+	OOLUA::pull2cpp(L, f);
+	if (f) csbody.axialTilt = *f;
+	else lua_pop(L, 1);
+	LUA_DEBUG_END(L, 0);
+}
 	pi_lua_get_int_attr   (L, "temp",            csbody.averageTemp,       0);
-	pi_lua_get_fixed_attr (L, "semi_major_axis", csbody.semiMajorAxis,     0);
-	pi_lua_get_fixed_attr (L, "eccentricity",    csbody.eccentricity,      0);
 	pi_lua_get_float_attr (L, "latitude",        csbody.latitude,          0);
 	pi_lua_get_float_attr (L, "longitude",       csbody.longitude,         0);
-	pi_lua_get_fixed_attr (L, "rotation_period", csbody.rotationPeriod,    0);
-	pi_lua_get_fixed_attr (L, "axial_tilt",      csbody.axialTilt,         0);
 	pi_lua_get_string_attr(L, "height_map",      csbody.heightMapFilename, 0);
 
 	lua_getfield(L, -1, "children");
@@ -189,13 +239,13 @@ void CustomSystem::Init()
 
 	OOLUA::setup_user_lua_state(L);
 	OOLUA::register_class<vector3f>(L);
+	OOLUA::register_class<fixed>(L);
 
 	LuaConstants::RegisterConstants(L);
 
 	MyLuaFixed::Fixed_register(L);
 	lua_pop(L, 1);
 
-	lua_register(L, "fixed", MyLuaFixed::Fixed_new);
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 	lua_register(L, "deg2rad", LuaUtilFuncs::deg2rad);
