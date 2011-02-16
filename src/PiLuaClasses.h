@@ -135,8 +135,6 @@ private:
 
 OOLUA_CLASS_NO_BASES(pi_matrix)
 	OOLUA_TYPEDEFS
-		Equal_op,
-		Not_equal_op,
 		Add_op,
 		Sub_op,
 		Mul_op
@@ -147,3 +145,8 @@ OOLUA_CLASS_NO_BASES(pi_matrix)
 	OOLUA_MEM_FUNC_0_CONST(pi_matrix, inverse)
 	OOLUA_MEM_FUNC_0_CONST(void, print)
 OOLUA_CLASS_END
+
+namespace PiLuaClasses
+{
+	void RegisterClasses(lua_State *l);
+};
