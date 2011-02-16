@@ -1048,37 +1048,23 @@ LmrModel *LmrLookupModelByName(const char *name) throw (LmrModelNotFoundExceptio
 }	
 
 namespace ModelFuncs {
-	static int call_model(lua_State *L)
+	static void call_model(const std::string& obj_name, const pi_vector& pos, const pi_vector& _xaxis, const pi_vector& _yaxis, float scale)
 	{
-		if (lua_gettop(L) != 5) return 0;
-
-		float scale;
-		pi_vector *pos, *_xaxis, *_yaxis;
-		std::string obj_name;
-
-		OOLUA::pull2cpp(L, scale);
-		OOLUA::pull2cpp(L, _yaxis);
-		OOLUA::pull2cpp(L, _xaxis);
-		OOLUA::pull2cpp(L, pos);
-		OOLUA::pull2cpp(L, obj_name);
-
-//	subobject(object_name, vector pos, vector xaxis, vector yaxis [, scale=float, onflag=])
 		LmrModel *m = s_models[obj_name];
 		if (!m) {
-			luaL_error(L, "call_model() to undefined model '%s'. Referenced model must be registered before calling model", obj_name.c_str());
+			luaL_error(sLua, "call_model() to undefined model '%s'. Referenced model must be registered before calling model", obj_name.c_str());
 		} else {
-			vector3f zaxis = vector3f::Cross(_xaxis->to_vector3f(), _yaxis->to_vector3f()).Normalized();
-			vector3f xaxis = vector3f::Cross(_yaxis->to_vector3f(), zaxis).Normalized();
+			vector3f zaxis = vector3f::Cross(_xaxis.to_vector3f(), _yaxis.to_vector3f()).Normalized();
+			vector3f xaxis = vector3f::Cross(_yaxis.to_vector3f(), zaxis).Normalized();
 			vector3f yaxis = vector3f::Cross(zaxis, xaxis);
 
 			matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(scale*xaxis, scale*yaxis, scale*zaxis);
-			trans[12] = pos->x();
-			trans[13] = pos->y();
-			trans[14] = pos->z();
+			trans[12] = pos.x();
+			trans[13] = pos.y();
+			trans[14] = pos.z();
 
 			s_curBuf->PushCallModel(m, trans, scale);
 		}
-		return 0;
 	}
 
 	static int set_light(lua_State *L)
@@ -1666,40 +1652,31 @@ namespace ModelFuncs {
 		return 0;
 	}
 
-	static int texture(lua_State *L)
+	static void texture()
 	{
-		const int nargs = lua_gettop(L);
-		if (lua_isnil(L, 1)) {
-			s_curBuf->SetTexture(0);
-		} else {
-			if (nargs == 4)
-			{
-				pi_vector *pos, *uaxis, *vaxis;
-				OOLUA::pull2cpp(L, vaxis);
-				OOLUA::pull2cpp(L, uaxis);
-				OOLUA::pull2cpp(L, pos);
+		s_curBuf->SetTexture(0);
+	}
+	static void texture(const std::string& texfile)
+	{
+		lua_getglobal(sLua, "CurrentDirectory");
+		std::string dir = luaL_checkstring(sLua, -1);
+		lua_pop(sLua, 1);
 
-				vector3f waxis = vector3f::Cross(uaxis->to_vector3f(), vaxis->to_vector3f());
+		std::string t = dir + std::string("/") + texfile;
+		GLuint texture = util_load_tex_rgba(t.c_str());
 
-				matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(uaxis->to_vector3f(), vaxis->to_vector3f(), waxis);
-				trans[12] = -pos->x();
-				trans[13] = -pos->y();
-				s_curBuf->SetTexMatrix(trans);
-			}
+		s_curBuf->SetTexture(texture);
+	}
+	static void texture(const std::string& texfile, const pi_vector& pos, const pi_vector& uaxis, const pi_vector& vaxis)
+	{
+		vector3f waxis = vector3f::Cross(uaxis.to_vector3f(), vaxis.to_vector3f());
 
-			std::string texfile;
-			OOLUA::pull2cpp(L, texfile);
+		matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(uaxis.to_vector3f(), vaxis.to_vector3f(), waxis);
+		trans[12] = -pos.x();
+		trans[13] = -pos.y();
+		s_curBuf->SetTexMatrix(trans);
 
-			lua_getglobal(L, "CurrentDirectory");
-			std::string dir = luaL_checkstring(L, -1);
-			lua_pop(L, 1);
-
-			std::string t = dir + std::string("/") + texfile;
-			GLuint texture = util_load_tex_rgba(t.c_str());
-
-			s_curBuf->SetTexture(texture);
-		}
-		return 0;
+		texture(texfile);
 	}
 
 		static matrix4x4f _textTrans;
@@ -2670,6 +2647,54 @@ static int define_model(lua_State *L)
 	return 0;
 }
 
+class pi_model {
+};
+
+OOLUA_CLASS_NO_BASES(pi_model)
+	OOLUA_TYPEDEFS
+		No_public_constructors
+	OOLUA_END_TYPES
+OOLUA_CLASS_END
+
+EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
+
+namespace static_model {
+	static int call_model(lua_State *l) {
+		OOLUA_C_FUNCTION_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
+	}
+
+	static int texture(lua_State *l) {
+		switch (lua_gettop(l)-1) {
+			case 0: {
+				OOLUA_C_FUNCTION_0(void, ModelFuncs::texture) 
+			}
+			case 1: {
+				OOLUA_C_FUNCTION_1(void, ModelFuncs::texture, const std::string&) 
+			}
+			case 4: {
+				OOLUA_C_FUNCTION_4(void, ModelFuncs::texture, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&)
+			}
+			default:
+				break;
+		}
+
+		printf("%d args on stack\n", lua_gettop(l));
+		for (int i = 1; i <= lua_gettop(l); i++) {
+			printf("  %s\n", lua_typename(l, lua_type(l, i)));
+		}
+		luaL_error(l, "...");
+		return 0;
+	}
+}
+
+static void RegisterModelClass(lua_State *l)
+{
+	OOLUA::register_class<pi_model>(l);
+	
+	OOLUA::register_class_static<pi_model>(l, "call_model", &static_model::call_model);
+	OOLUA::register_class_static<pi_model>(l, "texture",    &static_model::texture);
+}
+
 void LmrModelCompilerInit()
 {
 	s_staticBufferPool = new BufferObjectPool<sizeof(Vertex)>();
@@ -2689,6 +2714,8 @@ void LmrModelCompilerInit()
 
 	PiLuaClasses::RegisterClasses(L);
 	PiLuaConstants::RegisterConstants(L);
+
+	RegisterModelClass(L);
 
 	lua_pushinteger(L, 1234);
 	lua_setglobal(L, "x");
@@ -2717,7 +2744,6 @@ void LmrModelCompilerInit()
 	lua_register(L, "circle", ModelFuncs::circle);
 	lua_register(L, "xref_circle", ModelFuncs::xref_circle);
 	lua_register(L, "text", ModelFuncs::text);
-	lua_register(L, "texture", ModelFuncs::texture);
 	lua_register(L, "quadric_bezier_quad", ModelFuncs::quadric_bezier_quad);
 	lua_register(L, "xref_quadric_bezier_quad", ModelFuncs::xref_quadric_bezier_quad);
 	lua_register(L, "cubic_bezier_quad", ModelFuncs::cubic_bezier_quad);
@@ -2736,7 +2762,6 @@ void LmrModelCompilerInit()
 	lua_register(L, "billboard", ModelFuncs::billboard);
 	lua_register(L, "geomflag", ModelFuncs::geomflag);
 	lua_register(L, "zbias", ModelFuncs::zbias);
-	lua_register(L, "call_model", ModelFuncs::call_model);
 	lua_register(L, "noise", LuaUtilFuncs::noise);
 	lua_register(L, "load_obj", ObjLoader::load_obj_file);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);

@@ -1,5 +1,19 @@
 dofile(CurrentDirectory .. "/pistartup.lua")
 
+function call_model (name) return pi_model:call_model(name) end
+function texture (file,pos,uaxis,vaxis)
+	if file == nil then
+		print("-> 0")
+		return pi_model:texture()
+	end
+	if pos == nil then
+		print("-> 1")
+		return pi_model:texture(file)
+	end
+	print("-> 4")
+	return pi_model:texture(file,pos,uaxis,vaxis)
+end
+
 --
 -- Don't add models to this! Put them in ./models/
 --
