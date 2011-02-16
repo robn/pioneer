@@ -1,3 +1,6 @@
+#ifndef _PILUACLASSES_H
+#define _PILUACLASSES_H
+
 #include "oolua/oolua.h"
 
 #include "fixed.h"
@@ -150,3 +153,5 @@ namespace PiLuaClasses
 {
 	void RegisterClasses(lua_State *l);
 };
+
+#endif

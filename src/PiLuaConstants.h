@@ -1,5 +1,5 @@
-#ifndef _PiLUACONSTANTS_H
-#define _PiLUACONSTANTS_H
+#ifndef _PILUACONSTANTS_H
+#define _PILUACONSTANTS_H
 
 #include "mylua.h"
 
