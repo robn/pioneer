@@ -1,3 +1,5 @@
+dofile(CurrentDirectory .. "/pistartup.lua")
+
 --
 -- Don't add models to this! Put them in ./models/
 --

@@ -12,7 +12,16 @@ matrix = pi_matrix
 -- convenience constructors
 -- XXX do these belong in eg picompat.lua?
 function v (x,y,z) return vector:new(x,y,z) end
+function norm (x,y,z) return vector:new(x,y,z):norm() end
 function f (n,d) return fixed:new(n,d) end
+
+-- compatibility
+Matrix = {}
+function Matrix.new (x,y,z) return matrix:new(x,y,z) end
+function Matrix.orient (x,y,z) return matrix:orient(x,y,z) end
+function Matrix.rotate(a,v) return matrix:rotation(a,v) end
+function Matrix.scale(v) return matrix:scale(v) end
+function Matrix.translate(v) return matrix:translation(v) end
 
 -- math library extensions
 function math.deg2rad (n) return n * math.pi / 180 end
