@@ -6,6 +6,7 @@
 #include "perlin.h"
 #include "Render.h"
 #include "BufferObject.h"
+#include "PiLuaClasses.h"
 #include "PiLuaConstants.h"
 #include "LuaUtilFuncs.h"
 #include <algorithm>
@@ -2677,6 +2678,7 @@ void LmrModelCompilerInit()
 	sLua = L;
 	luaL_openlibs(L);
 
+	PiLuaClasses::RegisterClasses(L);
 	PiLuaConstants::RegisterConstants(L);
 
 	lua_pushinteger(L, 1234);
