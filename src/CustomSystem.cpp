@@ -1,6 +1,6 @@
 #include "CustomSystem.h"
 #include "PiLuaClasses.h"
-#include "LuaConstants.h"
+#include "PiLuaConstants.h"
 #include "MyLuaMathTypes.h"
 #include "LuaUtilFuncs.h"
 #include "Polit.h"
@@ -136,11 +136,8 @@ void CustomSystem::Init()
 	lua_State *L = lua_open();
 	luaL_openlibs(L);
 
-	OOLUA::setup_user_lua_state(L);
-	OOLUA::register_class<pi_vector>(L);
-	OOLUA::register_class<pi_fixed>(L);
-
-	LuaConstants::RegisterConstants(L);
+    PiLuaClasses::RegisterClasses(L);
+	PiLuaConstants::RegisterConstants(L);
 
 	lua_register(L, "define_system", define_system);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
