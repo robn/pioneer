@@ -5,3 +5,6 @@ EXPORT_OOLUA_FUNCTIONS_0_NON_CONST(pi_fixed)
 
 EXPORT_OOLUA_FUNCTIONS_8_CONST(pi_vector, x, y, z, norm, dot, cross, len, print)
 EXPORT_OOLUA_FUNCTIONS_0_NON_CONST(pi_vector)
+
+EXPORT_OOLUA_FUNCTIONS_2_CONST(pi_matrix, inverse, print)
+EXPORT_OOLUA_FUNCTIONS_0_NON_CONST(pi_matrix)
