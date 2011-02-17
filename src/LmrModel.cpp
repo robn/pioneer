@@ -2192,34 +2192,28 @@ namespace ModelFuncs {
 			lua_pushstring(L, "");
 		return 1;
 	}
-	
-	static int get_arg_material(lua_State *L)
+
+	static OOLUA::Lua_table get_arg_material(int n)
 	{
 		assert(s_curParams != 0);
-		int n = luaL_checkint(L, 1);
-		lua_createtable (L, 11, 0);
 
 		const LmrMaterial &mat = s_curParams->pMat[n];
 
-		for (int i=0; i<4; i++) {
-			lua_pushinteger(L, 1+i);
-			lua_pushnumber(L, mat.diffuse[i]);
-			lua_settable(L, -3);
-		}
-		for (int i=0; i<3; i++) {
-			lua_pushinteger(L, 5+i);
-			lua_pushnumber(L, mat.specular[i]);
-			lua_settable(L, -3);
-		}
-		lua_pushinteger(L, 8);
-		lua_pushnumber(L, mat.shininess);
-		lua_settable(L, -3);
-		for (int i=0; i<3; i++) {
-			lua_pushinteger(L, 9+i);
-			lua_pushnumber(L, mat.emissive[i]);
-			lua_settable(L, -3);
-		}
-		return 1;
+		OOLUA::Lua_table t;
+		int ti = 1;
+
+		for (int i=0; i<4; i++)
+			t.set_value(ti++, mat.diffuse[i]);
+
+		for (int i=0; i<3; i++)
+			t.set_value(ti++, mat.specular[i]);
+
+		t.set_value(ti++, mat.shininess);
+
+		for (int i=0; i<3; i++)
+			t.set_value(ti++, mat.emissive[i]);
+
+		return t;
 	}
 
 	static int billboard(lua_State *L)
@@ -2689,6 +2683,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(get_arg_material)
+		STATIC_FUNC_1(OOLUA::Lua_table, ModelFuncs::get_arg_material, int)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(sphere)
