@@ -1721,11 +1721,8 @@ namespace ModelFuncs {
 		return 0;
 	}
 	
-	static int geomflag(lua_State *L)
-	{
-		Uint16 flag = luaL_checkint(L, 1);
+	static void geomflag(int flag) {
 		s_curBuf->SetGeomFlag(flag);
-		return 0;
 	}
 
 	static int zbias(lua_State *L)
@@ -2799,6 +2796,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(geomflag)
+		STATIC_FUNC_1(void, ModelFuncs::geomflag, int);
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(zbias)
