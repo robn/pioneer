@@ -1617,12 +1617,8 @@ namespace ModelFuncs {
 	{
 		float mat[11];
 
-		for (int i=0; i<11; i++) {
-			if (! material.safe_at(i+1, mat[i])) {
-				luaL_error(sLua, "set_material: value at position '%d' is not a number\n", i+1);
-				return;
-			}
-		}
+		for (int i=0; i<11; i++)
+			if (! material.safe_at(i+1, mat[i])) mat[i] = 0;
 
 		s_curBuf->SetMaterial(mat_name.c_str(), mat);
 	}
