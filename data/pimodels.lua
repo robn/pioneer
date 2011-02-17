@@ -1,25 +1,28 @@
 dofile(CurrentDirectory .. "/pistartup.lua")
 
-function call_model (name,pos,xaxis,yaxis,scale) return pi_model:call_model(name,pos,xaxis,yaxis,scale) end
+function call_model (name,pos,xaxis,yaxis,scale) pi_model:call_model(name,pos,xaxis,yaxis,scale) end
 function texture (file,pos,uaxis,vaxis)
 	if file == nil then
-		return pi_model:texture()
+		pi_model:texture()
+        return
 	end
 	if pos == nil then
-		return pi_model:texture(file)
+		pi_model:texture(file)
+        return
 	end
-	return pi_model:texture(file,pos,uaxis,vaxis)
+	pi_model:texture(file,pos,uaxis,vaxis)
 end
 function set_material (name,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11)
     if type(m1) == "table" then
-        return pi_model:set_material (name, m1)
+        pi_model:set_material (name, m1)
     else
-        return pi_model:set_material (name, { m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11 })
+        pi_model:set_material (name, { m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11 })
+    end
 end
-function use_material (name) return pi_model:use_material(name) end
+function use_material (name) pi_model:use_material(name) end
 function get_arg_material (n) return pi_model:get_arg_material(n) end
-function set_light (num,quadratic_attenuation,pos,col) return pi_model:set_light(num,quadratic_attenuation,pos,col) end
-function use_light (num) return pi_model:use_light(num) end
+function set_light (num,quadratic_attenuation,pos,col) pi_model:set_light(num,quadratic_attenuation,pos,col) end
+function use_light (num) pi_model:use_light(num) end
 
 --
 -- Don't add models to this! Put them in ./models/
