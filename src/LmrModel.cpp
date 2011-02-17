@@ -2658,78 +2658,175 @@ OOLUA_CLASS_END
 
 EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 
+
+#define STATIC_DISPATCH_START(name) static int name(lua_State *l) { switch (lua_gettop(l)-1) {
+#define STATIC_FUNC(n,def) case n: { def }
+#define STATIC_DISPATCH_END default: break; } _static_dispatch_fail(l); return 0; }
+
+#define STATIC_FUNC_0(rt1,fn) \
+	STATIC_FUNC(0, OOLUA_C_FUNCTION_0(rt1,fn))
+#define STATIC_FUNC_1(rt1,fn,t1) \
+	STATIC_FUNC(1, OOLUA_C_FUNCTION_1(rt1,fn,t1))
+#define STATIC_FUNC_2(rt1,fn,t1,t2) \
+	STATIC_FUNC(2, OOLUA_C_FUNCTION_2(rt1,fn,t1,t2))
+#define STATIC_FUNC_3(rt1,fn,t1,t2,t3) \
+	STATIC_FUNC(3, OOLUA_C_FUNCTION_3(rt1,fn,t1,t2,t3))
+#define STATIC_FUNC_4(rt1,fn,t1,t2,t3,t4) \
+	STATIC_FUNC(4, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,t3,t4))
+#define STATIC_FUNC_5(rt1,fn,t1,t2,t3,t4,t5) \
+	STATIC_FUNC(5, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,t5))
+
+static void _static_dispatch_fail(lua_State *l)
+{
+	printf("%d args on stack:\n", lua_gettop(l));
+	for (int i = 1; i <= lua_gettop(l); i++) {
+		printf("  %s\n", lua_typename(l, lua_type(l, i)));
+	}
+	luaL_error(l, "...");
+}
+
 namespace static_model {
-	static int call_model(lua_State *l) {
-		OOLUA_C_FUNCTION_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
-	}
+	STATIC_DISPATCH_START(call_model)
+		STATIC_FUNC_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
+	STATIC_DISPATCH_END
 
-	static int texture(lua_State *l) {
-		switch (lua_gettop(l)-1) {
-			case 0: {
-				OOLUA_C_FUNCTION_0(void, ModelFuncs::texture) 
-			}
-			case 1: {
-				OOLUA_C_FUNCTION_1(void, ModelFuncs::texture, const std::string&) 
-			}
-			case 4: {
-				OOLUA_C_FUNCTION_4(void, ModelFuncs::texture, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&)
-			}
-			default:
-				break;
-		}
+	STATIC_DISPATCH_START(texture)
+		STATIC_FUNC_0(void, ModelFuncs::texture)
+		STATIC_FUNC_1(void, ModelFuncs::texture, const std::string&)
+		STATIC_FUNC_4(void, ModelFuncs::texture, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&)
+	STATIC_DISPATCH_END
 
-		printf("%d args on stack\n", lua_gettop(l));
-		for (int i = 1; i <= lua_gettop(l); i++) {
-			printf("  %s\n", lua_typename(l, lua_type(l, i)));
-		}
-		luaL_error(l, "...");
-		return 0;
-	}
+	STATIC_DISPATCH_START(set_material)
+	STATIC_DISPATCH_END
 
-	static int set_material(lua_State *l) { }
-	static int use_material(lua_State *l) { }
-	static int get_arg_material(lua_State *l) { }
-	static int sphere(lua_State *l) { }
-	static int sphere_slice(lua_State *l) { }
-	static int invisible_tri(lua_State *l) { }
-	static int tri(lua_State *l) { }
-	static int xref_tri(lua_State *l) { }
-	static int quad(lua_State *l) { }
-	static int xref_quad(lua_State *l) { }
-	static int cylinder(lua_State *l) { }
-	static int xref_cylinder(lua_State *l) { }
-	static int tapered_cylinder(lua_State *l) { }
-	static int xref_tapered_cylinder(lua_State *l) { }
-	static int lathe(lua_State *l) { }
-	static int tube(lua_State *l) { }
-	static int xref_tube(lua_State *l) { }
-	static int ring(lua_State *l) { }
-	static int xref_ring(lua_State *l) { }
-	static int circle(lua_State *l) { }
-	static int xref_circle(lua_State *l) { }
-	static int text(lua_State *l) { }
-	static int quadric_bezier_quad(lua_State *l) { }
-	static int xref_quadric_bezier_quad(lua_State *l) { }
-	static int cubic_bezier_quad(lua_State *l) { }
-	static int xref_cubic_bezier_quad(lua_State *l) { }
-	static int cubic_bezier_tri(lua_State *l) { }
-	static int xref_cubic_bezier_tri(lua_State *l) { }
-	static int quadric_bezier_tri(lua_State *l) { }
-	static int xref_quadric_bezier_tri(lua_State *l) { }
-	static int extrusion(lua_State *l) { }
-	static int thruster(lua_State *l) { }
-	static int xref_thruster(lua_State *l) { }
-	static int get_arg(lua_State *l) { }
-	static int get_arg_string(lua_State *l) { }
-	static int flat(lua_State *l) { }
-	static int xref_flat(lua_State *l) { }
-	static int billboard(lua_State *l) { }
-	static int geomflag(lua_State *l) { }
-	static int zbias(lua_State *l) { }
-	static int set_insideout(lua_State *l) { }
-	static int set_local_lighting(lua_State *l) { }
-	static int set_light(lua_State *l) { }
-	static int use_light(lua_State *l) { }
+	STATIC_DISPATCH_START(use_material)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(get_arg_material)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(sphere)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(sphere_slice)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(invisible_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(cylinder)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_cylinder)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(tapered_cylinder)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_tapered_cylinder)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(lathe)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(tube)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_tube)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(ring)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_ring)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(circle)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_circle)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(text)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(quadric_bezier_quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_quadric_bezier_quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(cubic_bezier_quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_cubic_bezier_quad)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(cubic_bezier_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_cubic_bezier_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(quadric_bezier_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_quadric_bezier_tri)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(extrusion)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(thruster)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_thruster)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(get_arg)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(get_arg_string)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(flat)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(xref_flat)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(billboard)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(geomflag)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(zbias)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(set_insideout)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(set_local_lighting)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(set_light)
+	STATIC_DISPATCH_END
+
+	STATIC_DISPATCH_START(use_light)
+	STATIC_DISPATCH_END
 }
 
 static void RegisterModelClass(lua_State *l)
