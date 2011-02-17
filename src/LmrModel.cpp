@@ -1067,24 +1067,18 @@ namespace ModelFuncs {
 		}
 	}
 
-	static int set_light(lua_State *L)
+	static void set_light(int num, float quadratic_attenuation, const pi_vector& pos, const pi_vector& col)
 	{
-		int num = luaL_checkint(L, 1)-1;
 		if ((num < 0) || (num > 3)) {
-			luaL_error(L, "set_light should have light number from 1 to 4.");
+			luaL_error(sLua, "set_light should have light number from 1 to 4.");
+			return;
 		}
-		const float quadratic_attenuation = luaL_checknumber(L, 2);
-		const vector3f *pos = MyLuaVec::checkVec(L, 3);
-		const vector3f *col = MyLuaVec::checkVec(L, 4);
-		s_curBuf->SetLight(num, quadratic_attenuation, *pos, *col);
-		return 0;
+		s_curBuf->SetLight(num, quadratic_attenuation, pos, col);
 	}
 
-	static int use_light(lua_State *L)
+	static void use_light(int num)
 	{
-		int num = luaL_checkint(L, 1)-1;
 		s_curBuf->PushUseLight(num);
-		return 0;
 	}
 
 	static int set_local_lighting(lua_State *L)
@@ -1619,37 +1613,27 @@ namespace ModelFuncs {
 	static int cubic_bezier_quad(lua_State *L) { _cubic_bezier_quad(L, false); return 0; }
 	static int xref_cubic_bezier_quad(lua_State *L) { _cubic_bezier_quad(L, true); return 0; }
 
-	static int set_material(lua_State *L)
+	static void set_material(const std::string& mat_name, OOLUA::Lua_table material)
 	{
-		const char *mat_name = luaL_checkstring(L, 1);
 		float mat[11];
-		if (lua_istable(L, 2)) {
-			// material as table of 11 values
-			for (int i=0; i<11; i++) {
-				lua_pushinteger(L, i+1);
-				lua_gettable(L, 2);
-				mat[i] = luaL_checknumber(L, -1);
-				lua_pop(L, 1);
-			}
-		} else {
-			for (int i=0; i<11; i++) {
-				mat[i] = lua_tonumber(L, i+2);
+
+		for (int i=0; i<11; i++) {
+			if (! material.safe_at(i+1, mat[i])) {
+				luaL_error(sLua, "set_material: value at position '%d' is not a number\n", i+1);
+				return;
 			}
 		}
-		s_curBuf->SetMaterial(mat_name, mat);
-		return 0;
+
+		s_curBuf->SetMaterial(mat_name.c_str(), mat);
 	}
 
-	static int use_material(lua_State *L)
+	static void use_material(const std::string& mat_name)
 	{
-		const char *mat_name = luaL_checkstring(L, 1);
 		try {
-			s_curBuf->PushUseMaterial(mat_name);
+			s_curBuf->PushUseMaterial(mat_name.c_str());
 		} catch (LmrUnknownMaterial) {
-			printf("Unknown material name '%s'.\n", mat_name);
-			exit(0);
+			luaL_error(sLua, "use_material: unknown material name '%s'", mat_name.c_str());
 		}
-		return 0;
 	}
 
 	static void texture()
@@ -2697,9 +2681,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(set_material)
+		STATIC_FUNC_2(void, ModelFuncs::set_material, const std::string&, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(use_material)
+		STATIC_FUNC_1(void, ModelFuncs::use_material, const std::string&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(get_arg_material)
@@ -2823,10 +2809,13 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(set_light)
+		STATIC_FUNC_4(void, ModelFuncs::set_light, int, float, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(use_light)
+		STATIC_FUNC_1(void, ModelFuncs::use_light, int)
 	STATIC_DISPATCH_END
+
 }
 
 static void RegisterModelClass(lua_State *l)
