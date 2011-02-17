@@ -2021,30 +2021,19 @@ namespace ModelFuncs {
 	}
 
 	/* Cylinder with no top or bottom caps */
-	static int ring(lua_State *L)
+	static void ring(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		const vector3f *start = MyLuaVec::checkVec(L, 2);
-		const vector3f *end = MyLuaVec::checkVec(L, 3);
-		const vector3f *updir = MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
-		_ring(steps, *start, *end, *updir, radius);
-		return 0;
+		_ring(steps, start, end, updir, radius);
 	}
 
-	static int xref_ring(lua_State *L)
+	static void xref_ring(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		vector3f start = *MyLuaVec::checkVec(L, 2);
-		vector3f end = *MyLuaVec::checkVec(L, 3);
-		vector3f updir = *MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
+		vector3f start = pstart, end = pend, updir = pupdir;
 		_ring(steps, start, end, updir, radius);
 		start.x = -start.x;
 		end.x = -end.x;
 		updir.x = -updir.x;
 		_ring(steps, start, end, updir, radius);
-		return 0;
 	}
 
 	static void invisible_tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
@@ -2729,9 +2718,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(ring)
+		STATIC_FUNC_5(void, ModelFuncs::ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_ring)
+		STATIC_FUNC_5(void, ModelFuncs::xref_ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(circle)

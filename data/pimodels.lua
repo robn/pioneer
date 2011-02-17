@@ -37,6 +37,8 @@ function thruster (...) pi_model:thruster(...) end
 function xref_thruster (...) pi_model:xref_thruster(...) end
 function cylinder (...) pi_model:cylinder(...) end
 function xref_cylinder (...) pi_model:xref_cylinder(...) end
+function ring (...) pi_model:ring(...) end
+function xref_ring (...) pi_model:xref_ring(...) end
 function geomflag (...) pi_model:geomflag(...) end
 function zbias (...) pi_model:zbias(...) end
 function set_light (...) pi_model:set_light(...) end
