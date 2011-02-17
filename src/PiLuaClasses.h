@@ -11,9 +11,10 @@ class pi_fixed {
 public:
 	pi_fixed(): f(0,0) { }
 	pi_fixed(int n, int d): f(n,d) { }
-	pi_fixed(const pi_fixed &a) { f = a.to_fixed(); }
+	pi_fixed(const pi_fixed &a) { f = a; }
 	pi_fixed(const fixed &a) { f = a; }
 
+    inline operator fixed () const { return f; }
 	inline fixed to_fixed() const { return f; }
 
 	inline float tonumber() const { return f.ToFloat(); }
@@ -52,6 +53,7 @@ public:
 	pi_vector(const pi_vector &a) { v = a.to_vector3f(); }
 	pi_vector(const vector3f &a) { v = a; }
 
+    inline operator vector3f () const { return v; }
 	inline vector3f to_vector3f() const { return v; }
 
 	inline bool operator==(const pi_vector &a) const { return v == a.to_vector3f(); }
@@ -102,6 +104,7 @@ public:
 	pi_matrix(const pi_matrix &a) { m = a.to_matrix4x4f(); }
 	pi_matrix(const matrix4x4f &a) { m = a; }
 
+    inline operator matrix4x4f () const { return m; }
 	inline matrix4x4f to_matrix4x4f() const { return m; }
 
 	inline pi_matrix operator+(const pi_matrix &a) const { return m + a.to_matrix4x4f(); }

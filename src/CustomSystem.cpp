@@ -106,7 +106,7 @@ static int define_system(lua_State *L)
 		luaL_error(L, "define_system: value for field 'pos' must be a vector");
 		return 0;
 	}
-	cs.pos = v->to_vector3f();
+	cs.pos = *v;
 
 	if (! t.safe_at("seed", cs.seed)) cs.seed = 0;
 

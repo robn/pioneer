@@ -1054,8 +1054,8 @@ namespace ModelFuncs {
 		if (!m) {
 			luaL_error(sLua, "call_model() to undefined model '%s'. Referenced model must be registered before calling model", obj_name.c_str());
 		} else {
-			vector3f zaxis = vector3f::Cross(_xaxis.to_vector3f(), _yaxis.to_vector3f()).Normalized();
-			vector3f xaxis = vector3f::Cross(_yaxis.to_vector3f(), zaxis).Normalized();
+			vector3f zaxis = vector3f::Cross(_xaxis, _yaxis).Normalized();
+			vector3f xaxis = vector3f::Cross(_yaxis, zaxis).Normalized();
 			vector3f yaxis = vector3f::Cross(zaxis, xaxis);
 
 			matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(scale*xaxis, scale*yaxis, scale*zaxis);
@@ -1669,9 +1669,9 @@ namespace ModelFuncs {
 	}
 	static void texture(const std::string& texfile, const pi_vector& pos, const pi_vector& uaxis, const pi_vector& vaxis)
 	{
-		vector3f waxis = vector3f::Cross(uaxis.to_vector3f(), vaxis.to_vector3f());
+		vector3f waxis = vector3f::Cross(uaxis, vaxis);
 
-		matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(uaxis.to_vector3f(), vaxis.to_vector3f(), waxis);
+		matrix4x4f trans = matrix4x4f::MakeInvRotMatrix(uaxis, vaxis, waxis);
 		trans[12] = -pos.x();
 		trans[13] = -pos.y();
 		s_curBuf->SetTexMatrix(trans);
