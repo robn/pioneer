@@ -2384,21 +2384,14 @@ namespace ObjLoader {
 		return mtl_map;
 	}
 
-	static int load_obj_file(lua_State *L)
+	static void load_obj_file(const std::string& obj_name, matrix4x4f *transform)
 	{
-		const char *obj_name = luaL_checkstring(L, 1);
-		int numArgs = lua_gettop(L);
-		matrix4x4f *transform = 0;
-		if (numArgs > 1) {
-			transform = MyLuaMatrix::checkMatrix(L, 2);
-		}
-
-		lua_getglobal(L, "CurrentDirectory");
-		std::string curdir = luaL_checkstring(L, -1);
-		lua_pop(L, 1);
+		lua_getglobal(sLua, "CurrentDirectory");
+		std::string curdir = luaL_checkstring(sLua, -1);
+		lua_pop(sLua, 1);
 	
 		char buf[1024];
-		snprintf(buf, sizeof(buf), "%s/%s", curdir.c_str(), obj_name);
+		snprintf(buf, sizeof(buf), "%s/%s", curdir.c_str(), obj_name.c_str());
 		FILE *f = fopen(buf, "r");
 		if (!f) {
 			Error("Could not open %s\n", buf);
@@ -2507,7 +2500,7 @@ namespace ObjLoader {
 			else if (strncmp("mtllib ", buf, 7) == 0) {
 				char lib_name[128];
 				if (1 == sscanf(buf, "mtllib %s", lib_name)) {
-					mtl_map = load_mtl_file(L, lib_name);
+					mtl_map = load_mtl_file(sLua, lib_name);
 				}
 			}
 			else if (strncmp("usemtl ", buf, 7) == 0) {
@@ -2519,7 +2512,7 @@ namespace ObjLoader {
 							snprintf(texfile, sizeof(texfile), "%s/%s", curdir.c_str(), mtl_map[mat_name].c_str());
 							texture = util_load_tex_rgba(texfile);
 						} catch (LmrUnknownMaterial) {
-							printf("Warning: Missing material %s (%s) in %s\n", mtl_map[mat_name].c_str(), mat_name, obj_name);
+							printf("Warning: Missing material %s (%s) in %s\n", mtl_map[mat_name].c_str(), mat_name, obj_name.c_str());
 						}
 					}
 				} else {
@@ -2528,8 +2521,18 @@ namespace ObjLoader {
 			}
 		}
 		fclose(f);
-		return 0;
 	}
+
+	static void load_obj_file(const std::string& obj_name, const pi_matrix& ptransform)
+	{
+		matrix4x4f transform = ptransform;
+		load_obj_file(obj_name, &transform);
+	}
+	static void load_obj_file(const std::string& obj_name)
+	{
+		load_obj_file(obj_name, NULL);
+	}
+
 };
 
 static int define_model(lua_State *L)
@@ -2804,6 +2807,10 @@ namespace static_model {
 		STATIC_FUNC_1(void, ModelFuncs::use_light, int)
 	STATIC_DISPATCH_END
 
+	STATIC_DISPATCH_START(load_obj_file)
+		STATIC_FUNC_1(void, ObjLoader::load_obj_file, const std::string&)
+		STATIC_FUNC_2(void, ObjLoader::load_obj_file, const std::string&, const pi_matrix&)
+	STATIC_DISPATCH_END
 }
 
 static void RegisterModelClass(lua_State *l)
@@ -2856,6 +2863,9 @@ static void RegisterModelClass(lua_State *l)
 	OOLUA::register_class_static<pi_model>(l, "set_local_lighting",         &static_model::set_local_lighting);
 	OOLUA::register_class_static<pi_model>(l, "set_light",                  &static_model::set_light);
 	OOLUA::register_class_static<pi_model>(l, "use_light",                  &static_model::use_light);
+
+	// XXX this can go in pi_model for now
+	OOLUA::register_class_static<pi_model>(l, "load_obj",                   &static_model::load_obj_file);
 }
 
 void LmrModelCompilerInit()
@@ -2886,7 +2896,6 @@ void LmrModelCompilerInit()
 
 	lua_register(L, "define_model", define_model);
 	lua_register(L, "noise", LuaUtilFuncs::noise);
-	lua_register(L, "load_obj", ObjLoader::load_obj_file);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 
 	s_buildDynamic = false;

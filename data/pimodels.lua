@@ -46,6 +46,8 @@ function zbias (...) pi_model:zbias(...) end
 function set_light (...) pi_model:set_light(...) end
 function use_light (...) pi_model:use_light(...) end
 
+function load_obj (...) pi_model:load_obj(...) end
+
 --
 -- Don't add models to this! Put them in ./models/
 --
