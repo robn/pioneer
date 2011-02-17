@@ -2621,7 +2621,7 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 
 #define STATIC_DISPATCH_START(name) static int name(lua_State *l) { const int _n = lua_gettop(l)-1;
 #define STATIC_FUNC(n,def) if (_n == n) { def }
-#define STATIC_FUNC_VA(n,def) if (_n >= n) { def }
+#define STATIC_FUNC_VA(n,def) if (_n >= n) { _static_varargs_table(l,n); def }
 #define STATIC_DISPATCH_END _static_dispatch_fail(l); return 0; }
 
 #define STATIC_FUNC_0(rt1,fn) \
@@ -2638,17 +2638,30 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 	STATIC_FUNC(5, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,t5))
 
 #define STATIC_FUNC_0_VA(rt1,fn) \
-	STATIC_FUNC_VA(0, OOLUA_C_FUNCTION_0(rt1,fn))
+	STATIC_FUNC_VA(0, OOLUA_C_FUNCTION_1(rt1,fn,OOLUA::Lua_table))
 #define STATIC_FUNC_1_VA(rt1,fn,t1) \
-	STATIC_FUNC_VA(1, OOLUA_C_FUNCTION_1(rt1,fn,t1))
+	STATIC_FUNC_VA(1, OOLUA_C_FUNCTION_2(rt1,fn,t1,OOLUA::Lua_table))
 #define STATIC_FUNC_2_VA(rt1,fn,t1,t2) \
-	STATIC_FUNC_VA(2, OOLUA_C_FUNCTION_2(rt1,fn,t1,t2))
+	STATIC_FUNC_VA(2, OOLUA_C_FUNCTION_3(rt1,fn,t1,t2,OOLUA::Lua_table))
 #define STATIC_FUNC_3_VA(rt1,fn,t1,t2,t3) \
-	STATIC_FUNC_VA(3, OOLUA_C_FUNCTION_3(rt1,fn,t1,t2,t3))
+	STATIC_FUNC_VA(3, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,t3,OOLUA::Lua_table))
 #define STATIC_FUNC_4_VA(rt1,fn,t1,t2,t3,t4) \
-	STATIC_FUNC_VA(4, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,t3,t4))
+	STATIC_FUNC_VA(4, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,OOLUA::Lua_table))
 #define STATIC_FUNC_5_VA(rt1,fn,t1,t2,t3,t4,t5) \
-	STATIC_FUNC_VA(5, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,t5))
+	STATIC_FUNC_VA(5, OOLUA_C_FUNCTION_6(rt1,fn,t1,t2,t3,t4,t5,OOLUA::Lua_table))
+
+static inline void _static_varargs_table(lua_State *l, int n)
+{
+	for (int i=n-(lua_gettop(l)-1); i<-1; i++)
+		lua_insert(l, i);
+	lua_newtable(l);
+	for (int i=1; lua_gettop(l)-2 > n; i++) {
+		lua_insert(l, -2);
+		lua_pushinteger(l, i);
+		lua_insert(l, -2);
+		lua_settable(l, -3);
+	}
+}
 
 static void _static_dispatch_fail(lua_State *l)
 {
@@ -2768,35 +2781,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(extrusion)
-
-	printf("%d args on stack:\n", lua_gettop(l));
-	for (int i = 1; i <= lua_gettop(l); i++) {
-		printf("  %s\n", lua_typename(l, lua_type(l, i)));
-	}
-
-	int n = 4;
-	if (_n >= n) {
-        for (int _i=n-(lua_gettop(l)-1); _i<-1; _i++) {
-            printf("-> %d\n", _i);
-            lua_insert(l, _i);
-        }
-		lua_newtable(l);
-		for (int _i=1; lua_gettop(l)-2 > n; _i++) {
-			lua_insert(l, -2);
-			lua_pushinteger(l, _i);
-			lua_insert(l, -2);
-			lua_settable(l, -3);
-		}
-
-		printf("%d args on stack:\n", lua_gettop(l));
-		for (int i = 1; i <= lua_gettop(l); i++) {
-			printf("  %s\n", lua_typename(l, lua_type(l, i)));
-		}
-
-		OOLUA_C_FUNCTION_5(void, ModelFuncs::extrusion, const pi_vector&, const pi_vector&, const pi_vector&, float, OOLUA::Lua_table);
-	}
-
-
+		STATIC_FUNC_4_VA(void, ModelFuncs::extrusion, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(thruster)
