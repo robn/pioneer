@@ -2272,14 +2272,6 @@ namespace ModelFuncs {
 		_sphere_subdivide(trans, v3, v31, v23, i3, i31, i23, depth-1);
 		_sphere_subdivide(trans, v12, v23, v31, i12, i23, i31, depth-1);
 	}
-	static void _get_orientation(lua_State *l, int stackpos, matrix4x4f &trans)
-	{
-		if ((lua_gettop(l) < stackpos) || lua_isnil(l, stackpos)) {
-			trans = matrix4x4f::Identity();
-		} else {
-			trans = *MyLuaMatrix::checkMatrix(l, stackpos);
-		}
-	}
 
 	static void sphere(int subdivs, const pi_matrix& pi_trans)
 	{
@@ -2310,19 +2302,10 @@ namespace ModelFuncs {
 		sphere(subdivs, pi_matrix::identity());
 	}
 
-	//////////////////////////////////////////
-	static int sphere_slice(lua_State *l)
+	static void sphere_slice(int LONG_SEGS, int LAT_SEGS, float sliceAngle1, float sliceAngle2, const pi_matrix& pi_trans)
 	{
-		int LAT_SEGS;
-		int LONG_SEGS;
-		float sliceAngle1, sliceAngle2;
-		LONG_SEGS = luaL_checkint(l, 1);
-		LAT_SEGS = luaL_checkint(l, 2);
-		sliceAngle1 = luaL_checknumber(l, 3);
-		sliceAngle2 = luaL_checknumber(l, 4);
-			//luaL_error(l, "sphere(subdivs, transform): subdivs must be in range [0,4]");
-		matrix4x4f trans;
-		_get_orientation(l, 5, trans);
+		matrix4x4f trans = pi_trans;
+
 		const vector3d yaxis(trans[4], trans[5], trans[6]);
 		float latDiff = (sliceAngle2-sliceAngle1) / (float)LAT_SEGS;
 
@@ -2379,8 +2362,6 @@ namespace ModelFuncs {
 		}
 		delete [] idx;
 		delete [] idx2;
-
-		return 0;
 	}
 
 
@@ -2688,6 +2669,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(sphere_slice)
+		STATIC_FUNC_5(void, ModelFuncs::sphere_slice, int, int, float, float, const pi_matrix&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(invisible_tri)
