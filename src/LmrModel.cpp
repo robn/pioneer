@@ -2130,17 +2130,13 @@ namespace ModelFuncs {
 		return 0;
 	}
 
-	static int thruster(lua_State *L)
+	static void thruster(const pi_vector& pos, const pi_vector& dir, float power, bool linear_only)
 	{
-		const vector3f *pos = MyLuaVec::checkVec(L, 1);
-		const vector3f *dir = MyLuaVec::checkVec(L, 2);
-		const float power = luaL_checknumber(L, 3);
-		bool linear_only = false;
-		if (lua_isboolean(L, 4)) {
-			linear_only = lua_toboolean(L, 4) != 0;
-		}
-		s_curBuf->PushThruster(*pos, *dir, power, linear_only);
-		return 0;
+		s_curBuf->PushThruster(pos, dir, power, linear_only);
+	}
+	static void thruster(const pi_vector& pos, const pi_vector& dir, float power)
+	{
+		thruster(pos, dir, power, false);
 	}
 
 	static int xref_thruster(lua_State *L)
@@ -2152,12 +2148,20 @@ namespace ModelFuncs {
 		if (lua_isboolean(L, 4)) {
 			linear_only = lua_toboolean(L, 4) != 0;
 		}
-		s_curBuf->PushThruster(pos, *dir, power, linear_only);
-		pos.x = -pos.x;
-		s_curBuf->PushThruster(pos, *dir, power, linear_only);
 		return 0;
 	}
 
+	static void xref_thruster(const pi_vector& ppos, const pi_vector& dir, float power, bool linear_only)
+	{
+		vector3f pos = ppos;
+		s_curBuf->PushThruster(pos, dir, power, linear_only);
+		pos.x = -pos.x;
+		s_curBuf->PushThruster(pos, dir, power, linear_only);
+	}
+	static void xref_thruster(const pi_vector& pos, const pi_vector& dir, float power)
+	{
+		xref_thruster(pos, dir, power, false);
+	}
 	static int get_arg(lua_State *L)
 	{
 		assert(s_curParams != 0);
@@ -2772,6 +2776,8 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(thruster)
+		STATIC_FUNC_3(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float)
+		STATIC_FUNC_4(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float, bool)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_thruster)
