@@ -21,6 +21,13 @@ function set_material (name,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11)
 end
 function use_material (name) pi_model:use_material(name) end
 function get_arg_material (n) return pi_model:get_arg_material(n) end
+function sphere (subdivs,trans)
+    if trans == nil then
+        pi_model:sphere(subdivs)
+        return
+    end
+    pi_model:sphere(subdivs,trans)
+end
 function set_light (num,quadratic_attenuation,pos,col) pi_model:set_light(num,quadratic_attenuation,pos,col) end
 function use_light (num) pi_model:use_light(num) end
 

@@ -2281,24 +2281,21 @@ namespace ModelFuncs {
 		}
 	}
 
-
-	static int sphere (lua_State *l)
+	static void sphere(int subdivs, const pi_matrix& pi_trans)
 	{
-		int i, subdivs;
-		matrix4x4f trans;
-		subdivs = luaL_checkint(l, 1);
 		if ((subdivs < 0) || (subdivs > 4)) {
-			luaL_error(l, "sphere(subdivs, transform): subdivs must be in range [0,4]");
+			luaL_error(sLua, "sphere(subdivs, transform): subdivs must be in range [0,4]");
 		}
-		_get_orientation(l, 2, trans);
+
+		matrix4x4f trans = pi_trans;
 
 		int vi[12];
-		for (i=0; i<12; i++) {
+		for (int i=0; i<12; i++) {
 			const vector3f &v = icosahedron_vertices[i];
 			vi[i] = s_curBuf->PushVertex(trans * v, trans.ApplyRotationOnly(v));
 		}
 			
-		for (i=0; i<20; i++) {
+		for (int i=0; i<20; i++) {
 			_sphere_subdivide (trans, icosahedron_vertices[icosahedron_faces[i][0]],
 					icosahedron_vertices[icosahedron_faces[i][1]],
 					icosahedron_vertices[icosahedron_faces[i][2]],
@@ -2307,7 +2304,10 @@ namespace ModelFuncs {
 					vi[icosahedron_faces[i][2]],
 					subdivs);
 		}
-		return 0;
+	}
+	static void sphere(int subdivs) 
+	{
+		sphere(subdivs, pi_matrix::identity());
 	}
 
 	//////////////////////////////////////////
@@ -2683,6 +2683,8 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(sphere)
+		STATIC_FUNC_1(void, ModelFuncs::sphere, int)
+		STATIC_FUNC_2(void, ModelFuncs::sphere, int, const pi_matrix&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(sphere_slice)
