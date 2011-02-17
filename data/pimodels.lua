@@ -30,6 +30,8 @@ function sphere (subdivs,trans)
 end
 function sphere_slice (...) pi_model:sphere_slice(...) end
 function invisible_tri (...) pi_model:invisible_tri(...) end
+function tri (...) pi_model:tri(...) end
+function xref_tri (...) pi_model:xref_tri(...) end
 function quad (...) pi_model:quad(...) end
 function xref_quad (...) pi_model:xref_quad(...) end
 function extrusion (...) pi_model:extrusion(...) end

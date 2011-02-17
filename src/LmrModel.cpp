@@ -2047,27 +2047,22 @@ namespace ModelFuncs {
 		s_curBuf->PushInvisibleTri(i1, i2, i3);
 	}
 
-	static int tri(lua_State *L)
+	static void tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
 	{
-		const vector3f *v1 = MyLuaVec::checkVec(L, 1);
-		const vector3f *v2 = MyLuaVec::checkVec(L, 2);
-		const vector3f *v3 = MyLuaVec::checkVec(L, 3);
-		
-		vector3f n = vector3f::Cross((*v1)-(*v2), (*v1)-(*v3)).Normalized();
-		int i1 = s_curBuf->PushVertex(*v1, n);
-		int i2 = s_curBuf->PushVertex(*v2, n);
-		int i3 = s_curBuf->PushVertex(*v3, n);
+		vector3f v1 = pv1, v2 = pv2, v3 = pv3;
+
+		vector3f n = vector3f::Cross(v1-v2, v1-v3).Normalized();
+		int i1 = s_curBuf->PushVertex(v1, n);
+		int i2 = s_curBuf->PushVertex(v2, n);
+		int i3 = s_curBuf->PushVertex(v3, n);
 		s_curBuf->PushTri(i1, i2, i3);
-		return 0;
 	}
-	
-	static int xref_tri(lua_State *L)
+
+	static void xref_tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
 	{
-		vector3f v1 = *MyLuaVec::checkVec(L, 1);
-		vector3f v2 = *MyLuaVec::checkVec(L, 2);
-		vector3f v3 = *MyLuaVec::checkVec(L, 3);
-		
-		vector3f n = vector3f::Cross((v1)-(v2), (v1)-(v3)).Normalized();
+		vector3f v1 = pv1, v2 = pv2, v3 = pv3;
+	
+		vector3f n = vector3f::Cross(v1-v2, v1-v3).Normalized();
 		int i1 = s_curBuf->PushVertex(v1, n);
 		int i2 = s_curBuf->PushVertex(v2, n);
 		int i3 = s_curBuf->PushVertex(v3, n);
@@ -2077,7 +2072,6 @@ namespace ModelFuncs {
 		i2 = s_curBuf->PushVertex(v2, n);
 		i3 = s_curBuf->PushVertex(v3, n);
 		s_curBuf->PushTri(i1, i3, i2);
-		return 0;
 	}
 
 	static void quad(const pi_vector& pv1, const pi_vector& pv2, const pi_vector &pv3, const pi_vector& pv4)
@@ -2681,9 +2675,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(tri)
+		STATIC_FUNC_3(void, ModelFuncs::tri, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_tri)
+		STATIC_FUNC_3(void, ModelFuncs::xref_tri, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(quad)
