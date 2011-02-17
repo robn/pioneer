@@ -2685,14 +2685,103 @@ namespace static_model {
 		luaL_error(l, "...");
 		return 0;
 	}
+
+	static int set_material(lua_State *l) { }
+	static int use_material(lua_State *l) { }
+	static int get_arg_material(lua_State *l) { }
+	static int sphere(lua_State *l) { }
+	static int sphere_slice(lua_State *l) { }
+	static int invisible_tri(lua_State *l) { }
+	static int tri(lua_State *l) { }
+	static int xref_tri(lua_State *l) { }
+	static int quad(lua_State *l) { }
+	static int xref_quad(lua_State *l) { }
+	static int cylinder(lua_State *l) { }
+	static int xref_cylinder(lua_State *l) { }
+	static int tapered_cylinder(lua_State *l) { }
+	static int xref_tapered_cylinder(lua_State *l) { }
+	static int lathe(lua_State *l) { }
+	static int tube(lua_State *l) { }
+	static int xref_tube(lua_State *l) { }
+	static int ring(lua_State *l) { }
+	static int xref_ring(lua_State *l) { }
+	static int circle(lua_State *l) { }
+	static int xref_circle(lua_State *l) { }
+	static int text(lua_State *l) { }
+	static int quadric_bezier_quad(lua_State *l) { }
+	static int xref_quadric_bezier_quad(lua_State *l) { }
+	static int cubic_bezier_quad(lua_State *l) { }
+	static int xref_cubic_bezier_quad(lua_State *l) { }
+	static int cubic_bezier_tri(lua_State *l) { }
+	static int xref_cubic_bezier_tri(lua_State *l) { }
+	static int quadric_bezier_tri(lua_State *l) { }
+	static int xref_quadric_bezier_tri(lua_State *l) { }
+	static int extrusion(lua_State *l) { }
+	static int thruster(lua_State *l) { }
+	static int xref_thruster(lua_State *l) { }
+	static int get_arg(lua_State *l) { }
+	static int get_arg_string(lua_State *l) { }
+	static int flat(lua_State *l) { }
+	static int xref_flat(lua_State *l) { }
+	static int billboard(lua_State *l) { }
+	static int geomflag(lua_State *l) { }
+	static int zbias(lua_State *l) { }
+	static int set_insideout(lua_State *l) { }
+	static int set_local_lighting(lua_State *l) { }
+	static int set_light(lua_State *l) { }
+	static int use_light(lua_State *l) { }
 }
 
 static void RegisterModelClass(lua_State *l)
 {
 	OOLUA::register_class<pi_model>(l);
 	
-	OOLUA::register_class_static<pi_model>(l, "call_model", &static_model::call_model);
-	OOLUA::register_class_static<pi_model>(l, "texture",    &static_model::texture);
+	OOLUA::register_class_static<pi_model>(l, "call_model",                 &static_model::call_model);
+	OOLUA::register_class_static<pi_model>(l, "texture",                    &static_model::texture);
+	OOLUA::register_class_static<pi_model>(l, "set_material",               &static_model::set_material);
+	OOLUA::register_class_static<pi_model>(l, "use_material",               &static_model::use_material);
+	OOLUA::register_class_static<pi_model>(l, "get_arg_material",           &static_model::get_arg_material);
+	OOLUA::register_class_static<pi_model>(l, "sphere",                     &static_model::sphere);
+	OOLUA::register_class_static<pi_model>(l, "sphere_slice",               &static_model::sphere_slice);
+	OOLUA::register_class_static<pi_model>(l, "invisible_tri",              &static_model::invisible_tri);
+	OOLUA::register_class_static<pi_model>(l, "tri",                        &static_model::tri);
+	OOLUA::register_class_static<pi_model>(l, "xref_tri",                   &static_model::xref_tri);
+	OOLUA::register_class_static<pi_model>(l, "quad",                       &static_model::quad);
+	OOLUA::register_class_static<pi_model>(l, "xref_quad",                  &static_model::xref_quad);
+	OOLUA::register_class_static<pi_model>(l, "cylinder",                   &static_model::cylinder);
+	OOLUA::register_class_static<pi_model>(l, "xref_cylinder",              &static_model::xref_cylinder);
+	OOLUA::register_class_static<pi_model>(l, "tapered_cylinder",           &static_model::tapered_cylinder);
+	OOLUA::register_class_static<pi_model>(l, "xref_tapered_cylinder",      &static_model::xref_tapered_cylinder);
+	OOLUA::register_class_static<pi_model>(l, "lathe",                      &static_model::lathe);
+	OOLUA::register_class_static<pi_model>(l, "tube",                       &static_model::tube);
+	OOLUA::register_class_static<pi_model>(l, "xref_tube",                  &static_model::xref_tube);
+	OOLUA::register_class_static<pi_model>(l, "ring",                       &static_model::ring);
+	OOLUA::register_class_static<pi_model>(l, "xref_ring",                  &static_model::xref_ring);
+	OOLUA::register_class_static<pi_model>(l, "circle",                     &static_model::circle);
+	OOLUA::register_class_static<pi_model>(l, "xref_circle",                &static_model::xref_circle);
+	OOLUA::register_class_static<pi_model>(l, "text",                       &static_model::text);
+	OOLUA::register_class_static<pi_model>(l, "quadric_bezier_quad",        &static_model::quadric_bezier_quad);
+	OOLUA::register_class_static<pi_model>(l, "xref_quadric_bezier_quad",   &static_model::xref_quadric_bezier_quad);
+	OOLUA::register_class_static<pi_model>(l, "cubic_bezier_quad",          &static_model::cubic_bezier_quad);
+	OOLUA::register_class_static<pi_model>(l, "xref_cubic_bezier_quad",     &static_model::xref_cubic_bezier_quad);
+	OOLUA::register_class_static<pi_model>(l, "cubic_bezier_tri",           &static_model::cubic_bezier_tri);
+	OOLUA::register_class_static<pi_model>(l, "xref_cubic_bezier_tri",      &static_model::xref_cubic_bezier_tri);
+	OOLUA::register_class_static<pi_model>(l, "quadric_bezier_tri",         &static_model::quadric_bezier_tri);
+	OOLUA::register_class_static<pi_model>(l, "xref_quadric_bezier_tri",    &static_model::xref_quadric_bezier_tri);
+	OOLUA::register_class_static<pi_model>(l, "extrusion",                  &static_model::extrusion);
+	OOLUA::register_class_static<pi_model>(l, "thruster",                   &static_model::thruster);
+	OOLUA::register_class_static<pi_model>(l, "xref_thruster",              &static_model::xref_thruster);
+	OOLUA::register_class_static<pi_model>(l, "get_arg",                    &static_model::get_arg);
+	OOLUA::register_class_static<pi_model>(l, "get_arg_string",             &static_model::get_arg_string);
+	OOLUA::register_class_static<pi_model>(l, "flat",                       &static_model::flat);
+	OOLUA::register_class_static<pi_model>(l, "xref_flat",                  &static_model::xref_flat);
+	OOLUA::register_class_static<pi_model>(l, "billboard",                  &static_model::billboard);
+	OOLUA::register_class_static<pi_model>(l, "geomflag",                   &static_model::geomflag);
+	OOLUA::register_class_static<pi_model>(l, "zbias",                      &static_model::zbias);
+	OOLUA::register_class_static<pi_model>(l, "set_insideout",              &static_model::set_insideout);
+	OOLUA::register_class_static<pi_model>(l, "set_local_lighting",         &static_model::set_local_lighting);
+	OOLUA::register_class_static<pi_model>(l, "set_light",                  &static_model::set_light);
+	OOLUA::register_class_static<pi_model>(l, "use_light",                  &static_model::use_light);
 }
 
 void LmrModelCompilerInit()
@@ -2722,53 +2811,9 @@ void LmrModelCompilerInit()
 
 
 	lua_register(L, "define_model", define_model);
-	lua_register(L, "set_material", ModelFuncs::set_material);
-	lua_register(L, "use_material", ModelFuncs::use_material);
-	lua_register(L, "get_arg_material", ModelFuncs::get_arg_material);
-	lua_register(L, "sphere", ModelFuncs::sphere);
-	lua_register(L, "sphere_slice", ModelFuncs::sphere_slice);
-	lua_register(L, "invisible_tri", ModelFuncs::invisible_tri);
-	lua_register(L, "tri", ModelFuncs::tri);
-	lua_register(L, "xref_tri", ModelFuncs::xref_tri);
-	lua_register(L, "quad", ModelFuncs::quad);
-	lua_register(L, "xref_quad", ModelFuncs::xref_quad);
-	lua_register(L, "cylinder", ModelFuncs::cylinder);
-	lua_register(L, "xref_cylinder", ModelFuncs::xref_cylinder);
-	lua_register(L, "tapered_cylinder", ModelFuncs::tapered_cylinder);
-	lua_register(L, "xref_tapered_cylinder", ModelFuncs::xref_tapered_cylinder);
-	lua_register(L, "lathe", ModelFuncs::lathe);
-	lua_register(L, "tube", ModelFuncs::tube);
-	lua_register(L, "xref_tube", ModelFuncs::xref_tube);
-	lua_register(L, "ring", ModelFuncs::ring);
-	lua_register(L, "xref_ring", ModelFuncs::xref_ring);
-	lua_register(L, "circle", ModelFuncs::circle);
-	lua_register(L, "xref_circle", ModelFuncs::xref_circle);
-	lua_register(L, "text", ModelFuncs::text);
-	lua_register(L, "quadric_bezier_quad", ModelFuncs::quadric_bezier_quad);
-	lua_register(L, "xref_quadric_bezier_quad", ModelFuncs::xref_quadric_bezier_quad);
-	lua_register(L, "cubic_bezier_quad", ModelFuncs::cubic_bezier_quad);
-	lua_register(L, "xref_cubic_bezier_quad", ModelFuncs::xref_cubic_bezier_quad);
-	lua_register(L, "cubic_bezier_tri", ModelFuncs::cubic_bezier_triangle);
-	lua_register(L, "xref_cubic_bezier_tri", ModelFuncs::xref_cubic_bezier_triangle);
-	lua_register(L, "quadric_bezier_tri", ModelFuncs::quadric_bezier_triangle);
-	lua_register(L, "xref_quadric_bezier_tri", ModelFuncs::xref_quadric_bezier_triangle);
-	lua_register(L, "extrusion", ModelFuncs::extrusion);
-	lua_register(L, "thruster", ModelFuncs::thruster);
-	lua_register(L, "xref_thruster", ModelFuncs::xref_thruster);
-	lua_register(L, "get_arg", ModelFuncs::get_arg);
-	lua_register(L, "get_arg_string", ModelFuncs::get_arg_string);
-	lua_register(L, "flat", ModelFuncs::flat);
-	lua_register(L, "xref_flat", ModelFuncs::xref_flat);
-	lua_register(L, "billboard", ModelFuncs::billboard);
-	lua_register(L, "geomflag", ModelFuncs::geomflag);
-	lua_register(L, "zbias", ModelFuncs::zbias);
 	lua_register(L, "noise", LuaUtilFuncs::noise);
 	lua_register(L, "load_obj", ObjLoader::load_obj_file);
 	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
-	lua_register(L, "set_insideout", ModelFuncs::insideout);
-	lua_register(L, "set_local_lighting", ModelFuncs::set_local_lighting);
-	lua_register(L, "set_light", ModelFuncs::set_light);
-	lua_register(L, "use_light", ModelFuncs::use_light);
 
 	s_buildDynamic = false;
 	lua_pushstring(L, PIONEER_DATA_DIR);
