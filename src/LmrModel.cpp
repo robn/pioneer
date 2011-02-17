@@ -1725,17 +1725,22 @@ namespace ModelFuncs {
 		s_curBuf->SetGeomFlag(flag);
 	}
 
-	static int zbias(lua_State *L)
+	static void zbias(float amount)
 	{
-		float amount = luaL_checknumber(L, 1);
-		if (amount == 0) {
+		if (amount != 0) {
+			luaL_error(sLua, "zbias: non-zero bias amount requires positiona and normal");
+			return;
+		}
+		s_curBuf->PushZBias(0, vector3f(0.0), vector3f(0.0));
+	}
+	static void zbias(float amount, const pi_vector& pos, const pi_vector& norm)
+	{
+		if (amount == 0)
+		{
 			s_curBuf->PushZBias(0, vector3f(0.0), vector3f(0.0));
 		} else {
-			vector3f *pos = MyLuaVec::checkVec(L, 2);
-			vector3f *norm = MyLuaVec::checkVec(L, 3);
-			s_curBuf->PushZBias(amount, *pos, *norm);
+			s_curBuf->PushZBias(amount, pos, norm);
 		}
-		return 0;
 	}
 
 	static void _circle(int steps, const vector3f &center, const vector3f &normal, const vector3f &updir, float radius) {
@@ -2794,6 +2799,8 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(zbias)
+		STATIC_FUNC_1(void, ModelFuncs::zbias, float);
+		STATIC_FUNC_3(void, ModelFuncs::zbias, float, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(set_insideout)
