@@ -1160,9 +1160,10 @@ namespace ModelFuncs {
 		return 0;
 	}
 
-	static void extrusion(const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius, OOLUA::Lua_table t)
+	static void extrusion(const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius, OOLUA::Lua_table t, int nt)
 	{
 		const pi_vector *v;
+		printf("%d vectors\n", nt);
 		for (int i=1; t.safe_at(i,v); i++)
 			v->print();
 		assert(0);
@@ -2638,29 +2639,31 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 	STATIC_FUNC(5, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,t5))
 
 #define STATIC_FUNC_0_VA(rt1,fn) \
-	STATIC_FUNC_VA(0, OOLUA_C_FUNCTION_1(rt1,fn,OOLUA::Lua_table))
+	STATIC_FUNC_VA(0, OOLUA_C_FUNCTION_2(rt1,fn,OOLUA::Lua_table,int))
 #define STATIC_FUNC_1_VA(rt1,fn,t1) \
-	STATIC_FUNC_VA(1, OOLUA_C_FUNCTION_2(rt1,fn,t1,OOLUA::Lua_table))
+	STATIC_FUNC_VA(1, OOLUA_C_FUNCTION_3(rt1,fn,t1,OOLUA::Lua_table,int))
 #define STATIC_FUNC_2_VA(rt1,fn,t1,t2) \
-	STATIC_FUNC_VA(2, OOLUA_C_FUNCTION_3(rt1,fn,t1,t2,OOLUA::Lua_table))
+	STATIC_FUNC_VA(2, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,OOLUA::Lua_table,int))
 #define STATIC_FUNC_3_VA(rt1,fn,t1,t2,t3) \
-	STATIC_FUNC_VA(3, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,t3,OOLUA::Lua_table))
+	STATIC_FUNC_VA(3, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,OOLUA::Lua_table,int))
 #define STATIC_FUNC_4_VA(rt1,fn,t1,t2,t3,t4) \
-	STATIC_FUNC_VA(4, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,OOLUA::Lua_table))
+	STATIC_FUNC_VA(4, OOLUA_C_FUNCTION_6(rt1,fn,t1,t2,t3,t4,OOLUA::Lua_table,int))
 #define STATIC_FUNC_5_VA(rt1,fn,t1,t2,t3,t4,t5) \
-	STATIC_FUNC_VA(5, OOLUA_C_FUNCTION_6(rt1,fn,t1,t2,t3,t4,t5,OOLUA::Lua_table))
+	STATIC_FUNC_VA(5, OOLUA_C_FUNCTION_7(rt1,fn,t1,t2,t3,t4,t5,OOLUA::Lua_table,int))
 
 static inline void _static_varargs_table(lua_State *l, int n)
 {
-	for (int i=n-(lua_gettop(l)-1); i<-1; i++)
+	int i;
+	for (i=n-(lua_gettop(l)-1); i<-1; i++)
 		lua_insert(l, i);
 	lua_newtable(l);
-	for (int i=1; lua_gettop(l)-2 > n; i++) {
+	for (i=1; lua_gettop(l)-2 > n; i++) {
 		lua_insert(l, -2);
 		lua_pushinteger(l, i);
 		lua_insert(l, -2);
 		lua_settable(l, -3);
 	}
+	lua_pushinteger(l, i-1);
 }
 
 static void _static_dispatch_fail(lua_State *l)
