@@ -1974,32 +1974,21 @@ namespace ModelFuncs {
 			s_curBuf->PushTri(vtxStart+3*steps, vtxStart+3*steps+i-1, vtxStart+3*steps+i);
 		}
 	}
-	
-	static int cylinder(lua_State *L)
+
+	static void cylinder(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		const vector3f *start = MyLuaVec::checkVec(L, 2);
-		const vector3f *end = MyLuaVec::checkVec(L, 3);
-		const vector3f *updir = MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
-		_cylinder(steps, *start, *end, *updir, radius);
-		return 0;
+		_cylinder(steps, start, end, updir, radius);
 	}
 
-	static int xref_cylinder(lua_State *L)
+	static void xref_cylinder(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
 	{
 		/* could optimise for x-reflection but fuck it */
-		int steps = luaL_checkint(L, 1);
-		vector3f start = *MyLuaVec::checkVec(L, 2);
-		vector3f end = *MyLuaVec::checkVec(L, 3);
-		vector3f updir = *MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
+		vector3f start = pstart, end = pend, updir = pupdir;
 		_cylinder(steps, start, end, updir, radius);
 		start.x = -start.x;
 		end.x = -end.x;
 		updir.x = -updir.x;
 		_cylinder(steps, start, end, updir, radius);
-		return 0;
 	}
 
 	static void _ring(int steps, const vector3f &start, const vector3f &end, const vector3f &updir, float radius) {
@@ -2717,9 +2706,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(cylinder)
+		STATIC_FUNC_5(void, ModelFuncs::cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_cylinder)
+		STATIC_FUNC_5(void, ModelFuncs::xref_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(tapered_cylinder)

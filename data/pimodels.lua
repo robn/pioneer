@@ -31,6 +31,8 @@ end
 function sphere_slice (long_segs,lat_segs,angle1,angle2,trans) pi_model:sphere_slice(long_segs,lat_segs,angle1,angle2,trans) end
 function invisible_tri (v1,v2,v3) pi_model:invisible_tri(v1,v2,v3) end
 function extrusion (s,e,updir,r,...) pi_model:extrusion(s,e,updir,r,...) end
+function cylinder (...) pi_model:cylinder(...) end
+function xref_cylinder (...) pi_model:xref_cylinder(...) end
 function set_light (num,quadratic_attenuation,pos,col) pi_model:set_light(num,quadratic_attenuation,pos,col) end
 function use_light (num) pi_model:use_light(num) end
 
