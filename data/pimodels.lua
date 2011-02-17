@@ -34,11 +34,6 @@ function extrusion (s,e,updir,r,...) pi_model:extrusion(s,e,updir,r,...) end
 function set_light (num,quadratic_attenuation,pos,col) pi_model:set_light(num,quadratic_attenuation,pos,col) end
 function use_light (num) pi_model:use_light(num) end
 
-extrusion(
-	v(1,0,0),v(2,0,0),v(3,0,0),4,
-	v(1,1,1),v(2,2,2),v(3,3,3),v(4,4,4),v(5,5,5)
-)
-
 --
 -- Don't add models to this! Put them in ./models/
 --

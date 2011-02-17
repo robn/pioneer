@@ -1160,38 +1160,33 @@ namespace ModelFuncs {
 		return 0;
 	}
 
-	static void extrusion(const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius, OOLUA::Lua_table t, int nt)
+	static void extrusion(const pi_vector& pstart, const pi_vector& pend, const pi_vector& updir, float radius, OOLUA::Lua_table t, int nt)
 	{
-		const pi_vector *v;
-		printf("%d vectors\n", nt);
-		for (int i=1; t.safe_at(i,v); i++)
-			v->print();
-		assert(0);
-	}
-
-	static int extrusion(lua_State *L)
-	{
-		const vector3f *start = MyLuaVec::checkVec(L, 1);
-		const vector3f *end = MyLuaVec::checkVec(L, 2);
-		const vector3f *updir = MyLuaVec::checkVec(L, 3);
-		const float radius = luaL_checknumber(L, 4);
-
 #define EXTRUSION_MAX_VTX 32
-		int steps = lua_gettop(L)-4;
-		if (steps > EXTRUSION_MAX_VTX) {
-			luaL_error(L, "extrusion() takes at most %d points", EXTRUSION_MAX_VTX);
+		if (nt > EXTRUSION_MAX_VTX) {
+			luaL_error(sLua, "extrusion() takes at most %d points", EXTRUSION_MAX_VTX);
+			return;
 		}
+
 		vector3f evtx[EXTRUSION_MAX_VTX];
 
-		for (int i=0; i<steps; i++) {
-			evtx[i] = *MyLuaVec::checkVec(L, i+5);
+		int steps;
+		for (steps = 0; steps < nt; steps++) {
+			pi_vector *pv;
+			if (!t.safe_at(steps+1, pv)) {
+				luaL_error(sLua, "extrusion: point %d is not a vector", steps+1);
+				return;
+			}
+			evtx[steps] = *pv;
 		}
 
 		const int vtxStart = s_curBuf->AllocVertices(6*steps);
 
-		vector3f yax = *updir;
+		vector3f start = pstart, end = pend;
+
+		vector3f yax = updir;
 		vector3f xax, zax;
-		zax = ((*end) - (*start)).Normalized();
+		zax = (end - start).Normalized();
 		xax = vector3f::Cross(yax, zax);
 
 		for (int i=0; i<steps; i++) {
@@ -1201,8 +1196,8 @@ namespace ModelFuncs {
 			norm = norm + tv;
 
 			vector3f p1 = norm * radius;
-			s_curBuf->SetVertex(vtxStart + i, (*start) + p1, -zax);
-			s_curBuf->SetVertex(vtxStart + i + steps, (*end) + p1, zax);
+			s_curBuf->SetVertex(vtxStart + i, start + p1, -zax);
+			s_curBuf->SetVertex(vtxStart + i + steps, end + p1, zax);
 		}
 
 		for (int i=0; i<steps-1; i++) {
@@ -1229,8 +1224,6 @@ namespace ModelFuncs {
 			s_curBuf->PushTri(idx, idx+1, idx+3);
 			s_curBuf->PushTri(idx, idx+3, idx+2);
 		}
-
-		return 0;
 	}
 	
 	static vector3f eval_cubic_bezier_u(const vector3f p[4], float u)
