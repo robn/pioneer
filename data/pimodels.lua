@@ -1,6 +1,6 @@
 dofile(CurrentDirectory .. "/pistartup.lua")
 
-function call_model (name,pos,xaxis,yaxis,scale) pi_model:call_model(name,pos,xaxis,yaxis,scale) end
+function call_model (...) pi_model:call_model(...) end
 function texture (file,pos,uaxis,vaxis)
 	if file == nil then
 		pi_model:texture()
@@ -12,15 +12,15 @@ function texture (file,pos,uaxis,vaxis)
 	end
 	pi_model:texture(file,pos,uaxis,vaxis)
 end
-function set_material (name,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11)
+function set_material (name,m1,...)
     if type(m1) == "table" then
-        pi_model:set_material (name, m1)
+        pi_model:set_material(name, m1)
     else
-        pi_model:set_material (name, { m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11 })
+        pi_model:set_material(name, { m1,... })
     end
 end
-function use_material (name) pi_model:use_material(name) end
-function get_arg_material (n) return pi_model:get_arg_material(n) end
+function use_material (...) pi_model:use_material(...) end
+function get_arg_material (...) return pi_model:get_arg_material(...) end
 function sphere (subdivs,trans)
     if trans == nil then
         pi_model:sphere(subdivs)
@@ -28,13 +28,13 @@ function sphere (subdivs,trans)
     end
     pi_model:sphere(subdivs,trans)
 end
-function sphere_slice (long_segs,lat_segs,angle1,angle2,trans) pi_model:sphere_slice(long_segs,lat_segs,angle1,angle2,trans) end
-function invisible_tri (v1,v2,v3) pi_model:invisible_tri(v1,v2,v3) end
-function extrusion (s,e,updir,r,...) pi_model:extrusion(s,e,updir,r,...) end
+function sphere_slice (...) pi_model:sphere_slice(...) end
+function invisible_tri (...) pi_model:invisible_tri(...) end
+function extrusion (...) pi_model:extrusion(...) end
 function cylinder (...) pi_model:cylinder(...) end
 function xref_cylinder (...) pi_model:xref_cylinder(...) end
-function set_light (num,quadratic_attenuation,pos,col) pi_model:set_light(num,quadratic_attenuation,pos,col) end
-function use_light (num) pi_model:use_light(num) end
+function set_light (...) pi_model:set_light(...) end
+function use_light (...) pi_model:use_light(...) end
 
 --
 -- Don't add models to this! Put them in ./models/
