@@ -1081,11 +1081,9 @@ namespace ModelFuncs {
 		s_curBuf->PushUseLight(num);
 	}
 
-	static int set_local_lighting(lua_State *L)
+	static void set_local_lighting(bool doIt)
 	{
-		const bool doIt = lua_toboolean(L, 1) != 0;
 		s_curBuf->PushSetLocalLighting(doIt);
-		return 0;
 	}
 
 	static int insideout(lua_State *L)
@@ -2751,6 +2749,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(set_local_lighting)
+		STATIC_FUNC_1(void, ModelFuncs::set_local_lighting, bool)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(set_light)

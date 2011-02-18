@@ -64,6 +64,7 @@ function xref_cubic_bezier_quad (divs_v,divs_u,pt1,...)
 end
 function geomflag (...) pi_model:geomflag(...) end
 function zbias (...) pi_model:zbias(...) end
+function set_local_lighting (...) pi_model:set_local_lighting(...) end
 function set_light (...) pi_model:set_light(...) end
 function use_light (...) pi_model:use_light(...) end
 
