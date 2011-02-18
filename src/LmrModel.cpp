@@ -1551,22 +1551,13 @@ namespace ModelFuncs {
 		return out;
 	}
 
-	static void _cubic_bezier_quad(lua_State *L, bool xref)
+	static void _cubic_bezier_quad(int divs_v, int divs_u, OOLUA::Lua_table points, bool xref)
 	{
 		vector3f pts[16];
-		const int divs_v = luaL_checkint(L, 1);
-		const int divs_u = luaL_checkint(L, 2);
-		if (lua_istable(L, 3)) {
-			for (int i=0; i<16; i++) {
-				lua_pushinteger(L, i+1);
-				lua_gettable(L, 3);
-				pts[i] = *MyLuaVec::checkVec(L, -1);
-				lua_pop(L, 1);
-			}
-		} else {
-			for (int i=0; i<16; i++) {
-				pts[i] = *MyLuaVec::checkVec(L, i+3);
-			}
+
+		for (int i=0; i<16; i++) {
+			pi_vector *pv;
+			pts[i] = points.safe_at(i+1, pv) ? pv->to_vector3f() : vector3f();
 		}
 
 		const int numVertsInPatch = (divs_v+1)*(divs_u+1);
@@ -1612,8 +1603,15 @@ namespace ModelFuncs {
 		}
 	}
 
-	static int cubic_bezier_quad(lua_State *L) { _cubic_bezier_quad(L, false); return 0; }
-	static int xref_cubic_bezier_quad(lua_State *L) { _cubic_bezier_quad(L, true); return 0; }
+	static void cubic_bezier_quad(int divs_v, int divs_u, OOLUA::Lua_table pts_table)
+	{
+		_cubic_bezier_quad(divs_v, divs_u, pts_table, false);
+	}
+
+	static void xref_cubic_bezier_quad(int divs_v, int divs_u, OOLUA::Lua_table pts_table)
+	{
+		_cubic_bezier_quad(divs_v, divs_u, pts_table, true);
+	}
 
 	static void set_material(const std::string& mat_name, OOLUA::Lua_table material)
 	{
@@ -2704,9 +2702,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(cubic_bezier_quad)
+		STATIC_FUNC_3(void, ModelFuncs::cubic_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_cubic_bezier_quad)
+		STATIC_FUNC_3(void, ModelFuncs::xref_cubic_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(cubic_bezier_tri)

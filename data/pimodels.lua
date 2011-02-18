@@ -46,6 +46,20 @@ function xref_ring (...) pi_model:xref_ring(...) end
 function circle (...) pi_model:circle(...) end
 function xref_circle (...) pi_model:xref_circle(...) end
 function text (...) pi_model:text(...) end
+function cubic_bezier_quad (divs_v,divs_u,pt1,...)
+    if type(pt1) == "table" then
+        pi_model:cubic_bezier_quad(divs_v, divs_u, pt1)
+    else
+		pi_model:cubic_bezier_quad(divs_v, divs_u, { pt1,... })
+    end
+end
+function xref_cubic_bezier_quad (divs_v,divs_u,pt1,...)
+    if type(pt1) == "table" then
+        pi_model:xref_cubic_bezier_quad(divs_v, divs_u, pt1)
+    else
+		pi_model:xref_cubic_bezier_quad(divs_v, divs_u, { pt1,... })
+    end
+end
 function geomflag (...) pi_model:geomflag(...) end
 function zbias (...) pi_model:zbias(...) end
 function set_light (...) pi_model:set_light(...) end
