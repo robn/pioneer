@@ -104,6 +104,18 @@ public:
 	pi_matrix(const pi_matrix &a) { m = a.to_matrix4x4f(); }
 	pi_matrix(const matrix4x4f &a) { m = a; }
 
+	pi_matrix(const pi_vector &v1, const pi_vector &v2, const pi_vector &v3)
+	{
+		m = matrix4x4f::MakeRotMatrix(v1,v2,v3); 
+	}
+	pi_matrix(const pi_vector &v1, const pi_vector &v2, const pi_vector &v3, const pi_vector &v4)
+	{ 
+		m = matrix4x4f::MakeRotMatrix(v1,v2,v3); 
+		m[12] = v4.x();
+		m[13] = v4.y();
+		m[14] = v4.z();
+	}
+
     inline operator matrix4x4f () const { return m; }
 	inline matrix4x4f to_matrix4x4f() const { return m; }
 
@@ -147,6 +159,8 @@ OOLUA_CLASS_NO_BASES(pi_matrix)
 	OOLUA_END_TYPES
 	OOLUA_CONSTRUCTORS_BEGIN
 		OOLUA_CONSTRUCTOR_1(float)
+		OOLUA_CONSTRUCTOR_3(const pi_vector&, const pi_vector&, const pi_vector&)
+		OOLUA_CONSTRUCTOR_4(const pi_vector&, const pi_vector&, const pi_vector&, const pi_vector&)
 	OOLUA_CONSTRUCTORS_END
 	OOLUA_MEM_FUNC_0_CONST(pi_matrix, inverse)
 	OOLUA_MEM_FUNC_0_CONST(void, print)
