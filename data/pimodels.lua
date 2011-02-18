@@ -39,6 +39,8 @@ function thruster (...) pi_model:thruster(...) end
 function xref_thruster (...) pi_model:xref_thruster(...) end
 function cylinder (...) pi_model:cylinder(...) end
 function xref_cylinder (...) pi_model:xref_cylinder(...) end
+function tapered_cylinder (...) pi_model:tapered_cylinder(...) end
+function xref_tapered_cylinder (...) pi_model:xref_tapered_cylinder(...) end
 function tube (...) pi_model:tube(...) end
 function xref_tube (...) pi_model:xref_tube(...) end
 function ring (...) pi_model:ring(...) end

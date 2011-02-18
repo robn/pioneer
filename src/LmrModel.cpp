@@ -1875,34 +1875,20 @@ namespace ModelFuncs {
 			s_curBuf->PushTri(vtxStart+3*steps, vtxStart+3*steps+i-1, vtxStart+3*steps+i);
 		}
 	}
-	
-	static int tapered_cylinder(lua_State *L)
+
+	static void tapered_cylinder(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius1, float radius2)
 	{
-		int steps = luaL_checkint(L, 1);
-		const vector3f *start = MyLuaVec::checkVec(L, 2);
-		const vector3f *end = MyLuaVec::checkVec(L, 3);
-		const vector3f *updir = MyLuaVec::checkVec(L, 4);
-		float radius1 = lua_tonumber(L, 5);
-		float radius2 = lua_tonumber(L, 6);
-		_tapered_cylinder(steps, *start, *end, *updir, radius1, radius2);
-		return 0;
+		_tapered_cylinder(steps, start, end, updir, radius1, radius2);
 	}
 
-	static int xref_tapered_cylinder(lua_State *L)
+	static void xref_tapered_cylinder(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius1, float radius2)
 	{
-		/* could optimise for x-reflection but fuck it */
-		int steps = luaL_checkint(L, 1);
-		vector3f start = *MyLuaVec::checkVec(L, 2);
-		vector3f end = *MyLuaVec::checkVec(L, 3);
-		vector3f updir = *MyLuaVec::checkVec(L, 4);
-		float radius1 = lua_tonumber(L, 5);
-		float radius2 = lua_tonumber(L, 6);
+		vector3f start = pstart, end = pend, updir = pupdir;
 		_tapered_cylinder(steps, start, end, updir, radius1, radius2);
 		start.x = -start.x;
 		end.x = -end.x;
 		updir.x = -updir.x;
 		_tapered_cylinder(steps, start, end, updir, radius1, radius2);
-		return 0;
 	}
 
 	static void _cylinder(int steps, const vector3f &start, const vector3f &end, const vector3f &updir, float radius) {
@@ -2658,9 +2644,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(tapered_cylinder)
+		STATIC_FUNC_6(void, ModelFuncs::tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_tapered_cylinder)
+		STATIC_FUNC_6(void, ModelFuncs::xref_tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(lathe)
