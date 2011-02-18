@@ -1676,51 +1676,40 @@ namespace ModelFuncs {
 				s_curBuf->PushVertex(p, _textNorm);
 			}
 		}
-	static int text(lua_State *L)
+	
+	static void text(const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale, OOLUA::Lua_table opts)
 	{
-		const char *str = luaL_checkstring(L, 1);
-		vector3f pos = *MyLuaVec::checkVec(L, 2);
-		vector3f *norm = MyLuaVec::checkVec(L, 3);
-		vector3f *textdir = MyLuaVec::checkVec(L, 4);
-		float scale = luaL_checknumber(L, 5);
-		vector3f yaxis = vector3f::Cross(*norm, *textdir).Normalized();
-		vector3f zaxis = vector3f::Cross(*textdir, yaxis).Normalized();
+		vector3f pos = ppos, norm = pnorm, textdir = ptextdir;
+
+		vector3f yaxis = vector3f::Cross(norm, textdir).Normalized();
+		vector3f zaxis = vector3f::Cross(textdir, yaxis).Normalized();
 		vector3f xaxis = vector3f::Cross(yaxis, zaxis);
 		_textTrans = matrix4x4f::MakeInvRotMatrix(scale*xaxis, scale*yaxis, scale*zaxis);
 		
 		bool do_center = false;
-		if (lua_istable(L, 6)) {
-			lua_pushstring(L, "center");
-			lua_gettable(L, 6);
-			do_center = lua_toboolean(L, -1) != 0;
-			lua_pop(L, 1);
-
-			lua_pushstring(L, "xoffset");
-			lua_gettable(L, 6);
-			float xoff = lua_tonumber(L, -1);
-			lua_pop(L, 1);
+		opts.at("center", do_center);
 			
-			lua_pushstring(L, "yoffset");
-			lua_gettable(L, 6);
-			float yoff = lua_tonumber(L, -1);
-			lua_pop(L, 1);
-			pos += _textTrans * vector3f(xoff, yoff, 0);
-		}
+		float xoff = 0, yoff = 0;
+		opts.at("xoffset", xoff);
+		opts.at("yoffset", yoff);
+		pos += _textTrans * vector3f(xoff, yoff, 0);
 	
 		if (do_center) {
 			float xoff = 0, yoff = 0;
-			s_font->MeasureString(str, xoff, yoff);
+			s_font->MeasureString(str.c_str(), xoff, yoff);
 			pos -= 0.5f * (_textTrans * vector3f(xoff, yoff, 0));
 		}
 		_textTrans[12] = pos.x;
 		_textTrans[13] = pos.y;
 		_textTrans[14] = pos.z;
-		_textNorm = *norm;
-		s_font->GetStringGeometry(str, &_text_index_callback, &_text_vertex_callback);
-//text("some literal string", vector pos, vector norm, vector textdir, [xoff=, yoff=, scale=, onflag=])
-		return 0;
+		_textNorm = norm;
+		s_font->GetStringGeometry(str.c_str(), &_text_index_callback, &_text_vertex_callback);
 	}
-	
+	static void text(const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale)
+	{
+		text(str, ppos, pnorm, ptextdir, scale, OOLUA::Lua_table());
+	}
+
 	static void geomflag(int flag) {
 		s_curBuf->SetGeomFlag(flag);
 	}
@@ -2704,6 +2693,8 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(text)
+		STATIC_FUNC_5(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_FUNC_6(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(quadric_bezier_quad)
