@@ -2527,7 +2527,7 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 #define STATIC_DISPATCH_START(name) static int name(lua_State *l) { const int _n = lua_gettop(l)-1;
 #define STATIC_FUNC(n,def) if (_n == n) { def }
 #define STATIC_FUNC_VA(n,def) if (_n >= n) { _static_varargs_table(l,n); def }
-#define STATIC_DISPATCH_END _static_dispatch_fail(l); return 0; }
+#define STATIC_DISPATCH_END _static_dispatch_fail(l,__func__); return 0; }
 
 #define STATIC_FUNC_0(rt1,fn) \
 	STATIC_FUNC(0, OOLUA_C_FUNCTION_0(rt1,fn))
@@ -2574,13 +2574,9 @@ static inline void _static_varargs_table(lua_State *l, int n)
 	lua_pushinteger(l, i-1);
 }
 
-static void _static_dispatch_fail(lua_State *l)
+static void _static_dispatch_fail(lua_State *l, const char* func)
 {
-	printf("%d args on stack:\n", lua_gettop(l));
-	for (int i = 1; i <= lua_gettop(l); i++) {
-		printf("  %s\n", lua_typename(l, lua_type(l, i)));
-	}
-	luaL_error(l, "...");
+	luaL_error(l, "no function found for pi_model:%s (%d arguments)", func, lua_gettop(l)-1);
 }
 
 namespace static_model {
