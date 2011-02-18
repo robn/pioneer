@@ -41,6 +41,8 @@ function cylinder (...) pi_model:cylinder(...) end
 function xref_cylinder (...) pi_model:xref_cylinder(...) end
 function ring (...) pi_model:ring(...) end
 function xref_ring (...) pi_model:xref_ring(...) end
+function circle (...) pi_model:circle(...) end
+function xref_circle (...) pi_model:xref_circle(...) end
 function geomflag (...) pi_model:geomflag(...) end
 function zbias (...) pi_model:zbias(...) end
 function set_light (...) pi_model:set_light(...) end

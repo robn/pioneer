@@ -1763,30 +1763,19 @@ namespace ModelFuncs {
 		}
 	}
 
-	static int circle(lua_State *L)
+	static void circle(int steps, const pi_vector& center, const pi_vector& normal, const pi_vector& updir, float radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		const vector3f *center = MyLuaVec::checkVec(L, 2);
-		const vector3f *normal = MyLuaVec::checkVec(L, 3);
-		const vector3f *updir = MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
-		_circle(steps, *center, *normal, *updir, radius);
-		return 0;
+		_circle(steps, center, normal, updir, radius);
 	}
 
-	static int xref_circle(lua_State *L)
+	static void xref_circle(int steps, const pi_vector& pcenter, const pi_vector& pnormal, const pi_vector& pupdir, float radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		vector3f center = *MyLuaVec::checkVec(L, 2);
-		vector3f normal = *MyLuaVec::checkVec(L, 3);
-		vector3f updir = *MyLuaVec::checkVec(L, 4);
-		float radius = lua_tonumber(L, 5);
+		vector3f center = pcenter, normal = pnormal, updir = pupdir;
 		_circle(steps, center, normal, updir, radius);
 		center.x = -center.x;
 		normal.x = -normal.x;
 		updir.x = -updir.x;
 		_circle(steps, center, normal, updir, radius);
-		return 0;
 	}
 
 	static void _tube(int steps, const vector3f &start, const vector3f &end, const vector3f &updir, float inner_radius, float outer_radius) {
@@ -2714,9 +2703,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(circle)
+		STATIC_FUNC_5(void, ModelFuncs::circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_circle)
+		STATIC_FUNC_5(void, ModelFuncs::xref_circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(text)
