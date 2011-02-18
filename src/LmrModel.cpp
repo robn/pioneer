@@ -2791,6 +2791,7 @@ void LmrModelCompilerInit()
 
 	PiLuaClasses::RegisterClasses(L);
 	PiLuaConstants::RegisterConstants(L);
+    LuaUtilFuncs::RegisterClasses(L);
 
 	RegisterModelClass(L);
 
@@ -2799,8 +2800,6 @@ void LmrModelCompilerInit()
 
 
 	lua_register(L, "define_model", define_model);
-	lua_register(L, "noise", LuaUtilFuncs::noise);
-	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 
 	s_buildDynamic = false;
 	lua_pushstring(L, PIONEER_DATA_DIR);

@@ -138,9 +138,9 @@ void CustomSystem::Init()
 
     PiLuaClasses::RegisterClasses(L);
 	PiLuaConstants::RegisterConstants(L);
+    LuaUtilFuncs::RegisterClasses(L);
 
 	lua_register(L, "define_system", define_system);
-	lua_register(L, "load_lua", LuaUtilFuncs::load_lua);
 
 	lua_pushstring(L, PIONEER_DATA_DIR);
 	lua_setglobal(L, "CurrentDirectory");
