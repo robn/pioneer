@@ -1247,110 +1247,106 @@ namespace ModelFuncs {
 		return out;
 	}
 
-	static int _flat(lua_State *L, bool xref)
+	static void _flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt, bool xref)
 	{
-		const int divs = luaL_checkinteger(L, 1);
-		const vector3f *normal = MyLuaVec::checkVec(L, 2);
+		const vector3f normal = pnormal;
+
 		vector3f xrefnorm(0.0f);
-		if (xref) xrefnorm = vector3f(-normal->x, normal->y, normal->z);
+		if (xref) xrefnorm = vector3f(-normal.x, normal.y, normal.z);
+
 #define FLAT_MAX_SEG 32
+		if (nt == 0) {
+			luaL_error(sLua, "flat: takes at least 1 table of line segments");
+			return;
+		}
+		if (nt > FLAT_MAX_SEG) {
+			luaL_error(sLua, "flat: takes at most %d table of line segments", FLAT_MAX_SEG);
+			return;
+		}
+
 		struct {
-			const vector3f *v[3];
+			vector3f v[3];
 			int nv;
 		} segvtx[FLAT_MAX_SEG];
 
-		if (!lua_istable(L, 3)) {
-			luaL_error(L, "argment 3 to flat() must be a table of line segments");
-			return 0;
-		}
-
-		int argmax = lua_gettop(L);
-		int seg = 0;
 		int numPoints = 0;
-		// iterate through table of line segments
-		for (int n=3; n<=argmax; n++, seg++) {
-			if (lua_istable(L, n)) {
-				// this table is a line segment itself
-				// 1 vtx = straight line
-				// 2     = quadric bezier
-				// 3     = cubic bezier
-				int nv = 0;
-				for (int i=1; i<4; i++) {
-					lua_pushinteger(L, i);
-					lua_gettable(L, n);
-					if (lua_isnil(L, -1)) {
-						lua_pop(L, 1);
-						break;
-					} else {
-						segvtx[seg].v[nv++] = MyLuaVec::checkVec(L, -1);
-						lua_pop(L, 1);
-					}
-				}
-				segvtx[seg].nv = nv;
+		int seg;
+		for (seg = 0; seg < nt; seg++) {
+			OOLUA::Lua_table segt;
 
-				if (!nv) {
-					luaL_error(L, "number of points in a line segment must be 1-3 (straight, quadric, cubic)");
-					return 0;
-				} else if (nv == 1) {
-					numPoints++;
-				} else if (nv > 1) {
-					numPoints += divs;
-				}
-			} else {
-				luaL_error(L, "invalid crap in line segment list");
-				return 0;
+			if (!(t.safe_at(seg+1,segt))) {
+				luaL_error(sLua, "flat: argument %d must be a table of line segments", seg+3);
+				return;
 			}
+
+			int nv = 0;
+			for (int i=1; i<4; i++) {
+				pi_vector *pv;
+				if (segt.safe_at(i, pv))
+					segvtx[seg].v[nv++] = *pv;
+			}
+			segvtx[seg].nv = nv;
+
+			if (!nv) {
+				luaL_error(sLua, "flat: number of points in segment table at argument %d must be 1-3 (straight, quadric, cubic)", seg+3);
+				return;
+			}
+
+			if (nv == 1)
+				numPoints++;
+			else if (nv > 1)
+				numPoints += divs;
 		}
 
 		const int vtxStart = s_curBuf->AllocVertices(xref ? 2*numPoints : numPoints);
 		int vtxPos = vtxStart;
 
-		const vector3f *prevSegEnd = segvtx[seg-1].v[ segvtx[seg-1].nv-1 ];
+		const vector3f *prevSegEnd = &(segvtx[seg-1].v[ segvtx[seg-1].nv-1 ]);
 		// evaluate segments
 		int maxSeg = seg;
 		for (seg=0; seg<maxSeg; seg++) {
 			if (segvtx[seg].nv == 1) {
 				if (xref) {
-					vector3f p = *segvtx[seg].v[0]; p.x = -p.x;
+					vector3f p = segvtx[seg].v[0]; p.x = -p.x;
 					s_curBuf->SetVertex(vtxPos + numPoints, p, xrefnorm);
 				}
-				s_curBuf->SetVertex(vtxPos++, *segvtx[seg].v[0], *normal);
-				prevSegEnd = segvtx[seg].v[0];
+				s_curBuf->SetVertex(vtxPos++, segvtx[seg].v[0], normal);
+				prevSegEnd = &(segvtx[seg].v[0]);
 			} else if (segvtx[seg].nv == 2) {
 				vector3f _p[3];
 				_p[0] = *prevSegEnd;
-				_p[1] = *segvtx[seg].v[0];
-				_p[2] = *segvtx[seg].v[1];
+				_p[1] = segvtx[seg].v[0];
+				_p[2] = segvtx[seg].v[1];
 				float inc = 1.0f / (float)divs;
 				float u = inc;
 				for (int i=1; i<=divs; i++, u+=inc) {
 					vector3f p = eval_quadric_bezier_u(_p, u);
-					s_curBuf->SetVertex(vtxPos, p, *normal);
+					s_curBuf->SetVertex(vtxPos, p, normal);
 					if (xref) {
 						p.x = -p.x;
 						s_curBuf->SetVertex(vtxPos+numPoints, p, xrefnorm);
 					}
 					vtxPos++;
 				}
-				prevSegEnd = segvtx[seg].v[1];
+				prevSegEnd = &(segvtx[seg].v[1]);
 			} else if (segvtx[seg].nv == 3) {
 				vector3f _p[4];
 				_p[0] = *prevSegEnd;
-				_p[1] = *segvtx[seg].v[0];
-				_p[2] = *segvtx[seg].v[1];
-				_p[3] = *segvtx[seg].v[2];
+				_p[1] = segvtx[seg].v[0];
+				_p[2] = segvtx[seg].v[1];
+				_p[3] = segvtx[seg].v[2];
 				float inc = 1.0f / (float)divs;
 				float u = inc;
 				for (int i=1; i<=divs; i++, u+=inc) {
 					vector3f p = eval_cubic_bezier_u(_p, u);
-					s_curBuf->SetVertex(vtxPos, p, *normal);
+					s_curBuf->SetVertex(vtxPos, p, normal);
 					if (xref) {
 						p.x = -p.x;
 						s_curBuf->SetVertex(vtxPos+numPoints, p, xrefnorm);
 					}
 					vtxPos++;
 				}
-				prevSegEnd = segvtx[seg].v[2];
+				prevSegEnd = &(segvtx[seg].v[2]);
 			}
 		}
 
@@ -1360,11 +1356,17 @@ namespace ModelFuncs {
 				s_curBuf->PushTri(vtxStart+numPoints, vtxStart+numPoints+1+i, vtxStart+numPoints+i);
 			}
 		}
-		return 0;
 	}
 	
-	static int flat(lua_State *L) { return _flat(L, false); }
-	static int xref_flat(lua_State *L) { return _flat(L, true); }
+	static void flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt)
+	{
+		_flat(divs, pnormal, t, nt, false);
+	}
+
+	static void xref_flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt)
+	{
+		_flat(divs, pnormal, t, nt, true);
+	}
 
 	static vector3f eval_quadric_bezier_triangle(const vector3f p[6], float s, float t, float u)
 	{
@@ -2728,9 +2730,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(flat)
+		STATIC_FUNC_2_VA(void, ModelFuncs::flat, int, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_flat)
+		STATIC_FUNC_2_VA(void, ModelFuncs::xref_flat, int, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(billboard)
