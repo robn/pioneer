@@ -1836,32 +1836,19 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(vtxStart+5*steps, vtxStart+7*steps, vtxStart+8*steps-1);
 	}
 	
-	static int tube(lua_State *L)
+	static void tube(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float inner_radius, float outer_radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		const vector3f *start = MyLuaVec::checkVec(L, 2);
-		const vector3f *end = MyLuaVec::checkVec(L, 3);
-		const vector3f *updir = MyLuaVec::checkVec(L, 4);
-		float inner_radius = lua_tonumber(L, 5);
-		float outer_radius = lua_tonumber(L, 6);
-		_tube(steps, *start, *end, *updir, inner_radius, outer_radius);
-		return 0;
+		_tube(steps, start, end, updir, inner_radius, outer_radius);
 	}
 
-	static int xref_tube(lua_State *L)
+	static void xref_tube(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float inner_radius, float outer_radius)
 	{
-		int steps = luaL_checkint(L, 1);
-		vector3f start = *MyLuaVec::checkVec(L, 2);
-		vector3f end = *MyLuaVec::checkVec(L, 3);
-		vector3f updir = *MyLuaVec::checkVec(L, 4);
-		float inner_radius = lua_tonumber(L, 5);
-		float outer_radius = lua_tonumber(L, 6);
+		vector3f start = pstart, end = pend, updir = pupdir;
 		_tube(steps, start, end, updir, inner_radius, outer_radius);
 		start.x = -start.x;
 		end.x = -end.x;
 		updir.x = -updir.x;
 		_tube(steps, start, end, updir, inner_radius, outer_radius);
-		return 0;
 	}
 
 	static void _tapered_cylinder(int steps, const vector3f &start, const vector3f &end, const vector3f &updir, float radius1, float radius2) {
@@ -2581,6 +2568,8 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 	STATIC_FUNC(4, OOLUA_C_FUNCTION_4(rt1,fn,t1,t2,t3,t4))
 #define STATIC_FUNC_5(rt1,fn,t1,t2,t3,t4,t5) \
 	STATIC_FUNC(5, OOLUA_C_FUNCTION_5(rt1,fn,t1,t2,t3,t4,t5))
+#define STATIC_FUNC_6(rt1,fn,t1,t2,t3,t4,t5,t6) \
+	STATIC_FUNC(6, OOLUA_C_FUNCTION_6(rt1,fn,t1,t2,t3,t4,t5,t6))
 
 #define STATIC_FUNC_0_VA(rt1,fn) \
 	STATIC_FUNC_VA(0, OOLUA_C_FUNCTION_2(rt1,fn,OOLUA::Lua_table,int))
@@ -2594,6 +2583,8 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 	STATIC_FUNC_VA(4, OOLUA_C_FUNCTION_6(rt1,fn,t1,t2,t3,t4,OOLUA::Lua_table,int))
 #define STATIC_FUNC_5_VA(rt1,fn,t1,t2,t3,t4,t5) \
 	STATIC_FUNC_VA(5, OOLUA_C_FUNCTION_7(rt1,fn,t1,t2,t3,t4,t5,OOLUA::Lua_table,int))
+#define STATIC_FUNC_6_VA(rt1,fn,t1,t2,t3,t4,t5,t6) \
+	STATIC_FUNC_VA(6, OOLUA_C_FUNCTION_8(rt1,fn,t1,t2,t3,t4,t5,t6,OOLUA::Lua_table,int))
 
 static inline void _static_varargs_table(lua_State *l, int n)
 {
@@ -2689,9 +2680,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(tube)
+		STATIC_FUNC_6(void, ModelFuncs::tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_tube)
+		STATIC_FUNC_6(void, ModelFuncs::xref_tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(ring)
