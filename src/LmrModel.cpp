@@ -1478,13 +1478,16 @@ namespace ModelFuncs {
 		return out;
 	}
 
-	static void _quadric_bezier_quad(lua_State *L, bool xref)
+	static void _quadric_bezier_quad(int divs_u, int divs_v, OOLUA::Lua_table points, bool xref)
 	{
 		vector3f pts[9];
-		const int divs_u = luaL_checkint(L, 1);
-		const int divs_v = luaL_checkint(L, 2);
 		for (int i=0; i<9; i++) {
-			pts[i] = *MyLuaVec::checkVec(L, i+3);
+			pi_vector *pv;
+			if (!points.safe_at(i+1, pv)) {
+				luaL_error(sLua, "quadric_bezier_quad: position %d in table of points is not a vector", i+1);
+				return;
+			}
+			pts[i] = *pv;
 		}
 
 		const int numVertsInPatch = (divs_u+1)*(divs_v+1);
@@ -1529,8 +1532,15 @@ namespace ModelFuncs {
 		}
 	}
 	
-	static int quadric_bezier_quad(lua_State *L) { _quadric_bezier_quad(L, false); return 0; }
-	static int xref_quadric_bezier_quad(lua_State *L) { _quadric_bezier_quad(L, true); return 0; }
+	static void quadric_bezier_quad(int divs_u, int divs_v, OOLUA::Lua_table points)
+	{
+		_quadric_bezier_quad(divs_u, divs_v, points, false);
+	}
+
+	static void xref_quadric_bezier_quad(int divs_u, int divs_v, OOLUA::Lua_table points)
+	{
+		_quadric_bezier_quad(divs_u, divs_v, points, true);
+	}
 
 	static vector3f eval_cubic_bezier_u_v(const vector3f p[16], float u, float v)
 	{
@@ -2680,9 +2690,11 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(quadric_bezier_quad)
+		STATIC_FUNC_3(void, ModelFuncs::quadric_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(xref_quadric_bezier_quad)
+		STATIC_FUNC_3(void, ModelFuncs::xref_quadric_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(cubic_bezier_quad)

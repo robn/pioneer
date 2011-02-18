@@ -48,6 +48,8 @@ function xref_ring (...) pi_model:xref_ring(...) end
 function circle (...) pi_model:circle(...) end
 function xref_circle (...) pi_model:xref_circle(...) end
 function text (...) pi_model:text(...) end
+function quadric_bezier_quad (divs_v,divs_u,...) pi_model:quadric_bezier_quad(divs_v, divs_u, { ... }) end
+function xref_quadric_bezier_quad (divs_v,divs_u,...) pi_model:xref_quadric_bezier_quad(divs_v, divs_u, { ... }) end
 function cubic_bezier_quad (divs_v,divs_u,pt1,...)
     if type(pt1) == "table" then
         pi_model:cubic_bezier_quad(divs_v, divs_u, pt1)
