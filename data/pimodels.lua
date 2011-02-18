@@ -67,6 +67,7 @@ end
 function geomflag (...) pi_model:geomflag(...) end
 function flat (...) pi_model:flat(...) end
 function xref_flat (...) pi_model:xref_flat(...) end
+function billboard (...) pi_model:billboard(...) end
 function zbias (...) pi_model:zbias(...) end
 function set_local_lighting (...) pi_model:set_local_lighting(...) end
 function set_light (...) pi_model:set_light(...) end

@@ -2129,28 +2129,21 @@ namespace ModelFuncs {
 		return t;
 	}
 
-	static int billboard(lua_State *L)
+	static void billboard(const std::string& texname, float size, const pi_vector& color, OOLUA::Lua_table points)
 	{
-//		billboard('texname', size, color, { p1, p2, p3, p4 })
-		const char *texname = luaL_checkstring(L, 1);
-		const float size = luaL_checknumber(L, 2);
-		const vector3f color = *MyLuaVec::checkVec(L, 3);
-		std::vector<vector3f> points;
+		vector3f pts[4];
 
-		if (lua_istable(L, 4)) {
-			for (int i=1;; i++) {
-				lua_pushinteger(L, i);
-				lua_gettable(L, 4);
-				if (lua_isnil(L, -1)) {
-					lua_pop(L, 1);
-					break;
-				}
-				points.push_back(*MyLuaVec::checkVec(L, -1));
-				lua_pop(L, 1);
+		int n;
+		for (n=0; n<4; n++) {
+			pi_vector *pv;
+			if (!points.safe_at(n+1, pv)) {
+				/* XXX blow up if not a pi_vector */
+				break;
 			}
+			pts[n] = *pv;
 		}
-		s_curBuf->PushBillboards(texname, size, color, points.size(), &points[0]);
-		return 0;
+
+		s_curBuf->PushBillboards(texname.c_str(), size, color, n, pts);
 	}
 	////////////////////////////////////////////////////////////////
 	
@@ -2746,6 +2739,7 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(billboard)
+		STATIC_FUNC_4(void, ModelFuncs::billboard, const std::string&, float, const pi_vector&, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(geomflag)
