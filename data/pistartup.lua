@@ -23,6 +23,9 @@ function Matrix.rotate(a,v) return matrix:rotation(a,v) end
 function Matrix.scale(v) return matrix:scale(v) end
 function Matrix.translate(v) return matrix:translation(v) end
 
+function noise (...) return pi_utils:noise(...) end
+function load_lua (...) return pi_utils:load_lua(...) end
+
 -- math library extensions
 function math.deg2rad (n) return n * math.pi / 180 end
 
