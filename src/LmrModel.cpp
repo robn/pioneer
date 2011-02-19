@@ -2113,8 +2113,7 @@ namespace ModelFuncs {
 
 		const LmrMaterial &mat = s_curParams->pMat[n];
 
-		OOLUA::Lua_table t;
-		OOLUA::new_table(sLua, t);
+		OOLUA::Lua_table t = OOLUA::new_table(sLua);
 
 		int ti = 1;
 
