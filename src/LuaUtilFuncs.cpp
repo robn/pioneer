@@ -88,12 +88,12 @@ namespace LuaUtilFuncs {
 EXPORT_OOLUA_NO_FUNCTIONS(pi_utils)
 
 namespace static_utils {
-	STATIC_DISPATCH_START(noise)
+	STATIC_DISPATCH_START(pi_utils,noise)
 		STATIC_FUNC_1(float, LuaUtilFuncs::noise, const pi_vector&)
 		STATIC_FUNC_3(float, LuaUtilFuncs::noise, float, float, float)
 	STATIC_DISPATCH_END
 
-	STATIC_DISPATCH_START(load_lua)
+	STATIC_DISPATCH_START(pi_utils,load_lua)
 		STATIC_FUNC_1(void, LuaUtilFuncs::load_lua, const std::string&)
 	STATIC_DISPATCH_END
 }
