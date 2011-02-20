@@ -16,11 +16,11 @@
 
 namespace LuaUtilFuncs {
 
-	static float noise(const pi_vector& v)
+    STATIC_FUNC_1(float, noise, const pi_vector& v)
 	{
 		return ::noise(vector3d(v));
 	}
-	static float noise(float x, float y, float z)
+    STATIC_FUNC_3(float, noise, float x, float y, float z)
 	{
 		return ::noise(vector3d(x,y,z));
 	}
@@ -79,7 +79,7 @@ namespace LuaUtilFuncs {
 	}
 #endif
 
-	static void load_lua(const std::string& filename)
+    STATIC_FUNC_1(void, load_lua, const std::string& filename)
 	{
 		assert(0);
 	}

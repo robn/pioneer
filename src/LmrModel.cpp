@@ -1049,7 +1049,7 @@ LmrModel *LmrLookupModelByName(const char *name) throw (LmrModelNotFoundExceptio
 }	
 
 namespace ModelFuncs {
-	static void call_model(const std::string& obj_name, const pi_vector& pos, const pi_vector& _xaxis, const pi_vector& _yaxis, float scale)
+	STATIC_FUNC_5(void, call_model, const std::string& obj_name, const pi_vector& pos, const pi_vector& _xaxis, const pi_vector& _yaxis, float scale)
 	{
 		LmrModel *m = s_models[obj_name];
 		if (!m) {
@@ -1068,7 +1068,7 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void set_light(int num, float quadratic_attenuation, const pi_vector& pos, const pi_vector& col)
+	STATIC_FUNC_4(void, set_light, int num, float quadratic_attenuation, const pi_vector& pos, const pi_vector& col)
 	{
 		if ((num < 0) || (num > 3)) {
 			luaL_error(sLua, "set_light should have light number from 1 to 4.");
@@ -1077,12 +1077,12 @@ namespace ModelFuncs {
 		s_curBuf->SetLight(num, quadratic_attenuation, pos, col);
 	}
 
-	static void use_light(int num)
+	STATIC_FUNC_1(void, use_light, int num)
 	{
 		s_curBuf->PushUseLight(num);
 	}
 
-	static void set_local_lighting(bool doIt)
+	STATIC_FUNC_1(void, set_local_lighting, bool doIt)
 	{
 		s_curBuf->PushSetLocalLighting(doIt);
 	}
@@ -1159,10 +1159,10 @@ namespace ModelFuncs {
 		return 0;
 	}
 
-	static void extrusion(const pi_vector& pstart, const pi_vector& pend, const pi_vector& updir, float radius, OOLUA::Lua_table t, int nt)
+	STATIC_FUNC_4_VA(void, extrusion, const pi_vector& pstart, const pi_vector& pend, const pi_vector& updir, float radius)
 	{
 #define EXTRUSION_MAX_VTX 32
-		if (nt > EXTRUSION_MAX_VTX) {
+		if (va_n > EXTRUSION_MAX_VTX) {
 			luaL_error(sLua, "extrusion() takes at most %d points", EXTRUSION_MAX_VTX);
 			return;
 		}
@@ -1170,9 +1170,9 @@ namespace ModelFuncs {
 		vector3f evtx[EXTRUSION_MAX_VTX];
 
 		int steps;
-		for (steps = 0; steps < nt; steps++) {
+		for (steps = 0; steps < va_n; steps++) {
 			pi_vector *pv;
-			if (!t.safe_at(steps+1, pv)) {
+			if (!va_t.safe_at(steps+1, pv)) {
 				luaL_error(sLua, "extrusion: point %d is not a vector", steps+1);
 				return;
 			}
@@ -1248,7 +1248,7 @@ namespace ModelFuncs {
 		return out;
 	}
 
-	static void _flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt, bool xref)
+	static void _flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table va_t, int va_n, bool xref)
 	{
 		const vector3f normal = pnormal;
 
@@ -1256,11 +1256,11 @@ namespace ModelFuncs {
 		if (xref) xrefnorm = vector3f(-normal.x, normal.y, normal.z);
 
 #define FLAT_MAX_SEG 32
-		if (nt == 0) {
+		if (va_n == 0) {
 			luaL_error(sLua, "flat: takes at least 1 table of line segments");
 			return;
 		}
-		if (nt > FLAT_MAX_SEG) {
+		if (va_n > FLAT_MAX_SEG) {
 			luaL_error(sLua, "flat: takes at most %d table of line segments", FLAT_MAX_SEG);
 			return;
 		}
@@ -1272,10 +1272,10 @@ namespace ModelFuncs {
 
 		int numPoints = 0;
 		int seg;
-		for (seg = 0; seg < nt; seg++) {
+		for (seg = 0; seg < va_n; seg++) {
 			OOLUA::Lua_table segt;
 
-			if (!(t.safe_at(seg+1,segt))) {
+			if (!(va_t.safe_at(seg+1,segt))) {
 				luaL_error(sLua, "flat: argument %d must be a table of line segments", seg+3);
 				return;
 			}
@@ -1359,14 +1359,14 @@ namespace ModelFuncs {
 		}
 	}
 	
-	static void flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt)
+	STATIC_FUNC_2_VA(void, flat, int divs, const pi_vector& pnormal)
 	{
-		_flat(divs, pnormal, t, nt, false);
+		_flat(divs, pnormal, va_t, va_n, false);
 	}
 
-	static void xref_flat(int divs, const pi_vector& pnormal, OOLUA::Lua_table t, int nt)
+	STATIC_FUNC_2_VA(void, xref_flat, int divs, const pi_vector& pnormal)
 	{
-		_flat(divs, pnormal, t, nt, true);
+		_flat(divs, pnormal, va_t, va_n, true);
 	}
 
 	static vector3f eval_quadric_bezier_triangle(const vector3f p[6], float s, float t, float u)
@@ -1533,12 +1533,12 @@ namespace ModelFuncs {
 		}
 	}
 	
-	static void quadric_bezier_quad(int divs_u, int divs_v, OOLUA::Lua_table points)
+	STATIC_FUNC_3(void, quadric_bezier_quad, int divs_u, int divs_v, OOLUA::Lua_table points)
 	{
 		_quadric_bezier_quad(divs_u, divs_v, points, false);
 	}
 
-	static void xref_quadric_bezier_quad(int divs_u, int divs_v, OOLUA::Lua_table points)
+	STATIC_FUNC_3(void, xref_quadric_bezier_quad, int divs_u, int divs_v, OOLUA::Lua_table points)
 	{
 		_quadric_bezier_quad(divs_u, divs_v, points, true);
 	}
@@ -1614,17 +1614,17 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void cubic_bezier_quad(int divs_v, int divs_u, OOLUA::Lua_table pts_table)
+	STATIC_FUNC_3(void, cubic_bezier_quad, int divs_v, int divs_u, OOLUA::Lua_table pts_table)
 	{
 		_cubic_bezier_quad(divs_v, divs_u, pts_table, false);
 	}
 
-	static void xref_cubic_bezier_quad(int divs_v, int divs_u, OOLUA::Lua_table pts_table)
+	STATIC_FUNC_3(void, xref_cubic_bezier_quad, int divs_v, int divs_u, OOLUA::Lua_table pts_table)
 	{
 		_cubic_bezier_quad(divs_v, divs_u, pts_table, true);
 	}
 
-	static void set_material(const std::string& mat_name, OOLUA::Lua_table material)
+	STATIC_FUNC_2(void, set_material, const std::string& mat_name, OOLUA::Lua_table material)
 	{
 		float mat[11];
 
@@ -1634,7 +1634,7 @@ namespace ModelFuncs {
 		s_curBuf->SetMaterial(mat_name.c_str(), mat);
 	}
 
-	static void use_material(const std::string& mat_name)
+	STATIC_FUNC_1(void, use_material, const std::string& mat_name)
 	{
 		try {
 			s_curBuf->PushUseMaterial(mat_name.c_str());
@@ -1643,11 +1643,11 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void texture()
+	STATIC_FUNC_0(void, texture)
 	{
 		s_curBuf->SetTexture(0);
 	}
-	static void texture(const std::string& texfile)
+	STATIC_FUNC_1(void, texture, const std::string& texfile)
 	{
 		lua_getglobal(sLua, "CurrentDirectory");
 		std::string dir = luaL_checkstring(sLua, -1);
@@ -1658,7 +1658,7 @@ namespace ModelFuncs {
 
 		s_curBuf->SetTexture(texture);
 	}
-	static void texture(const std::string& texfile, const pi_vector& pos, const pi_vector& uaxis, const pi_vector& vaxis)
+	STATIC_FUNC_4(void, texture, const std::string& texfile, const pi_vector& pos, const pi_vector& uaxis, const pi_vector& vaxis)
 	{
 		vector3f waxis = vector3f::Cross(uaxis, vaxis);
 
@@ -1686,7 +1686,7 @@ namespace ModelFuncs {
 			}
 		}
 	
-	static void text(const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale, OOLUA::Lua_table opts)
+	STATIC_FUNC_6(void, text, const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale, OOLUA::Lua_table opts)
 	{
 		vector3f pos = ppos, norm = pnorm, textdir = ptextdir;
 
@@ -1714,16 +1714,17 @@ namespace ModelFuncs {
 		_textNorm = norm;
 		s_font->GetStringGeometry(str.c_str(), &_text_index_callback, &_text_vertex_callback);
 	}
-	static void text(const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale)
+	STATIC_FUNC_5(void, text, const std::string& str, const pi_vector& ppos, const pi_vector& pnorm, const pi_vector& ptextdir, float scale)
 	{
 		text(str, ppos, pnorm, ptextdir, scale, OOLUA::Lua_table());
 	}
 
-	static void geomflag(int flag) {
+	STATIC_FUNC_1(void, geomflag, int flag)
+    {
 		s_curBuf->SetGeomFlag(flag);
 	}
 
-	static void zbias(float amount)
+	STATIC_FUNC_1(void, zbias, float amount)
 	{
 		if (amount != 0) {
 			luaL_error(sLua, "zbias: non-zero bias amount requires positiona and normal");
@@ -1731,7 +1732,7 @@ namespace ModelFuncs {
 		}
 		s_curBuf->PushZBias(0, vector3f(0.0), vector3f(0.0));
 	}
-	static void zbias(float amount, const pi_vector& pos, const pi_vector& norm)
+	STATIC_FUNC_3(void, zbias, float amount, const pi_vector& pos, const pi_vector& norm)
 	{
 		if (amount == 0)
 		{
@@ -1761,12 +1762,12 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void circle(int steps, const pi_vector& center, const pi_vector& normal, const pi_vector& updir, float radius)
+	STATIC_FUNC_5(void, circle, int steps, const pi_vector& center, const pi_vector& normal, const pi_vector& updir, float radius)
 	{
 		_circle(steps, center, normal, updir, radius);
 	}
 
-	static void xref_circle(int steps, const pi_vector& pcenter, const pi_vector& pnormal, const pi_vector& pupdir, float radius)
+	STATIC_FUNC_5(void, xref_circle, int steps, const pi_vector& pcenter, const pi_vector& pnormal, const pi_vector& pupdir, float radius)
 	{
 		vector3f center = pcenter, normal = pnormal, updir = pupdir;
 		_circle(steps, center, normal, updir, radius);
@@ -1834,12 +1835,12 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(vtxStart+5*steps, vtxStart+7*steps, vtxStart+8*steps-1);
 	}
 	
-	static void tube(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float inner_radius, float outer_radius)
+	STATIC_FUNC_6(void, tube, int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float inner_radius, float outer_radius)
 	{
 		_tube(steps, start, end, updir, inner_radius, outer_radius);
 	}
 
-	static void xref_tube(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float inner_radius, float outer_radius)
+	STATIC_FUNC_6(void, xref_tube, int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float inner_radius, float outer_radius)
 	{
 		vector3f start = pstart, end = pend, updir = pupdir;
 		_tube(steps, start, end, updir, inner_radius, outer_radius);
@@ -1887,12 +1888,12 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void tapered_cylinder(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius1, float radius2)
+	STATIC_FUNC_6(void, tapered_cylinder, int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius1, float radius2)
 	{
 		_tapered_cylinder(steps, start, end, updir, radius1, radius2);
 	}
 
-	static void xref_tapered_cylinder(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius1, float radius2)
+	STATIC_FUNC_6(void, xref_tapered_cylinder, int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius1, float radius2)
 	{
 		vector3f start = pstart, end = pend, updir = pupdir;
 		_tapered_cylinder(steps, start, end, updir, radius1, radius2);
@@ -1937,12 +1938,12 @@ namespace ModelFuncs {
 		}
 	}
 
-	static void cylinder(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
+	STATIC_FUNC_5(void, cylinder, int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
 	{
 		_cylinder(steps, start, end, updir, radius);
 	}
 
-	static void xref_cylinder(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
+	STATIC_FUNC_5(void, xref_cylinder, int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
 	{
 		/* could optimise for x-reflection but fuck it */
 		vector3f start = pstart, end = pend, updir = pupdir;
@@ -1981,12 +1982,12 @@ namespace ModelFuncs {
 	}
 
 	/* Cylinder with no top or bottom caps */
-	static void ring(int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
+	STATIC_FUNC_5(void, ring, int steps, const pi_vector& start, const pi_vector& end, const pi_vector& updir, float radius)
 	{
 		_ring(steps, start, end, updir, radius);
 	}
 
-	static void xref_ring(int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
+	STATIC_FUNC_5(void, xref_ring, int steps, const pi_vector& pstart, const pi_vector& pend, const pi_vector& pupdir, float radius)
 	{
 		vector3f start = pstart, end = pend, updir = pupdir;
 		_ring(steps, start, end, updir, radius);
@@ -1996,7 +1997,7 @@ namespace ModelFuncs {
 		_ring(steps, start, end, updir, radius);
 	}
 
-	static void invisible_tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
+	STATIC_FUNC_3(void, invisible_tri, const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
 	{
 		vector3f v1 = pv1, v2 = pv2, v3 = pv3;
 
@@ -2007,7 +2008,7 @@ namespace ModelFuncs {
 		s_curBuf->PushInvisibleTri(i1, i2, i3);
 	}
 
-	static void tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
+	STATIC_FUNC_3(void, tri, const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
 	{
 		vector3f v1 = pv1, v2 = pv2, v3 = pv3;
 
@@ -2018,7 +2019,7 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(i1, i2, i3);
 	}
 
-	static void xref_tri(const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
+	STATIC_FUNC_3(void, xref_tri, const pi_vector& pv1, const pi_vector& pv2, const pi_vector& pv3)
 	{
 		vector3f v1 = pv1, v2 = pv2, v3 = pv3;
 	
@@ -2034,7 +2035,7 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(i1, i3, i2);
 	}
 
-	static void quad(const pi_vector& pv1, const pi_vector& pv2, const pi_vector &pv3, const pi_vector& pv4)
+	STATIC_FUNC_4(void, quad, const pi_vector& pv1, const pi_vector& pv2, const pi_vector &pv3, const pi_vector& pv4)
 	{
 		vector3f v1 = pv1, v2 = pv2, v3 = pv3, v4 = pv4;
 
@@ -2047,7 +2048,7 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(i1, i3, i4);
 	}
 
-	static void xref_quad(const pi_vector& pv1, const pi_vector& pv2, const pi_vector &pv3, const pi_vector& pv4)
+	STATIC_FUNC_4(void, xref_quad, const pi_vector& pv1, const pi_vector& pv2, const pi_vector &pv3, const pi_vector& pv4)
 	{
 		vector3f v1 = pv1, v2 = pv2, v3 = pv3, v4 = pv4;
 	
@@ -2067,23 +2068,23 @@ namespace ModelFuncs {
 		s_curBuf->PushTri(i1, i4, i3);
 	}
 
-	static void thruster(const pi_vector& pos, const pi_vector& dir, float power, bool linear_only)
+	STATIC_FUNC_4(void, thruster, const pi_vector& pos, const pi_vector& dir, float power, bool linear_only)
 	{
 		s_curBuf->PushThruster(pos, dir, power, linear_only);
 	}
-	static void thruster(const pi_vector& pos, const pi_vector& dir, float power)
+	STATIC_FUNC_3(void, thruster, const pi_vector& pos, const pi_vector& dir, float power)
 	{
 		thruster(pos, dir, power, false);
 	}
 
-	static void xref_thruster(const pi_vector& ppos, const pi_vector& dir, float power, bool linear_only)
+	STATIC_FUNC_4(void, xref_thruster, const pi_vector& ppos, const pi_vector& dir, float power, bool linear_only)
 	{
 		vector3f pos = ppos;
 		s_curBuf->PushThruster(pos, dir, power, linear_only);
 		pos.x = -pos.x;
 		s_curBuf->PushThruster(pos, dir, power, linear_only);
 	}
-	static void xref_thruster(const pi_vector& pos, const pi_vector& dir, float power)
+	STATIC_FUNC_3(void, xref_thruster, const pi_vector& pos, const pi_vector& dir, float power)
 	{
 		xref_thruster(pos, dir, power, false);
 	}
@@ -2107,7 +2108,7 @@ namespace ModelFuncs {
 		return 1;
 	}
 
-	static OOLUA::Lua_table get_arg_material(int n)
+	STATIC_FUNC_1(OOLUA::Lua_table, get_arg_material, int n)
 	{
 		assert(s_curParams != 0);
 
@@ -2131,7 +2132,7 @@ namespace ModelFuncs {
 		return t;
 	}
 
-	static void billboard(const std::string& texname, float size, const pi_vector& color, OOLUA::Lua_table points)
+	STATIC_FUNC_4(void, billboard, const std::string& texname, float size, const pi_vector& color, OOLUA::Lua_table points)
 	{
 		vector3f pts[4];
 
@@ -2185,7 +2186,7 @@ namespace ModelFuncs {
 		_sphere_subdivide(trans, v12, v23, v31, i12, i23, i31, depth-1);
 	}
 
-	static void sphere(int subdivs, const pi_matrix& pi_trans)
+	STATIC_FUNC_2(void, sphere, int subdivs, const pi_matrix& pi_trans)
 	{
 		if ((subdivs < 0) || (subdivs > 4)) {
 			luaL_error(sLua, "sphere(subdivs, transform): subdivs must be in range [0,4]");
@@ -2209,12 +2210,12 @@ namespace ModelFuncs {
 					subdivs);
 		}
 	}
-	static void sphere(int subdivs) 
+	STATIC_FUNC_1(void, sphere, int subdivs) 
 	{
 		sphere(subdivs, pi_matrix::identity());
 	}
 
-	static void sphere_slice(int LONG_SEGS, int LAT_SEGS, float sliceAngle1, float sliceAngle2, const pi_matrix& pi_trans)
+	STATIC_FUNC_5(void, sphere_slice, int LONG_SEGS, int LAT_SEGS, float sliceAngle1, float sliceAngle2, const pi_matrix& pi_trans)
 	{
 		matrix4x4f trans = pi_trans;
 
@@ -2466,12 +2467,12 @@ namespace ObjLoader {
 		fclose(f);
 	}
 
-	static void load_obj_file(const std::string& obj_name, const pi_matrix& ptransform)
+	STATIC_FUNC_2(void, load_obj_file, const std::string& obj_name, const pi_matrix& ptransform)
 	{
 		matrix4x4f transform = ptransform;
 		load_obj_file(obj_name, &transform);
 	}
-	static void load_obj_file(const std::string& obj_name)
+	STATIC_FUNC_1(void, load_obj_file, const std::string& obj_name)
 	{
 		load_obj_file(obj_name, NULL);
 	}

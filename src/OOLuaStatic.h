@@ -3,6 +3,38 @@
 
 #include "oolua/oolua.h"
 
+#define STATIC_FUNC_0(rt,name) \
+	static rt name()
+#define STATIC_FUNC_1(rt,name,a1) \
+	static rt name(a1)
+#define STATIC_FUNC_2(rt,name,a1,a2) \
+	static rt name(a1,a2)
+#define STATIC_FUNC_3(rt,name,a1,a2,a3) \
+	static rt name(a1,a2,a3)
+#define STATIC_FUNC_4(rt,name,a1,a2,a3,a4) \
+	static rt name(a1,a2,a3,a4)
+#define STATIC_FUNC_5(rt,name,a1,a2,a3,a4,a5) \
+	static rt name(a1,a2,a3,a4,a5)
+#define STATIC_FUNC_6(rt,name,a1,a2,a3,a4,a5,a6) \
+	static rt name(a1,a2,a3,a4,a5,a6)
+
+#define _STATIC_VA_ARGS OOLUA::Lua_table va_t, int va_n
+
+#define STATIC_FUNC_0_VA(rt,name) \
+	static rt name(_STATIC_VA_ARGS)
+#define STATIC_FUNC_1_VA(rt,name,a1) \
+	static rt name(a1, _STATIC_VA_ARGS)
+#define STATIC_FUNC_2_VA(rt,name,a1,a2) \
+	static rt name(a1,a2, _STATIC_VA_ARGS)
+#define STATIC_FUNC_3_VA(rt,name,a1,a2,a3) \
+	static rt name(a1,a2,a3, _STATIC_VA_ARGS)
+#define STATIC_FUNC_4_VA(rt,name,a1,a2,a3,a4) \
+	static rt name(a1,a2,a3,a4, _STATIC_VA_ARGS)
+#define STATIC_FUNC_5_VA(rt,name,a1,a2,a3,a4,a5) \
+	static rt name(a1,a2,a3,a4,a5, _STATIC_VA_ARGS)
+#define STATIC_FUNC_6_VA(rt,name,a1,a2,a3,a4,a5,a6) \
+	static rt name(a1,a2,a3,a4,a5,a6, _STATIC_VA_ARGS)
+
 #define STATIC_DISPATCH_START(cl,name) \
     static int name(lua_State *l) { const char* _cl = #cl; const char* _name = #name; const int _n = lua_gettop(l)-1;
 #define STATIC_CALL_FUNC(n,def) if (_n == n) { def }
