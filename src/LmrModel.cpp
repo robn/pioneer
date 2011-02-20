@@ -2530,118 +2530,118 @@ EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
 
 namespace static_model {
 	STATIC_DISPATCH_START(pi_model,call_model)
-		STATIC_FUNC_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,texture)
-		STATIC_FUNC_0(void, ModelFuncs::texture)
-		STATIC_FUNC_1(void, ModelFuncs::texture, const std::string&)
-		STATIC_FUNC_4(void, ModelFuncs::texture, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_0(void, ModelFuncs::texture)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::texture, const std::string&)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::texture, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,set_material)
-		STATIC_FUNC_2(void, ModelFuncs::set_material, const std::string&, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_2(void, ModelFuncs::set_material, const std::string&, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,use_material)
-		STATIC_FUNC_1(void, ModelFuncs::use_material, const std::string&)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::use_material, const std::string&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,get_arg_material)
-		STATIC_FUNC_1(OOLUA::Lua_table, ModelFuncs::get_arg_material, int)
+		STATIC_CALL_FUNC_1(OOLUA::Lua_table, ModelFuncs::get_arg_material, int)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,sphere)
-		STATIC_FUNC_1(void, ModelFuncs::sphere, int)
-		STATIC_FUNC_2(void, ModelFuncs::sphere, int, const pi_matrix&)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::sphere, int)
+		STATIC_CALL_FUNC_2(void, ModelFuncs::sphere, int, const pi_matrix&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,sphere_slice)
-		STATIC_FUNC_5(void, ModelFuncs::sphere_slice, int, int, float, float, const pi_matrix&)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::sphere_slice, int, int, float, float, const pi_matrix&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,invisible_tri)
-		STATIC_FUNC_3(void, ModelFuncs::invisible_tri, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::invisible_tri, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,tri)
-		STATIC_FUNC_3(void, ModelFuncs::tri, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::tri, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_tri)
-		STATIC_FUNC_3(void, ModelFuncs::xref_tri, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::xref_tri, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,quad)
-		STATIC_FUNC_4(void, ModelFuncs::quad, const pi_vector&, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::quad, const pi_vector&, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_quad)
-		STATIC_FUNC_4(void, ModelFuncs::xref_quad, const pi_vector&, const pi_vector&, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::xref_quad, const pi_vector&, const pi_vector&, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,cylinder)
-		STATIC_FUNC_5(void, ModelFuncs::cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_cylinder)
-		STATIC_FUNC_5(void, ModelFuncs::xref_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::xref_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,tapered_cylinder)
-		STATIC_FUNC_6(void, ModelFuncs::tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
+		STATIC_CALL_FUNC_6(void, ModelFuncs::tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_tapered_cylinder)
-		STATIC_FUNC_6(void, ModelFuncs::xref_tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
+		STATIC_CALL_FUNC_6(void, ModelFuncs::xref_tapered_cylinder, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,lathe)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,tube)
-		STATIC_FUNC_6(void, ModelFuncs::tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
+		STATIC_CALL_FUNC_6(void, ModelFuncs::tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_tube)
-		STATIC_FUNC_6(void, ModelFuncs::xref_tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
+		STATIC_CALL_FUNC_6(void, ModelFuncs::xref_tube, int, const pi_vector&, const pi_vector&, const pi_vector&, float, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,ring)
-		STATIC_FUNC_5(void, ModelFuncs::ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_ring)
-		STATIC_FUNC_5(void, ModelFuncs::xref_ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::xref_ring, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,circle)
-		STATIC_FUNC_5(void, ModelFuncs::circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_circle)
-		STATIC_FUNC_5(void, ModelFuncs::xref_circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::xref_circle, int, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,text)
-		STATIC_FUNC_5(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
-		STATIC_FUNC_6(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_5(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_6(void, ModelFuncs::text, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,quadric_bezier_quad)
-		STATIC_FUNC_3(void, ModelFuncs::quadric_bezier_quad, int, int, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::quadric_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_quadric_bezier_quad)
-		STATIC_FUNC_3(void, ModelFuncs::xref_quadric_bezier_quad, int, int, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::xref_quadric_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,cubic_bezier_quad)
-		STATIC_FUNC_3(void, ModelFuncs::cubic_bezier_quad, int, int, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::cubic_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_cubic_bezier_quad)
-		STATIC_FUNC_3(void, ModelFuncs::xref_cubic_bezier_quad, int, int, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::xref_cubic_bezier_quad, int, int, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,cubic_bezier_tri)
@@ -2657,17 +2657,17 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,extrusion)
-		STATIC_FUNC_4_VA(void, ModelFuncs::extrusion, const pi_vector&, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_4_VA(void, ModelFuncs::extrusion, const pi_vector&, const pi_vector&, const pi_vector&, float)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,thruster)
-		STATIC_FUNC_3(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float)
-		STATIC_FUNC_4(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float, bool)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::thruster, const pi_vector&, const pi_vector&, float, bool)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_thruster)
-		STATIC_FUNC_3(void, ModelFuncs::xref_thruster, const pi_vector&, const pi_vector&, float)
-		STATIC_FUNC_4(void, ModelFuncs::xref_thruster, const pi_vector&, const pi_vector&, float, bool)
+		STATIC_CALL_FUNC_3(void, ModelFuncs::xref_thruster, const pi_vector&, const pi_vector&, float)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::xref_thruster, const pi_vector&, const pi_vector&, float, bool)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,get_arg)
@@ -2677,44 +2677,44 @@ namespace static_model {
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,flat)
-		STATIC_FUNC_2_VA(void, ModelFuncs::flat, int, const pi_vector&)
+		STATIC_CALL_FUNC_2_VA(void, ModelFuncs::flat, int, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,xref_flat)
-		STATIC_FUNC_2_VA(void, ModelFuncs::xref_flat, int, const pi_vector&)
+		STATIC_CALL_FUNC_2_VA(void, ModelFuncs::xref_flat, int, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,billboard)
-		STATIC_FUNC_4(void, ModelFuncs::billboard, const std::string&, float, const pi_vector&, OOLUA::Lua_table)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::billboard, const std::string&, float, const pi_vector&, OOLUA::Lua_table)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,geomflag)
-		STATIC_FUNC_1(void, ModelFuncs::geomflag, int);
+		STATIC_CALL_FUNC_1(void, ModelFuncs::geomflag, int);
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,zbias)
-		STATIC_FUNC_1(void, ModelFuncs::zbias, float);
-		STATIC_FUNC_3(void, ModelFuncs::zbias, float, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::zbias, float);
+		STATIC_CALL_FUNC_3(void, ModelFuncs::zbias, float, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,set_insideout)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,set_local_lighting)
-		STATIC_FUNC_1(void, ModelFuncs::set_local_lighting, bool)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::set_local_lighting, bool)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,set_light)
-		STATIC_FUNC_4(void, ModelFuncs::set_light, int, float, const pi_vector&, const pi_vector&)
+		STATIC_CALL_FUNC_4(void, ModelFuncs::set_light, int, float, const pi_vector&, const pi_vector&)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,use_light)
-		STATIC_FUNC_1(void, ModelFuncs::use_light, int)
+		STATIC_CALL_FUNC_1(void, ModelFuncs::use_light, int)
 	STATIC_DISPATCH_END
 
 	STATIC_DISPATCH_START(pi_model,load_obj_file)
-		STATIC_FUNC_1(void, ObjLoader::load_obj_file, const std::string&)
-		STATIC_FUNC_2(void, ObjLoader::load_obj_file, const std::string&, const pi_matrix&)
+		STATIC_CALL_FUNC_1(void, ObjLoader::load_obj_file, const std::string&)
+		STATIC_CALL_FUNC_2(void, ObjLoader::load_obj_file, const std::string&, const pi_matrix&)
 	STATIC_DISPATCH_END
 }
 
