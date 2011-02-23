@@ -1,6 +1,7 @@
 #include "LuaUtilFuncs.h"
 #include "PiLuaClasses.h"
 #include "OOLuaStatic.h"
+#include "mylua.h"
 #include "vector3.h"
 #include "perlin.h"
 #include "libs.h"
@@ -25,7 +26,6 @@ namespace LuaUtilFuncs {
 		return ::noise(vector3d(x,y,z));
 	}
 
-#if 0
 	static void lua_traverse(lua_State *L, const char *fn) {
 		DIR *dir;
 		struct dirent *entry;
@@ -77,12 +77,6 @@ namespace LuaUtilFuncs {
 		lua_pushstring(L, save_dir.c_str());
 		lua_setglobal(L, "CurrentDirectory");
 	}
-#endif
-
-    STATIC_FUNC_1(void, load_lua, const std::string& filename)
-	{
-		assert(0);
-	}
 }
 
 EXPORT_OOLUA_NO_FUNCTIONS(pi_utils)
@@ -93,9 +87,16 @@ namespace static_utils {
 		STATIC_CALL_FUNC_3(float, LuaUtilFuncs::noise, float, float, float)
 	STATIC_DISPATCH_END
 
-	STATIC_DISPATCH_START(pi_utils,load_lua)
-		STATIC_CALL_FUNC_1(void, LuaUtilFuncs::load_lua, const std::string&)
-	STATIC_DISPATCH_END
+	int load_lua(lua_State* l)
+	{
+		std::string path;
+		if (!OOLUA::pull2cpp(l, path)) {
+			luaL_error(l, "cound't load lua files under %s\n", path.c_str());
+			return 0;
+		}
+		LuaUtilFuncs::lua_traverse(l, path.c_str());
+        return 0;
+	}
 }
 
 void LuaUtilFuncs::RegisterClasses(lua_State *l)
