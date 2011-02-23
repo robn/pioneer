@@ -1,55 +1,146 @@
 dofile(CurrentDirectory .. "/pistartup.lua")
 
-function call_model (...) pi_model:call_model(...) end
+-- define_model(name, { info = {...}, static = function (lod) {...}, dynamic = function(lod) {...} } )
+function define_model (name,data)
+	m = pi_model:new(name)
+	if data.info then m:info(data.info) end
+	if data.static then
+		m:static(function (m,lod)
+			_current_model = m
+			data.static(lod)
+		end)
+	end
+	if data.static then
+		m:dynamic(function (m,lod)
+			_current_model = m
+			data.dynamic(lod)
+		end)
+	end
+	pi_model:add(m)
+end
+
+-- call_model(name, pos, xaxis, yaxis, scale)
+function call_model (...) _current_model:call_model(...) end
+-- use_material(name)
+function use_material (...) _current_model:use_material(...) end
+-- t = get_arg_material(n)
+function get_arg_material (...) return _current_model:get_arg_material(...) end
+-- sphere_slice(long_segs, lat_segs, slice_angle1, slice_angle2, transform)
+function sphere_slice (...) _current_model:sphere_slice(...) end
+-- invisible_tri(v1, v2, v3)
+function invisible_tri (...) _current_model:invisible_tri(...) end
+-- tri(v1, v2, v3)
+function tri (...) _current_model:tri(...) end
+-- xref_tri(v1, v2, v3)
+function xref_tri (...) _current_model:xref_tri(...) end
+-- quad(v1, v2, v3, v4)
+function quad (...) _current_model:quad(...) end
+-- quad(v1, v2, v3, v4)
+function xref_quad (...) _current_model:xref_quad(...) end
+-- cylinder(steps, start, end, updir, radius)
+function cylinder (...) _current_model:cylinder(...) end
+-- xref_cylinder(steps, start, end, updir, radius)
+function xref_cylinder (...) _current_model:xref_cylinder(...) end
+-- tapered_cylinder(steps, start, end, updir, radius1, radius2)
+function tapered_cylinder (...) _current_model:tapered_cylinder(...) end
+-- xref_tapered_cylinder(steps, start, end, updir, radius1, radius2)
+function xref_tapered_cylinder (...) _current_model:xref_tapered_cylinder(...) end
+-- tube(steps, start, end, updir, inner_radius, outer_radius)
+function tube (...) _current_model:tube(...) end
+-- xref_tube(steps, start, end, updir, inner_radius, outer_radius)
+function xref_tube (...) _current_model:xref_tube(...) end
+-- ring(steps, start, end, updir, radius)
+function ring (...) _current_model:ring(...) end
+-- xref_ring(steps, start, end, updir, radius)
+function xref_ring (...) _current_model:xref_ring(...) end
+-- circle(steps, center, normal, updir, radius)
+function circle (...) _current_model:circle(...) end
+-- xref_circle(steps, center, normal, updir, radius)
+function xref_circle (...) _current_model:xref_circle(...) end
+-- geomflag(flag)
+function geomflag (...) _current_model:geomflag(...) end
+-- billboard(name, size, color, { points })
+function billboard (...) _current_model:billboard(...) end
+-- set_local_lighting(flag)
+function set_local_lighting (...) _current_model:set_local_lighting(...) end
+-- set_light(num, quadratic_attenuation, pos, color)
+function set_light (...) _current_model:set_light(...) end
+-- use_light(num)
+function use_light (...) _current_model:use_light(...) end
+
+-- extrusion(start, end, updir, radius, points...)
+function extrusion (start,end,updir,radius,...) _current_model:extrusion(start,end,updir,radius,{...}) end
+-- quadric_bezier_quad(divs_v, divs_u, points...)
+function quadric_bezier_quad (divs_v,divs_u,...) _current_model:quadric_bezier_quad(divs_v,divs_u,{...}) end
+-- xref_quadric_bezier_quad(divs_v, divs_u, points...)
+function xref_quadric_bezier_quad (divs_v,divs_u,...) _current_model:xref_quadric_bezier_quad(divs_v,divs_u,{...}) end
+-- flat(divs, norm, segments...)
+function flat (divs,norm,...) _current_model:flat(divs,norm,{...}) end
+-- xref_flat(divs, norm, segments...)
+function xref_flat (divs,norm,...) _current_model:xref_flat({...}) end
+
+-- thruster(pos, dir, power, linear_only)
+function thruster (pos,dir,power,linear_only)
+	if linear_only == nil then
+		_current_model:thruster(pos,dir,power,false)
+	else
+		_current_model:thruster(pos,dir,power,linear_only)
+	end
+end
+-- xref_thruster(pos, dir, power, linear_only)
+function thruster (pos,dir,power,linear_only)
+	if linear_only == nil then
+		_current_model:xref_thruster(pos,dir,power,false)
+	else
+		_current_model:xref_thruster(pos,dir,power,linear_only)
+	end
+end
+-- text(str, pos, norm, textdir, scale, { center=..., xoffset=..., yoffset=... })
+function text (str,pos,norm,textdir,scale,opts)
+	if opts == nil then
+		_current_model:text(str,pos,norm,textdir,scale,{})
+	else
+		_current_model:text(str,pos,norm,textdir,scale,opts)
+	end
+end
+-- zbias(amount, pos, norm) or zbias(0)
+function zbias (amount,pos,norm)
+	if amount == 0 then
+		_current_model:zbias(0,v(0,0,0),v(0,0,0))
+		return
+	end
+	if pos == nil || norm == nil then
+		error("zbias: non-zero bias amount requires position and normal")
+	end
+	_current_model:zbias(0,pos,norm)
+end
+-- texture(file, pos, uaxis, vaxis) or texture(file) or texture()
 function texture (file,pos,uaxis,vaxis)
 	if file == nil then
-		pi_model:texture()
-        return
+		_current_model:clear_texture()
+		return
 	end
-	if pos == nil then
-		pi_model:texture(file)
-        return
-	end
-	pi_model:texture(file,pos,uaxis,vaxis)
+	_current_model:texture(file)
+	if pos != nil then
+		_current_model:texture_transform(pos,uaxis,vaxis)
 end
+-- set_material(name, args...) or set_material(name, { args... })
 function set_material (name,m1,...)
     if type(m1) == "table" then
-        pi_model:set_material(name, m1)
+        _current_model:set_material(name, m1)
     else
-        pi_model:set_material(name, { m1,... })
+        _current_model:set_material(name, { m1,... })
     end
 end
-function use_material (...) pi_model:use_material(...) end
-function get_arg_material (...) return pi_model:get_arg_material(...) end
+-- sphere(subdivs, trans) or sphere(subdivs)
 function sphere (subdivs,trans)
     if trans == nil then
-        pi_model:sphere(subdivs)
+        _current_model:sphere(subdivs,matrix:identity())
         return
     end
-    pi_model:sphere(subdivs,trans)
+	_current_model:sphere(subdivs,trans)
 end
-function sphere_slice (...) pi_model:sphere_slice(...) end
-function invisible_tri (...) pi_model:invisible_tri(...) end
-function tri (...) pi_model:tri(...) end
-function xref_tri (...) pi_model:xref_tri(...) end
-function quad (...) pi_model:quad(...) end
-function xref_quad (...) pi_model:xref_quad(...) end
-function extrusion (...) pi_model:extrusion(...) end
-function thruster (...) pi_model:thruster(...) end
-function xref_thruster (...) pi_model:xref_thruster(...) end
-function cylinder (...) pi_model:cylinder(...) end
-function xref_cylinder (...) pi_model:xref_cylinder(...) end
-function tapered_cylinder (...) pi_model:tapered_cylinder(...) end
-function xref_tapered_cylinder (...) pi_model:xref_tapered_cylinder(...) end
-function tube (...) pi_model:tube(...) end
-function xref_tube (...) pi_model:xref_tube(...) end
-function ring (...) pi_model:ring(...) end
-function xref_ring (...) pi_model:xref_ring(...) end
-function circle (...) pi_model:circle(...) end
-function xref_circle (...) pi_model:xref_circle(...) end
-function text (...) pi_model:text(...) end
-function quadric_bezier_quad (divs_v,divs_u,...) pi_model:quadric_bezier_quad(divs_v, divs_u, { ... }) end
-function xref_quadric_bezier_quad (divs_v,divs_u,...) pi_model:xref_quadric_bezier_quad(divs_v, divs_u, { ... }) end
+-- cubic_bezier_quads(divs_v, divs_u, points...) or cubic_bezier_quad(divs_v, divs_u, { points... })
 function cubic_bezier_quad (divs_v,divs_u,pt1,...)
     if type(pt1) == "table" then
         pi_model:cubic_bezier_quad(divs_v, divs_u, pt1)
@@ -57,6 +148,7 @@ function cubic_bezier_quad (divs_v,divs_u,pt1,...)
 		pi_model:cubic_bezier_quad(divs_v, divs_u, { pt1,... })
     end
 end
+-- xref_cubic_bezier_quads(divs_v, divs_u, points...) or xref_cubic_bezier_quads(divs_v, divs_u, { points... })
 function xref_cubic_bezier_quad (divs_v,divs_u,pt1,...)
     if type(pt1) == "table" then
         pi_model:xref_cubic_bezier_quad(divs_v, divs_u, pt1)
@@ -64,16 +156,14 @@ function xref_cubic_bezier_quad (divs_v,divs_u,pt1,...)
 		pi_model:xref_cubic_bezier_quad(divs_v, divs_u, { pt1,... })
     end
 end
-function geomflag (...) pi_model:geomflag(...) end
-function flat (...) pi_model:flat(...) end
-function xref_flat (...) pi_model:xref_flat(...) end
-function billboard (...) pi_model:billboard(...) end
-function zbias (...) pi_model:zbias(...) end
-function set_local_lighting (...) pi_model:set_local_lighting(...) end
-function set_light (...) pi_model:set_light(...) end
-function use_light (...) pi_model:use_light(...) end
-
-function load_obj (...) pi_model:load_obj(...) end
+-- load_obj(name, trans)
+function load_obj (name, trans)
+    if trans == nil then
+        _current_model:load_lua(name,matrix:identity())
+        return
+    end
+	_current_model:load_obj(name,trans)
+end
 
 --
 -- Don't add models to this! Put them in ./models/
