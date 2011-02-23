@@ -1,6 +1,8 @@
 #ifndef _PI_H
 #define _PI_H
 
+#error lua-overhaul branch is abandoned. bits of it might live on, but its too big for me right now
+
 #include "libs.h"
 #include "Gui.h"
 #include "View.h"
