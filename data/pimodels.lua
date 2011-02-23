@@ -2,21 +2,21 @@ dofile(CurrentDirectory .. "/pistartup.lua")
 
 -- define_model(name, { info = {...}, static = function (lod) {...}, dynamic = function(lod) {...} } )
 function define_model (name,data)
-	m = pi_model:new(name)
+	local m = pi_model:new(name)
 	if data.info then m:info(data.info) end
 	if data.static then
-		m:static(function (m,lod)
+		m:static_func(function (m,lod)
 			_current_model = m
 			data.static(lod)
 		end)
 	end
-	if data.static then
-		m:dynamic(function (m,lod)
+	if data.dynamic then
+		m:dynamic_func(function (m,lod)
 			_current_model = m
 			data.dynamic(lod)
 		end)
 	end
-	pi_model:add(m)
+	m:add()
 end
 
 -- call_model(name, pos, xaxis, yaxis, scale)

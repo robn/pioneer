@@ -2519,16 +2519,32 @@ static int define_model(lua_State *L)
 }
 
 class pi_model {
+public:
+	pi_model(const std::string& name) { printf("%s\n", name.c_str()); }
+
+	void info(OOLUA::Lua_table t) {}
+	void static_func(OOLUA::Lua_func_ref f) {}
+	void dynamic_func(OOLUA::Lua_func_ref f) {}
+	void add() {}
 };
 
 OOLUA_CLASS_NO_BASES(pi_model)
 	OOLUA_TYPEDEFS
-		No_public_constructors
+		No_default_constructor
 	OOLUA_END_TYPES
+	OOLUA_CONSTRUCTORS_BEGIN
+		OOLUA_CONSTRUCTOR_1(const std::string&)
+	OOLUA_CONSTRUCTORS_END
+	OOLUA_MEM_FUNC_1(void, info, OOLUA::Lua_table)
+	OOLUA_MEM_FUNC_1(void, static_func, OOLUA::Lua_func_ref)
+	OOLUA_MEM_FUNC_1(void, dynamic_func, OOLUA::Lua_func_ref)
+	OOLUA_MEM_FUNC_0(void, add)
 OOLUA_CLASS_END
 
-EXPORT_OOLUA_NO_FUNCTIONS(pi_model)
+EXPORT_OOLUA_FUNCTIONS_NON_CONST(pi_model, info, static_func, dynamic_func, add)
+EXPORT_OOLUA_FUNCTIONS_0_CONST(pi_model)
 
+#if 0
 namespace static_model {
 	STATIC_DISPATCH_START(pi_model,call_model)
 		STATIC_CALL_FUNC_5(void, ModelFuncs::call_model, const std::string&, const pi_vector&, const pi_vector&, const pi_vector&, float)
@@ -2718,11 +2734,13 @@ namespace static_model {
 		STATIC_CALL_FUNC_2(void, ObjLoader::load_obj_file, const std::string&, const pi_matrix&)
 	STATIC_DISPATCH_END
 }
+#endif
 
 static void RegisterModelClass(lua_State *l)
 {
 	OOLUA::register_class<pi_model>(l);
-	
+
+#if 0
 	OOLUA::register_class_static<pi_model>(l, "call_model",                 &static_model::call_model);
 	OOLUA::register_class_static<pi_model>(l, "texture",                    &static_model::texture);
 	OOLUA::register_class_static<pi_model>(l, "set_material",               &static_model::set_material);
@@ -2772,6 +2790,7 @@ static void RegisterModelClass(lua_State *l)
 
 	// XXX this can go in pi_model for now
 	OOLUA::register_class_static<pi_model>(l, "load_obj",                   &static_model::load_obj_file);
+#endif
 }
 
 void LmrModelCompilerInit()
