@@ -69,7 +69,7 @@ function set_light (...) _current_model:set_light(...) end
 function use_light (...) _current_model:use_light(...) end
 
 -- extrusion(start, end, updir, radius, points...)
-function extrusion (start,end,updir,radius,...) _current_model:extrusion(start,end,updir,radius,{...}) end
+function extrusion (start,_end,updir,radius,...) _current_model:extrusion(start,_end,updir,radius,{...}) end
 -- quadric_bezier_quad(divs_v, divs_u, points...)
 function quadric_bezier_quad (divs_v,divs_u,...) _current_model:quadric_bezier_quad(divs_v,divs_u,{...}) end
 -- xref_quadric_bezier_quad(divs_v, divs_u, points...)
@@ -109,7 +109,7 @@ function zbias (amount,pos,norm)
 		_current_model:zbias(0,v(0,0,0),v(0,0,0))
 		return
 	end
-	if pos == nil || norm == nil then
+	if pos == nil or norm == nil then
 		error("zbias: non-zero bias amount requires position and normal")
 	end
 	_current_model:zbias(0,pos,norm)
@@ -121,8 +121,9 @@ function texture (file,pos,uaxis,vaxis)
 		return
 	end
 	_current_model:texture(file)
-	if pos != nil then
+	if pos ~= nil then
 		_current_model:texture_transform(pos,uaxis,vaxis)
+	end
 end
 -- set_material(name, args...) or set_material(name, { args... })
 function set_material (name,m1,...)
