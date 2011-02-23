@@ -324,7 +324,7 @@ static void _DrawAtmosphere(double rad1, double rad2, vector3d &pos, const float
 	rot = matrix4x4d::RotateZMatrix(angStep);
 
 	glDisable(GL_LIGHTING);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);	
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	glBegin(GL_TRIANGLE_STRIP);
@@ -383,6 +383,7 @@ void Planet::Render(const vector3d &viewCoords, const matrix4x4d &viewTransform)
 
 	double dist_to_horizon;
 	for (;;) {
+		if (len < rad) break;		// player inside radius case
 		dist_to_horizon = sqrt(len*len - rad*rad);
 
 		if (dist_to_horizon < zfar*0.5) break;

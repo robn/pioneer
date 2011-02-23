@@ -22,7 +22,6 @@ namespace Space {
 
 std::list<Body*> bodies;
 Frame *rootFrame;
-static void MoveOrbitingObjectFrames(Frame *f);
 static void UpdateFramesOfReference();
 static void CollideFrame(Frame *f);
 static void PruneCorpses();
@@ -203,30 +202,10 @@ Frame *GetFrameWithSBody(const SBody *b)
 	return find_frame_with_sbody(rootFrame, b);
 }
 
-void MoveOrbitingObjectFrames(Frame *f)
-{
-	if (f == Space::rootFrame) {
-		f->SetPosition(vector3d(0,0,0));
-		f->SetVelocity(vector3d(0,0,0));
-	} else if (f->m_sbody) {
-		// this isn't very smegging efficient
-		vector3d pos = f->m_sbody->orbit.OrbitalPosAtTime(Pi::GetGameTime());
-		vector3d pos2 = f->m_sbody->orbit.OrbitalPosAtTime(Pi::GetGameTime()+1.0);
-		vector3d vel = pos2 - pos;
-		f->SetPosition(pos);
-		f->SetVelocity(vel);
-	}
-	f->RotateInTimestep(Pi::GetTimeStep());
-
-	for (std::list<Frame*>::iterator i = f->m_children.begin(); i != f->m_children.end(); ++i) {
-		MoveOrbitingObjectFrames(*i);
-	}
-}
-
 static void SetFrameOrientationFromSBodyAxialTilt(Frame *f, const SBody *sbody)
 {
 	matrix4x4d rot = matrix4x4d::RotateXMatrix(sbody->axialTilt.ToDouble());
-	f->SetOrientation(rot);
+	f->SetRotationOnly(rot);
 }
 
 static Frame *MakeFrameFor(SBody *sbody, Body *b, Frame *f)
@@ -256,7 +235,7 @@ static Frame *MakeFrameFor(SBody *sbody, Body *b, Frame *f)
 		// for planets we want an non-rotating frame for a few radii
 		// and a rotating frame in the same position but with maybe 1.05*radius,
 		// which actually contains the object.
-		frameRadius = std::max(2.0*sbody->GetRadius(), sbody->GetMaxChildOrbitalDistance()*1.05);
+		frameRadius = std::max(4.0*sbody->GetRadius(), sbody->GetMaxChildOrbitalDistance()*1.05);
 		orbFrame = new Frame(f, sbody->name.c_str());
 		orbFrame->m_sbody = sbody;
 		orbFrame->SetRadius(frameRadius ? frameRadius : 10*sbody->GetRadius());
@@ -321,10 +300,8 @@ static Frame *MakeFrameFor(SBody *sbody, Body *b, Frame *f)
 				// used for orientation on planet surface
 				double r2 = r.Double(); 	// function parameter evaluation order is implementation-dependent
 				double r1 = r.Double();		// can't put two rands in the same expression
-				rot = matrix4x4d::RotateZMatrix(2*M_PI*r1) *
-					matrix4x4d::RotateYMatrix(2*M_PI*r2);
-//				rot = matrix4x4d::RotateZMatrix(2*M_PI*r.Double()) *
-//						      matrix4x4d::RotateYMatrix(2*M_PI*r.Double());
+				rot = matrix4x4d::RotateZMatrix(2*M_PI*r1)
+					* matrix4x4d::RotateYMatrix(2*M_PI*r2);
 				pos = rot * vector3d(0,1,0);
 				height = planet->GetTerrainHeight(pos) - planet->GetSBody()->GetRadius();
 				// don't want to be under water
@@ -369,7 +346,9 @@ void GenBody(SBody *sbody, Frame *f)
 void BuildSystem()
 {
 	GenBody(Pi::currentSystem->rootBody, rootFrame);
-	MoveOrbitingObjectFrames(rootFrame);
+	rootFrame->SetPosition(vector3d(0,0,0));
+	rootFrame->SetVelocity(vector3d(0,0,0));
+	rootFrame->UpdateOrbitRails();
 }
 
 void AddBody(Body *b)
@@ -657,7 +636,7 @@ void TimeStep(float step)
 	CollideFrame(rootFrame);
 	// XXX does not need to be done this often
 	UpdateFramesOfReference();
-	MoveOrbitingObjectFrames(rootFrame);
+	rootFrame->UpdateOrbitRails();
 	
 	for (bodiesIter_t i = bodies.begin(); i != bodies.end(); ++i) {
 		(*i)->TimeStepUpdate(step);
@@ -883,7 +862,7 @@ void Render(const Frame *cam_frame)
 	int idx = 0;
 	for (std::list<Body*>::iterator i = bodies.begin(); i != bodies.end(); ++i) {
 		const vector3d pos = (*i)->GetInterpolatedPosition();
-		Frame::GetFrameTransform((*i)->GetFrame(), cam_frame, bz[idx].viewTransform);
+		Frame::GetFrameRenderTransform((*i)->GetFrame(), cam_frame, bz[idx].viewTransform);
 		vector3d toBody = bz[idx].viewTransform * pos;
 		bz[idx].viewTransform = bz[idx].viewTransform;
 		bz[idx].viewCoords = toBody;
