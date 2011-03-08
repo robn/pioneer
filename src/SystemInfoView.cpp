@@ -48,7 +48,7 @@ void SystemInfoView::Draw3D()
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glTranslatef(0, 0, -(m_selectedObject->GetRadius()/2000000));
+	glTranslatef(0,0,-3.0);
 	glRotatef(m_rotation, 0, 1, 0);
 
 	vector3d campos(0,0,0);
