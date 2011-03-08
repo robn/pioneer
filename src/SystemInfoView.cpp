@@ -47,16 +47,6 @@ void SystemInfoView::Draw3D()
 	glLoadIdentity();
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	float lightPos[4] = { 0,0,0,0 };
-	float lightCol[4] = { 1.0, 1.0, 1.0, 0 };
-	float ambCol[4] = { 1.0,1.0,1.0,0 };
-
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambCol);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol);
-	glEnable(GL_LIGHT0);
 
 	glTranslatef(0, 0, -(m_selectedObject->GetRadius()/2000000));
 	glRotatef(m_rotation, 0, 1, 0);
