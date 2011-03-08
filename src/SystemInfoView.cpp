@@ -8,6 +8,7 @@ SystemInfoView::SystemInfoView()
 	m_system = 0;
     m_selectedObject = 0;
     m_geosphere = 0;
+	m_rotation = 0;
 
 	SetTransparency(true);
 }
@@ -57,12 +58,14 @@ void SystemInfoView::Draw3D()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol);
 	glEnable(GL_LIGHT0);
 
-	glTranslatef(0,0, -(m_selectedObject->GetRadius()/2000000));
-	vector3d campos(0,0,0);
+	glTranslatef(0, 0, -(m_selectedObject->GetRadius()/2000000));
+	glRotatef(m_rotation, 0, 1, 0);
 
+	vector3d campos(0,0,0);
     m_geosphere->Render(campos, m_selectedObject->GetRadius(), 200.0);
 }
 
 void SystemInfoView::Update()
 {
+	if ((m_rotation += 0.1f) == 360) m_rotation = 0;
 }

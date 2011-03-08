@@ -20,6 +20,7 @@ private:
 	StarSystem *m_system;
 	SBody *m_selectedObject;
     GeoSphere *m_geosphere;
+	float m_rotation;
 };
 
 #endif /* _SYSTEMINFOVIEW_H */
