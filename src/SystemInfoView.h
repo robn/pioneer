@@ -4,6 +4,7 @@
 #include "libs.h"
 #include "Gui.h"
 #include "View.h"
+#include "GeoSphere.h"
 
 class StarSystem;
 class SBody;
@@ -16,10 +17,9 @@ public:
 	virtual void Draw3D();
 	virtual void OnSwitchTo() {}
 private:
-	void ResetViewpoint();
-
 	StarSystem *m_system;
 	SBody *m_selectedObject;
+    GeoSphere *m_geosphere;
 };
 
 #endif /* _SYSTEMINFOVIEW_H */
