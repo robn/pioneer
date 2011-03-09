@@ -40,8 +40,6 @@ void SystemInfoView::Draw3D()
 		m_geosphere = new GeoSphere(m_selectedObject);
 	}
 
-	glDisable(GL_LIGHTING);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(50, Pi::GetScrAspect(), 1.0, 1000.0);
@@ -50,9 +48,11 @@ void SystemInfoView::Draw3D()
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glTranslatef(0,0,-3.0);
-	glRotatef(m_rotation, 0, 1, 0);
+	glDisable(GL_LIGHTING);
 
+	glTranslatef(0,0,-3.0);
+
+	glRotatef(m_rotation, 0, 1, 0);
 	vector3d campos(0,0,0);
 	m_geosphere->Render(campos, m_selectedObject->GetRadius(), 4.0);
 }
