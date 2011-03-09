@@ -28,17 +28,19 @@ void SystemInfoView::Draw3D()
 		if (!m_system->IsSystem(sector_x, sector_y, system_idx)) {
 			delete m_system;
 			m_system = 0;
-            m_selectedObject = 0;
-            if (m_geosphere) delete m_geosphere;
+			m_selectedObject = 0;
+			if (m_geosphere) delete m_geosphere;
 		}
 	}
 
 	if (!m_system) m_system = new StarSystem(sector_x, sector_y, system_idx);
 
-    if (!m_geosphere) {
-        m_selectedObject = m_system->m_bodies[3];
-        m_geosphere = new GeoSphere(m_selectedObject);
-    }
+	if (!m_geosphere) {
+		m_selectedObject = m_system->m_bodies[3];
+		m_geosphere = new GeoSphere(m_selectedObject);
+	}
+
+	glDisable(GL_LIGHTING);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -52,7 +54,7 @@ void SystemInfoView::Draw3D()
 	glRotatef(m_rotation, 0, 1, 0);
 
 	vector3d campos(0,0,0);
-    m_geosphere->Render(campos, m_selectedObject->GetRadius(), 200.0);
+	m_geosphere->Render(campos, m_selectedObject->GetRadius(), 4.0);
 }
 
 void SystemInfoView::Update()
