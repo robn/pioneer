@@ -1171,6 +1171,10 @@ void GeoSphere::Render(vector3d campos, const float radius, const float scale) {
 	Plane planes[6];
 	GetFrustum(planes);
 	const float atmosRadius = ATMOSPHERE_RADIUS;
+
+	matrix4x4d m;
+	glGetDoublev(GL_MODELVIEW_MATRIX, &m[0]);
+	m.Print();
 	
 	// no frustum test of entire geosphere, since Space::Render does this
 	// for each body using its GetBoundingRadius() value

@@ -828,13 +828,14 @@ void Pi::Start()
 		MainLoop();
 	} else if (choice == 3) {
 		/* debug start point */
-		SBodyPath path(1,0,2);
-		path.sbodyId = 6;
+		SBodyPath path(0,0,0);
+		path.sbodyId = 3;
 		Space::DoHyperspaceTo(&path);
-		player->SetPosition(vector3d(2*EARTH_RADIUS,0,0));
+		player->SetPosition(vector3d(-2*EARTH_RADIUS,0,0));
 		player->SetVelocity(vector3d(0,0,0));
 		player->m_equipment.Add(Equip::HYPERCLOUD_ANALYZER);
 
+/*
 		Ship *enemy = new Ship(ShipType::EAGLE_LRF);
 		enemy->SetFrame(player->GetFrame());
 		enemy->SetPosition(player->GetPosition()+vector3d(0,0,-9000.0));
@@ -864,6 +865,7 @@ void Pi::Start()
 		acc2 = shipdef->linThrust[ShipType::THRUSTER_REVERSE] / (9.81*mass);
 		acc3 = shipdef->linThrust[ShipType::THRUSTER_UP] / (9.81*mass);
 		printf("Enemy ship thrust = %.1fg, %.1fg, %.1fg\n", acc1, acc2, acc3);
+*/
 
 
 	/*	Frame *stationFrame = new Frame(pframe, "Station frame...");

@@ -49,12 +49,6 @@ void SystemInfoView::Draw3D()
 
 	float znear, zfar;
 	Pi::worldView->GetNearFarClipPlane(&znear, &zfar);
-	// why the hell do i give these functions such big names..
-	const float zoom = 0.9f; // angle of viewing = 2.0*atan(zoom);
-	const float left = zoom * znear;
-	const float fracH = left / Pi::GetScrAspect();
-	//glOrtho(-left, left, -fracH, fracH, znear, zfar);
-	//glFrustum(-left, left, -fracH, fracH, znear, zfar);
 	glOrtho(-Pi::GetScrAspect()*100000.0, Pi::GetScrAspect()*100000.0, 100000.0, -100000.0, znear, zfar);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -64,20 +58,16 @@ void SystemInfoView::Draw3D()
 
 	glDisable(GL_LIGHTING);
 
-	glTranslatef(0,0,-100);
-
-	/*
-	glTranslatef(0, 0, -1);
 	glRotatef(180, 0, 0, 1);
 
-	glRotatef(-m_rotation, 0, 1, 0);
-	vector3d campos(0,0,0);
-	*/
+	vector3d viewCoords = last_viewCoords;
+	matrix4x4d viewTransform = last_viewTransform;
 
-	m_planet->Render(last_viewCoords, last_viewTransform);
+	m_planet->Render(viewCoords, viewTransform);
 }
 
 void SystemInfoView::Update()
 {
-	if ((m_rotation += 0.1f) == 360) m_rotation = 0;
+	if ((m_rotation += 0.0001f) == 360) m_rotation = 0;
+	printf("rot: %f\n", m_rotation);
 }
