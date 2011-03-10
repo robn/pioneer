@@ -4,7 +4,7 @@
 #include "libs.h"
 #include "Gui.h"
 #include "View.h"
-#include "GeoSphere.h"
+#include "Planet.h"
 
 class StarSystem;
 class SBody;
@@ -19,7 +19,7 @@ public:
 private:
 	StarSystem *m_system;
 	SBody *m_selectedObject;
-    GeoSphere *m_geosphere;
+	Planet *m_planet;
 	float m_rotation;
 };
 

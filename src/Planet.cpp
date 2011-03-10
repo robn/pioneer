@@ -365,8 +365,15 @@ void Planet::DrawAtmosphere(vector3d &pos)
 	_DrawAtmosphere(0.999, 1.05, pos, c);
 }
 
+vector3d last_viewCoords;
+matrix4x4d last_viewTransform;
+
 void Planet::Render(const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {
+	if (sbody->name == "Earth") {
+		last_viewCoords = viewCoords;
+		last_viewTransform = viewTransform;
+	}
 
 	matrix4x4d ftran = viewTransform;
 	vector3d fpos = viewCoords;
