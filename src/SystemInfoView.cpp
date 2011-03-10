@@ -42,7 +42,7 @@ void SystemInfoView::Draw3D()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(50, Pi::GetScrAspect(), 1.0, 1000.0);
+	glOrtho(-Pi::GetScrAspect(), Pi::GetScrAspect(), 1.0, -1.0, 0.0, 2.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glClearColor(0,0,0,0);
@@ -50,9 +50,10 @@ void SystemInfoView::Draw3D()
 
 	glDisable(GL_LIGHTING);
 
-	glTranslatef(0,0,-3.0);
+	glTranslatef(0, 0, -1);
+	glRotatef(180, 0, 0, 1);
 
-	glRotatef(m_rotation, 0, 1, 0);
+	glRotatef(-m_rotation, 0, 1, 0);
 	vector3d campos(0,0,0);
 	m_geosphere->Render(campos, m_selectedObject->GetRadius(), 4.0);
 }
