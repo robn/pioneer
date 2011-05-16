@@ -512,7 +512,7 @@ void TextureFontFace::RenderString(const char *str, float x, float y)
 			if (glyph->tex) RenderGlyph(str[i], px, py);
 			if (i+1 < len) {
 				FT_Vector kern;
-				FT_Get_Kerning(m_face, str[i]+32, str[i+1]+32, FT_KERNING_UNFITTED, &kern);
+				FT_Get_Kerning(m_face, str[i], str[i+1], FT_KERNING_UNFITTED, &kern);
 				px += float(kern.x) / 64.0;
 			}
 			px += glyph->advx;
