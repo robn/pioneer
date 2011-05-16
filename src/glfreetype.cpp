@@ -542,11 +542,16 @@ void TextureFontFace::RenderMarkup(const char *str, float x, float y)
 		}
 		if (str[i] == '\n') {
 			px = x;
-			py += floor(GetHeight()*PARAGRAPH_SPACING);
+			py += GetHeight()*PARAGRAPH_SPACING;
 		} else {
 			glfglyph_t *glyph = &m_glyphs[str[i]];
 			if (glyph->tex) RenderGlyph(str[i], px, py);
-			px += floor(glyph->advx);
+			if (i+1 < len) {
+				FT_Vector kern;
+				FT_Get_Kerning(m_face, str[i], str[i+1], FT_KERNING_UNFITTED, &kern);
+				px += float(kern.x) / 64.0;
+			}
+			px += glyph->advx;
 		}
 	}
 	TEXTURE_FONT_LEAVE;
