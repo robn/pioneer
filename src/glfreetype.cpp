@@ -513,9 +513,9 @@ void TextureFontFace::RenderString(const char *str, float x, float y)
 			if (i+1 < len) {
 				FT_Vector kern;
 				FT_Get_Kerning(m_face, str[i]+32, str[i+1]+32, FT_KERNING_UNFITTED, &kern);
-				px += float(kern.x >> 6);
+				px += float(kern.x) / 64.0;
 			}
-			px += floor(glyph->advx);
+			px += glyph->advx;
 		}
 	}
 	TEXTURE_FONT_LEAVE;
@@ -603,8 +603,8 @@ TextureFontFace::TextureFontFace(const char *filename_ttf, int a_width, int a_he
 			glyph.height = m_face->glyph->bitmap.rows / float(sz);
 			glyph.offx = m_face->glyph->bitmap_left;
 			glyph.offy = m_face->glyph->bitmap_top;
-			glyph.advx = float(m_face->glyph->advance.x >> 6);
-			glyph.advy = float(m_face->glyph->advance.y >> 6);
+			glyph.advx = float(m_face->glyph->advance.x) / 64.0;
+			glyph.advy = float(m_face->glyph->advance.y) / 64.0;
 			m_glyphs[chr] = glyph;
 		}
 
@@ -612,7 +612,7 @@ TextureFontFace::TextureFontFace(const char *filename_ttf, int a_width, int a_he
 		
 		m_height = float(a_height);
 		m_width = float(a_width);
-		m_descender = -float(m_face->descender >> 6);
+		m_descender = -float(m_face->descender) / 64.0;
 	}
 }
 
