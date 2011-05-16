@@ -4,6 +4,8 @@
 #include <map>
 #include <list>
 #include <SDL_stdinc.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class FontFace
 {
@@ -52,6 +54,7 @@ class TextureFontFace
 	};
 	const glfglyph_t &GetGlyph(int ch) { return m_glyphs[ch]; }
 	private:
+    FT_Face m_face;
 	void RenderGlyph(int chr, float x, float y);
 	float m_height;
 	float m_width;

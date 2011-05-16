@@ -5,11 +5,9 @@
 #include <map>
 #include <list>
 #include <GL/glew.h>
-#include <ft2build.h>
 #include "glfreetype.h"
 #include "libs.h"
 
-#include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
@@ -550,13 +548,12 @@ void TextureFontFace::RenderMarkup(const char *str, float x, float y)
 
 TextureFontFace::TextureFontFace(const char *filename_ttf, int a_width, int a_height)
 {
-	FT_Face face;
 	int err;
 	m_pixSize = a_height;
-	if (0 != (err = FT_New_Face(library, filename_ttf, 0, &face))) {
+	if (0 != (err = FT_New_Face(library, filename_ttf, 0, &m_face))) {
 		fprintf(stderr, "Terrible error! Couldn't load '%s'; error %d.\n", filename_ttf, err);
 	} else {
-		FT_Set_Pixel_Sizes(face, a_width, a_height);
+		FT_Set_Pixel_Sizes(m_face, a_width, a_height);
 		int nbit = 0;
 		int sz = a_height;
 		while (sz) { sz >>= 1; nbit++; }
@@ -568,27 +565,27 @@ TextureFontFace::TextureFontFace(const char *filename_ttf, int a_width, int a_he
 		for (int chr=32; chr<127; chr++) {
 			memset(pixBuf, 0, 2*sz*sz);
 
-			if (0 != FT_Load_Char(face, chr, FT_LOAD_RENDER)) {
+			if (0 != FT_Load_Char(m_face, chr, FT_LOAD_RENDER)) {
 				printf("Couldn't load glyph\n");
 				continue;
 			}
 
 			// face->glyph->bitmap
 			// copy to square buffer GL can stomach
-			const int pitch = face->glyph->bitmap.pitch;
-	//		const int xs = face->glyph->bitmap_left;
-	//		const int ys = face->glyph->bitmap_top;
-			for (int row=0; row<face->glyph->bitmap.rows; row++) {
-				for (int col=0; col<face->glyph->bitmap.width; col++) {
-					pixBuf[2*sz*row + 2*col] = face->glyph->bitmap.buffer[pitch*row + col];
-					pixBuf[2*sz*row + 2*col+1] = face->glyph->bitmap.buffer[pitch*row + col];
+			const int pitch = m_face->glyph->bitmap.pitch;
+	//		const int xs = m_face->glyph->bitmap_left;
+	//		const int ys = m_face->glyph->bitmap_top;
+			for (int row=0; row<m_face->glyph->bitmap.rows; row++) {
+				for (int col=0; col<m_face->glyph->bitmap.width; col++) {
+					pixBuf[2*sz*row + 2*col] = m_face->glyph->bitmap.buffer[pitch*row + col];
+					pixBuf[2*sz*row + 2*col+1] = m_face->glyph->bitmap.buffer[pitch*row + col];
 				}
 			}
 
-			glfglyph_t _face;
+			glfglyph_t glyph;
 			glEnable (GL_TEXTURE_2D);
-			glGenTextures (1, &_face.tex);
-			glBindTexture (GL_TEXTURE_2D, _face.tex);
+			glGenTextures (1, &glyph.tex);
+			glBindTexture (GL_TEXTURE_2D, glyph.tex);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, sz, sz, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, pixBuf);
 			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -596,20 +593,20 @@ TextureFontFace::TextureFontFace(const char *filename_ttf, int a_width, int a_he
 			glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glDisable (GL_TEXTURE_2D);
 
-			_face.width = face->glyph->bitmap.width / float(sz);
-			_face.height = face->glyph->bitmap.rows / float(sz);
-			_face.offx = face->glyph->bitmap_left;
-			_face.offy = face->glyph->bitmap_top;
-			_face.advx = float(face->glyph->advance.x >> 6);
-			_face.advy = float(face->glyph->advance.y >> 6);
-			m_glyphs[chr] = _face;
+			glyph.width = m_face->glyph->bitmap.width / float(sz);
+			glyph.height = m_face->glyph->bitmap.rows / float(sz);
+			glyph.offx = m_face->glyph->bitmap_left;
+			glyph.offy = m_face->glyph->bitmap_top;
+			glyph.advx = float(m_face->glyph->advance.x >> 6);
+			glyph.advy = float(m_face->glyph->advance.y >> 6);
+			m_glyphs[chr] = glyph;
 		}
 
 		delete [] pixBuf;
 		
 		m_height = float(a_height);
 		m_width = float(a_width);
-		m_descender = -float(face->descender >> 6);
+		m_descender = -float(m_face->descender >> 6);
 	}
 }
 
