@@ -502,13 +502,19 @@ void TextureFontFace::RenderString(const char *str, float x, float y)
 	TEXTURE_FONT_ENTER;
 	float px = x;
 	float py = y;
-	for (unsigned int i=0; i<strlen(str); i++) {
+	unsigned int len = strlen(str);
+	for (unsigned int i=0; i<len; i++) {
 		if (str[i] == '\n') {
 			px = x;
 			py += floor(GetHeight()*PARAGRAPH_SPACING);
 		} else {
 			glfglyph_t *glyph = &m_glyphs[str[i]];
 			if (glyph->tex) RenderGlyph(str[i], px, py);
+			if (i+1 < len) {
+				FT_Vector kern;
+				FT_Get_Kerning(m_face, str[i]+32, str[i+1]+32, FT_KERNING_UNFITTED, &kern);
+				px += float(kern.x >> 6);
+			}
 			px += floor(glyph->advx);
 		}
 	}
