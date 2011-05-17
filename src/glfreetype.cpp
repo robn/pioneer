@@ -506,7 +506,7 @@ void TextureFontFace::RenderString(const char *str, float x, float y)
 	for (unsigned int i=0; i<len; i++) {
 		if (str[i] == '\n') {
 			px = x;
-			py += floor(GetHeight()*PARAGRAPH_SPACING);
+			py += GetHeight()*PARAGRAPH_SPACING;
 		} else {
 			glfglyph_t *glyph = &m_glyphs[str[i]];
 			if (glyph->tex) RenderGlyph(str[i], px, py);
