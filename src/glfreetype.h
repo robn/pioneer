@@ -7,6 +7,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "FontConfig.h"
+
 class FontFace
 {
 	public:
@@ -37,8 +39,8 @@ class FontFace
 
 class TextureFontFace
 {
-	public:
-	TextureFontFace(const char *filename_ttf, int width, int height);
+public:
+	TextureFontFace(const std::string &config_filename);
 	void RenderString(const char *str, float x, float y);
 	void RenderMarkup(const char *str, float x, float y);
 	void MeasureString(const char *str, float &w, float &h);
@@ -53,8 +55,10 @@ class TextureFontFace
 		int offx, offy;
 	};
 	const glfglyph_t &GetGlyph(int ch) { return m_glyphs[ch]; }
-	private:
-    FT_Face m_face;
+
+private:
+	FontConfig m_config;
+	FT_Face m_face;
 	void RenderGlyph(int chr, float x, float y);
 	float m_height;
 	float m_width;
