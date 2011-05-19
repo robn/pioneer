@@ -60,6 +60,7 @@ noinst_HEADERS = \
 	InfoView.h \
 	IniConfig.h \
 	GameConfig.h \
+	FontConfig.h \
 	KeyBindings.h \
 	LmrModel.h \
 	LuaBody.h \
@@ -190,6 +191,7 @@ pioneer_SOURCES	= \
 	InfoView.cpp \
 	IniConfig.cpp \
 	GameConfig.cpp \
+	FontConfig.cpp \
 	KeyBindings.cpp \
 	LmrModel.cpp \
 	LuaBody.cpp \
