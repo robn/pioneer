@@ -275,6 +275,8 @@ modelviewer_SOURCES = \
 	LuaUtils.cpp \
 	MyLuaMathTypes.cpp \
 	Render.cpp \
+	IniConfig.cpp \
+	FontConfig.cpp \
 	glfreetype.cpp \
 	perlin.cpp \
 	utils.cpp
