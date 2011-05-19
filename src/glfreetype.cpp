@@ -509,7 +509,7 @@ void TextureFontFace::RenderString(const char *str, float x, float y)
 			py += GetHeight()*PARAGRAPH_SPACING;
 		} else {
 			glfglyph_t *glyph = &m_glyphs[str[i]];
-			if (glyph->tex) RenderGlyph(str[i], px, py);
+			if (glyph->tex) RenderGlyph(str[i], roundf(px), py);
 			if (i+1 < len) {
 				FT_Vector kern;
 				FT_Get_Kerning(m_face, str[i], str[i+1], FT_KERNING_UNFITTED, &kern);
@@ -545,7 +545,7 @@ void TextureFontFace::RenderMarkup(const char *str, float x, float y)
 			py += GetHeight()*PARAGRAPH_SPACING;
 		} else {
 			glfglyph_t *glyph = &m_glyphs[str[i]];
-			if (glyph->tex) RenderGlyph(str[i], px, py);
+			if (glyph->tex) RenderGlyph(str[i], roundf(px), py);
 			if (i+1 < len) {
 				FT_Vector kern;
 				FT_Get_Kerning(m_face, str[i], str[i+1], FT_KERNING_UNFITTED, &kern);
