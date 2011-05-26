@@ -23,7 +23,7 @@ define_model('airport_control_tower', {
 	end,
 	dynamic = function(lod)
 	local lightphase = math.fmod(get_arg(1)+0.620486, 1)
-	billboard('smoke.png', 50, lightphase > .5 and v(1,0,0) or v(0,1,0), { v(0, 201, 0) })
+	billboard('beacon.png', 50, lightphase > .5 and v(1,0,0) or v(0,1,0), { v(0, 201, 0) })
 	end
 })
 
@@ -71,7 +71,7 @@ function createRunway(num, position)
 		else
 			color = v(0,1,0) -- green
 		end
-		billboard('smoke.png', 50, color, { 
+		billboard('beacon.png', 50, color, { 
 			position + v(0,1,30), position + v(0,1,-30),
 			position + v(100,1,30), position + v(100,1,-30), position + v(-100,1,30), position + v(-100,1,-30),
 			position + v(200,1,30), position + v(200,1,-30), position + v(-200,1,30), position + v(-200,1,-30),
