@@ -1326,8 +1326,9 @@ static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
 	assert(b<=max);
 	assert(a>=0);
 	fixed one_over_3max = fixed(2,1)/(3*max);
-	return (b*b - one_over_3max*b*b*b) -
-		(a*a - one_over_3max*a*a*a);
+	fixed mass = (b*b - one_over_3max*b*b*b) - (a*a - one_over_3max*a*a*a);
+	assert(mass > 0);
+	return mass;
 }
 
 static fixed get_disc_density(SBody *primary, fixed discMin, fixed discMax, fixed percentOfPrimaryMass)
