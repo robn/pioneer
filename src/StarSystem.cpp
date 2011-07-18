@@ -1296,9 +1296,13 @@ fixed SBody::CalcHillRadius() const
 		fixedf<48> a = semiMajorAxis;
 		fixedf<48> e = eccentricity;
 
-		return fixed(a * (fixedf<48>(1,1)-e) *
+		fixed hill_radius =
+			fixed(a * (fixedf<48>(1,1)-e) *
 				fixedf<48>::CubeRootOf(fixedf<48>(
 						mass / (fixedf<32>(3,1)*mprimary))));
+
+		assert(hill_radius > 0);
+		return hill_radius;
 		
 		//fixed hr = semiMajorAxis*(fixed(1,1) - eccentricity) *
 		//  fixedcuberoot(mass / (3*mprimary));
