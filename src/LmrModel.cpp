@@ -671,14 +671,20 @@ public:
 	}
 
 	void GetCollMeshGeometry(LmrCollMesh *c, const matrix4x4f &transform, const LmrObjParams *params) {
+		assert(m_triflags.size() == m_indices.size()/3);
+
+		int numTris = 0;
+		for (unsigned int i=0; i < m_triflags.size(); i++)
+			if (m_triflags[i] < 0x8000) numTris++;
+
+		c->m_numTris += numTris;
+
 		const int vtxBase = c->nv;
 		const int idxBase = c->ni;
 		const int flagBase = c->nf;
 		c->nv += m_vertices.size();
-		c->ni += m_indices.size();
-		c->nf += m_indices.size()/3;
-		assert(m_triflags.size() == m_indices.size()/3);
-		c->m_numTris += m_triflags.size();
+		c->ni += numTris*3;
+		c->nf += numTris;
 
 		if (m_vertices.size()) {
 			c->pVertex = static_cast<float*>(realloc(c->pVertex, 3*sizeof(float)*c->nv));
@@ -691,14 +697,23 @@ public:
 				c->m_aabb.Update(v);
 			}
 		}
+
 		if (m_indices.size()) {
 			c->pIndex = static_cast<int*>(realloc(c->pIndex, sizeof(int)*c->ni));
 			c->pFlag = static_cast<unsigned int*>(realloc(c->pFlag, sizeof(unsigned int)*c->nf));
-			for (unsigned int i=0; i<m_indices.size(); i++) {
-				c->pIndex[idxBase + i] = vtxBase + m_indices[i];
-			}
-			for (unsigned int i=0; i<m_triflags.size(); i++) {
-				c->pFlag[flagBase + i] = m_triflags[i];
+
+			unsigned int index_src = 0, index_dest = 0, flag_src = 0, flag_dest = 0;
+			while (index_src < m_indices.size()) {
+				if (m_triflags[flag_src] < 0x8000) {
+					c->pIndex[idxBase + index_dest++] = vtxBase + m_indices[index_src++];
+					c->pIndex[idxBase + index_dest++] = vtxBase + m_indices[index_src++];
+					c->pIndex[idxBase + index_dest++] = vtxBase + m_indices[index_src++];
+					c->pFlag[flagBase + flag_dest++] = m_triflags[flag_src++];
+				}
+				else {
+					index_src += 3;
+					flag_src++;
+				}
 			}
 		}
 		
