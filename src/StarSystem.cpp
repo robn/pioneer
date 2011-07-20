@@ -1359,7 +1359,6 @@ static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
 	assert(a>=0);
 	fixed one_over_3max = fixed(2,1)/(3*max);
 	fixed mass = (b*b - one_over_3max*b*b*b) - (a*a - one_over_3max*a*a*a);
-	assert(mass > 0);
 	return mass;
 }
 
@@ -1442,7 +1441,9 @@ void StarSystem::MakePlanetsAround(SBody *primary, MTRand &rand)
 			const fixed a = pos;
 			const fixed b = fixed(135,100)*apoapsis;
 			mass = mass_from_disk_area(a, b, discMax);
-			mass *= rand.Fixed() * discDensity;
+			fixed r; do { r = rand.Fixed(); } while(r == 0);
+			mass *= r * discDensity;
+			assert(mass>0);
 		}
 
 		SBody *planet = NewBody();
