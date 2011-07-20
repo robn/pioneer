@@ -1286,27 +1286,55 @@ void StarSystem::Dump()
  */
 fixed SBody::CalcHillRadius() const
 {
-	if (GetSuperType() <= SUPERTYPE_STAR) {
-		return fixed(0);
-	} else {
-		// playing with precision since these numbers get small
-		// masses in earth masses
-		fixedf<32> mprimary = parent->GetMassInEarths();
+	assert(GetSuperType() > SUPERTYPE_STAR);
 
-		fixedf<48> a = semiMajorAxis;
-		fixedf<48> e = eccentricity;
+	// hill radius is:
+	//   semi_major_axis * (1-eccentricity) * cuberoot(mass / 3*parent_mass)
+	// 
+	// if mass and parent_mass are massively different (eg a tiny asteroid
+	// around a star) then we don't have enough precision to the division. to
+	// get around this we actually do:
+	//
+	//   semi_major_axis * (1-eccentricity) * cuberoot(mass) / cuberoot(3*parent_mass)
+	//
+	// cube root moves towards zero very quickly, increasing the likelihood
+	// that we can get them near each other
+	//
+	// alas, for very very tiny things (down around 1e-6) we don't even have
+	// enough precision to compute the cube root. to handle that we switch to
+	// 16.48 for any mass < 0
 
-		fixed hill_radius =
-			fixed(a * (fixedf<48>(1,1)-e) *
-				fixedf<48>::CubeRootOf(fixedf<48>(
-						mass / (fixedf<32>(3,1)*mprimary))));
+	fixed cbrt_of_mass =
+		mass < fixed(1,1) ? 
+			fixed(fixedf<48>::CubeRootOf(fixedf<48>(mass))) : 
+			fixed::CubeRootOf(mass);
 
+	fixed parent_mass_3 = parent->GetMassInEarths() * 3;
+	fixed cbrt_of_parent_mass_3 = 
+		parent_mass_3 < fixed(1,1) ? 
+			fixed(fixedf<48>::CubeRootOf(fixedf<48>(parent_mass_3))) :
+			fixed::CubeRootOf(parent_mass_3);
+	
+	fixed hill_radius =
+		semiMajorAxis *
+		(fixed(1,1) - eccentricity) *
+		cbrt_of_mass /
+		cbrt_of_parent_mass_3;
+
+#ifdef DEBUG
+	if (hill_radius <= 0) {
+		float expected = semiMajorAxis.ToDouble() * (1.0-eccentricity.ToDouble()) * cbrt(mass.ToDouble() / 3*parent->GetMassInEarths().ToDouble());
+		fprintf(stderr, "hill radius is %f, expected something around %f\n", hill_radius.ToDouble(), expected);
+		fprintf(stderr, "body %s\n", name.c_str());
+		fprintf(stderr, "mass %f type %d\n", mass.ToDouble(), type);
+		fprintf(stderr, "parent mass %f type %d\n", parent->GetMassInEarths().ToDouble(), parent->type);
 		assert(hill_radius > 0);
-		return hill_radius;
-		
-		//fixed hr = semiMajorAxis*(fixed(1,1) - eccentricity) *
-		//  fixedcuberoot(mass / (3*mprimary));
 	}
+#else
+	assert(hill_radius > 0);
+#endif
+
+	return hill_radius;
 }
 
 static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
