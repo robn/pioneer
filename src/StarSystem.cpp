@@ -1353,6 +1353,7 @@ static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
 	// constant factors (pi) in this equation drop out.
 	//
 	b = (b > max ? max : b);
+	assert(a!=b);
 	assert(b>=a);
 	assert(a<=max);
 	assert(b<=max);
