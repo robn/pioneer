@@ -1357,8 +1357,32 @@ static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
 	assert(a<=max);
 	assert(b<=max);
 	assert(a>=0);
-	fixed one_over_3max = fixed(2,1)/(3*max);
-	fixed mass = (b*b - one_over_3max*b*b*b) - (a*a - one_over_3max*a*a*a);
+
+	fixed one_over_3max =
+		max < fixed(1,1) ?
+			fixed(fixedf<48>(2,1) / (3*fixedf<48>(max))) :
+			fixed(2,1)/(3*max);
+
+	fixed ares;
+	if (a < fixed(1,1)) {
+		fixedf<48> a48(a);
+		ares = fixed(a48*a48 - fixedf<48>(one_over_3max)*a48*a48*a48);
+	}
+	else
+		ares = a*a - one_over_3max*a*a*a;
+	
+	fixed bres;
+	if (b < fixed(1,1)) {
+		fixedf<48> b48(b);
+		bres = fixed(b48*b48 - fixedf<48>(one_over_3max)*b48*b48*b48);
+	}
+	else
+		bres = b*b - one_over_3max*b*b*b;
+	
+	fixed mass = bres - ares;
+	
+	assert(mass > 0);
+
 	return mass;
 }
 
