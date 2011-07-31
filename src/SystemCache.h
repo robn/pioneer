@@ -13,7 +13,7 @@ public:
 
 	StarSystem *GetCached(const SystemPath &path);
 
-	typedef void (*AsyncCallback)(StarSystem*);
+	typedef sigc::slot<void,StarSystem*> AsyncCallback;
 	void GetCachedAsync(const SystemPath &path, AsyncCallback callback);
 
 	struct AsyncData {

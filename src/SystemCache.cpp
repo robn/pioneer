@@ -39,7 +39,7 @@ void SystemCache::OnGetCachedAsyncCompleted(AsyncData *data)
 	std::map<SystemPath, std::list<AsyncCallback> >::iterator i = m_pendingCallbacks.find(data->path);
 	if (i != m_pendingCallbacks.end()) {
 		for (std::list<AsyncCallback>::iterator j = (*i).second.begin(); j != (*i).second.end(); j++) {
-			(*(*j))(data->sys);
+			(*j)(data->sys);
 		}
 	}
 	m_pendingCallbacks.erase(i);
@@ -55,7 +55,7 @@ void SystemCache::GetCachedAsync(const SystemPath &path, AsyncCallback callback)
 		std::map<SystemPath,StarSystem*>::iterator i = m_cachedSystems.find(path);
 		if (i != m_cachedSystems.end()) {
 			s = (*i).second;
-			(*callback)(s);
+			callback(s);
 			return;
 		}
 	}
