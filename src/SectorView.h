@@ -29,6 +29,7 @@ public:
 
 	sigc::signal<void> onHyperspaceTargetChanged;
 private:
+	void CheckInhabited(StarSystem *s, Sector::System *ss);
 	void DrawSector(int x, int y);
 	void PutClickableLabel(std::string &text, const SystemPath &path);
 	void OnClickSystem(const SystemPath &path);

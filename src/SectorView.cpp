@@ -190,6 +190,12 @@ void SectorView::PutClickableLabel(std::string &text, const SystemPath &path)
 	Gui::Screen::LeaveOrtho();
 }
 
+void SectorView::CheckInhabited(StarSystem *s, Sector::System *ss)
+{
+	ss->SetInhabited(!s->m_unexplored && s->m_spaceStations.size());
+	s->Release();
+}
+
 void SectorView::DrawSector(int sx, int sy)
 {
 	SystemPath playerLoc = Pi::currentSystem->GetPath();
@@ -225,22 +231,8 @@ void SectorView::DrawSector(int sx, int sy)
 		glCallList(m_gluDiskDlist);
 		glScalef(2,2,2);
 
-		// only do this once we've pretty much stopped moving.
-		float diffx = fabs(m_pxMovingTo - m_px);
-		float diffy = fabs(m_pyMovingTo - m_py);
-		// Ideally, since this takes so f'ing long, it wants to be done as a threaded job but haven't written that yet.
-		if( !(*i).IsSetInhabited() && diffx < 0.001f && diffy < 0.001f ) {
-			StarSystem* pSS = Pi::systemCache->GetCached(current);
-			if( !pSS->m_unexplored && pSS->m_spaceStations.size()>0 ) 
-			{
-				(*i).SetInhabited(true);
-			}
-			else
-			{
-				(*i).SetInhabited(false);
-			}
-			pSS->DecRefCount();
-		}
+		Pi::systemCache->GetCachedAsync(current, sigc::bind(sigc::mem_fun(this, &SectorView::CheckInhabited), &(*i)));
+
 		// Pulse populated stars
 		if( (*i).IsSetInhabited() && (*i).IsInhabited() )
 		{
