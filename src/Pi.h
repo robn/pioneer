@@ -32,6 +32,7 @@ class GameMenuView;
 struct lua_State;
 namespace Sound { class MusicPlayer; }
 class SystemCache;
+class ThreadManager;
 
 #if OBJECTVIEWER
 class ObjectViewerView;
@@ -159,6 +160,7 @@ public:
 #endif
 
 	static SystemCache *systemCache;
+	static ThreadManager *threadManager;
 
 	static int CombatRating(int kills);
 	static const char * const combatRating[];

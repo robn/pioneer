@@ -61,6 +61,7 @@
 #include "Background.h"
 #include "Lang.h"
 #include "SystemCache.h"
+#include "ThreadManager.h"
 
 float Pi::gameTickAlpha;
 int Pi::timeAccelIdx = 1;
@@ -149,6 +150,7 @@ ObjectViewerView *Pi::objectViewerView;
 
 Sound::MusicPlayer Pi::musicPlayer;
 SystemCache *Pi::systemCache;
+ThreadManager *Pi::threadManager;
 
 int Pi::CombatRating(int kills)
 {
@@ -851,6 +853,8 @@ void Pi::InitGame()
 
 	if (!config.Int("DisableSound")) AmbientSounds::Init();
 
+	threadManager = new ThreadManager();
+
 	LuaInitGame();
 }
 
@@ -880,6 +884,8 @@ void Pi::StartGame()
 
 void Pi::UninitGame()
 {
+	delete threadManager;
+
 	if (!config.Int("DisableSound")) AmbientSounds::Uninit();
 	Sound::DestroyAllEvents();
 
@@ -1268,6 +1274,8 @@ void Pi::MainLoop()
 		cpan->Update();
 		currentView->Update();
 		musicPlayer.Update();
+
+		threadManager->CleanupCompletedThreads();
 
 		if (SDL_GetTicks() - last_stats > 1000) {
 			Pi::statSceneTris += LmrModelGetStatsTris();

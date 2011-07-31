@@ -121,6 +121,7 @@ noinst_HEADERS = \
 	SystemView.h \
 	TextureFont.h \
 	TextureManager.h \
+	ThreadManager.h \
 	VectorFont.h \
 	VideoLink.h \
 	View.h \
@@ -241,6 +242,7 @@ pioneer_SOURCES	= \
 	SystemView.cpp \
 	TextureFont.cpp \
 	TextureManager.cpp \
+	ThreadManager.cpp \
 	VectorFont.cpp \
 	WorldView.cpp \
 	main.cpp \
