@@ -820,6 +820,7 @@ void Pi::InitGame()
 	Pi::currentView = 0;
 	Pi::isGameStarted = false;
 
+	threadManager = new ThreadManager();
 	systemCache = new SystemCache();
 
 	Polit::Init();
@@ -853,8 +854,6 @@ void Pi::InitGame()
 
 	if (!config.Int("DisableSound")) AmbientSounds::Init();
 
-	threadManager = new ThreadManager();
-
 	LuaInitGame();
 }
 
@@ -884,8 +883,6 @@ void Pi::StartGame()
 
 void Pi::UninitGame()
 {
-	delete threadManager;
-
 	if (!config.Int("DisableSound")) AmbientSounds::Uninit();
 	Sound::DestroyAllEvents();
 
@@ -910,6 +907,7 @@ void Pi::UninitGame()
 	}
 
 	delete systemCache;
+	delete threadManager;
 }
 
 void Pi::Start()
