@@ -14,6 +14,7 @@
 #include "perlin.h"
 #include "SectorView.h"
 #include "Lang.h"
+#include "SystemCache.h"
 
 const double WorldView::PICK_OBJECT_RECT_SIZE = 20.0;
 static const Color s_hudTextColor(0.0f,1.0f,0.0f,0.8f);
@@ -565,7 +566,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 #endif
 
 	if (const SystemPath *dest = Space::GetHyperspaceDest()) {
-		StarSystem *s = StarSystem::GetCached(*dest);
+		StarSystem *s = Pi::systemCache->GetCached(*dest);
 		char buf[128];
 		snprintf(buf, sizeof(buf), Lang::IN_TRANSIT_TO_N_X_X, s->GetName().c_str(), dest->sectorX, dest->sectorY);
 		m_hudVelocity->SetText(buf);
@@ -932,7 +933,7 @@ void WorldView::OnHyperspaceTargetChanged()
 
 	const SystemPath path = Pi::sectorView->GetHyperspaceTarget();
 
-	StarSystem *system = StarSystem::GetCached(path);
+	StarSystem *system = Pi::systemCache->GetCached(path);
 	Pi::cpan->MsgLog()->Message("", std::string(Lang::SET_HYPERSPACE_DESTINATION_TO+system->GetName()));
 	system->Release();
 

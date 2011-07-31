@@ -115,6 +115,7 @@ noinst_HEADERS = \
 	SpaceStationView.h \
 	Star.h \
 	StarSystem.h \
+	SystemCache.h \
 	SystemInfoView.h \
 	SystemPath.h \
 	SystemView.h \
@@ -235,6 +236,7 @@ pioneer_SOURCES	= \
 	SpaceStationView.cpp \
 	Star.cpp \
 	StarSystem.cpp \
+	SystemCache.cpp \
 	SystemInfoView.cpp \
 	SystemView.cpp \
 	TextureFont.cpp \

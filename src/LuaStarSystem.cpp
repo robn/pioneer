@@ -13,6 +13,7 @@
 #include "Planet.h"
 #include "SpaceStation.h"
 #include "Sector.h"
+#include "SystemCache.h"
 
 /*
  * Class: StarSystem
@@ -258,7 +259,7 @@ static int l_starsystem_get_nearby_systems(lua_State *l)
 				if (Sector::DistanceBetween(&here_sec, here_idx, &sec, idx) > dist_ly)
 					continue;
 
-				StarSystem *sys = StarSystem::GetCached(SystemPath(x, y, idx));
+				StarSystem *sys = Pi::systemCache->GetCached(SystemPath(x, y, idx));
 				if (filter) {
 					lua_pushvalue(l, 3);
 					LuaStarSystem::PushToLua(sys);

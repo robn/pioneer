@@ -7,6 +7,7 @@
 #include "LmrModel.h"
 #include "Render.h"
 #include "Lang.h"
+#include "SystemCache.h"
 
 class InfoViewPage: public Gui::Fixed {
 public:
@@ -65,7 +66,7 @@ public:
 		float ypos = 0;
 		for (std::list<const Mission*>::const_iterator i = missions.begin(); i != missions.end(); ++i) {
 			SystemPath path = (*i)->location;
-			StarSystem *s = StarSystem::GetCached(path);
+			StarSystem *s = Pi::systemCache->GetCached(path);
 			SBody *sbody = s->GetBodyByPath(&path);
 
 			l = new Gui::Label((*i)->type);

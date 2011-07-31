@@ -5,6 +5,7 @@
 #include <map>
 #include "utils.h"
 #include "Lang.h"
+#include "SystemCache.h"
 
 #define CELSIUS	273.15
 //#define DEBUG_DUMP
@@ -1914,42 +1915,8 @@ StarSystem *StarSystem::Unserialize(Serializer::Reader &rd)
 		int sec_x = rd.Int32();
 		int sec_y = rd.Int32();
 		int sys_idx = rd.Int32();
-		return StarSystem::GetCached(SystemPath(sec_x, sec_y, sys_idx));
+		return Pi::systemCache->GetCached(SystemPath(sec_x, sec_y, sys_idx));
 	} else {
 		return 0;
-	}
-}
-
-static std::map<SystemPath,StarSystem*> s_cachedSystems;
-
-StarSystem *StarSystem::GetCached(const SystemPath &path)
-{
-	StarSystem *s = 0;
-
-	for (std::map<SystemPath,StarSystem*>::iterator i = s_cachedSystems.begin(); i != s_cachedSystems.end(); i++) {
-		if ((*i).first == path)
-			s = (*i).second;
-	}
-
-	if (!s) {
-		s = new StarSystem(path);
-		s_cachedSystems.insert( std::pair<SystemPath,StarSystem*>(path, s) );
-	}
-
-	s->IncRefCount();
-	return s;
-}
-
-void StarSystem::ShrinkCache()
-{
-	std::map<SystemPath,StarSystem*>::iterator i = s_cachedSystems.begin();
-	while (i != s_cachedSystems.end()) {
-		StarSystem *s = (*i).second;
-		if (s->GetRefCount() == 0) {
-			delete s;
-			s_cachedSystems.erase(i++);
-		}
-		else
-			i++;
 	}
 }

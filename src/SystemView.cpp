@@ -3,6 +3,7 @@
 #include "SectorView.h"
 #include "StarSystem.h"
 #include "Lang.h"
+#include "SystemCache.h"
 
 SystemView::SystemView()
 {
@@ -219,7 +220,7 @@ void SystemView::Draw3D()
 	std::string t = Lang::TIME_POINT+format_date(m_time);
 	m_timePoint->SetText(t);
 
-	if (!m_system) m_system = StarSystem::GetCached(path);
+	if (!m_system) m_system = Pi::systemCache->GetCached(path);
 
 	glDisable(GL_LIGHTING);
 	glEnable(GL_FOG);

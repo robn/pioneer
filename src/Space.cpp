@@ -18,6 +18,7 @@
 #include "Render.h"
 #include "WorldView.h"
 #include "SectorView.h"
+#include "SystemCache.h"
 
 namespace Space {
 
@@ -723,7 +724,7 @@ void DoHyperspaceTo(const SystemPath *dest)
 	}
 	
 	if (Pi::currentSystem) Pi::currentSystem->Release();
-	Pi::currentSystem = StarSystem::GetCached(dest);
+	Pi::currentSystem = Pi::systemCache->GetCached(dest);
 	Space::Clear();
 	Space::BuildSystem();
 	
@@ -861,7 +862,7 @@ void DoHyperspaceTo(const SystemPath *dest)
 void SetupSystemForGameStart(const SystemPath *dest, int starport, int port)
 {
 	if (Pi::currentSystem) Pi::currentSystem->Release();
-	Pi::currentSystem = StarSystem::GetCached(dest);
+	Pi::currentSystem = Pi::systemCache->GetCached(dest);
 	Space::Clear();
 	Space::BuildSystem();
 

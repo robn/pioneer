@@ -9,6 +9,7 @@
 #include "StarSystem.h"
 #include "GalacticView.h"
 #include "Lang.h"
+#include "SystemCache.h"
 		
 SectorView::SectorView() :
 	m_firstTime(true),
@@ -229,7 +230,7 @@ void SectorView::DrawSector(int sx, int sy)
 		float diffy = fabs(m_pyMovingTo - m_py);
 		// Ideally, since this takes so f'ing long, it wants to be done as a threaded job but haven't written that yet.
 		if( !(*i).IsSetInhabited() && diffx < 0.001f && diffy < 0.001f ) {
-			StarSystem* pSS = StarSystem::GetCached(current);
+			StarSystem* pSS = Pi::systemCache->GetCached(current);
 			if( !pSS->m_unexplored && pSS->m_spaceStations.size()>0 ) 
 			{
 				(*i).SetInhabited(true);
@@ -444,7 +445,7 @@ void SectorView::Update()
 				break;
 		}
 
-		StarSystem *sys = StarSystem::GetCached(m_selected);
+		StarSystem *sys = Pi::systemCache->GetCached(m_selected);
 
 		std::string desc;
 		if (sys->GetNumStars() == 4) {

@@ -172,10 +172,9 @@ private:
 class StarSystem : public DeleteEmitter, public RefCounted {
 public:
 	friend class SBody;
+	friend class SystemCache;
 
-	static StarSystem *GetCached(const SystemPath &path);
 	inline void Release() { DecRefCount(); }
-	static void ShrinkCache();
 
 	const std::string &GetName() const { return m_name; }
 	SystemPath GetPathOf(const SBody *sbody) const;

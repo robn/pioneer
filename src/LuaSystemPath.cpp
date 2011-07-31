@@ -6,6 +6,7 @@
 #include "SystemPath.h"
 #include "StarSystem.h"
 #include "Sector.h"
+#include "SystemCache.h"
 
 /*
  * Class: SystemPath
@@ -179,7 +180,7 @@ static int l_sbodypath_distance_to(lua_State *l)
 static int l_sbodypath_get_star_system(lua_State *l)
 {
 	SystemPath *path = LuaSystemPath::GetFromLua(1);
-	StarSystem *s = StarSystem::GetCached(path);
+	StarSystem *s = Pi::systemCache->GetCached(path);
 	LuaStarSystem::PushToLua(s);
 	s->Release();
 	return 1;
@@ -207,7 +208,7 @@ static int l_sbodypath_get_star_system(lua_State *l)
 static int l_sbodypath_get_system_body(lua_State *l)
 {
 	SystemPath *path = LuaSystemPath::GetFromLua(1);
-	StarSystem *s = StarSystem::GetCached(path);
+	StarSystem *s = Pi::systemCache->GetCached(path);
 	SBody *sbody = s->GetBodyByPath(path);
 	s->Release();
 	LuaSBody::PushToLua(sbody);

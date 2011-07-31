@@ -60,7 +60,7 @@
 #include "SoundMusic.h"
 #include "Background.h"
 #include "Lang.h"
-#include "Lang.h"
+#include "SystemCache.h"
 
 float Pi::gameTickAlpha;
 int Pi::timeAccelIdx = 1;
@@ -148,6 +148,7 @@ ObjectViewerView *Pi::objectViewerView;
 #endif
 
 Sound::MusicPlayer Pi::musicPlayer;
+SystemCache *Pi::systemCache;
 
 int Pi::CombatRating(int kills)
 {
@@ -817,6 +818,8 @@ void Pi::InitGame()
 	Pi::currentView = 0;
 	Pi::isGameStarted = false;
 
+	systemCache = new SystemCache();
+
 	Polit::Init();
 
 	player = new Player("Eagle Long Range Fighter");
@@ -899,6 +902,8 @@ void Pi::UninitGame()
 		delete Pi::player;
 		Pi::player = 0;
 	}
+
+	delete systemCache;
 }
 
 void Pi::Start()
@@ -1258,7 +1263,7 @@ void Pi::MainLoop()
 		} else {
 			// this is something we need not do every turn...
 			if (!config.Int("DisableSound")) AmbientSounds::Update();
-			StarSystem::ShrinkCache();
+			systemCache->ShrinkCache();
 		}
 		cpan->Update();
 		currentView->Update();
@@ -1303,7 +1308,7 @@ StarSystem *Pi::GetSelectedSystem()
 		selectedSystem->Release();
 	}
 
-	selectedSystem = StarSystem::GetCached(selectedPath);
+	selectedSystem = systemCache->GetCached(selectedPath);
 	return selectedSystem;
 }
 
