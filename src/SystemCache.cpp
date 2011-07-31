@@ -1,4 +1,6 @@
 #include "SystemCache.h"
+#include "ThreadManager.h"
+#include "Pi.h"
 
 SystemCache::SystemCache()
 {
@@ -12,10 +14,9 @@ StarSystem *SystemCache::GetCached(const SystemPath &path)
 {
 	StarSystem *s = 0;
 
-	for (std::map<SystemPath,StarSystem*>::iterator i = m_cachedSystems.begin(); i != m_cachedSystems.end(); i++) {
-		if ((*i).first == path)
-			s = (*i).second;
-	}
+	std::map<SystemPath,StarSystem*>::iterator i = m_cachedSystems.find(path);
+	if (i != m_cachedSystems.end())
+		s = (*i).second;
 
 	if (!s) {
 		s = new StarSystem(path);
@@ -24,6 +25,57 @@ StarSystem *SystemCache::GetCached(const SystemPath &path)
 
 	s->IncRefCount();
 	return s;
+}
+
+void SystemCache::GetCachedAsyncThreadEntry(AsyncData *data)
+{
+	data->sys = new StarSystem(data->path);
+}
+
+void SystemCache::OnGetCachedAsyncCompleted(AsyncData *data)
+{
+	m_cachedSystems.insert( std::make_pair(data->path, data->sys) );
+
+	std::map<SystemPath, std::list<AsyncCallback> >::iterator i = m_pendingCallbacks.find(data->path);
+	if (i != m_pendingCallbacks.end()) {
+		for (std::list<AsyncCallback>::iterator j = (*i).second.begin(); j != (*i).second.end(); j++) {
+			(*(*j))(data->sys);
+		}
+	}
+	m_pendingCallbacks.erase(i);
+
+	delete data;
+}
+
+void SystemCache::GetCachedAsync(const SystemPath &path, AsyncCallback callback)
+{
+	StarSystem *s;
+
+	{
+		std::map<SystemPath,StarSystem*>::iterator i = m_cachedSystems.find(path);
+		if (i != m_cachedSystems.end()) {
+			s = (*i).second;
+			(*callback)(s);
+			return;
+		}
+	}
+
+	{
+		std::map<SystemPath, std::list<AsyncCallback> >::iterator i = m_pendingCallbacks.find(path);
+		if (i != m_pendingCallbacks.end()) {
+			(*i).second.push_back(callback);
+			return;
+		}
+	}
+	
+	std::list<AsyncCallback> pendingCallbacks;
+	pendingCallbacks.push_back(callback);
+	m_pendingCallbacks.insert( std::make_pair(path, pendingCallbacks) );
+
+	AsyncData *data = new AsyncData;
+	data->path = path;
+	Thread<AsyncData> *t = Pi::threadManager->StartThread(&SystemCache::GetCachedAsyncThreadEntry, data);
+	t->onCompleted.connect(sigc::mem_fun(this, &SystemCache::OnGetCachedAsyncCompleted));
 }
 
 void SystemCache::ShrinkCache()
