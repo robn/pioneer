@@ -11,8 +11,13 @@ class ThreadBase {
 	enum State {
 		INIT,
 		RUNNING,
+		UPDATED,
 		COMPLETED,
 	};
+
+	void ReportUpdate() {
+		SetState(UPDATED);
+	}
 
 protected:
 	ThreadBase() : m_thread(0), m_state(INIT) {
@@ -25,7 +30,8 @@ protected:
 	}
 
 	void Kill() { 
-		if (GetState() == RUNNING)
+		State s = GetState();
+		if (s == RUNNING || s == UPDATED)
 			SDL_KillThread(m_thread);
 	}
 
@@ -43,6 +49,7 @@ protected:
 	}
 
 	virtual void SignalCompleted() {}
+	virtual void SignalUpdated() {}
 
 	SDL_Thread *m_thread;
 
@@ -54,17 +61,18 @@ private:
 template <typename T>
 class Thread : public ThreadBase {
 public:
-	Thread(void (*entry)(T*), T* data) : ThreadBase(), m_entry(entry), m_data(data) {
+	Thread(void (*entry)(Thread<T> *, T*), T* data) : ThreadBase(), m_entry(entry), m_data(data) {
 		m_thread = SDL_CreateThread(&Trampoline, this);
 	}
 
 	sigc::signal<void,T*> onCompleted;
+	sigc::signal<void,T*> onUpdated;
 	
 private:
 	static int Trampoline(void *vt) {
 		Thread<T> *t = static_cast<Thread<T>*>(vt);
 		t->SetState(ThreadBase::RUNNING);
-		(*t->m_entry)(t->m_data);
+		(*t->m_entry)(t, t->m_data);
 		t->SetState(ThreadBase::COMPLETED);
 		return 0;
 	}
@@ -73,7 +81,11 @@ private:
 		onCompleted.emit(m_data);
 	}
 
-	void (*m_entry)(T *data);
+	virtual void SignalUpdated() {
+		onUpdated.emit(m_data);
+	}
+
+	void (*m_entry)(Thread<T> *thread, T *data);
 	T *m_data;
 };
 
@@ -82,13 +94,13 @@ public:
 	ThreadManager() {}
 	~ThreadManager();
 
-	template <typename T> Thread<T> *StartThread(void (*entry)(T *data), T *data) {
+	template <typename T> Thread<T> *StartThread(void (*entry)(Thread<T> *, T *), T *data) {
 		Thread<T> *t = new Thread<T>(entry, data);
 		m_threads.push_back(t);
 		return t;
 	}
 
-	void CleanupCompletedThreads(void);
+	void ProcessThreadUpdates();
 
 private:
 	std::list<ThreadBase*> m_threads;

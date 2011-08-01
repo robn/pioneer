@@ -6,7 +6,7 @@ ThreadManager::~ThreadManager()
 		(*i)->Kill();
 }
 
-void ThreadManager::CleanupCompletedThreads()
+void ThreadManager::ProcessThreadUpdates()
 {
 	std::list<ThreadBase*>::iterator i = m_threads.begin();
 	while (i != m_threads.end()) {
@@ -17,6 +17,11 @@ void ThreadManager::CleanupCompletedThreads()
 			t->SignalCompleted();
 			delete t;
 			continue;
+		}
+
+		if (t->GetState() == ThreadBase::UPDATED) {
+			t->SetState(ThreadBase::RUNNING);
+			t->SignalUpdated();
 		}
 
 		i++;

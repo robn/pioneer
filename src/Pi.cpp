@@ -1273,7 +1273,7 @@ void Pi::MainLoop()
 		currentView->Update();
 		musicPlayer.Update();
 
-		threadManager->CleanupCompletedThreads();
+		threadManager->ProcessThreadUpdates();
 
 		if (SDL_GetTicks() - last_stats > 1000) {
 			Pi::statSceneTris += LmrModelGetStatsTris();

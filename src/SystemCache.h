@@ -2,6 +2,7 @@
 #define _SYSTEMCACHE_H
 
 #include "libs.h"
+#include "ThreadManager.h"
 #include "StarSystem.h"
 #include "SystemPath.h"
 #include <map>
@@ -20,7 +21,7 @@ public:
 		SystemPath path;
 		StarSystem *sys;
 	};
-	static void GetCachedAsyncThreadEntry(AsyncData *data);
+	static void GetCachedAsyncThreadEntry(Thread<AsyncData> *thread, AsyncData *data);
 	void OnGetCachedAsyncCompleted(AsyncData *data);
 
 	void ShrinkCache();

@@ -1,5 +1,4 @@
 #include "SystemCache.h"
-#include "ThreadManager.h"
 #include "Pi.h"
 
 SystemCache::SystemCache()
@@ -27,7 +26,7 @@ StarSystem *SystemCache::GetCached(const SystemPath &path)
 	return s;
 }
 
-void SystemCache::GetCachedAsyncThreadEntry(AsyncData *data)
+void SystemCache::GetCachedAsyncThreadEntry(Thread<AsyncData> *thread, AsyncData *data)
 {
 	data->sys = new StarSystem(data->path);
 }
