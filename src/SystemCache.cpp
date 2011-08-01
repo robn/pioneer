@@ -106,8 +106,10 @@ void SystemCache::GetCachedAsync(const SystemPath &path, AsyncCallback callback)
 		std::map<SystemPath, std::list<AsyncCallback> >::iterator i = m_pendingCallbacks.find(path);
 		if (i != m_pendingCallbacks.end()) {
 			for (std::list<AsyncCallback>::iterator j = (*i).second.begin(); j != (*i).second.end(); j++)
-				if ((*j) == callback)
+				if ((*j) == callback) {
+					printf("already got callback from [%d,%d,%d], ignoring it\n", path.sectorX, path.sectorY, path.systemIndex);
 					return;
+				}
 			(*i).second.push_back(callback);
 			return;
 		}

@@ -190,10 +190,12 @@ void SectorView::PutClickableLabel(std::string &text, const SystemPath &path)
 	Gui::Screen::LeaveOrtho();
 }
 
-void SectorView::CheckInhabited(StarSystem *s, Sector::System *ss)
+void SectorView::CheckInhabited(StarSystem *sys)
 {
-	ss->SetInhabited(!s->m_unexplored && s->m_spaceStations.size());
-	s->Release();
+	SystemPath path = sys->GetPath();
+	Sector *sec = GetCached(path.sectorX, path.sectorY);
+	sec->m_systems[path.systemIndex].SetInhabited(!sys->m_unexplored && sys->m_spaceStations.size());
+	sys->Release();
 }
 
 void SectorView::DrawSector(int sx, int sy)
@@ -232,7 +234,7 @@ void SectorView::DrawSector(int sx, int sy)
 		glScalef(2,2,2);
 
 		if (!(*i).IsSetInhabited())
-			Pi::systemCache->GetCachedAsync(current, sigc::bind(sigc::mem_fun(this, &SectorView::CheckInhabited), &(*i)));
+			Pi::systemCache->GetCachedAsync(current, sigc::mem_fun(this, &SectorView::CheckInhabited));
 
 		// Pulse populated stars
 		if( (*i).IsSetInhabited() && (*i).IsInhabited() )
