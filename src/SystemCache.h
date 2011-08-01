@@ -6,6 +6,7 @@
 #include "StarSystem.h"
 #include "SystemPath.h"
 #include <map>
+#include <queue>
 
 class SystemCache {
 public:
@@ -18,18 +19,21 @@ public:
 	void GetCachedAsync(const SystemPath &path, AsyncCallback callback);
 
 	struct AsyncData {
-		SystemPath path;
-		StarSystem *sys;
+		std::queue<SystemPath> paths;
+		std::queue<StarSystem*> systems;
+		SDL_mutex *mutex;
 	};
 	static void GetCachedAsyncThreadEntry(Thread<AsyncData> *thread, AsyncData *data);
+
+	void OnGetCachedAsyncUpdated(AsyncData *data);
 	void OnGetCachedAsyncCompleted(AsyncData *data);
 
 	void ShrinkCache();
 
 private:
 	std::map<SystemPath,StarSystem*> m_cachedSystems;
-
 	std::map<SystemPath, std::list<AsyncCallback> > m_pendingCallbacks;
+	AsyncData *m_asyncData;
 };
 
 #endif

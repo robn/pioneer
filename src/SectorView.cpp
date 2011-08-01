@@ -231,7 +231,8 @@ void SectorView::DrawSector(int sx, int sy)
 		glCallList(m_gluDiskDlist);
 		glScalef(2,2,2);
 
-		Pi::systemCache->GetCachedAsync(current, sigc::bind(sigc::mem_fun(this, &SectorView::CheckInhabited), &(*i)));
+		if (!(*i).IsSetInhabited())
+			Pi::systemCache->GetCachedAsync(current, sigc::bind(sigc::mem_fun(this, &SectorView::CheckInhabited), &(*i)));
 
 		// Pulse populated stars
 		if( (*i).IsSetInhabited() && (*i).IsInhabited() )

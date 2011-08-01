@@ -8,6 +8,7 @@ class ThreadManager;
 class ThreadBase {
 	friend class ThreadManager;
 
+public:
 	enum State {
 		INIT,
 		RUNNING,
