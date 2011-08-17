@@ -13,7 +13,7 @@
 
 #define INNER_RADIUS (Sector::SIZE*1.5f)
 #define OUTER_RADIUS (Sector::SIZE*3.0f)
-		
+
 SectorView::SectorView() :
 	m_firstTime(true),
 	m_selectionFollowsMovement(true),
@@ -415,6 +415,27 @@ static void _draw_arrow(const vector3f &direction)
 	glEnable(GL_CULL_FACE);
 }
 
+static void _draw_star(float r, float g, float b, float a)
+{
+	static const int SLICES = 40;
+	static const float RADIUS = 0.2f;
+
+	static const float incr = 2*M_PI/SLICES;
+
+	glBegin(GL_TRIANGLE_FAN);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glColor4f(r, g, b, a);
+		for (int i = 0; i < SLICES; i++) {
+			float angle = incr * i;
+			glVertex3f(cosf(angle)*RADIUS, sinf(angle)*RADIUS, 0.0f);
+		}
+
+		glVertex3f(RADIUS, 0.0f, 0.0f);
+	glEnd();
+}
+		
 void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos)
 {
 	Sector* ps = GetCached(sx, sy, sz);
@@ -505,14 +526,13 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		}
 
 		// draw star blob itself
-		glColor4f(col[0], col[1], col[2], 1.0f);
 		glPushMatrix();
 		glRotatef(-m_rotZ, 0, 0, 1);
 		glRotatef(-m_rotX, 1, 0, 0);
 		glScalef((StarSystem::starScale[(*i).starType[0]]),
 			(StarSystem::starScale[(*i).starType[0]]),
 			(StarSystem::starScale[(*i).starType[0]]));
-		glCallList(m_gluDiskDlist);
+		_draw_star(col[0], col[1], col[2], 1.0f);
 		glScalef(2,2,2);
 
 		// player location indicator
