@@ -60,6 +60,19 @@ SectorView::SectorView() :
 	glNewList(m_gluDiskDlist, GL_COMPILE);
 	gluDisk(Pi::gluQuadric, 0.0, 0.2, 40, 1);
 	glEndList();
+
+	SDL_Surface *is = IMG_Load(PIONEER_DATA_DIR "/icons/star_sphere.png");
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1, &m_starSphereTex);
+	glBindTexture(GL_TEXTURE_2D, m_starSphereTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, is->w, is->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, is->pixels);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+	SDL_FreeSurface(is);
 	
 	m_infoBox = new Gui::VBox();
 	m_infoBox->SetTransparency(false);
@@ -137,6 +150,7 @@ SectorView::SectorView() :
 SectorView::~SectorView()
 {
 	glDeleteLists(m_gluDiskDlist, 1);
+	glDeleteTextures(1, &m_starSphereTex);
 	m_onMouseButtonDown.disconnect();
 	if (m_onKeyPressConnection.connected()) m_onKeyPressConnection.disconnect();
 }
@@ -532,13 +546,30 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		glScalef((StarSystem::starScale[(*i).starType[0]]),
 			(StarSystem::starScale[(*i).starType[0]]),
 			(StarSystem::starScale[(*i).starType[0]]));
-		_draw_star(col[0], col[1], col[2], 1.0f);
+		//_draw_star(col[0], col[1], col[2], 1.0f);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, m_starSphereTex);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glColor3fv(col);
+		//glColor4f(1.0f,1.0f,1.0f,1.0f);
+		static const float HW = 0.2f;
+		glBegin(GL_QUADS);
+			glTexCoord2f(0,0);
+			glVertex2f(-HW,-HW);
+			glTexCoord2f(1.0f,0);
+			glVertex2f(HW,-HW);
+			glTexCoord2f(1.0f,1.0f);
+			glVertex2f(HW,HW);
+			glTexCoord2f(0,1.0f);
+			glVertex2f(-HW,HW);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
 		glScalef(2,2,2);
 
 		// player location indicator
 		if (current == m_current) {
 			glPushMatrix();
-			glDepthRange(0.2,1.0);
+			glDepthRange(0.3,1.0);
 			glColor3f(0,0,0.8);
 			glScalef(3,3,3);
 			glCallList(m_gluDiskDlist);
@@ -547,7 +578,7 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		// selected indicator
 		if (current == m_selected) {
 			glPushMatrix();
-			glDepthRange(0.1,1.0);
+			glDepthRange(0.2,1.0);
 			glColor3f(0,0.8,0);
 			glScalef(2,2,2);
 			glCallList(m_gluDiskDlist);

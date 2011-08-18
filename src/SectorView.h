@@ -82,7 +82,9 @@ private:
 	Gui::ImageButton *m_zoomOutButton;
 	Gui::ImageButton *m_galaxyButton;
 	Gui::TextEntry *m_searchBox;
+
 	GLuint m_gluDiskDlist;
+	GLuint m_starSphereTex;
 	
 	Gui::LabelSet *m_clickableLabels;
 
