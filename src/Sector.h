@@ -40,11 +40,13 @@ public:
 		bool m_queriedStarSystem;
 		bool m_isInhabited;
 	};
+
+	const int sx, sy, sz;
 	std::vector<System> m_systems;
+
 private:
 	void GetCustomSystems();
 	std::string GenName(System &sys, MTRand &rand);
-	int sx, sy, sz;
 };
 
 #endif /* _SECTOR_H */
