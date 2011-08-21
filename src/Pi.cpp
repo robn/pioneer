@@ -57,6 +57,7 @@
 #include "LuaRand.h"
 #include "LuaNameGen.h"
 #include "LuaMusic.h"
+#include "LuaSector.h"
 #include "SoundMusic.h"
 #include "Background.h"
 #include "Lang.h"
@@ -200,6 +201,7 @@ static void LuaInit()
 	LuaShipType::RegisterClass();
 	LuaEquipType::RegisterClass();
 	LuaRand::RegisterClass();
+	LuaSector::RegisterClass();
 
 	LuaObject<LuaChatForm>::RegisterClass();
 	LuaObject<LuaEventQueueBase>::RegisterClass();

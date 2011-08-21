@@ -58,6 +58,7 @@ noinst_HEADERS = \
 	LuaRand.h \
 	LuaSBody.h \
 	LuaSystemPath.h \
+	LuaSector.h \
 	LuaSerializer.h \
 	LuaShip.h \
 	LuaShipType.h \
@@ -180,6 +181,7 @@ pioneer_SOURCES	= \
 	LuaRand.cpp \
 	LuaSBody.cpp \
 	LuaSystemPath.cpp \
+	LuaSector.cpp \
 	LuaSerializer.cpp \
 	LuaShip.cpp \
 	LuaShipType.cpp \
