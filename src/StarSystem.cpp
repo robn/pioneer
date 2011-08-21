@@ -1082,7 +1082,7 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	memset(m_tradeLevel, 0, sizeof(m_tradeLevel));
 	rootBody = 0;
 
-	Sector s = Sector(m_path.sectorX, m_path.sectorY, m_path.sectorZ);
+	Sector s(m_path.sectorX, m_path.sectorY, m_path.sectorZ);
 	assert(m_path.systemIndex >= 0 && m_path.systemIndex < s.m_systems.size());
 
 	m_seed = s.m_systems[m_path.systemIndex].seed;

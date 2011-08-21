@@ -6,8 +6,9 @@
 #include <vector>
 #include "StarSystem.h"
 #include "CustomSystem.h"
+#include "DeleteEmitter.h"
 
-class Sector {
+class Sector : public DeleteEmitter {
 public:
 	// lightyears
 	static const float SIZE;
