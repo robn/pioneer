@@ -41,12 +41,14 @@ Sector::Sector(int x, int y, int z) : sx(x), sy(y), sz(z)
 	MTRand rng(_init, 4);
 	MTRand rand(UNIVERSE_SEED);
 
+#if 0
 	GetCustomSystems();
 
 	/* Always place random systems outside the core custom-only region */
 	if ((x < -CUSTOM_ONLY_RADIUS) || (x > CUSTOM_ONLY_RADIUS-1) ||
 	    (y < -CUSTOM_ONLY_RADIUS) || (y > CUSTOM_ONLY_RADIUS-1) ||
 	    (z < -CUSTOM_ONLY_RADIUS) || (z > CUSTOM_ONLY_RADIUS-1)) {
+#endif
 		int numSystems = (rng.Int32(4,20) * Galaxy::GetSectorDensity(x, y, z)) >> 8;
 
 		for (int i=0; i<numSystems; i++) {
@@ -232,7 +234,9 @@ Sector::Sector(int x, int y, int z) : sx(x), sy(y), sz(z)
 
 			m_systems.push_back(s);
 		}
+#if 0
 	}
+#endif
 }
 
 float Sector::DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB)

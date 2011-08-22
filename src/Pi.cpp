@@ -364,8 +364,8 @@ void Pi::Init()
 	if (config.Int("DisableShaders")) Render::ToggleShaders();
 	if (config.Int("EnableHDR")) Render::ToggleHDR();
 
-    CustomSystem::Init();
-	draw_progress(0.3f);
+    //CustomSystem::Init();
+	//draw_progress(0.3f);
 
 	LmrModelCompilerInit();
 	draw_progress(0.4f);
@@ -976,33 +976,33 @@ void Pi::Start()
     switch (choice) {
         case 1: // Earth start point
         {
-            SystemPath path(0,0,0, 0);
-            Space::SetupSystemForGameStart(&path, 4, 0);
+            SystemPath path(0,1,-3,0);
+            Space::SetupSystemForGameStart(&path, 0, 0);
             StartGame();
             MainLoop();
             break;
         }
         case 2: // Epsilon Eridani start point
         {
-            SystemPath path(1,0,-1, 0);
-            Space::SetupSystemForGameStart(&path, 0, 0);
+            SystemPath path(0,1,-3,0);
+            Space::SetupSystemForGameStart(&path, 8, 0);
             StartGame();
             MainLoop();
             break;
         }
         case 3: // Debug start point
         {
-            SystemPath path(1,0,-1, 0);
+            SystemPath path(0,1,-3,0);
             Space::DoHyperspaceTo(&path);
             for (std::list<Body*>::iterator i = Space::bodies.begin(); i != Space::bodies.end(); i++) {
                 const SBody *sbody = (*i)->GetSBody();
                 if (!sbody) continue;
-                if (sbody->id == 6) {
+                if (sbody->id == 17) {
                     player->SetFrame((*i)->GetFrame());
                     break;
                 }
             }
-            player->SetPosition(vector3d(0,2*EARTH_RADIUS,0));
+            player->SetPosition(vector3d(0,5.5f*EARTH_RADIUS,0));
             player->SetVelocity(vector3d(0,0,0));
             player->m_equipment.Add(Equip::HYPERCLOUD_ANALYZER);
             player->UpdateMass();
