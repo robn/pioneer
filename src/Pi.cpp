@@ -353,8 +353,6 @@ void Pi::Init()
 		Error("OpenGL extension ARB_vertex_buffer_object not supported. Pioneer can not run on your graphics card.");
 	}
 
-	LuaInit();
-
 	Render::Init(width, height);
 	draw_progress(0.1f);
 
@@ -365,11 +363,8 @@ void Pi::Init()
 	if (config.Int("DisableShaders")) Render::ToggleShaders();
 	if (config.Int("EnableHDR")) Render::ToggleHDR();
 
-    //CustomSystem::Init();
-	//draw_progress(0.3f);
-
 	LmrModelCompilerInit();
-	draw_progress(0.4f);
+	draw_progress(0.3f);
 
 //unsigned int control_word;
 //_clearfp();
@@ -377,19 +372,19 @@ void Pi::Init()
 //double fpexcept = Pi::timeAccelRates[1] / Pi::timeAccelRates[0];
 
 	ShipType::Init();
+	draw_progress(0.4f);
+
+	CityOnPlanet::Init();
 	draw_progress(0.5f);
 
 	GeoSphere::Init();
 	draw_progress(0.6f);
 
-	CityOnPlanet::Init();
+	Space::Init();
 	draw_progress(0.7f);
 
-	Space::Init();
-	draw_progress(0.8f);
-
 	SpaceStation::Init();
-	draw_progress(0.9f);
+	draw_progress(0.8f);
 
 	if (!config.Int("DisableSound")) {
 		Sound::Init();
@@ -402,6 +397,9 @@ void Pi::Init()
 		if (config.Int("SfxMuted")) Sound::SetSfxVolume(0.f);
 		if (config.Int("MusicMuted")) GetMusicPlayer().SetEnabled(false);
 	}
+	draw_progress(0.9f);
+
+	LuaInit();
 	draw_progress(1.0f);
 
 #if 0
