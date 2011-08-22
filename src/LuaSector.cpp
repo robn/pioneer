@@ -50,6 +50,14 @@ static int l_sector_get_systems(lua_State *l)
 	return 1;
 }
 
+static int l_sector_set_custom_only(lua_State *l)
+{
+	Sector *s = LuaSector::GetFromLua(1);
+	bool c = lua_toboolean(l, 2);
+	s->SetCustomOnly(c);
+	return 0;
+}
+
 static int l_sector_attr_x(lua_State *l)
 {
 	Sector *s = LuaSector::GetFromLua(1);
@@ -71,20 +79,29 @@ static int l_sector_attr_z(lua_State *l)
 	return 1;
 }
 
+static int l_sector_attr_custom_only(lua_State *l)
+{
+	Sector *s = LuaSector::GetFromLua(1);
+	lua_pushboolean(l, s->GetCustomOnly());
+	return 1;
+}
+
 template <> const char *LuaObject<Sector>::s_type = "Sector";
 
 template <> void LuaObject<Sector>::RegisterClass()
 {
 	static luaL_reg l_methods[] = {
-		{ "New",        l_sector_new         },
-		{ "GetSystems", l_sector_get_systems },
+		{ "New",           l_sector_new             },
+		{ "GetSystems",    l_sector_get_systems     },
+		{ "SetCustomOnly", l_sector_set_custom_only },
 		{ 0, 0 }
 	};
 
 	static luaL_reg l_attrs[] = {
-		{ "x", l_sector_attr_x },
-		{ "y", l_sector_attr_y },
-		{ "z", l_sector_attr_z },
+		{ "x",          l_sector_attr_x },
+		{ "y",          l_sector_attr_y },
+		{ "z",          l_sector_attr_z },
+		{ "customOnly", l_sector_attr_custom_only },
 		{ 0, 0 }
 	};
 

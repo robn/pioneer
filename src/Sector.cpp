@@ -35,7 +35,9 @@ void Sector::GetCustomSystems()
 #define CUSTOM_ONLY_RADIUS	4
 
 //////////////////////// Sector
-Sector::Sector(int x, int y, int z) : sx(x), sy(y), sz(z)
+Sector::Sector(int x, int y, int z) :
+	sx(x), sy(y), sz(z),
+	m_customOnly(false)
 {
 	unsigned long _init[4] = { x, y, z, UNIVERSE_SEED };
 	MTRand rng(_init, 4);
