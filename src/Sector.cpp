@@ -45,7 +45,7 @@ void Sector::Release()
 {
 	DecRefCount();
 	if (!GetRefCount())
-		free(this);
+        delete this;
 }
 
 const std::vector<Sector::System> &Sector::GetSystems() const
