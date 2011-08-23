@@ -69,9 +69,12 @@ static int l_sbodypath_new(lua_State *l)
 	if (!lua_isnone(l, 5))
 		sbody_id = luaL_checkinteger(l, 5);
 	
-	Sector s(sector_x, sector_y, sector_z);
-	if (size_t(system_idx) >= s.m_systems.size())
+	Sector *s = Sector::Get(sector_x, sector_y, sector_z);
+	if (s->GetNumSystems() <= Uint32(system_idx)) {
+		s->Release();
 		luaL_error(l, "System %d in sector [%d,%d,%d] does not exist", system_idx, sector_x, sector_y, sector_z);
+	}
+	s->Release();
 
 	// XXX explode if sbody_id doesn't exist in the target system?
 	
@@ -150,10 +153,13 @@ static int l_sbodypath_distance_to(lua_State *l)
 		loc2 = &(s2->GetPath());
 	}
 
-	Sector sec1(loc1->sectorX, loc1->sectorY, loc1->sectorZ);
-	Sector sec2(loc2->sectorX, loc2->sectorY, loc1->sectorZ);
+	Sector *sec1 = Sector::Get(loc1->sectorX, loc1->sectorY, loc1->sectorZ);
+	Sector *sec2 = Sector::Get(loc2->sectorX, loc2->sectorY, loc1->sectorZ);
 	
-	double dist = Sector::DistanceBetween(&sec1, loc1->systemIndex, &sec2, loc2->systemIndex);
+	double dist = Sector::DistanceBetween(sec1, loc1->systemIndex, sec2, loc2->systemIndex);
+
+	sec1->Release();
+	sec2->Release();
 
 	lua_pushnumber(l, dist);
 

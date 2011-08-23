@@ -12,6 +12,72 @@ static const char *sys_names[SYS_NAME_FRAGS] =
 
 const float Sector::SIZE = 8;
 
+std::map<SystemPath,Sector*> Sector::s_globalCache;
+std::map<SystemPath,Sector*> Sector::s_gameCache;
+
+Sector *Sector::Get(int x, int y, int z)
+{
+	SystemPath path(x,y,z,0,0);
+
+	Sector *s;
+	std::map<SystemPath,Sector*>::iterator i;
+
+	i = s_gameCache.find(path);
+	if (i != s_gameCache.end()) {
+		s = (*i).second;
+		s->IncRefCount();
+		return s;
+	}
+
+	i = s_globalCache.find(path);
+	if (i != s_globalCache.end()) {
+		s = (*i).second;
+		s->IncRefCount();
+		return s;
+	}
+
+	s = new Sector(x,y,z);
+	s->IncRefCount();
+	return s;
+}
+
+void Sector::Release()
+{
+	DecRefCount();
+	if (!GetRefCount())
+		free(this);
+}
+
+const std::vector<Sector::System> &Sector::GetSystems() const
+{
+	GenerateSystems();
+	return m_systems;
+}
+
+const Sector::System &Sector::GetSystem(Uint32 n) const
+{
+	GenerateSystems();
+	assert(n < m_systems.size());
+	return m_systems[n];
+}
+
+Uint32 Sector::GetNumSystems() const
+{
+	GenerateSystems();
+	return m_systems.size();
+}
+
+
+
+Sector::Sector(int x, int y, int z) :
+	sx(x), sy(y), sz(z),
+	m_dirty(true),
+	m_customOnly(false)
+{
+}
+
+
+/*
 void Sector::GetCustomSystems()
 {
 	const std::list<const CustomSystem*> systems = CustomSystem::GetCustomSystemsForSector(sx, sy, sz);
@@ -31,15 +97,17 @@ void Sector::GetCustomSystems()
 		m_systems.push_back(s);
 	}
 }
+*/
 
 #define CUSTOM_ONLY_RADIUS	4
 
-//////////////////////// Sector
-Sector::Sector(int x, int y, int z) :
-	sx(x), sy(y), sz(z),
-	m_customOnly(false)
+void Sector::GenerateSystems() const
 {
-	unsigned long _init[4] = { x, y, z, UNIVERSE_SEED };
+	if (!m_dirty) return;
+
+	m_systems.clear();
+
+	unsigned long _init[4] = { sx, sy, sz, UNIVERSE_SEED };
 	MTRand rng(_init, 4);
 	MTRand rand(UNIVERSE_SEED);
 
@@ -51,7 +119,7 @@ Sector::Sector(int x, int y, int z) :
 	    (y < -CUSTOM_ONLY_RADIUS) || (y > CUSTOM_ONLY_RADIUS-1) ||
 	    (z < -CUSTOM_ONLY_RADIUS) || (z > CUSTOM_ONLY_RADIUS-1)) {
 #endif
-		int numSystems = (rng.Int32(4,20) * Galaxy::GetSectorDensity(x, y, z)) >> 8;
+		int numSystems = (rng.Int32(4,20) * Galaxy::GetSectorDensity(sx, sy, sz)) >> 8;
 
 		for (int i=0; i<numSystems; i++) {
 			System s;
@@ -239,16 +307,18 @@ Sector::Sector(int x, int y, int z) :
 #if 0
 	}
 #endif
+
+	m_dirty = false;
 }
 
 float Sector::DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB)
 {
-	vector3f dv = a->m_systems[sysIdxA].p - b->m_systems[sysIdxB].p;
+	vector3f dv = a->GetSystem(sysIdxA).p - b->GetSystem(sysIdxB).p;
 	dv += Sector::SIZE*vector3f(a->sx - b->sx, a->sy - b->sy, a->sz - b->sz);
 	return dv.Length();
 }
 
-std::string Sector::GenName(System &sys, MTRand &rng)
+std::string Sector::GenName(System &sys, MTRand &rng) const
 {
 	std::string name;
 	const int dist = std::max(std::max(abs(sx),abs(sy)),abs(sz));

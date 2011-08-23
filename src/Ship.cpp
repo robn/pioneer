@@ -335,10 +335,15 @@ static float distance_to_system(const SystemPath *dest)
 {
 	SystemPath here = Pi::currentSystem->GetPath();
 	
-	Sector sec1(here.sectorX, here.sectorY, here.sectorZ);
-	Sector sec2(dest->sectorX, dest->sectorY, dest->sectorZ);
+	Sector *sec1 = Sector::Get(here.sectorX, here.sectorY, here.sectorZ);
+	Sector *sec2 = Sector::Get(dest->sectorX, dest->sectorY, dest->sectorZ);
 
-	return Sector::DistanceBetween(&sec1, here.systemIndex, &sec2, dest->systemIndex);
+	float dist = Sector::DistanceBetween(sec1, here.systemIndex, sec2, dest->systemIndex);
+
+	sec1->Release();
+	sec2->Release();
+
+	return dist;
 }
 
 void Ship::UseHyperspaceFuel(const SystemPath *dest)

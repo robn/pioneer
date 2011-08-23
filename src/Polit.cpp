@@ -190,15 +190,18 @@ void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, 
 	const unsigned long _init[5] = { path.sectorX, path.sectorY, path.sectorZ, path.systemIndex, POLIT_SEED };
 	MTRand rand(_init, 5);
 
-	Sector sec(path.sectorX, path.sectorY, path.sectorZ);
+	Sector *sec = Sector::Get(path.sectorX, path.sectorY, path.sectorZ);
 
 	GovType a = GOV_INVALID;
 	
 	/* from custom system definition */
+    /* XXX CUSTOM
 	if (sec.m_systems[path.systemIndex].customSys) {
 		Polit::GovType t = sec.m_systems[path.systemIndex].customSys->govType;
 		a = t;
 	}
+    */
+
 	if (a == GOV_INVALID) {
 		if (path == SystemPath(0,0,0,0)) {
 			a = Polit::GOV_EARTHDEMOC;
@@ -214,6 +217,8 @@ void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, 
 
 	outSysPolit.govType = a;
 	outSysPolit.lawlessness = s_govDesc[a].baseLawlessness * rand.Fixed();
+
+    sec->Release();
 }
 
 #define POLIT_SALT 0x8732abdf

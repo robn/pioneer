@@ -8,18 +8,8 @@
 #include "CustomSystem.h"
 #include "DeleteEmitter.h"
 
-class Sector : public DeleteEmitter {
+class Sector : public DeleteEmitter, private RefCounted {
 public:
-	// lightyears
-	static const float SIZE;
-
-	Sector(int x, int y, int z);
-	static float DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB);
-	// Sector is within a bounding rectangle - used for SectorView m_sectorCache pruning.
-	bool WithinBox(const int Xmin, const int Xmax, const int Ymin, const int Ymax, const int Zmin, const int Zmax) const;
-
-	bool GetCustomOnly() const { return m_customOnly; }
-	void SetCustomOnly(bool c) { m_customOnly = c; }
 
 	class System {
 	public:
@@ -44,14 +34,43 @@ public:
 		bool m_isInhabited;
 	};
 
+	// lightyears
+	static const float SIZE;
+
+	static Sector *Get(int x, int y, int z);
+	void Release();
+
+	const std::vector<System> &GetSystems() const;
+	const System &GetSystem(Uint32 n) const;
+	Uint32 GetNumSystems() const;
+
+	bool GetCustomOnly() const { return m_customOnly; }
+	void SetCustomOnly(bool c) { m_customOnly = c; }
+
+	static float DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB);
+	// Sector is within a bounding rectangle - used for SectorView m_sectorCache pruning.
+	bool WithinBox(const int Xmin, const int Xmax, const int Ymin, const int Ymax, const int Zmin, const int Zmax) const;
+
 	const int sx, sy, sz;
-	std::vector<System> m_systems;
 
 private:
-	void GetCustomSystems();
-	std::string GenName(System &sys, MTRand &rand);
+	Sector(int x, int y, int z);
+
+	//void GetCustomSystems();
+	std::string GenName(System &sys, MTRand &rand) const;
+
+	void GenerateSystems() const;
+
+	mutable std::vector<System> m_systems;
+	mutable bool m_dirty;
 
 	bool m_customOnly;
+
+	// sectors that were modified at startup
+	static std::map<SystemPath,Sector*> s_globalCache;
+
+	// sectors that have been modified in the current game
+	static std::map<SystemPath,Sector*> s_gameCache;
 };
 
 #endif /* _SECTOR_H */

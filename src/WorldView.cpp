@@ -730,7 +730,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 			}
 			else {
 				const SystemPath dest = ship->GetHyperspaceDest();
-				Sector s(dest.sectorX, dest.sectorY, dest.sectorZ);
+				Sector *s = Sector::Get(dest.sectorX, dest.sectorY, dest.sectorZ);
 				text += stringf(512,
 					std::string(
                         std::string(Lang::HYPERSPACE_X_CLOUD)+std::string("\n")+
@@ -741,9 +741,10 @@ void WorldView::RefreshButtonStateAndVisibility()
 					cloud->IsArrival() ? Lang::ARRIVAL : Lang::DEPARTURE,
 					ship->CalcStats()->total_mass,
                     cloud->IsArrival() ? Lang::SOURCE : Lang::DESTINATION,
-					s.m_systems[dest.systemIndex].name.c_str(),
+					s->GetSystem(dest.systemIndex).name.c_str(),
 					format_date(cloud->GetDueDate()).c_str()
 				);
+				s->Release();
 			}
 
 			m_hudTargetInfo->SetText(text);

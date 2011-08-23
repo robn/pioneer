@@ -7,8 +7,8 @@ static int l_sector_new(lua_State *l)
 	int x = luaL_checkinteger(l, 1);
 	int y = luaL_checkinteger(l, 2);
 	int z = luaL_checkinteger(l, 3);
-	Sector *s = new Sector(x, y, z);
-	LuaSector::PushToLuaGC(s);
+	Sector *s = Sector::Get(x, y, z);
+	LuaSector::PushToLua(s);
 	return 1;
 }
 
@@ -20,7 +20,8 @@ static int l_sector_get_systems(lua_State *l)
 
 	lua_newtable(l);
 
-	for (std::vector<Sector::System>::iterator i = s->m_systems.begin(); i != s->m_systems.end(); i++) {
+	const std::vector<Sector::System> systems = s->GetSystems();
+	for (std::vector<Sector::System>::const_iterator i = systems.begin(); i != systems.end(); i++) {
 		lua_pushinteger(l, lua_objlen(l, -1)+1);
 
 		lua_newtable(l);

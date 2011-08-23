@@ -194,8 +194,8 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 
 	for (std::map<SystemPath,Sector*>::iterator i = m_sectorCache.begin(); i != m_sectorCache.end(); i++)
 
-		for (unsigned int systemIndex = 0; systemIndex < (*i).second->m_systems.size(); systemIndex++) {
-			const Sector::System *ss = &((*i).second->m_systems[systemIndex]);
+		for (unsigned int systemIndex = 0; systemIndex < (*i).second->GetNumSystems(); systemIndex++) {
+			const Sector::System *ss = &((*i).second->GetSystem(systemIndex));
 
 			// compare with the start of the current system
 			if (strncasecmp(search.c_str(), ss->name.c_str(), search.size()) == 0) {
@@ -289,7 +289,7 @@ void SectorView::Draw3D()
 	Sector* playerSec = GetCached(m_current.sectorX, m_current.sectorY, m_current.sectorZ);
 	vector3f playerPos
 		= Sector::SIZE * vector3f(float(m_current.sectorX), float(m_current.sectorY), float(m_current.sectorZ))
-		+ playerSec->m_systems[m_current.systemIndex].p;
+		+ playerSec->GetSystem(m_current.systemIndex).p;
 	
 
 	for (int sx = -DRAW_RAD; sx <= DRAW_RAD; sx++) {
@@ -341,7 +341,7 @@ void SectorView::ResetHyperspaceTarget()
 void SectorView::GotoSystem(const SystemPath &path)
 {
 	Sector* ps = GetCached(path.sectorX, path.sectorY, path.sectorZ);
-	const vector3f &p = ps->m_systems[path.systemIndex].p;
+	const vector3f &p = ps->GetSystem(path.systemIndex).p;
 	m_posMovingTo.x = path.sectorX + p.x/Sector::SIZE;
 	m_posMovingTo.y = path.sectorY + p.y/Sector::SIZE;
 	m_posMovingTo.z = path.sectorZ + p.z/Sector::SIZE;
@@ -485,7 +485,8 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 
 	if (!(sx || sy)) glColor3f(1,1,0);
 	Uint32 num=0;
-	for (std::vector<Sector::System>::iterator i = ps->m_systems.begin(); i != ps->m_systems.end(); ++i, ++num) {
+	std::vector<Sector::System> systems = ps->GetSystems();
+	for (std::vector<Sector::System>::iterator i = systems.begin(); i != systems.end(); ++i, ++num) {
 		SystemPath current = SystemPath(sx, sy, sz, num);
 
 		const vector3f sysAbsPos = Sector::SIZE*vector3f(float(sx), float(sy), float(sz)) + (*i).p;
@@ -775,14 +776,14 @@ void SectorView::Update()
 		SystemPath new_selected = SystemPath(int(floor(m_pos.x)), int(floor(m_pos.y)), int(floor(m_pos.z)), 0);
 
 		Sector* ps = GetCached(new_selected.sectorX, new_selected.sectorY, new_selected.sectorZ);
-		if (ps->m_systems.size()) {
+		if (ps->GetNumSystems()) {
 			float px = FFRAC(m_pos.x)*Sector::SIZE;
 			float py = FFRAC(m_pos.y)*Sector::SIZE;
 			float pz = FFRAC(m_pos.z)*Sector::SIZE;
 
 			float min_dist = FLT_MAX;
-			for (unsigned int i=0; i<ps->m_systems.size(); i++) {
-				Sector::System *ss = &ps->m_systems[i];
+			for (unsigned int i=0; i<ps->GetNumSystems(); i++) {
+				const Sector::System *ss = &ps->GetSystem(i);
 				float dx = px - ss->p.x;
 				float dy = py - ss->p.y;
 				float dz = pz - ss->p.z;
@@ -822,7 +823,7 @@ Sector* SectorView::GetCached(int sectorX, int sectorY, int sectorZ)
 	if (i != m_sectorCache.end())
 		return (*i).second;
 
-	s = new Sector(sectorX, sectorY, sectorZ);
+	s = Sector::Get(sectorX, sectorY, sectorZ);
 	m_sectorCache.insert( std::pair<SystemPath,Sector*>(loc, s) );
 
 	return s;

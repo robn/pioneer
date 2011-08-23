@@ -1082,11 +1082,13 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	memset(m_tradeLevel, 0, sizeof(m_tradeLevel));
 	rootBody = 0;
 
-	Sector s(m_path.sectorX, m_path.sectorY, m_path.sectorZ);
-	assert(m_path.systemIndex >= 0 && m_path.systemIndex < s.m_systems.size());
+	Sector *sec = Sector::Get(m_path.sectorX, m_path.sectorY, m_path.sectorZ);
+	assert(m_path.systemIndex >= 0 && m_path.systemIndex < sec->GetNumSystems());
 
-	m_seed = s.m_systems[m_path.systemIndex].seed;
-	m_name = s.m_systems[m_path.systemIndex].name;
+	const Sector::System secsys = sec->GetSystem(m_path.systemIndex);
+
+	m_seed = secsys.seed;
+	m_name = secsys.name;
 
 	unsigned long _init[6] = { m_path.systemIndex, m_path.sectorX, m_path.sectorY, m_path.sectorZ, UNIVERSE_SEED, m_seed };
 	MTRand rand(_init, 6);
@@ -1100,15 +1102,16 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
 	m_isCustom = m_hasCustomBodies = false;
-	if (s.m_systems[m_path.systemIndex].customSys) {
+	if (secsys.customSys) {
 		m_isCustom = true;
-		const CustomSystem *custom = s.m_systems[m_path.systemIndex].customSys;
+		const CustomSystem *custom = secsys.customSys;
 		m_numStars = custom->numStars;
 		if (custom->shortDesc.length() > 0) m_shortDesc = custom->shortDesc;
 		if (custom->longDesc.length() > 0) m_longDesc = custom->longDesc;
 		if (!custom->IsRandom()) {
 			m_hasCustomBodies = true;
-			GenerateFromCustom(s.m_systems[m_path.systemIndex].customSys, rand);
+			GenerateFromCustom(secsys.customSys, rand);
+			sec->Release();
 			return;
 		}
 	}
@@ -1116,14 +1119,14 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	SBody *star[4];
 	SBody *centGrav1, *centGrav2;
 
-	const int numStars = s.m_systems[m_path.systemIndex].numStars;
+	const int numStars = secsys.numStars;
 	assert((numStars >= 1) && (numStars <= 4));
 
 	if (numStars == 1) {
-		SBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
+		SBody::BodyType type = secsys.starType[0];
 		star[0] = NewBody();
 		star[0]->parent = NULL;
-		star[0]->name = s.m_systems[m_path.systemIndex].name;
+		star[0]->name = secsys.name;
 		star[0]->orbMin = 0;
 		star[0]->orbMax = 0;
 		MakeStarOfType(star[0], type, rand);
@@ -1133,19 +1136,19 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 		centGrav1 = NewBody();
 		centGrav1->type = SBody::TYPE_GRAVPOINT;
 		centGrav1->parent = NULL;
-		centGrav1->name = s.m_systems[m_path.systemIndex].name+" A,B";
+		centGrav1->name = secsys.name+" A,B";
 		rootBody = centGrav1;
 
-		SBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
+		SBody::BodyType type = secsys.starType[0];
 		star[0] = NewBody();
-		star[0]->name = s.m_systems[m_path.systemIndex].name+" A";
+		star[0]->name = secsys.name+" A";
 		star[0]->parent = centGrav1;
 		MakeStarOfType(star[0], type, rand);
 		
 		star[1] = NewBody();
-		star[1]->name = s.m_systems[m_path.systemIndex].name+" B";
+		star[1]->name = secsys.name+" B";
 		star[1]->parent = centGrav1;
-		MakeStarOfTypeLighterThan(star[1], s.m_systems[m_path.systemIndex].starType[1],
+		MakeStarOfTypeLighterThan(star[1], secsys.starType[1],
 				star[0]->mass, rand);
 
 		centGrav1->mass = star[0]->mass + star[1]->mass;
@@ -1164,29 +1167,29 @@ try_that_again_guvnah:
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
 				star[2] = NewBody();
-				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
+				star[2]->name = secsys.name+" C";
 				star[2]->orbMin = 0;
 				star[2]->orbMax = 0;
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2],
+				MakeStarOfTypeLighterThan(star[2], secsys.starType[2],
 					star[0]->mass, rand);
 				centGrav2 = star[2];
 				m_numStars = 3;
 			} else {
 				centGrav2 = NewBody();
 				centGrav2->type = SBody::TYPE_GRAVPOINT;
-				centGrav2->name = s.m_systems[m_path.systemIndex].name+" C,D";
+				centGrav2->name = secsys.name+" C,D";
 				centGrav2->orbMax = 0;
 
 				star[2] = NewBody();
-				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
+				star[2]->name = secsys.name+" C";
 				star[2]->parent = centGrav2;
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2],
+				MakeStarOfTypeLighterThan(star[2], secsys.starType[2],
 					star[0]->mass, rand);
 				
 				star[3] = NewBody();
-				star[3]->name = s.m_systems[m_path.systemIndex].name+" D";
+				star[3]->name = secsys.name+" D";
 				star[3]->parent = centGrav2;
-				MakeStarOfTypeLighterThan(star[3], s.m_systems[m_path.systemIndex].starType[3],
+				MakeStarOfTypeLighterThan(star[3], secsys.starType[3],
 					star[2]->mass, rand);
 
 				MakeBinaryPair(star[2], star[3], fixed(0), rand);
@@ -1198,7 +1201,7 @@ try_that_again_guvnah:
 			SBody *superCentGrav = NewBody();
 			superCentGrav->type = SBody::TYPE_GRAVPOINT;
 			superCentGrav->parent = NULL;
-			superCentGrav->name = s.m_systems[m_path.systemIndex].name;
+			superCentGrav->name = secsys.name;
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
 			rootBody = superCentGrav;
@@ -1209,6 +1212,8 @@ try_that_again_guvnah:
 
 		}
 	}
+
+	sec->Release();
 
 	m_metallicity = starMetallicities[rootBody->type];
 
