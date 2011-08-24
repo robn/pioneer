@@ -58,6 +58,7 @@
 #include "LuaMusic.h"
 #include "LuaSector.h"
 #include "LuaFixed.h"
+#include "CustomSystem.h"
 #include "SoundMusic.h"
 #include "Background.h"
 #include "Lang.h"
@@ -209,6 +210,8 @@ static void LuaInit()
 
 	LuaObject<LuaSerializer>::RegisterClass();
 	LuaObject<LuaTimer>::RegisterClass();
+
+	LuaObject<CustomSystem>::RegisterClass();
 
 	Pi::luaOnGameStart.RegisterEventQueue();
 	Pi::luaOnGameEnd.RegisterEventQueue();

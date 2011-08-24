@@ -1,3 +1,31 @@
+#ifndef _CUSTOMSYSTEM_H
+#define _CUSTOMSYSTEM_H
+
+#include "libs.h"
+#include "Polit.h"
+#include "StarSystem.h"
+#include "DeleteEmitter.h"
+#include "LuaManager.h"
+
+class CustomSystem : public DeleteEmitter {
+public:
+	std::string    name;
+	vector3f       pos;
+	Polit::GovType govType;
+	std::string    shortDesc;
+	std::string    longDesc;
+	Uint32         seed;
+
+	SBody::BodyType primaryType;
+	fixed           primaryRadius;
+	fixed           primaryMass;
+	Uint32          primaryTemp;
+};
+
+#endif
+
+
+
 #if 0
 #ifndef _CUSTOMSYSTEM_H
 #define _CUSTOMSYSTEM_H

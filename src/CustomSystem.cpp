@@ -1,3 +1,20 @@
+#include "CustomSystem.h"
+#include "LuaObject.h"
+
+template <> const char *LuaObject<CustomSystem>::s_type = "CustomSystem";
+
+template <> void LuaObject<CustomSystem>::RegisterClass()
+{
+	static luaL_reg l_methods[] = {
+		{ 0, 0 }
+	};
+
+	LuaObjectBase::CreateClass(s_type, NULL, l_methods, NULL, NULL);
+}
+
+
+
+
 #if 0
 #include "CustomSystem.h"
 #include "LuaUtils.h"
