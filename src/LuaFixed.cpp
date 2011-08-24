@@ -136,13 +136,13 @@ static int l_fixed_meta_lt(lua_State *l)
 	return 1;
 }
 
-template <> const char *LuaObject<LuaUncopyable<fixed> >::s_type = "Fixed";
+template <> const char *LuaObject<LuaUncopyable<fixed> >::s_type = "fixed";
 
 template <> void LuaObject<LuaUncopyable<fixed> >::RegisterClass()
 {
 	static const luaL_reg l_methods[] = {
-		{ "New",      l_fixed_new       },
-		{ "ToNumber", l_fixed_to_number },
+		{ "new",      l_fixed_new       },
+		{ "tonumber", l_fixed_to_number },
 		{ 0, 0 }
 	};
 
