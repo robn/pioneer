@@ -30,7 +30,6 @@
 #include "LmrModel.h"
 #include "render/Render.h"
 #include "AmbientSounds.h"
-#include "CustomSystem.h"
 #include "CityOnPlanet.h"
 #include "LuaManager.h"
 #include "LuaBody.h"

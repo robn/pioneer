@@ -1,3 +1,4 @@
+#if 0
 #include "CustomSystem.h"
 #include "LuaUtils.h"
 #include "PiLuaClasses.h"
@@ -191,3 +192,4 @@ LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSBody>, seed, radius, mass, temp, sem
 LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSBody>, longitude, rotation_period, axial_tilt, height_map, metallicity, volcanicity, atmos_density, atmos_oxidizing, ocean_cover)
 LUA_MEMBER_FUNC_2(OOLUA::Proxy_class<CustomSBody>, ice_cover, life)
 CLASS_LIST_MEMBERS_END
+#endif

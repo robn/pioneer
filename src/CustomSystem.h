@@ -1,3 +1,4 @@
+#if 0
 #ifndef _CUSTOMSYSTEM_H
 #define _CUSTOMSYSTEM_H
 
@@ -154,3 +155,4 @@ OOLUA_CLASS_NO_BASES(CustomSystem)
 OOLUA_CLASS_END
 
 #endif /* _CUSTOMSYSTEM_H */
+#endif

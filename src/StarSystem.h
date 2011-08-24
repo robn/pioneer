@@ -11,8 +11,10 @@
 #include "RefCounted.h"
 #include "SystemPath.h"
 
+#if 0
 class CustomSBody;
 class CustomSystem;
+#endif
 class SBody;
 
 // doubles - all masses in Kg, all lengths in meters
@@ -237,8 +239,10 @@ private:
 	void MakeStarOfType(SBody *sbody, SBody::BodyType type, MTRand &rand);
 	void MakeStarOfTypeLighterThan(SBody *sbody, SBody::BodyType type, fixed maxMass, MTRand &rand);
 	void MakeBinaryPair(SBody *a, SBody *b, fixed minDist, MTRand &rand);
+#if 0
 	void CustomGetKidsOf(SBody *parent, const std::list<CustomSBody> *children, int *outHumanInfestedness, MTRand &rand);
 	void GenerateFromCustom(const CustomSystem *, MTRand &rand);
+#endif
 	void Populate(bool addSpaceStations);
 
 	SystemPath m_path;

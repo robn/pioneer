@@ -4,8 +4,8 @@
 #include "libs.h"
 #include <string>
 #include <vector>
+#include <map>
 #include "StarSystem.h"
-#include "CustomSystem.h"
 #include "DeleteEmitter.h"
 
 class Sector : public DeleteEmitter, private RefCounted {
@@ -13,7 +13,7 @@ public:
 
 	class System {
 	public:
-		System() : customSys(0), m_queriedStarSystem(false), m_isInhabited(false) {};
+		System() : m_queriedStarSystem(false), m_isInhabited(false) {};
 		~System() {};
 
 		// Check that we've had our habitation status set
@@ -27,7 +27,7 @@ public:
 		int numStars;
 		SBody::BodyType starType[4];
 		Uint32 seed;
-		const CustomSystem *customSys;
+		//const CustomSystem *customSys;
 
 	private:
 		bool m_queriedStarSystem;

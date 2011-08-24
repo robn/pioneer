@@ -1,6 +1,7 @@
 #include "LuaObject.h"
 #include "LuaSector.h"
 #include "LuaUtils.h"
+#include "LuaConstants.h"
 
 static int l_sector_new(lua_State *l)
 {

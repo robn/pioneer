@@ -21,6 +21,7 @@
 #include "Polit.h"
 #include "CityOnPlanet.h"
 #include "Missile.h"
+#include "LuaConstants.h"
 #include "Lang.h"
 
 #define TONS_HULL_PER_SHIELD 10.0f

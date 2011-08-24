@@ -1,6 +1,6 @@
 #include "Sector.h"
 #include "StarSystem.h"
-#include "CustomSystem.h"
+//#include "CustomSystem.h"
 #include "Galaxy.h"
 #include "utils.h"
 
@@ -138,7 +138,7 @@ void Sector::GenerateSystems() const
 			s.p.y = rng.Double(SIZE);
 			s.p.z = rng.Double(SIZE);
 			s.seed = 0;
-			s.customSys = 0;
+			//s.customSys = 0;
 			
 			float spec = rng.Int32(1000000);
 			// frequencies from wikipedia

@@ -79,7 +79,6 @@ noinst_HEADERS = \
 	ObjectViewerView.h \
 	PersistSystemData.h \
 	Pi.h \
-	PiLuaClasses.h \
 	Planet.h \
 	Player.h \
 	Polit.h \
@@ -201,7 +200,6 @@ pioneer_SOURCES	= \
 	NameGenerator.cpp \
 	ObjectViewerView.cpp \
 	Pi.cpp \
-	PiLuaClasses.cpp \
 	Planet.cpp \
 	Player.cpp \
 	Polit.cpp \

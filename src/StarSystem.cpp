@@ -922,6 +922,7 @@ struct CustomSBody {
 	fixed eccentricity;
 };
 */
+#if 0
 void StarSystem::CustomGetKidsOf(SBody *parent, const std::list<CustomSBody> *children, int *outHumanInfestedness, MTRand &rand)
 {
 	for (std::list<CustomSBody>::const_iterator i = children->begin(); i != children->end(); i++) {
@@ -1000,6 +1001,7 @@ void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 	Populate(false);
 
 }
+#endif
 
 void StarSystem::MakeStarOfType(SBody *sbody, SBody::BodyType type, MTRand &rand)
 {
@@ -1101,6 +1103,7 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	int dist = isqrt(1 + m_path.sectorX*m_path.sectorX + m_path.sectorY*m_path.sectorY + m_path.sectorZ*m_path.sectorZ);
 	m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
+#if 0
 	m_isCustom = m_hasCustomBodies = false;
 	if (secsys.customSys) {
 		m_isCustom = true;
@@ -1115,6 +1118,7 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 			return;
 		}
 	}
+#endif
 
 	SBody *star[4];
 	SBody *centGrav1, *centGrav2;

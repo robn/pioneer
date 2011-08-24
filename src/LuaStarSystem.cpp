@@ -5,6 +5,7 @@
 #include "LuaStarSystem.h"
 #include "LuaSystemPath.h"
 #include "LuaUtils.h"
+#include "LuaConstants.h"
 #include "StarSystem.h"
 #include "EquipType.h"
 #include "Pi.h"
