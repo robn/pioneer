@@ -15,11 +15,17 @@ public:
 	std::string    shortDesc;
 	std::string    longDesc;
 	Uint32         seed;
+	bool           wantRandSeed;
 
 	SBody::BodyType primaryType;
 	fixed           primaryRadius;
 	fixed           primaryMass;
 	Uint32          primaryTemp;
+
+	static int l_customsystem_new(lua_State *);
+
+private:
+	CustomSystem() {}
 };
 
 #endif

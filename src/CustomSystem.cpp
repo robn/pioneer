@@ -1,11 +1,161 @@
 #include "CustomSystem.h"
 #include "LuaObject.h"
+#include "LuaConstants.h"
+#include "LuaFixed.h"
+
+static inline bool _check_table_param(lua_State *l, int tableidx, const char *key, bool required, int (*testfn)(lua_State *, int), int what, const char *where)
+{
+	lua_getfield(l, tableidx, key);
+	if (!required && lua_isnil(l, -1))
+		return false;
+	if (!testfn(l, -1)) {
+		luaL_where(l, 0);
+		luaL_error(l, "%s bad argument '%s' to '%s' (%s expected, got %s)",
+			lua_tostring(l, -1), key, where, lua_typename(l, what), luaL_typename(l, -2));
+	}
+	return true;
+}
+
+static inline bool _check_table_param(lua_State *l, int tableidx, const char *key, bool required, int what, const char *where)
+{
+	lua_getfield(l, tableidx, key);
+	if (!required && lua_isnil(l, -1))
+		return false;
+	if (lua_type(l, -1) != what) {
+		luaL_where(l, 0);
+		luaL_error(l, "%s bad argument '%s' to '%s' (%s expected, got %s)",
+			lua_tostring(l, -1), key, where, lua_typename(l, what), luaL_typename(l, -2));
+	}
+	return true;
+}
+
+/*
+local sol = CustomSystem.New({
+    name       = 'Sol',
+    pos        = { 0, 0, 0 },
+    govtype    = 'EARTHDEMOC',
+    shortdesc  = 'The historical birthplace of humankind',
+    longdesc   = [[Sol is a fine joint]],
+    seed       = 23,
+    primary    = {
+        type   = 'STAR_G',
+        radius = f(1,1),
+        mass   = f(1,1),
+        temp   = 5700,
+    },
+})
+*/
+int CustomSystem::l_customsystem_new(lua_State *l)
+{
+	LUA_DEBUG_START(l);
+
+	if (!lua_istable(l, 1))
+		luaL_typerror(l, 1, lua_typename(l, LUA_TTABLE));
+
+	int old_top = lua_gettop(l);
+
+	_check_table_param(l, 1, "name", true, lua_isstring, LUA_TSTRING, "CustomSystem.New");
+	std::string name = lua_tostring(l, -1);
+
+	_check_table_param(l, 1, "pos", true, LUA_TTABLE, "CustomSystem.New");
+	float pos[3];
+	bool badpos = false;
+	if (lua_objlen(l, -1) != 3)
+		badpos = true;
+	else
+		for (int i = 0; i < 3; i++) {
+			lua_pushinteger(l, i+1);
+			lua_gettable(l, -2);
+			if (!lua_isnumber(l, -1)) {
+				badpos = true;
+				break;
+			}
+			pos[i] = lua_tonumber(l, -1);
+			lua_pop(l, 1);
+		}
+	if (badpos) {
+		luaL_where(l, 0);
+		luaL_error(l, "%s bad argument 'pos' to 'CustomSystem.New' (3 numbers expected)", lua_tostring(l, -1));
+	}
+
+	Polit::GovType govType
+		= _check_table_param(l, 1, "govtype", false, lua_isstring, LUA_TSTRING, "CustomSystem.New")
+		? static_cast<Polit::GovType>(LuaConstants::GetConstant(l, "PolitGovType", lua_tostring(l, -1)))
+		: Polit::GOV_NONE;
+	
+	std::string shortDesc;
+	if (_check_table_param(l, 1, "shortdesc", false, lua_isstring, LUA_TSTRING, "CustomSystem.New"))
+		shortDesc = lua_tostring(l, -1);
+
+	std::string longDesc;
+	if (_check_table_param(l, 1, "longdesc", false, lua_isstring, LUA_TSTRING, "CustomSystem.New"))
+		longDesc = lua_tostring(l, -1);
+
+	Uint32 seed = 0;
+	bool wantRandSeed = true;
+	if (_check_table_param(l, 1, "seed", false, lua_isnumber, LUA_TNUMBER, "CustomSystem.New")) {
+		seed = lua_tointeger(l, -1);
+		wantRandSeed = false;
+	}
+
+	_check_table_param(l, 1, "primary", true, LUA_TTABLE, "CustomSystem.New");
+	int primary = lua_gettop(l);
+
+	_check_table_param(l, primary, "type", true, lua_isstring, LUA_TSTRING, "CustomSystem.New primary");
+	SBody::BodyType primaryType = static_cast<SBody::BodyType>(LuaConstants::GetConstant(l, "BodyType", lua_tostring(l, -1)));
+
+	fixed primaryRadius;
+	if (_check_table_param(l, primary, "radius", false, lua_isuserdata, LUA_TUSERDATA, "CustomSystem.New primary"))
+		primaryRadius = *LuaFixed::GetFromLua(-1);
+
+	fixed primaryMass;
+	if (_check_table_param(l, primary, "mass", false, lua_isuserdata, LUA_TUSERDATA, "CustomSystem.New primary"))
+		primaryMass = *LuaFixed::GetFromLua(-1);
+
+	int primaryTemp = 0;
+	if (_check_table_param(l, primary, "temp", false, lua_isnumber, LUA_TNUMBER, "CustomSystem.New primary"))
+		primaryTemp = lua_tointeger(l, -1);
+	
+	lua_settop(l, old_top);
+
+	CustomSystem *cs = new CustomSystem();
+	cs->name = name;
+	cs->pos = vector3f(pos);
+	cs->govType = govType;
+	cs->shortDesc = shortDesc;
+	cs->longDesc = longDesc;
+	cs->seed = seed;
+	cs->wantRandSeed = wantRandSeed;
+	cs->primaryType = primaryType;
+	cs->primaryRadius = primaryRadius;
+	cs->primaryMass = primaryMass;
+	cs->primaryTemp = primaryTemp;
+
+	LuaObject<CustomSystem>::PushToLuaGC(cs);
+
+	/*
+	printf("name: %s\n", name.c_str());
+	printf("pos: %f %f %f\n", pos[0], pos[1], pos[2]);
+	printf("govType: %d\n", govType);
+	printf("shortDesc: %s\n", shortDesc.c_str());
+	printf("longDesc: %s\n", longDesc.c_str());
+	printf("seed: %d [rand: %s]\n", seed, wantRandSeed ? "true" : "false");
+	printf("primaryType: %d\n", primaryType);
+	printf("primaryRadius: %f\n", primaryRadius.ToDouble());
+	printf("primaryMass: %f\n", primaryMass.ToDouble());
+	printf("primaryTemp: %d\n", primaryTemp);
+	*/
+
+	LUA_DEBUG_END(l, 1);
+	return 1;
+}
 
 template <> const char *LuaObject<CustomSystem>::s_type = "CustomSystem";
 
 template <> void LuaObject<CustomSystem>::RegisterClass()
 {
 	static luaL_reg l_methods[] = {
+		{ "New", CustomSystem::l_customsystem_new },
 		{ 0, 0 }
 	};
 
