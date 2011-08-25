@@ -1,5 +1,4 @@
 #include "CustomSystem.h"
-#include "LuaObject.h"
 #include "LuaConstants.h"
 #include "LuaFixed.h"
 
@@ -131,7 +130,7 @@ int CustomSystem::l_customsystem_new(lua_State *l)
 	cs->primaryMass = primaryMass;
 	cs->primaryTemp = primaryTemp;
 
-	LuaObject<CustomSystem>::PushToLuaGC(cs);
+	LuaCustomSystem::PushToLuaGC(cs);
 
 	/*
 	printf("name: %s\n", name.c_str());

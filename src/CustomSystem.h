@@ -5,7 +5,7 @@
 #include "Polit.h"
 #include "StarSystem.h"
 #include "DeleteEmitter.h"
-#include "LuaManager.h"
+#include "LuaObject.h"
 
 class CustomSystem : public DeleteEmitter {
 public:
@@ -27,6 +27,8 @@ public:
 private:
 	CustomSystem() {}
 };
+
+typedef LuaObject<CustomSystem> LuaCustomSystem;
 
 #endif
 
