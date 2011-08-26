@@ -67,6 +67,11 @@ Uint32 Sector::GetNumSystems() const
 	return m_systems.size();
 }
 
+void Sector::AddSystem(const CustomSystem *customSystem)
+{
+	m_customSystems.push_back(customSystem);
+}
+
 
 
 Sector::Sector(int x, int y, int z) :

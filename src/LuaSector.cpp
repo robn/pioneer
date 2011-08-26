@@ -2,6 +2,7 @@
 #include "LuaSector.h"
 #include "LuaUtils.h"
 #include "LuaConstants.h"
+#include "CustomSystem.h"
 
 static int l_sector_new(lua_State *l)
 {
@@ -60,6 +61,15 @@ static int l_sector_set_custom_only(lua_State *l)
 	return 0;
 }
 
+static int l_sector_add_system(lua_State *l)
+{
+	Sector *s = LuaSector::GetFromLua(1);
+	CustomSystem *cs = LuaCustomSystem::GetFromLua(2);
+	LuaCustomSystem::ReleaseOwnership(cs);
+	s->AddSystem(cs);
+	return 0;
+}
+
 static int l_sector_attr_x(lua_State *l)
 {
 	Sector *s = LuaSector::GetFromLua(1);
@@ -96,6 +106,7 @@ template <> void LuaObject<Sector>::RegisterClass()
 		{ "New",           l_sector_new             },
 		{ "GetSystems",    l_sector_get_systems     },
 		{ "SetCustomOnly", l_sector_set_custom_only },
+		{ "AddSystem",     l_sector_add_system      },
 		{ 0, 0 }
 	};
 

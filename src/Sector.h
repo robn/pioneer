@@ -7,6 +7,7 @@
 #include <map>
 #include "StarSystem.h"
 #include "DeleteEmitter.h"
+#include "CustomSystem.h"
 
 class Sector : public DeleteEmitter, private RefCounted {
 public:
@@ -47,6 +48,8 @@ public:
 	bool GetCustomOnly() const { return m_customOnly; }
 	void SetCustomOnly(bool c) { m_customOnly = c; }
 
+	void AddSystem(const CustomSystem *customSystem);
+
 	static float DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB);
 	// Sector is within a bounding rectangle - used for SectorView m_sectorCache pruning.
 	bool WithinBox(const int Xmin, const int Xmax, const int Ymin, const int Ymax, const int Zmin, const int Zmax) const;
@@ -63,6 +66,8 @@ private:
 
 	mutable std::vector<System> m_systems;
 	mutable bool m_dirty;
+
+	std::vector<const CustomSystem*> m_customSystems;
 
 	bool m_customOnly;
 
