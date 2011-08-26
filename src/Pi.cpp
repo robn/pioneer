@@ -62,7 +62,7 @@
 #include "SoundMusic.h"
 #include "Background.h"
 #include "Lang.h"
-#include "Lang.h"
+#include "StringF.h"
 
 float Pi::gameTickAlpha;
 int Pi::timeAccelIdx = 1;
@@ -173,7 +173,7 @@ static void draw_progress(float progress)
 	Gui::Screen::EnterOrtho();
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	std::string msg = stringf(256, Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, progress * 15.0f);
+	std::string msg = stringf(Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, formatarg("age", progress * 15.0f));
 	Gui::Screen::MeasureString(msg, w, h);
 	glColor3f(1.0f,1.0f,1.0f);
 	Gui::Screen::RenderString(msg, 0.5f*(Gui::Screen::GetWidth()-w), 0.5f*(Gui::Screen::GetHeight()-h));
@@ -1280,9 +1280,8 @@ void Pi::MainLoop()
 #ifdef MAKING_VIDEO
 		if (SDL_GetTicks() - last_screendump > 50) {
 			last_screendump = SDL_GetTicks();
-			char buf[256];
-			snprintf(buf, sizeof(buf), Lang::SCREENSHOT_FILENAME_TEMPLATE, dumpnum++);
-			Screendump(buf, GetScrWidth(), GetScrHeight());
+			std::string fname = stringf(Lang::SCREENSHOT_FILENAME_TEMPLATE, formatarg("index", dumpnum++));
+			Screendump(fname.c_str(), GetScrWidth(), GetScrHeight());
 		}
 #endif /* MAKING_VIDEO */
 	}

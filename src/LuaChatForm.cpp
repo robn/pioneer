@@ -11,6 +11,8 @@
 #include "CommodityTradeWidget.h"
 #include "FaceVideoLink.h"
 #include "StationPoliceForm.h"
+#include "Lang.h"
+#include "StringF.h"
 
 void LuaChatForm::OnOptionClicked(int option)
 {
@@ -195,7 +197,7 @@ void LuaChatForm::OnClickBuy(int t) {
 
 	if (allow_buy) {
 		if (SellTo(Pi::player, static_cast<Equip::Type>(t), true)) {
-			Pi::Message(stringf(512, "You have bought 1t of %s.", EquipType::types[t].name));
+			Pi::Message(stringf(Lang::BOUGHT_1T_OF, formatarg("commodity", EquipType::types[t].name)));
 		}
 		m_commodityTradeWidget->UpdateStock(t);
 	}
@@ -219,7 +221,7 @@ void LuaChatForm::OnClickSell(int t) {
 
 	if (allow_sell) {
 		if (BuyFrom(Pi::player, static_cast<Equip::Type>(t), true)) {
-			Pi::Message(stringf(512, "You have sold 1t of %s.", EquipType::types[t].name));
+			Pi::Message(stringf(Lang::SOLD_1T_OF, formatarg("commodity", EquipType::types[t].name)));
 		}
 		m_commodityTradeWidget->UpdateStock(t);
 	}
@@ -696,27 +698,6 @@ int LuaChatForm::l_luachatform_close(lua_State *l)
 }
 
 /*
- * Method: Refresh
- *
- * > form:Refresh()
- *
- * Since alpha 12 it is no longer necessary to request that the form be
- * updated - it is handled automatically.
- *
- * Availability:
- *
- *   alpha 10 (stable), alpha 13 (deprecated)
- *
- * Status:
- *
- *   deprecated
- */
-static int l_luachatform_refresh(lua_State *l)
-{
-	return 0;
-}
-
-/*
  * Method: GotoPolice
  *
  * Aborts the chat form and takes the player to the station police screen
@@ -778,8 +759,6 @@ template <> void LuaObject<LuaChatForm>::RegisterClass()
 		{ "AddGoodsTrader",      LuaChatForm::l_luachatform_add_goods_trader },
 		{ "GotoPolice",          LuaChatForm::l_luachatform_goto_police      },
 		{ "RemoveAdvertOnClose", l_luachatform_remove_advert_on_close        },
-
-		{ "Refresh",             l_luachatform_refresh                       },
 		{ 0, 0 }
 	};
 
