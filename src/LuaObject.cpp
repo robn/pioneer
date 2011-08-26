@@ -504,6 +504,35 @@ DeleteEmitter *LuaObjectBase::GetFromLua(int index, const char *type)
 	return lo->m_object;
 }
 
+void LuaObjectBase::ReleaseOwnership(DeleteEmitter *o)
+{
+	assert(instantiated);
+	assert(o);
+
+	lua_State *l = Pi::luaManager.GetLuaState();
+
+	LUA_DEBUG_START(l);
+
+	lua_getfield(l, LUA_REGISTRYINDEX, "LuaObjectRegistry");
+	assert(lua_istable(l, -1));
+
+	lua_pushlightuserdata(l, o);
+	lua_gettable(l, -2);
+	assert(lua_isuserdata(l, -1));
+
+	lid *idp = static_cast<lid*>(lua_touserdata(l, -1));
+	assert(idp);
+
+	LuaObjectBase *lo = LuaObjectBase::Lookup(*idp);
+	assert(lo);
+
+	lua_pop(l, 2);
+
+	LUA_DEBUG_END(l, 0);
+
+	lo->m_wantDelete = false;
+}
+
 bool LuaObjectBase::Isa(const char *base) const
 {
 	// fast path

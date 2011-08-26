@@ -150,6 +150,10 @@ protected:
 	// does exactly the same as GetFromLua without triggering exceptions
 	static DeleteEmitter *CheckFromLua(int index, const char *type);
 
+	// take ownership of an object owned by LuaObject (ie pushed via
+	// PushToLuaGC)
+	static void ReleaseOwnership(DeleteEmitter *o);
+
 	// register a promotion test. when an object with lua type base_type is
 	// pushed, test_fn will be called. if it returns true then the created lua
 	// object will be of target_type
@@ -243,6 +247,10 @@ public:
 		return dynamic_cast<T *>(LuaObjectBase::CheckFromLua(index, s_type));
 	}
 
+	static void ReleaseOwnership(T *o) {
+		LuaObjectBase::ReleaseOwnership(o);
+	}
+
 protected:
 	// hook up the appropriate acquirer for the wrapped object.
 	virtual void Acquire(DeleteEmitter *o) { this->LuaAcquirer<T>::Acquire(dynamic_cast<T*>(o)); }
@@ -303,6 +311,9 @@ public:
 	static inline T *CheckFromLua(int index) {
 		return dynamic_cast<T*>(LuaObject<UT>::CheckFromLua(index));
 	}
+
+	// ReleaseOwnership not implemented for uncopyable objects. They are owned
+	// by Lua by definition
 };
 
 #endif
