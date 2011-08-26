@@ -1,7 +1,7 @@
 #include "Sector.h"
 #include "StarSystem.h"
-//#include "CustomSystem.h"
 #include "Galaxy.h"
+#include "Pi.h"
 #include "utils.h"
 
 #define SYS_NAME_FRAGS	32
@@ -70,6 +70,26 @@ Uint32 Sector::GetNumSystems() const
 void Sector::AddSystem(const CustomSystem *customSystem)
 {
 	m_customSystems.push_back(customSystem);
+
+	SystemPath path(sx,sy,sz,0,0);
+
+	std::map<SystemPath,Sector*>::iterator i;
+
+	if (Pi::IsGameStarted()) {
+		i = s_gameCache.find(path);
+		if (i == s_gameCache.end()) {
+			IncRefCount();
+			s_gameCache.insert( std::make_pair(path, this) );
+		}
+	}
+
+	else {
+		i = s_globalCache.find(path);
+		if (i == s_globalCache.end()) {
+			IncRefCount();
+			s_globalCache.insert( std::make_pair(path, this) );
+		}
+	}
 }
 
 
