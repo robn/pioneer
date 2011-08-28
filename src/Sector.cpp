@@ -12,7 +12,7 @@ static const char *sys_names[SYS_NAME_FRAGS] =
 
 const float Sector::SIZE = 8;
 
-std::map<SystemPath,Sector*> Sector::s_globalCache;
+std::map<SystemPath,Sector*> Sector::s_startupCache;
 std::map<SystemPath,Sector*> Sector::s_gameCache;
 
 Sector *Sector::Get(int x, int y, int z)
@@ -29,8 +29,8 @@ Sector *Sector::Get(int x, int y, int z)
 		return s;
 	}
 
-	i = s_globalCache.find(path);
-	if (i != s_globalCache.end()) {
+	i = s_startupCache.find(path);
+	if (i != s_startupCache.end()) {
 		s = (*i).second;
 		s->IncRefCount();
 		return s;
@@ -84,10 +84,10 @@ void Sector::AddSystem(const CustomSystem *customSystem)
 	}
 
 	else {
-		i = s_globalCache.find(path);
-		if (i == s_globalCache.end()) {
+		i = s_startupCache.find(path);
+		if (i == s_startupCache.end()) {
 			IncRefCount();
-			s_globalCache.insert( std::make_pair(path, this) );
+			s_startupCache.insert( std::make_pair(path, this) );
 		}
 	}
 }

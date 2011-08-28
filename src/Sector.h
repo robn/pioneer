@@ -72,7 +72,7 @@ private:
 	bool m_customOnly;
 
 	// sectors that were modified at startup
-	static std::map<SystemPath,Sector*> s_globalCache;
+	static std::map<SystemPath,Sector*> s_startupCache;
 
 	// sectors that have been modified in the current game
 	static std::map<SystemPath,Sector*> s_gameCache;
