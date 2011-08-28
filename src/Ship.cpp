@@ -136,6 +136,7 @@ Ship::Ship(ShipType::Type shipType): DynamicBody()
 	m_angThrusters.x = m_angThrusters.y = m_angThrusters.z = 0;
 	m_equipment.InitSlotSizes(shipType);
 	m_hyperspace.countdown = 0;
+	m_hyperspace.now = false;
 	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
 		m_gunState[i] = 0;
 		m_gunRecharge[i] = 0;
@@ -419,6 +420,19 @@ bool Ship::CanHyperspaceTo(const SystemPath *dest, int &outFuelRequired, double 
 
 Ship::HyperjumpStatus Ship::StartHyperspaceCountdown(const SystemPath &dest)
 {
+	Ship::HyperjumpStatus status = Hyperspace(dest);
+	if (status != Ship::HYPERJUMP_OK)
+		return status;
+	
+	Equip::Type t = m_equipment.Get(Equip::SLOT_ENGINE);
+	m_hyperspace.countdown = 1 + EquipType::types[t].pval;
+	m_hyperspace.now = false;
+
+	return Ship::HYPERJUMP_OK;
+}
+
+Ship::HyperjumpStatus Ship::Hyperspace(const SystemPath &dest)
+{
 	int fuelUsage;
 	double duration;
 
@@ -426,9 +440,9 @@ Ship::HyperjumpStatus Ship::StartHyperspaceCountdown(const SystemPath &dest)
 	if (!CanHyperspaceTo(&dest, fuelUsage, duration, &status))
 		return status;
 
-	Equip::Type t = m_equipment.Get(Equip::SLOT_ENGINE);
-	m_hyperspace.countdown = 1 + EquipType::types[t].pval;
 	m_hyperspace.dest = dest;
+	m_hyperspace.countdown = 0;
+	m_hyperspace.now = true;
 
 	return Ship::HYPERJUMP_OK;
 }
@@ -436,6 +450,7 @@ Ship::HyperjumpStatus Ship::StartHyperspaceCountdown(const SystemPath &dest)
 void Ship::ResetHyperspaceCountdown()
 {
     m_hyperspace.countdown = 0;
+	m_hyperspace.now = false;
 }
 
 float Ship::GetECMRechargeTime()
@@ -836,9 +851,14 @@ void Ship::StaticUpdate(const float timeStep)
 	if (m_hyperspace.countdown > 0.0f) {
 		m_hyperspace.countdown = m_hyperspace.countdown - timeStep;
 		if (m_hyperspace.countdown <= 0.0f) {
-			m_hyperspace.countdown = 0.0f;
-			Space::StartHyperspaceTo(this, &m_hyperspace.dest);
+			m_hyperspace.countdown = 0;
+			m_hyperspace.now = true;
 		}
+	}
+
+	if (m_hyperspace.now) {
+		m_hyperspace.now = false;
+		Space::StartHyperspaceTo(this, &m_hyperspace.dest);
 	}
 }
 
@@ -880,6 +900,7 @@ void Ship::SetDockedWith(SpaceStation *s, int port)
 		SetVelocity(vector3d(0,0,0));
 		SetAngVelocity(vector3d(0,0,0));
 		Disable();
+		ClearThrusterState();
 		m_dockedWith->SetDocked(this, port);
 		onDock.emit();
 	} else {
