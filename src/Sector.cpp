@@ -69,7 +69,11 @@ Uint32 Sector::GetNumSystems() const
 
 void Sector::AddSystem(const CustomSystem *customSystem)
 {
-	m_customSystems.push_back(customSystem);
+	// XXX don't add duplicates
+	if (Pi::IsGameStarted())
+		m_gameCustomSystems.push_back(customSystem);
+	else
+		m_startupCustomSystems.push_back(customSystem);
 
 	SystemPath path(sx,sy,sz,0,0);
 

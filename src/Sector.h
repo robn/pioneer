@@ -67,8 +67,13 @@ private:
 	mutable std::vector<System> m_systems;
 	mutable bool m_dirty;
 
-	std::vector<const CustomSystem*> m_customSystems;
+	// systems that were added at startup
+	std::vector<const CustomSystem*> m_startupCustomSystems;
 
+	// systems that were added during the current game
+	std::vector<const CustomSystem*> m_gameCustomSystems;
+
+	// sector should only show custom systems
 	bool m_customOnly;
 
 	// sectors that were modified at startup
