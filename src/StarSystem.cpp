@@ -1103,22 +1103,21 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	int dist = isqrt(1 + m_path.sectorX*m_path.sectorX + m_path.sectorY*m_path.sectorY + m_path.sectorZ*m_path.sectorZ);
 	m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
-#if 0
 	m_isCustom = m_hasCustomBodies = false;
-	if (secsys.customSys) {
+	if (secsys.customSystem) {
 		m_isCustom = true;
-		const CustomSystem *custom = secsys.customSys;
-		m_numStars = custom->numStars;
+		const CustomSystem *custom = secsys.customSystem;
 		if (custom->shortDesc.length() > 0) m_shortDesc = custom->shortDesc;
 		if (custom->longDesc.length() > 0) m_longDesc = custom->longDesc;
+#if 0
 		if (!custom->IsRandom()) {
 			m_hasCustomBodies = true;
 			GenerateFromCustom(secsys.customSys, rand);
 			sec->Release();
 			return;
 		}
-	}
 #endif
+	}
 
 	SBody *star[4];
 	SBody *centGrav1, *centGrav2;

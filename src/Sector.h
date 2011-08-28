@@ -28,6 +28,7 @@ public:
 		int numStars;
 		SBody::BodyType starType[4];
 		Uint32 seed;
+
 		const CustomSystem *customSystem;
 
 	private:

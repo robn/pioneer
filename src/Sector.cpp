@@ -155,6 +155,7 @@ void Sector::GenerateSystems() const
 	
 			for (int i=0; i<numSystems; i++) {
 				System s;
+
 				switch (rng.Int32(15)) {
 					case 0:
 						s.numStars = 4; break;
@@ -170,7 +171,7 @@ void Sector::GenerateSystems() const
 				s.p.y = rng.Double(SIZE);
 				s.p.z = rng.Double(SIZE);
 				s.seed = 0;
-				//s.customSys = 0;
+				s.customSystem = 0;
 				
 				float spec = rng.Int32(1000000);
 				// frequencies from wikipedia
