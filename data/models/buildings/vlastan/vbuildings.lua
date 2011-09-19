@@ -6,7 +6,7 @@ local building = function(name, modelname, bradius, lodpixels)
 			 bounding_radius = bradius,
 			 lod_pixels = lodpixels,
 			 materials = {'wall'},
-			 tags = {'city_building'},
+			 tags = {'building','city_building'},
 		},
 		static = function(lod)
 			--name, diffuse rgba, spec rgb+intensity, emit rgb

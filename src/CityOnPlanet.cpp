@@ -161,6 +161,11 @@ static void lookupBuildingListModels(citybuildinglist_t *list)
 
 void CityOnPlanet::Init()
 {
+	std::vector<LmrModel*> models;
+	LmrGetModelsWithTag("building", models);
+	for (std::vector<LmrModel*>::iterator i = models.begin(); i != models.end(); i++)
+		printf("building: %s\n", (*i)->GetName());
+
 	/* Resolve city model numbers since it is a bit expensive */
 	if (!s_cityBuildingsInitted) {
 		s_cityBuildingsInitted = true;

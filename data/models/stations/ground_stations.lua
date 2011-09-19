@@ -68,7 +68,7 @@ define_model('ground_station_1', {
 	info = {
 		bounding_radius=300.0,
 		materials = {'text', 'pad', 'body'},
-		tags = {'surface_station'},
+		tags = {'building', 'surface_station'},
 		num_docking_ports = 1,
 		dock_anim_stage_duration = { DOCKING_TIMEOUT_SECONDS, 4.0},
 		undock_anim_stage_duration = { 0 },
@@ -101,7 +101,7 @@ define_model('ground_station_2', {
 	info = {
 		bounding_radius=300.0,
 		materials = {'text', 'pad', 'body'},
-		tags = {'surface_station'},
+		tags = {'building', 'surface_station'},
 		num_docking_ports = 2,
 		dock_anim_stage_duration = { DOCKING_TIMEOUT_SECONDS, 4.0},
 		undock_anim_stage_duration = { 0 },
@@ -135,7 +135,7 @@ define_model('ground_station_3', {
 	info = {
 		bounding_radius=300.0,
 		materials = {'text', 'pad', 'body'},
-		tags = {'surface_station'},
+		tags = {'building', 'surface_station'},
 		num_docking_ports = 3,
 		dock_anim_stage_duration = { DOCKING_TIMEOUT_SECONDS, 4.0},
 		undock_anim_stage_duration = { 0 },
@@ -169,7 +169,7 @@ define_model('ground_station_4', {
 	info = {
 		bounding_radius=300.0,
 		materials = {'text', 'pad', 'body'},
-		tags = {'surface_station'},
+		tags = {'building', 'surface_station'},
 		num_docking_ports = 4,
 		dock_anim_stage_duration = { DOCKING_TIMEOUT_SECONDS, 4.0},
 		undock_anim_stage_duration = { 0 },

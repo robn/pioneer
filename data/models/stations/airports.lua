@@ -88,7 +88,7 @@ define_model('airport_1', {
 	info = {
 		bounding_radius=1500.0,
 		materials = {'text', 'runway', 'body'},
-		tags = {'surface_station'},
+		tags = {'building', 'surface_station'},
 		angular_velocity = 1.0,
 		num_docking_ports = 1,
 		dock_anim_stage_duration = { DOCKING_TIMEOUT_SECONDS, 2 },
