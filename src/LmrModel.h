@@ -56,6 +56,7 @@ public:
 	bool GetBoolAttribute(const char *attr_name) const;
 	void PushAttributeToLuaStack(const char *attr_name) const;
 	const char *GetName() const { return m_name.c_str(); }
+	const std::vector<std::string> &GetTags() const { return m_tags; }
 private:
 	void Build(int lod, const LmrObjParams *params);
 
@@ -72,6 +73,7 @@ private:
 	// only used for lod pixel size at the moment
 	float m_drawClipRadius;
 	float m_scale;
+	std::vector<std::string> m_tags;
 	friend class LmrGeomBuffer;
 };
 

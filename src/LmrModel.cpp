@@ -957,6 +957,22 @@ LmrModel::LmrModel(const char *model_name)
 		}
 		lua_pop(sLua, 1);
 
+		lua_getfield(sLua, -1, "tags");
+		if (lua_istable(sLua, -1)) {
+			for(int i=1;; i++) {
+				lua_pushinteger(sLua, i);
+				lua_gettable(sLua, -2);
+				bool is_string = lua_isstring(sLua, -1) != 0;
+				if (is_string) {
+					const char *tag = luaL_checkstring(sLua, -1);
+					m_tags.push_back(tag);
+				}
+				lua_pop(sLua, 1);
+				if (!is_string) break;
+			}
+		}
+		lua_pop(sLua, 1);
+
 		/* pop model_info table */
 		lua_pop(sLua, 1);
 	} else {
@@ -1053,33 +1069,10 @@ void LmrGetModelsWithTag(const char *tag, std::vector<LmrModel*> &outModels)
 			i != s_models.end(); ++i) {
 		LmrModel *model = (*i).second;
 
-		LUA_DEBUG_START(sLua);
-		
-		char buf[256];
-		snprintf(buf, sizeof(buf), "%s_info", model->GetName());
-		lua_getglobal(sLua, buf);
-		lua_getfield(sLua, -1, "tags");
-		if (lua_istable(sLua, -1)) {
-			for(int j=1;; j++) {
-				lua_pushinteger(sLua, j);
-				lua_gettable(sLua, -2);
-				if (lua_isstring(sLua, -1)) {
-					const char *s = luaL_checkstring(sLua, -1);
-					if (0 == strcmp(tag, s)) {
-						outModels.push_back(model);
-						lua_pop(sLua, 1);
-						break;
-					}
-				} else if (lua_isnil(sLua, -1)) {
-					lua_pop(sLua, 1);
-					break;
-				}
-				lua_pop(sLua, 1);
-			}
-		}
-		lua_pop(sLua, 2);
-
-		LUA_DEBUG_END(sLua, 0);
+		std::vector<std::string> tags = model->GetTags();
+		for (std::vector<std::string>::const_iterator j = tags.begin(); j != tags.end(); j++)
+			if ((*j) == tag)
+				outModels.push_back(model);
 	}
 }
 
