@@ -579,7 +579,7 @@ define_model('mushroom_station_2', {
 		lod_pixels = {10,100,300,0},
 		bounding_radius=200.0,
 		materials = {'body', 'text', 'markings', 'lift_floor', 'tower_base', 'inside'},
-		tags = {'building', 'surface_station'},
+		tags = {'surface_station'},
 		num_docking_ports = 2,
 		-- 1 - permission granted
 		-- 2 - position docked ship
