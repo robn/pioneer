@@ -41,6 +41,16 @@ private:
 	Frame *m_frame;
 	std::vector<BuildingDef> m_buildings;
 	int m_detailLevel;
+
+	// definition for an available building
+	struct Building {
+		LmrModel *model;
+		const LmrCollMesh *collMesh;
+		double xzRadius;
+	};
+	static std::vector<Building> s_buildings;
+	static bool s_buildingsLoaded;
+
 };
 
 #endif /* _CITYONPLANET_H */

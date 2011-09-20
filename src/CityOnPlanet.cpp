@@ -9,6 +9,9 @@
 #define START_SEG_SIZE CITY_ON_PLANET_RADIUS
 #define MIN_SEG_SIZE 50.0
 
+std::vector<CityOnPlanet::Building> CityOnPlanet::s_buildings;
+bool CityOnPlanet::s_buildingsLoaded = false;
+
 bool s_cityBuildingsInitted = false;
 struct citybuilding_t {
 	const char *modelname;
@@ -161,10 +164,22 @@ static void lookupBuildingListModels(citybuildinglist_t *list)
 
 void CityOnPlanet::Init()
 {
+	if (s_buildingsLoaded)
+		return;
+
 	std::vector<LmrModel*> models;
 	LmrGetModelsWithTag("building", models);
-	for (std::vector<LmrModel*>::iterator i = models.begin(); i != models.end(); i++)
-		printf("building: %s\n", (*i)->GetName());
+	for (std::vector<LmrModel*>::iterator i = models.begin(); i != models.end(); i++) {
+		Building b;
+		b.model = (*i);
+		b.collMesh = new LmrCollMesh(b.model, &cityobj_params);
+
+		double maxx = std::max(fabs(b.collMesh->GetAabb().max.x), fabs(b.collMesh->GetAabb().min.x));
+		double maxy = std::max(fabs(b.collMesh->GetAabb().max.z), fabs(b.collMesh->GetAabb().min.z));
+		b.xzRadius = sqrt(maxx*maxx + maxy*maxy);
+
+		s_buildings.push_back(b);
+	}
 
 	/* Resolve city model numbers since it is a bit expensive */
 	if (!s_cityBuildingsInitted) {
@@ -173,6 +188,8 @@ void CityOnPlanet::Init()
 			lookupBuildingListModels(&s_buildingLists[i]);
 		}
 	}
+
+	s_buildingsLoaded = true;
 }
 
 CityOnPlanet::~CityOnPlanet()
