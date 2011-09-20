@@ -1,4 +1,3 @@
---[[
 --baseless combo
 define_model('combo_nobase', {
 	info = {
@@ -189,7 +188,7 @@ define_model('arco01_base', {
 		lod_pixels = {30,200,300},
 		bounding_radius = 500,
 		materials = {'grass', 'concrete', 'gravel', 'steel', 'text', 'metal', 'chrome', 'win', 'dome','dome_trans'},
-		tags = {'city_building'},
+		tags = {'building', 'city_building'},
 	},
 
 	static = function(lod)
@@ -256,4 +255,3 @@ define_model('arco01_base', {
 		end
   	end,
 })
---]]

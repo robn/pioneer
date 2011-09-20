@@ -1,4 +1,3 @@
---[[
 define_model('church_new_clockhd', {
     info = {
 			lod_pixels = {1,20,50,0},
@@ -101,6 +100,7 @@ define_model('church_new_0', {
 	end
 })
 
+--[[
 define_model('church_new_1', {
 	info = {
 			lod_pixels = {.1,20,100,0},
