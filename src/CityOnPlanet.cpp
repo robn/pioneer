@@ -12,14 +12,14 @@
 std::vector<CityOnPlanet::Building> CityOnPlanet::s_buildings;
 bool CityOnPlanet::s_buildingsLoaded = false;
 
-bool s_cityBuildingsInitted = false;
-struct citybuilding_t {
-	const char *modelname;
-	double xzradius;
-	LmrModel *resolvedModel;
-	const LmrCollMesh *collMesh;
-};
+#define CITYFLAVOURS 5
+struct cityflavourdef_t {
+	//int buildingListIdx;
+	vector3d center;
+	double size;
+} cityflavour[CITYFLAVOURS];
 
+#if 0
 #define MAX_BUILDING_LISTS 1
 struct citybuildinglist_t {
 	const char *modelTagName;
@@ -33,14 +33,7 @@ citybuildinglist_t s_buildingLists[MAX_BUILDING_LISTS] = {
 	//{ "city_power", 100, 250, 0, NULL },
 	//{ "city_starport_building", 300, 400, 0, NULL },
 };
-
-#define CITYFLAVOURS 5
-struct cityflavourdef_t {
-	int buildingListIdx;
-	vector3d center;
-	double size;
-} cityflavour[CITYFLAVOURS];
-
+#endif
 
 static Plane planes[6];
 LmrObjParams cityobj_params;
@@ -54,19 +47,20 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, 
 	vector3d cent = (p1+p2+p3+p4)*0.25;
 
 	cityflavourdef_t *flavour;
-	citybuildinglist_t *buildings;
+	//citybuildinglist_t *buildings;
 
 	// pick a building flavour (city, windfarm, etc)
 	for (int flv=0; flv<CITYFLAVOURS; flv++) {
 		flavour = &cityflavour[flv];
-		buildings = &s_buildingLists[flavour->buildingListIdx];
+		//buildings = &s_buildingLists[flavour->buildingListIdx];
        
 		int tries;
 		for (tries=20; tries--; ) {
-			const citybuilding_t &bt = buildings->buildings[rand.Int32(buildings->numBuildings)];
-			model = bt.resolvedModel;
-			modelRadXZ = bt.xzradius;
-			cmesh = bt.collMesh;
+			//const citybuilding_t &bt = buildings->buildings[rand.Int32(buildings->numBuildings)];
+			Building b = s_buildings[rand.Int32(s_buildings.size())];
+			model = b.model;
+			modelRadXZ = b.xzRadius;
+			cmesh = b.collMesh;
 			if (modelRadXZ < rad) break;
 			if (tries == 0) return;
 		}
@@ -141,27 +135,6 @@ void CityOnPlanet::RemoveStaticGeomsFromCollisionSpace()
 	}
 }
 
-static void lookupBuildingListModels(citybuildinglist_t *list)
-{
-	//const char *modelTagName;
-	std::vector<LmrModel*> models;
-	LmrGetModelsWithTag(list->modelTagName, models);
-	//printf("Got %d buildings of tag %s\n", models.size(), list->modelTagName);
-	list->buildings = new citybuilding_t[models.size()];
-	list->numBuildings = models.size();
-
-	int i = 0;
-	for (std::vector<LmrModel*>::iterator m = models.begin(); m != models.end(); ++m, i++) {
-		list->buildings[i].resolvedModel = *m;
-		const LmrCollMesh *collMesh = new LmrCollMesh(*m, &cityobj_params);
-		list->buildings[i].collMesh = collMesh;
-		double maxx = std::max(fabs(collMesh->GetAabb().max.x), fabs(collMesh->GetAabb().min.x));
-		double maxy = std::max(fabs(collMesh->GetAabb().max.z), fabs(collMesh->GetAabb().min.z));
-		list->buildings[i].xzradius = sqrt(maxx*maxx + maxy*maxy);
-		//printf("%s: %f\n", list->buildings[i].modelname, list->buildings[i].xzradius);
-	}
-}
-
 void CityOnPlanet::Init()
 {
 	if (s_buildingsLoaded)
@@ -181,14 +154,6 @@ void CityOnPlanet::Init()
 		s_buildings.push_back(b);
 	}
 
-	/* Resolve city model numbers since it is a bit expensive */
-	if (!s_cityBuildingsInitted) {
-		s_cityBuildingsInitted = true;
-		for (int i=0; i<MAX_BUILDING_LISTS; i++) {
-			lookupBuildingListModels(&s_buildingLists[i]);
-		}
-	}
-
 	s_buildingsLoaded = true;
 }
 
@@ -203,18 +168,12 @@ CityOnPlanet::~CityOnPlanet()
 
 CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed)
 {
+	assert(s_buildingsLoaded);
+
 	m_buildings.clear();
 	m_planet = planet;
 	m_frame = planet->GetFrame();
 	m_detailLevel = Pi::detail.cities;
-
-	/* Resolve city model numbers since it is a bit expensive */
-	if (!s_cityBuildingsInitted) {
-		s_cityBuildingsInitted = true;
-		for (int i=0; i<MAX_BUILDING_LISTS; i++) {
-			lookupBuildingListModels(&s_buildingLists[i]);
-		}
-	}
 
 	Aabb aabb;
 	station->GetAabb(aabb);
@@ -235,17 +194,18 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed)
 	double sizez = START_SEG_SIZE;// + rand.Int32((int)START_SEG_SIZE);
 	
 	// always have random shipyard buildings around the space station
-	cityflavour[0].buildingListIdx = 0;//2;
+	//cityflavour[0].buildingListIdx = 0;//2;
 	cityflavour[0].center = p;
 	cityflavour[0].size = 500;
 
 	for (int i=1; i<CITYFLAVOURS; i++) {
-		cityflavour[i].buildingListIdx = MAX_BUILDING_LISTS>1 ? rand.Int32(MAX_BUILDING_LISTS-1) : 0;
-		citybuildinglist_t *blist = &s_buildingLists[cityflavour[i].buildingListIdx];
+		//cityflavour[i].buildingListIdx = MAX_BUILDING_LISTS>1 ? rand.Int32(MAX_BUILDING_LISTS-1) : 0;
+		//citybuildinglist_t *blist = &s_buildingLists[cityflavour[i].buildingListIdx];
 		double a = rand.Int32(-1000,1000);
 		double b = rand.Int32(-1000,1000);
 		cityflavour[i].center = p + a*mx + b*mz;
-		cityflavour[i].size = rand.Int32(int(blist->minRadius), int(blist->maxRadius));
+		//cityflavour[i].size = rand.Int32(int(blist->minRadius), int(blist->maxRadius));
+		cityflavour[i].size = rand.Int32(800, 2000);
 	}
 	
 	for (int side=0; side<4; side++) {
