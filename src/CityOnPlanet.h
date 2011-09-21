@@ -27,19 +27,8 @@ private:
 	void AddStaticGeomsToCollisionSpace();
 	void RemoveStaticGeomsFromCollisionSpace();
 
-	struct BuildingDef {
-		LmrModel *model;
-		float clipRadius;
-		int rotation; // 0-3
-		vector3d pos;
-		Geom *geom;
-		// may not be at lower detail level
-		bool isEnabled;
-	};
-
 	Planet *m_planet;
 	Frame *m_frame;
-	std::vector<BuildingDef> m_buildings;
 	int m_detailLevel;
 
 	// definition for an available building
@@ -50,6 +39,20 @@ private:
 	};
 	static std::vector<Building> s_buildings;
 	static bool s_buildingsLoaded;
+
+	std::vector<const Building *> m_candidateBuildings;
+
+	struct BuildingDef {
+		LmrModel *model;
+		float clipRadius;
+		int rotation; // 0-3
+		vector3d pos;
+		Geom *geom;
+		// may not be at lower detail level
+		bool isEnabled;
+	};
+	std::vector<BuildingDef> m_buildings;
+
 
 };
 

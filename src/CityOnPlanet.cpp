@@ -57,10 +57,10 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, 
 		int tries;
 		for (tries=20; tries--; ) {
 			//const citybuilding_t &bt = buildings->buildings[rand.Int32(buildings->numBuildings)];
-			Building b = s_buildings[rand.Int32(s_buildings.size())];
-			model = b.model;
-			modelRadXZ = b.xzRadius;
-			cmesh = b.collMesh;
+			const Building *b = m_candidateBuildings[rand.Int32(m_candidateBuildings.size())];
+			model = b->model;
+			modelRadXZ = b->xzRadius;
+			cmesh = b->collMesh;
 			if (modelRadXZ < rad) break;
 			if (tries == 0) return;
 		}
@@ -166,14 +166,29 @@ CityOnPlanet::~CityOnPlanet()
 	}
 }
 
-CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed)
+CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
+	m_planet(planet),
+	m_frame(planet->GetFrame()),
+	m_detailLevel(Pi::detail.cities)
 {
 	assert(s_buildingsLoaded);
 
-	m_buildings.clear();
-	m_planet = planet;
-	m_frame = planet->GetFrame();
-	m_detailLevel = Pi::detail.cities;
+	// XXX dumb building selection just for testing really
+	const SBody *body = m_planet->GetSBody();
+	bool earthlike = (body->m_life > fixed(7,10) && body->m_volatileGas > fixed(2,10)) ? true : false;
+	std::string tag(earthlike ? "earthlike" : "hostile");
+
+	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++)
+	{
+		for (std::vector<std::string>::const_iterator j = (*i).model->GetTags().begin(); j != (*i).model->GetTags().end(); j++)
+		{
+			if ((*j) == tag) {
+				m_candidateBuildings.push_back(&(*i));
+				printf("candidate: %s\n", (*i).model->GetName());
+				break;
+			}
+		}
+	}
 
 	Aabb aabb;
 	station->GetAabb(aabb);
