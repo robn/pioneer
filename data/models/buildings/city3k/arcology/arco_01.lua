@@ -188,7 +188,10 @@ define_model('arco01_base', {
 		lod_pixels = {30,200,300},
 		bounding_radius = 500,
 		materials = {'grass', 'concrete', 'gravel', 'steel', 'text', 'metal', 'chrome', 'win', 'dome','dome_trans'},
-		tags = {'building', 'hostile', 'city_building'},
+		tags = {'building'},
+		building_info = {
+			environment = "hostile",
+		},
 	},
 
 	static = function(lod)
