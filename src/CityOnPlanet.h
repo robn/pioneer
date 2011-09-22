@@ -13,6 +13,34 @@ class Geom;
 
 #define CITY_ON_PLANET_RADIUS 5000.0
 
+struct Building {
+	LmrModel *model;
+	const LmrCollMesh *collMesh;
+	double xzRadius;
+
+	enum BuildingType {
+		TYPE_GENERAL,
+		TYPE_POWER
+	};
+	enum BuildingEnvironment {
+		ENV_EARTHLIKE,
+		ENV_HOSTILE
+	};
+	enum BuildingCitySize {
+		SIZE_TINY,
+		SIZE_SMALL,
+		SIZE_MEDIUM,
+		SIZE_LARGE,
+		SIZE_HUGE
+	};
+
+	BuildingType type;
+	BuildingEnvironment environment;
+	BuildingCitySize minCitySize, maxCitySize;
+	double population;
+};
+
+
 class CityOnPlanet: public Object {
 public:
 	OBJDEF(CityOnPlanet, Object, CITYONPLANET);
@@ -31,12 +59,6 @@ private:
 	Frame *m_frame;
 	int m_detailLevel;
 
-	// definition for an available building
-	struct Building {
-		LmrModel *model;
-		const LmrCollMesh *collMesh;
-		double xzRadius;
-	};
 	static std::vector<Building> s_buildings;
 	static bool s_buildingsLoaded;
 

@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "ShipType.h"
 #include "Ship.h"
+#include "CityOnPlanet.h"
 
 /*
  * Namespace: Constants
@@ -776,6 +777,81 @@ void LuaConstants::Register(lua_State *l)
 	};
 	_create_constant_table(l, "MissionStatus", mission_status_constants);
 
+
+    /*
+     * Constants: BuildingType
+     *
+     * Building types (used in city generation)
+     *
+     * GENERAL - general building, no special meaning
+     * POWER - power-generating building
+     *
+	 * Availability:
+	 *
+	 *   alpha 15
+	 *
+	 * Status:
+	 *
+	 *   experimental
+	 */
+	static const pi_lua_constant_t building_type_constants[] = {
+		{ "GENERAL", Building::TYPE_GENERAL },
+		{ "POWER",   Building::TYPE_POWER },
+		{ 0, 0 }
+	};
+	_create_constant_table(l, "BuildingType", building_type_constants);
+
+    /*
+     * Constants: BuildingEnvironment
+     *
+     * Building environments (used in city generation)
+     *
+     * EARTHLIKE - building is for earth-like environments (breathable atmosphere)
+     * HOSTILE - building is for hostile environments (non-breathable or no atmosphere)
+     *
+	 * Availability:
+	 *
+	 *   alpha 15
+	 *
+	 * Status:
+	 *
+	 *   experimental
+	 */
+	static const pi_lua_constant_t building_environment_constants[] = {
+		{ "EARTHLIKE", Building::ENV_EARTHLIKE },
+		{ "HOSTILE",   Building::ENV_HOSTILE },
+		{ 0, 0 }
+	};
+	_create_constant_table(l, "BuildingEnvironment", building_environment_constants);
+
+    /*
+     * Constants: BuildingCitySize
+     *
+     * Building city sizes (used in city generation)
+     *
+     * TINY -
+     * SMALL -
+	 * MEDIUM -
+	 * LARGE -
+	 * HUGE -
+     *
+	 * Availability:
+	 *
+	 *   alpha 15
+	 *
+	 * Status:
+	 *
+	 *   experimental
+	 */
+	static const pi_lua_constant_t building_city_size_constants[] = {
+		{ "TINY",   Building::SIZE_TINY },
+		{ "SMALL",  Building::SIZE_SMALL },
+		{ "MEDIUM", Building::SIZE_MEDIUM },
+		{ "LARGE",  Building::SIZE_LARGE },
+		{ "HUGE",   Building::SIZE_HUGE },
+		{ 0, 0 }
+	};
+	_create_constant_table(l, "BuildingCitySize", building_city_size_constants);
 
 	LUA_DEBUG_END(l, 0);
 }

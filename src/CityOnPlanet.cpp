@@ -4,12 +4,13 @@
 #include "SpaceStation.h"
 #include "Planet.h"
 #include "Pi.h"
+#include "LuaConstants.h"
 #include "collider/Geom.h"
 
 #define START_SEG_SIZE CITY_ON_PLANET_RADIUS
 #define MIN_SEG_SIZE 50.0
 
-std::vector<CityOnPlanet::Building> CityOnPlanet::s_buildings;
+std::vector<Building> CityOnPlanet::s_buildings;
 bool CityOnPlanet::s_buildingsLoaded = false;
 
 #define CITYFLAVOURS 5
@@ -139,6 +140,8 @@ void CityOnPlanet::Init()
 {
 	if (s_buildingsLoaded)
 		return;
+	
+	lua_State *l = LmrGetLuaState();
 
 	std::vector<LmrModel*> models;
 	LmrGetModelsWithTag("building", models);
@@ -150,6 +153,45 @@ void CityOnPlanet::Init()
 		double maxx = std::max(fabs(b.collMesh->GetAabb().max.x), fabs(b.collMesh->GetAabb().min.x));
 		double maxy = std::max(fabs(b.collMesh->GetAabb().max.z), fabs(b.collMesh->GetAabb().min.z));
 		b.xzRadius = sqrt(maxx*maxx + maxy*maxy);
+
+		LUA_DEBUG_START(l);
+
+		b.model->PushAttributeToLuaStack("building_info");
+		int info = lua_gettop(l);
+
+		lua_getfield(l, info, "type");
+		if (lua_isnil(l, -1))
+			b.type = Building::TYPE_GENERAL;
+		else
+			b.type = static_cast<Building::BuildingType>(LuaConstants::GetConstant(l, "BuildingType", luaL_checkstring(l, -1)));
+
+		lua_getfield(l, info, "environment");
+		if (lua_isnil(l, -1))
+			b.environment = Building::ENV_EARTHLIKE;
+		else
+			b.environment = static_cast<Building::BuildingEnvironment>(LuaConstants::GetConstant(l, "BuildingEnvironment", luaL_checkstring(l, -1)));
+
+		lua_getfield(l, info, "min_city_size");
+		if (lua_isnil(l, -1))
+			b.minCitySize = Building::SIZE_TINY;
+		else
+			b.minCitySize = static_cast<Building::BuildingCitySize>(LuaConstants::GetConstant(l, "BuildingCitySize", luaL_checkstring(l, -1)));
+
+		lua_getfield(l, info, "max_city_size");
+		if (lua_isnil(l, -1))
+			b.maxCitySize = Building::SIZE_HUGE;
+		else
+			b.maxCitySize = static_cast<Building::BuildingCitySize>(LuaConstants::GetConstant(l, "BuildingCitySize", luaL_checkstring(l, -1)));
+
+		lua_getfield(l, info, "population");
+		if (lua_isnil(l, -1))
+			b.population = 1.0;
+		else
+			b.population = luaL_checknumber(l, -1);
+
+		lua_pop(l, 6);
+
+		LUA_DEBUG_END(l, 0);
 
 		s_buildings.push_back(b);
 	}
