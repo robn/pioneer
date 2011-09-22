@@ -9,6 +9,7 @@
 #include "BufferObject.h"
 #include "LuaUtils.h"
 #include "TextureManager.h"
+#include "LuaConstants.h"
 #include <set>
 #include <algorithm>
 
@@ -2997,6 +2998,9 @@ void LmrModelCompilerInit()
 	luaL_openlibs(L);
 
 	LUA_DEBUG_START(sLua);
+
+	LuaConstants::Register(L);
+
 
 	lua_pushinteger(L, 1234);
 	lua_setglobal(L, "x");

@@ -262,6 +262,7 @@ modelviewer_SOURCES = \
 	FontManager.cpp \
 	LmrModel.cpp \
 	LuaModelViewer.cpp \
+	LuaConstants.cpp \
 	LuaUtils.cpp \
 	MyLuaMathTypes.cpp \
 	StringF.cpp \
