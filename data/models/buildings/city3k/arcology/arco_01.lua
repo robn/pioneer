@@ -190,7 +190,7 @@ define_model('arco01_base', {
 		materials = {'grass', 'concrete', 'gravel', 'steel', 'text', 'metal', 'chrome', 'win', 'dome','dome_trans'},
 		tags = {'building'},
 		building_info = {
-			environment = "hostile",
+			environment = "HOSTILE",
 		},
 	},
 

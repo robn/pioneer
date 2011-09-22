@@ -37,5 +37,5 @@ building('vbuilding05', 'newbuilding5', 130, {6, 30, 100}, { population = 0.3, m
 building('vbuilding06', 'newbuilding6', 120, {6, 30, 100}, { population = 0.25, min_city_size = "SMALL", max_city_size = "LARGE" })
 building('vbuilding07', 'newbuilding7', 100, {5, 20, 100}, { population = 0.2, min_city_size = "TINY", max_city_size = "MEDIUM" })
 building('vbuilding08', 'newbuilding8', 70,  {4, 10, 100}, { population = 0.2, min_city_size = "TINY", max_city_size = "MEDIUM" })
-building('vbuilding09', 'newbuilding9', 100, {5, 15, 100}, { population = 0.1, min_city_size = "TINY", max_city_size = "HUGE", type = "power" })
+building('vbuilding09', 'newbuilding9', 100, {5, 15, 100}, { population = 0.1, min_city_size = "TINY", max_city_size = "HUGE", type = "POWER" })
 building('vbuilding10', 'newbuilding10', 40, {2, 5, 100}, { population = 0.05, min_city_size = "TINY", max_city_size = "SMALL" })
