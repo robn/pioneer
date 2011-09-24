@@ -217,20 +217,11 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 
 	// XXX dumb building selection just for testing really
 	const SBody *body = m_planet->GetSBody();
-	bool earthlike = (body->m_life > fixed(7,10) && body->m_volatileGas > fixed(2,10)) ? true : false;
-	std::string tag(earthlike ? "earthlike" : "hostile");
+	Building::BuildingEnvironment e = (body->m_life > fixed(7,10) && body->m_volatileGas > fixed(2,10)) ? Building::ENV_EARTHLIKE : Building::ENV_HOSTILE;
 
 	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++)
-	{
-		for (std::vector<std::string>::const_iterator j = (*i).model->GetTags().begin(); j != (*i).model->GetTags().end(); j++)
-		{
-			if ((*j) == tag) {
-				m_candidateBuildings.push_back(&(*i));
-				printf("candidate: %s\n", (*i).model->GetName());
-				break;
-			}
-		}
-	}
+		if ((*i).environment == e)
+			m_candidateBuildings.push_back(&(*i));
 
 	Aabb aabb;
 	station->GetAabb(aabb);
