@@ -215,13 +215,30 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 {
 	assert(s_buildingsLoaded);
 
-	// XXX dumb building selection just for testing really
 	const SBody *body = m_planet->GetSBody();
-	Building::BuildingEnvironment e = (body->m_life > fixed(7,10) && body->m_volatileGas > fixed(2,10)) ? Building::ENV_EARTHLIKE : Building::ENV_HOSTILE;
 
-	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++)
-		if ((*i).environment == e)
+	Building::BuildingEnvironment environment = 
+		(body->m_life > fixed(7,10) && body->m_volatileGas > fixed(2,10))
+			? Building::ENV_EARTHLIKE : Building::ENV_HOSTILE;
+
+	int nstarports = 0;
+	for (std::vector<SBody*>::const_iterator i = body->children.begin(); i != body->children.end(); i++)
+		if ((*i)->type == SBody::TYPE_STARPORT_SURFACE)
+			nstarports++;
+	
+	double population = body->m_population.ToDouble() / nstarports;
+	Building::BuildingCitySize size = 
+		population >= 1.00 ? Building::SIZE_HUGE :
+		population >= 0.75 ? Building::SIZE_LARGE :
+		population >= 0.50 ? Building::SIZE_MEDIUM :
+		population >= 0.25 ? Building::SIZE_SMALL :
+		                     Building::SIZE_TINY;
+
+	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++) {
+		Building b = (*i);
+		if (b.environment == environment && b.minCitySize <= size && b.maxCitySize >= size)
 			m_candidateBuildings.push_back(&(*i));
+	}
 
 	Aabb aabb;
 	station->GetAabb(aabb);
