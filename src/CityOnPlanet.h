@@ -19,8 +19,8 @@ struct Building {
 	double xzRadius;
 
 	enum BuildingType {
-		TYPE_GENERAL,
-		TYPE_POWER
+		TYPE_NORMAL,
+		TYPE_STARPORT
 	};
 	enum BuildingEnvironment {
 		ENV_EARTHLIKE,

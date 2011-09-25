@@ -161,7 +161,7 @@ void CityOnPlanet::Init()
 
 		lua_getfield(l, info, "type");
 		if (lua_isnil(l, -1))
-			b.type = Building::TYPE_GENERAL;
+			b.type = Building::TYPE_NORMAL;
 		else
 			b.type = static_cast<Building::BuildingType>(LuaConstants::GetConstant(l, "BuildingType", luaL_checkstring(l, -1)));
 

@@ -783,8 +783,8 @@ void LuaConstants::Register(lua_State *l)
      *
      * Building types (used in city generation)
      *
-     * GENERAL - general building, no special meaning
-     * POWER - power-generating building
+     * NORMAL - normal building, no special meaning
+     * STARPORT - starport support building (not an actual starport), placed closer to the starport
      *
 	 * Availability:
 	 *
@@ -795,8 +795,8 @@ void LuaConstants::Register(lua_State *l)
 	 *   experimental
 	 */
 	static const pi_lua_constant_t building_type_constants[] = {
-		{ "GENERAL", Building::TYPE_GENERAL },
-		{ "POWER",   Building::TYPE_POWER },
+		{ "NORMAL",   Building::TYPE_NORMAL },
+		{ "STARPORT", Building::TYPE_STARPORT },
 		{ 0, 0 }
 	};
 	_create_constant_table(l, "BuildingType", building_type_constants);
