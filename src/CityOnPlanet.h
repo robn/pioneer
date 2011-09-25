@@ -62,7 +62,7 @@ private:
 	static std::vector<Building> s_buildings;
 	static bool s_buildingsLoaded;
 
-	std::vector<const Building *> m_candidateBuildings;
+	std::map< Building::BuildingType, std::vector<const Building *> > m_candidateBuildings;
 
 	struct BuildingDef {
 		LmrModel *model;

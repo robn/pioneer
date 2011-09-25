@@ -58,7 +58,7 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, 
 		int tries;
 		for (tries=20; tries--; ) {
 			//const citybuilding_t &bt = buildings->buildings[rand.Int32(buildings->numBuildings)];
-			const Building *b = m_candidateBuildings[rand.Int32(m_candidateBuildings.size())];
+			const Building *b = m_candidateBuildings[Building::TYPE_NORMAL][rand.Int32(m_candidateBuildings[Building::TYPE_NORMAL].size())];
 			model = b->model;
 			modelRadXZ = b->xzRadius;
 			cmesh = b->collMesh;
@@ -237,7 +237,7 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++) {
 		Building b = (*i);
 		if (b.environment == environment && b.minCitySize <= size && b.maxCitySize >= size)
-			m_candidateBuildings.push_back(&(*i));
+			m_candidateBuildings[b.type].push_back(&(*i));
 	}
 
 	Aabb aabb;
