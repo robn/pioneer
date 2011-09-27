@@ -39,13 +39,13 @@ citybuildinglist_t s_buildingLists[MAX_BUILDING_LISTS] = {
 static Plane planes[6];
 LmrObjParams cityobj_params;
 
-void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, vector3d p2, vector3d p3, vector3d p4)
+void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 {
-	double rad = (p1-p2).Length()*0.5;
+	double rad = (div.p1-div.p2).Length()*0.5;
 	LmrModel *model;
 	double modelRadXZ;
 	const LmrCollMesh *cmesh;
-	vector3d cent = (p1+p2+p3+p4)*0.25;
+	vector3d cent = (div.p1+div.p2+div.p3+div.p4)*0.25;
 
 	cityflavourdef_t *flavour;
 	//citybuildinglist_t *buildings;
@@ -78,15 +78,16 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, 
 
 	if (rad > modelRadXZ*2.0) {
 always_divide:
-		vector3d a = (p1+p2)*0.5;
-		vector3d b = (p2+p3)*0.5;
-		vector3d c = (p3+p4)*0.5;
-		vector3d d = (p4+p1)*0.5;
-		vector3d e = (p1+p2+p3+p4)*0.25;
-		PutCityBit(rand, rot, p1, a, e, d);
-		PutCityBit(rand, rot, a, p2, b, e);
-		PutCityBit(rand, rot, e, b, p3, c);
-		PutCityBit(rand, rot, d, e, c, p4);
+		vector3d a = (div.p1+div.p2)*0.5;
+		vector3d b = (div.p2+div.p3)*0.5;
+		vector3d c = (div.p3+div.p4)*0.5;
+		vector3d d = (div.p4+div.p1)*0.5;
+		vector3d e = (div.p1+div.p2+div.p3+div.p4)*0.25;
+
+		PutCityBit(rand, rot, Division(div.p1, a, e, d));
+		PutCityBit(rand, rot, Division(a, div.p2, b, e));
+		PutCityBit(rand, rot, Division(e, b, div.p3, c));
+		PutCityBit(rand, rot, Division(d, e, c, div.p4));
 	} else {
 		cent = cent.Normalized();
 		double height = m_planet->GetTerrainHeight(cent);
@@ -274,38 +275,40 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 	}
 	
 	for (int side=0; side<4; side++) {
+		Division d;
+
 		/* put buildings on all sides of spaceport */
 		switch(side) {
 			case 3:
-				p1 = p + mx*(aabb.min.x) + mz*aabb.min.z;
-				p2 = p + mx*(aabb.min.x) + mz*(aabb.min.z-sizez);
-				p3 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z-sizez);
-				p4 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z);
+				d.p1 = p + mx*(aabb.min.x) + mz*aabb.min.z;
+				d.p2 = p + mx*(aabb.min.x) + mz*(aabb.min.z-sizez);
+				d.p3 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z-sizez);
+				d.p4 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z);
 				break;
 			case 2:
-				p1 = p + mx*(aabb.min.x-sizex) + mz*aabb.max.z;
-				p2 = p + mx*(aabb.min.x-sizex) + mz*(aabb.max.z-sizez);
-				p3 = p + mx*(aabb.min.x) + mz*(aabb.max.z-sizez);
-				p4 = p + mx*(aabb.min.x) + mz*(aabb.max.z);
+				d.p1 = p + mx*(aabb.min.x-sizex) + mz*aabb.max.z;
+				d.p2 = p + mx*(aabb.min.x-sizex) + mz*(aabb.max.z-sizez);
+				d.p3 = p + mx*(aabb.min.x) + mz*(aabb.max.z-sizez);
+				d.p4 = p + mx*(aabb.min.x) + mz*(aabb.max.z);
 				break;
 			case 1:
-				p1 = p + mx*(aabb.max.x-sizex) + mz*aabb.max.z;
-				p2 = p + mx*(aabb.max.x) + mz*aabb.max.z;
-				p3 = p + mx*(aabb.max.x) + mz*(aabb.max.z+sizez);
-				p4 = p + mx*(aabb.max.x-sizex) + mz*(aabb.max.z+sizez);
+				d.p1 = p + mx*(aabb.max.x-sizex) + mz*aabb.max.z;
+				d.p2 = p + mx*(aabb.max.x) + mz*aabb.max.z;
+				d.p3 = p + mx*(aabb.max.x) + mz*(aabb.max.z+sizez);
+				d.p4 = p + mx*(aabb.max.x-sizex) + mz*(aabb.max.z+sizez);
 				break;
 			default:
 			case 0:
-				p1 = p + mx*aabb.max.x + mz*aabb.min.z;
-				p2 = p + mx*(aabb.max.x+sizex) + mz*aabb.min.z;
-				p3 = p + mx*(aabb.max.x+sizex) + mz*(aabb.min.z+sizez);
-				p4 = p + mx*aabb.max.x + mz*(aabb.min.z+sizez);
+				d.p1 = p + mx*aabb.max.x + mz*aabb.min.z;
+				d.p2 = p + mx*(aabb.max.x+sizex) + mz*aabb.min.z;
+				d.p3 = p + mx*(aabb.max.x+sizex) + mz*(aabb.min.z+sizez);
+				d.p4 = p + mx*aabb.max.x + mz*(aabb.min.z+sizez);
 				break;
 		}
 
-		vector3d center = (p1+p2+p3+p4)*0.25;
-		PutCityBit(rand, m, p1, p2, p3, p4);
+		PutCityBit(rand, m, d);
 	}
+
 	AddStaticGeomsToCollisionSpace();
 }
 

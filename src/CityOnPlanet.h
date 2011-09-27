@@ -50,8 +50,17 @@ public:
 	inline Planet *GetPlanet() const { return m_planet; }
 
 	static void Init();
+
 private:
-	void PutCityBit(MTRand &rand, const matrix4x4d &rot, vector3d p1, vector3d p2, vector3d p3, vector3d p4);
+
+	class Division {
+	public:
+		Division() {}
+		Division(vector3d _p1, vector3d _p2, vector3d _p3, vector3d _p4) : p1(_p1), p2(_p2), p3(_p3), p4(_p4) {}
+		vector3d p1, p2, p3, p4;
+	};
+
+	void PutCityBit(MTRand &rand, const matrix4x4d &rot, Division d);
 	void AddStaticGeomsToCollisionSpace();
 	void RemoveStaticGeomsFromCollisionSpace();
 
