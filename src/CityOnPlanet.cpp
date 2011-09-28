@@ -46,13 +46,18 @@ citybuildinglist_t s_buildingLists[MAX_BUILDING_LISTS] = {
 static Plane planes[6];
 LmrObjParams cityobj_params;
 
+// fill the given region with buildings
 void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zones[], const SurfaceRegion &r)
 {
+	// radius of the circle bounded by this region
 	double rad = (r.p1-r.p2).Length()*0.5;
+
+	// centre of the region where we will try to place a building
+	vector3d p = (r.p1+r.p2+r.p3+r.p4)*0.25;
+
 	LmrModel *model;
 	double modelRadXZ;
 	const LmrCollMesh *cmesh;
-	vector3d cent = (r.p1+r.p2+r.p3+r.p4)*0.25;
 
 	bool found = false;
 
@@ -67,7 +72,7 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zo
 			if (tries == 0) return;
 		}
 		
-		bool tooDistant = ((zones[i].centre - cent).Length()*(1.0/zones[i].size) > rand.Double());
+		bool tooDistant = ((zones[i].centre - p).Length()*(1.0/zones[i].size) > rand.Double());
 		if (!tooDistant) {
 			found = true;
 			break;
@@ -83,30 +88,29 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zo
 		vector3d b = (r.p2+r.p3)*0.5;
 		vector3d c = (r.p3+r.p4)*0.5;
 		vector3d d = (r.p4+r.p1)*0.5;
-		vector3d e = (r.p1+r.p2+r.p3+r.p4)*0.25;
 
-		PutCityBit(rand, rot, zones, SurfaceRegion(r.p1, a, e, d));
-		PutCityBit(rand, rot, zones, SurfaceRegion(a, r.p2, b, e));
-		PutCityBit(rand, rot, zones, SurfaceRegion(e, b, r.p3, c));
-		PutCityBit(rand, rot, zones, SurfaceRegion(d, e, c, r.p4));
+		PutCityBit(rand, rot, zones, SurfaceRegion(r.p1, a, p, d));
+		PutCityBit(rand, rot, zones, SurfaceRegion(a, r.p2, b, p));
+		PutCityBit(rand, rot, zones, SurfaceRegion(p, b, r.p3, c));
+		PutCityBit(rand, rot, zones, SurfaceRegion(d, p, c, r.p4));
 
 		return;
 	}
 
-	cent = cent.Normalized();
-	double height = m_planet->GetTerrainHeight(cent);
+	p = p.Normalized();
+	double height = m_planet->GetTerrainHeight(p);
 	/* don't position below sealevel! */
 	if (height - m_planet->GetSBody()->GetRadius() <= 0.0) return;
-	cent = cent * height;
+	p = p * height;
 
 	Geom *geom = new Geom(cmesh->geomTree);
 	int rotTimes90 = rand.Int32(4);
 	matrix4x4d grot = rot * matrix4x4d::RotateYMatrix(M_PI*0.5*double(rotTimes90));
-	geom->MoveTo(grot, cent);
+	geom->MoveTo(grot, p);
 	geom->SetUserData(this);
 //	f->AddStaticGeom(geom);
 
-	BuildingDef def = { model, cmesh->GetBoundingRadius(), rotTimes90, cent, geom, false };
+	BuildingDef def = { model, cmesh->GetBoundingRadius(), rotTimes90, p, geom, false };
 	m_buildings.push_back(def);
 }
 
@@ -295,7 +299,29 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 	for (int side=0; side<4; side++) {
 		SurfaceRegion r;
 
-		/* put buildings on all sides of spaceport */
+		/*
+		 * put buildings around the spaceport. here we're setting up four
+		 * regions within the city limits, adjacent to the spaceport like so:
+		 *
+		 *                +-----------+
+		 *                |           |
+		 *                |           |
+		 *                |     3     |
+		 *    +-----------+           |
+		 *    |           |           |
+		 *    |           +-----+-----+-----+
+		 *    |     2     |     |           |
+		 *    |           | sp  |           |
+		 *    |           |     |     0     |
+		 *    +-----+-----+-----+           |
+		 *          |           |           |
+		 *          |           +-----------+
+		 *          |     1     |
+		 *          |           |
+		 *          |           |
+		 *          +-----------+
+		 */
+
 		switch(side) {
 			case 3:
 				r.p1 = p + mx*(aabb.min.x) + mz*aabb.min.z;
