@@ -50,6 +50,8 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 	cityflavourdef_t *flavour;
 	//citybuildinglist_t *buildings;
 
+	bool found = false;
+
 	// pick a building flavour (city, windfarm, etc)
 	for (int flv=0; flv<CITYFLAVOURS; flv++) {
 		flavour = &cityflavour[flv];
@@ -67,17 +69,17 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 		}
 		
 		bool tooDistant = ((flavour->center - cent).Length()*(1.0/flavour->size) > rand.Double());
-		if (!tooDistant) break;
-		else flavour = 0;
+		if (!tooDistant) {
+			found = true;
+			break;
+		}
 	}
 
-	if (flavour == 0) {
-		if (rad > MIN_SEG_SIZE) goto always_divide;
-		else return;
-	}
+	if (!found)
+		if (rad <= MIN_SEG_SIZE)
+			return;
 
-	if (rad > modelRadXZ*2.0) {
-always_divide:
+	if (!found || rad > modelRadXZ*2.0) {
 		vector3d a = (div.p1+div.p2)*0.5;
 		vector3d b = (div.p2+div.p3)*0.5;
 		vector3d c = (div.p3+div.p4)*0.5;
