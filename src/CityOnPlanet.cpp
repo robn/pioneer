@@ -46,13 +46,13 @@ citybuildinglist_t s_buildingLists[MAX_BUILDING_LISTS] = {
 static Plane planes[6];
 LmrObjParams cityobj_params;
 
-void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zones[], Division div)
+void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zones[], const SurfaceRegion &r)
 {
-	double rad = (div.p1-div.p2).Length()*0.5;
+	double rad = (r.p1-r.p2).Length()*0.5;
 	LmrModel *model;
 	double modelRadXZ;
 	const LmrCollMesh *cmesh;
-	vector3d cent = (div.p1+div.p2+div.p3+div.p4)*0.25;
+	vector3d cent = (r.p1+r.p2+r.p3+r.p4)*0.25;
 
 	bool found = false;
 
@@ -79,16 +79,16 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zo
 			return;
 
 	if (!found || rad > modelRadXZ*2.0) {
-		vector3d a = (div.p1+div.p2)*0.5;
-		vector3d b = (div.p2+div.p3)*0.5;
-		vector3d c = (div.p3+div.p4)*0.5;
-		vector3d d = (div.p4+div.p1)*0.5;
-		vector3d e = (div.p1+div.p2+div.p3+div.p4)*0.25;
+		vector3d a = (r.p1+r.p2)*0.5;
+		vector3d b = (r.p2+r.p3)*0.5;
+		vector3d c = (r.p3+r.p4)*0.5;
+		vector3d d = (r.p4+r.p1)*0.5;
+		vector3d e = (r.p1+r.p2+r.p3+r.p4)*0.25;
 
-		PutCityBit(rand, rot, zones, Division(div.p1, a, e, d));
-		PutCityBit(rand, rot, zones, Division(a, div.p2, b, e));
-		PutCityBit(rand, rot, zones, Division(e, b, div.p3, c));
-		PutCityBit(rand, rot, zones, Division(d, e, c, div.p4));
+		PutCityBit(rand, rot, zones, SurfaceRegion(r.p1, a, e, d));
+		PutCityBit(rand, rot, zones, SurfaceRegion(a, r.p2, b, e));
+		PutCityBit(rand, rot, zones, SurfaceRegion(e, b, r.p3, c));
+		PutCityBit(rand, rot, zones, SurfaceRegion(d, e, c, r.p4));
 
 		return;
 	}
@@ -293,38 +293,38 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 	}
 	
 	for (int side=0; side<4; side++) {
-		Division d;
+		SurfaceRegion r;
 
 		/* put buildings on all sides of spaceport */
 		switch(side) {
 			case 3:
-				d.p1 = p + mx*(aabb.min.x) + mz*aabb.min.z;
-				d.p2 = p + mx*(aabb.min.x) + mz*(aabb.min.z-sizez);
-				d.p3 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z-sizez);
-				d.p4 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z);
+				r.p1 = p + mx*(aabb.min.x) + mz*aabb.min.z;
+				r.p2 = p + mx*(aabb.min.x) + mz*(aabb.min.z-sizez);
+				r.p3 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z-sizez);
+				r.p4 = p + mx*(aabb.min.x+sizex) + mz*(aabb.min.z);
 				break;
 			case 2:
-				d.p1 = p + mx*(aabb.min.x-sizex) + mz*aabb.max.z;
-				d.p2 = p + mx*(aabb.min.x-sizex) + mz*(aabb.max.z-sizez);
-				d.p3 = p + mx*(aabb.min.x) + mz*(aabb.max.z-sizez);
-				d.p4 = p + mx*(aabb.min.x) + mz*(aabb.max.z);
+				r.p1 = p + mx*(aabb.min.x-sizex) + mz*aabb.max.z;
+				r.p2 = p + mx*(aabb.min.x-sizex) + mz*(aabb.max.z-sizez);
+				r.p3 = p + mx*(aabb.min.x) + mz*(aabb.max.z-sizez);
+				r.p4 = p + mx*(aabb.min.x) + mz*(aabb.max.z);
 				break;
 			case 1:
-				d.p1 = p + mx*(aabb.max.x-sizex) + mz*aabb.max.z;
-				d.p2 = p + mx*(aabb.max.x) + mz*aabb.max.z;
-				d.p3 = p + mx*(aabb.max.x) + mz*(aabb.max.z+sizez);
-				d.p4 = p + mx*(aabb.max.x-sizex) + mz*(aabb.max.z+sizez);
+				r.p1 = p + mx*(aabb.max.x-sizex) + mz*aabb.max.z;
+				r.p2 = p + mx*(aabb.max.x) + mz*aabb.max.z;
+				r.p3 = p + mx*(aabb.max.x) + mz*(aabb.max.z+sizez);
+				r.p4 = p + mx*(aabb.max.x-sizex) + mz*(aabb.max.z+sizez);
 				break;
 			default:
 			case 0:
-				d.p1 = p + mx*aabb.max.x + mz*aabb.min.z;
-				d.p2 = p + mx*(aabb.max.x+sizex) + mz*aabb.min.z;
-				d.p3 = p + mx*(aabb.max.x+sizex) + mz*(aabb.min.z+sizez);
-				d.p4 = p + mx*aabb.max.x + mz*(aabb.min.z+sizez);
+				r.p1 = p + mx*aabb.max.x + mz*aabb.min.z;
+				r.p2 = p + mx*(aabb.max.x+sizex) + mz*aabb.min.z;
+				r.p3 = p + mx*(aabb.max.x+sizex) + mz*(aabb.min.z+sizez);
+				r.p4 = p + mx*aabb.max.x + mz*(aabb.min.z+sizez);
 				break;
 		}
 
-		PutCityBit(rand, m, zones, d);
+		PutCityBit(rand, m, zones, r);
 	}
 
 	AddStaticGeomsToCollisionSpace();
