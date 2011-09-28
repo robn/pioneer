@@ -90,23 +90,25 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 		PutCityBit(rand, rot, Division(a, div.p2, b, e));
 		PutCityBit(rand, rot, Division(e, b, div.p3, c));
 		PutCityBit(rand, rot, Division(d, e, c, div.p4));
-	} else {
-		cent = cent.Normalized();
-		double height = m_planet->GetTerrainHeight(cent);
-		/* don't position below sealevel! */
-		if (height - m_planet->GetSBody()->GetRadius() <= 0.0) return;
-		cent = cent * height;
 
-		Geom *geom = new Geom(cmesh->geomTree);
-		int rotTimes90 = rand.Int32(4);
-		matrix4x4d grot = rot * matrix4x4d::RotateYMatrix(M_PI*0.5*double(rotTimes90));
-		geom->MoveTo(grot, cent);
-		geom->SetUserData(this);
-//		f->AddStaticGeom(geom);
-
-		BuildingDef def = { model, cmesh->GetBoundingRadius(), rotTimes90, cent, geom, false };
-		m_buildings.push_back(def);
+		return;
 	}
+
+	cent = cent.Normalized();
+	double height = m_planet->GetTerrainHeight(cent);
+	/* don't position below sealevel! */
+	if (height - m_planet->GetSBody()->GetRadius() <= 0.0) return;
+	cent = cent * height;
+
+	Geom *geom = new Geom(cmesh->geomTree);
+	int rotTimes90 = rand.Int32(4);
+	matrix4x4d grot = rot * matrix4x4d::RotateYMatrix(M_PI*0.5*double(rotTimes90));
+	geom->MoveTo(grot, cent);
+	geom->SetUserData(this);
+//	f->AddStaticGeom(geom);
+
+	BuildingDef def = { model, cmesh->GetBoundingRadius(), rotTimes90, cent, geom, false };
+	m_buildings.push_back(def);
 }
 
 void CityOnPlanet::AddStaticGeomsToCollisionSpace()
