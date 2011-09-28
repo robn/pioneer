@@ -7,12 +7,20 @@
 #include "LuaConstants.h"
 #include "collider/Geom.h"
 
-#define START_SEG_SIZE CITY_ON_PLANET_RADIUS
 #define MIN_SEG_SIZE 50.0
 
 std::vector<Building> CityOnPlanet::s_buildings;
 bool CityOnPlanet::s_buildingsLoaded = false;
 
+
+#define MAX_ZONES 2
+static const CityOnPlanet::ZoneDef s_zonesDefs[] = {
+	{ Building::TYPE_STARPORT, 300.0, 400.0 },
+	{ Building::TYPE_NORMAL,   400.0, CITY_ON_PLANET_RADIUS }
+};
+
+
+#if 0
 #define CITYFLAVOURS 5
 struct cityflavourdef_t {
 	//int buildingListIdx;
@@ -20,7 +28,6 @@ struct cityflavourdef_t {
 	double size;
 } cityflavour[CITYFLAVOURS];
 
-#if 0
 #define MAX_BUILDING_LISTS 1
 struct citybuildinglist_t {
 	const char *modelTagName;
@@ -39,7 +46,7 @@ citybuildinglist_t s_buildingLists[MAX_BUILDING_LISTS] = {
 static Plane planes[6];
 LmrObjParams cityobj_params;
 
-void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
+void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zones[], Division div)
 {
 	double rad = (div.p1-div.p2).Length()*0.5;
 	LmrModel *model;
@@ -47,20 +54,12 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 	const LmrCollMesh *cmesh;
 	vector3d cent = (div.p1+div.p2+div.p3+div.p4)*0.25;
 
-	cityflavourdef_t *flavour;
-	//citybuildinglist_t *buildings;
-
 	bool found = false;
 
-	// pick a building flavour (city, windfarm, etc)
-	for (int flv=0; flv<CITYFLAVOURS; flv++) {
-		flavour = &cityflavour[flv];
-		//buildings = &s_buildingLists[flavour->buildingListIdx];
-       
+	for (int i=0; i<MAX_ZONES; i++) {
 		int tries;
 		for (tries=20; tries--; ) {
-			//const citybuilding_t &bt = buildings->buildings[rand.Int32(buildings->numBuildings)];
-			const Building *b = m_candidateBuildings[Building::TYPE_NORMAL][rand.Int32(m_candidateBuildings[Building::TYPE_NORMAL].size())];
+			const Building *b = m_candidateBuildings[zones[i].def.type][rand.Int32(m_candidateBuildings[zones[i].def.type].size())];
 			model = b->model;
 			modelRadXZ = b->xzRadius;
 			cmesh = b->collMesh;
@@ -68,7 +67,7 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 			if (tries == 0) return;
 		}
 		
-		bool tooDistant = ((flavour->center - cent).Length()*(1.0/flavour->size) > rand.Double());
+		bool tooDistant = ((zones[i].centre - cent).Length()*(1.0/zones[i].size) > rand.Double());
 		if (!tooDistant) {
 			found = true;
 			break;
@@ -86,10 +85,10 @@ void CityOnPlanet::PutCityBit(MTRand &rand, const matrix4x4d &rot, Division div)
 		vector3d d = (div.p4+div.p1)*0.5;
 		vector3d e = (div.p1+div.p2+div.p3+div.p4)*0.25;
 
-		PutCityBit(rand, rot, Division(div.p1, a, e, d));
-		PutCityBit(rand, rot, Division(a, div.p2, b, e));
-		PutCityBit(rand, rot, Division(e, b, div.p3, c));
-		PutCityBit(rand, rot, Division(d, e, c, div.p4));
+		PutCityBit(rand, rot, zones, Division(div.p1, a, e, d));
+		PutCityBit(rand, rot, zones, Division(a, div.p2, b, e));
+		PutCityBit(rand, rot, zones, Division(e, b, div.p3, c));
+		PutCityBit(rand, rot, zones, Division(d, e, c, div.p4));
 
 		return;
 	}
@@ -238,7 +237,16 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 		population >= 0.50 ? Building::SIZE_MEDIUM :
 		population >= 0.25 ? Building::SIZE_SMALL :
 		                     Building::SIZE_TINY;
-
+	
+	double scale = 
+		size == Building::SIZE_HUGE   ? 1.0 :
+		size == Building::SIZE_LARGE  ? 0.8 :
+		size == Building::SIZE_MEDIUM ? 0.6 :
+		size == Building::SIZE_SMALL  ? 0.4 :
+		                                0.2;
+	
+	double radius = CITY_ON_PLANET_RADIUS * scale;
+	
 	for (std::vector<Building>::const_iterator i = s_buildings.begin(); i != s_buildings.end(); i++) {
 		Building b = (*i);
 		if (b.environment == environment && b.minCitySize <= size && b.maxCitySize >= size)
@@ -259,23 +267,29 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 
 	vector3d p = station->GetPosition();
 
-	vector3d p1, p2, p3, p4;
-	double sizex = START_SEG_SIZE;// + rand.Int32((int)START_SEG_SIZE);
-	double sizez = START_SEG_SIZE;// + rand.Int32((int)START_SEG_SIZE);
-	
-	// always have random shipyard buildings around the space station
-	//cityflavour[0].buildingListIdx = 0;//2;
-	cityflavour[0].center = p;
-	cityflavour[0].size = 500;
+	double sizex = radius;
+	double sizez = radius;
 
-	for (int i=1; i<CITYFLAVOURS; i++) {
-		//cityflavour[i].buildingListIdx = MAX_BUILDING_LISTS>1 ? rand.Int32(MAX_BUILDING_LISTS-1) : 0;
-		//citybuildinglist_t *blist = &s_buildingLists[cityflavour[i].buildingListIdx];
-		double a = rand.Int32(-1000,1000);
-		double b = rand.Int32(-1000,1000);
-		cityflavour[i].center = p + a*mx + b*mz;
-		//cityflavour[i].size = rand.Int32(int(blist->minRadius), int(blist->maxRadius));
-		cityflavour[i].size = rand.Int32(800, 2000);
+
+	Zone zones[MAX_ZONES];
+
+	for (int i=0; i < MAX_ZONES; i++)
+	{
+		zones[i].def = s_zonesDefs[i];
+		zones[i].def.minRadius *= scale;
+		zones[i].def.maxRadius *= scale;
+
+		// force starport buildings to centre on the starport
+		if (zones[i].def.type == Building::TYPE_STARPORT)
+			zones[i].centre = p;
+
+		else {
+			double a = rand.Int32(-zones[i].def.minRadius, zones[i].def.minRadius);
+			double b = rand.Int32(-zones[i].def.minRadius, zones[i].def.minRadius);
+			zones[i].centre = p + a*mx + b*mz;
+		}
+
+		zones[i].size = rand.Int32(zones[i].def.minRadius, zones[i].def.maxRadius);
 	}
 	
 	for (int side=0; side<4; side++) {
@@ -310,7 +324,7 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed) :
 				break;
 		}
 
-		PutCityBit(rand, m, d);
+		PutCityBit(rand, m, zones, d);
 	}
 
 	AddStaticGeomsToCollisionSpace();

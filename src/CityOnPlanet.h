@@ -51,7 +51,18 @@ public:
 
 	static void Init();
 
+	struct ZoneDef {
+		Building::BuildingType type;
+		double minRadius, maxRadius;
+	};
+
 private:
+
+	struct Zone {
+		ZoneDef def;
+		vector3d centre;
+		double size;
+	};
 
 	class Division {
 	public:
@@ -60,7 +71,8 @@ private:
 		vector3d p1, p2, p3, p4;
 	};
 
-	void PutCityBit(MTRand &rand, const matrix4x4d &rot, Division d);
+	void PutCityBit(MTRand &rand, const matrix4x4d &rot, const Zone zones[], Division d);
+
 	void AddStaticGeomsToCollisionSpace();
 	void RemoveStaticGeomsFromCollisionSpace();
 
