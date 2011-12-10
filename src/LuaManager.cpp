@@ -1,4 +1,8 @@
 #include "LuaManager.h"
+#include "LuaBody.h"
+#include "LuaShip.h"
+#include "LuaSpaceStation.h"
+#include "LuaCargoBody.h"
 #include <stdlib.h> // for abort
 
 bool instantiated = false;
@@ -43,13 +47,104 @@ LuaManager::LuaManager() : m_lua(NULL) {
 	lua_pop(m_lua, 1);
 	lua_setfield(m_lua, LUA_REGISTRYINDEX, "PiDebug");
 
+	m_serializer = new LuaSerializer();
+	m_timer = new LuaTimer();
+
+	m_onGameStart = new LuaEventQueue<>("onGameStart");
+	m_onGameEnd = new LuaEventQueue<>("onGameEnd");
+	m_onEnterSystem = new LuaEventQueue<Ship>("onEnterSystem");
+	m_onLeaveSystem = new LuaEventQueue<Ship>("onLeaveSystem");
+	m_onFrameChanged = new LuaEventQueue<Body>("onFrameChanged");
+	m_onShipDestroyed = new LuaEventQueue<Ship,Body>("onShipDestroyed");
+	m_onShipHit = new LuaEventQueue<Ship,Body>("onShipHit");
+	m_onShipCollided = new LuaEventQueue<Ship,Body>("onShipCollided");
+	m_onShipDocked = new LuaEventQueue<Ship,SpaceStation>("onShipDocked");
+	m_onShipUndocked = new LuaEventQueue<Ship,SpaceStation>("onShipUndocked");
+	m_onShipLanded = new LuaEventQueue<Ship,Body>("onShipLanded");
+	m_onShipTakeOff = new LuaEventQueue<Ship,Body>("onShipTakeOff");
+	m_onShipAlertChanged = new LuaEventQueue<Ship,const char *>("onShipAlertChanged");
+	m_onJettison = new LuaEventQueue<Ship,CargoBody>("onJettison");
+	m_onAICompleted = new LuaEventQueue<Ship,const char *>("onAICompleted");
+	m_onCreateBB = new LuaEventQueue<SpaceStation>("onCreateBB");
+	m_onUpdateBB = new LuaEventQueue<SpaceStation>("onUpdateBB");
+	m_onSongFinished = new LuaEventQueue<>("onSongFinished");
+	m_onShipFlavourChanged = new LuaEventQueue<Ship>("onShipFlavourChanged");
+	m_onShipEquipmentChanged = new LuaEventQueue<Ship,const char *>("onShipEquipmentChanged");
+
+	m_onGameStart->RegisterEventQueue();
+	m_onGameEnd->RegisterEventQueue();
+	m_onEnterSystem->RegisterEventQueue();
+	m_onLeaveSystem->RegisterEventQueue();
+	m_onFrameChanged->RegisterEventQueue();
+	m_onShipDestroyed->RegisterEventQueue();
+	m_onShipHit->RegisterEventQueue();
+	m_onShipCollided->RegisterEventQueue();
+	m_onShipDocked->RegisterEventQueue();
+	m_onShipLanded->RegisterEventQueue();
+	m_onShipTakeOff->RegisterEventQueue();
+	m_onShipUndocked->RegisterEventQueue();
+	m_onShipAlertChanged->RegisterEventQueue();
+	m_onJettison->RegisterEventQueue();
+	m_onAICompleted->RegisterEventQueue();
+	m_onCreateBB->RegisterEventQueue();
+	m_onUpdateBB->RegisterEventQueue();
+	m_onSongFinished->RegisterEventQueue();
+	m_onShipFlavourChanged->RegisterEventQueue();
+	m_onShipEquipmentChanged->RegisterEventQueue();
+
 	instantiated = true;
 }
 
 LuaManager::~LuaManager() {
+	delete m_onGameStart;
+	delete m_onGameEnd;
+	delete m_onEnterSystem;
+	delete m_onLeaveSystem;
+	delete m_onFrameChanged;
+	delete m_onShipDestroyed;
+	delete m_onShipHit;
+	delete m_onShipCollided;
+	delete m_onShipDocked;
+	delete m_onShipUndocked;
+	delete m_onShipLanded;
+	delete m_onShipTakeOff;
+	delete m_onShipAlertChanged;
+	delete m_onJettison;
+	delete m_onAICompleted;
+	delete m_onCreateBB;
+	delete m_onUpdateBB;
+	delete m_onSongFinished;
+	delete m_onShipFlavourChanged;
+	delete m_onShipEquipmentChanged;
+
+	delete m_serializer;
+	delete m_timer;
+
 	lua_close(m_lua);
 
 	instantiated = false;
+}
+
+void LuaManager::Tick() {
+	m_onEnterSystem->Emit();
+	m_onLeaveSystem->Emit();
+	m_onFrameChanged->Emit();
+	m_onShipHit->Emit();
+	m_onShipCollided->Emit();
+	m_onShipDestroyed->Emit();
+	m_onShipDocked->Emit();
+	m_onShipAlertChanged->Emit();
+	m_onShipUndocked->Emit();
+	m_onShipLanded->Emit();
+	m_onShipTakeOff->Emit();
+	m_onJettison->Emit();
+	m_onAICompleted->Emit();
+	m_onCreateBB->Emit();
+	m_onUpdateBB->Emit();
+	m_onShipFlavourChanged->Emit();
+	m_onShipEquipmentChanged->Emit();
+
+	m_timer->Tick();
 }
 
 size_t LuaManager::GetMemoryUsage() const {

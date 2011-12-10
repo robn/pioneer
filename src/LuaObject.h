@@ -1,7 +1,7 @@
 #ifndef _LUAOBJECT_H
 #define _LUAOBJECT_H
 
-#include "LuaManager.h"
+#include "LuaUtils.h"
 #include "DeleteEmitter.h"
 
 //

@@ -7,9 +7,6 @@
 #include "mtrand.h"
 #include "gameconsts.h"
 #include "GameConfig.h"
-#include "LuaEventQueue.h"
-#include "LuaSerializer.h"
-#include "LuaTimer.h"
 #include "CargoBody.h"
 #include "Space.h"
 #include <map>
@@ -29,6 +26,7 @@ class SpaceStation;
 class GalacticView;
 class Ship;
 class GameMenuView;
+class LuaManager;
 class LuaConsole;
 namespace Sound { class MusicPlayer; }
 
@@ -100,30 +98,6 @@ public:
 	static sigc::signal<void, const SpaceStation*> onDockingClearanceExpired;
 
 	static LuaManager *luaManager;
-
-	static LuaSerializer *luaSerializer;
-	static LuaTimer *luaTimer;
-
-	static LuaEventQueue<> *luaOnGameStart;
-	static LuaEventQueue<> *luaOnGameEnd;
-	static LuaEventQueue<Ship> *luaOnEnterSystem;
-	static LuaEventQueue<Ship> *luaOnLeaveSystem;
-	static LuaEventQueue<Body> *luaOnFrameChanged;
-	static LuaEventQueue<Ship,Body> *luaOnShipDestroyed;
-	static LuaEventQueue<Ship,Body> *luaOnShipHit;
-	static LuaEventQueue<Ship,Body> *luaOnShipCollided;
-	static LuaEventQueue<Ship,SpaceStation> *luaOnShipDocked;
-	static LuaEventQueue<Ship,SpaceStation> *luaOnShipUndocked;
-	static LuaEventQueue<Ship,Body> *luaOnShipLanded;
-	static LuaEventQueue<Ship,Body> *luaOnShipTakeOff;
-	static LuaEventQueue<Ship,const char *> *luaOnShipAlertChanged;
-	static LuaEventQueue<Ship,CargoBody> *luaOnJettison;
-	static LuaEventQueue<Ship,const char *> *luaOnAICompleted;
-	static LuaEventQueue<SpaceStation> *luaOnCreateBB;
-	static LuaEventQueue<SpaceStation> *luaOnUpdateBB;
-	static LuaEventQueue<> *luaOnSongFinished;
-	static LuaEventQueue<Ship> *luaOnShipFlavourChanged;
-	static LuaEventQueue<Ship,const char *> *luaOnShipEquipmentChanged;
 
 	static MTRand rng;
 	static int statSceneTris;

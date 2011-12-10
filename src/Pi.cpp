@@ -81,28 +81,6 @@ sigc::signal<void> Pi::onPlayerChangeFlightControlState;
 sigc::signal<void> Pi::onPlayerChangeEquipment;
 sigc::signal<void, const SpaceStation*> Pi::onDockingClearanceExpired;
 LuaManager *Pi::luaManager;
-LuaSerializer *Pi::luaSerializer;
-LuaTimer *Pi::luaTimer;
-LuaEventQueue<> *Pi::luaOnGameStart;
-LuaEventQueue<> *Pi::luaOnGameEnd;
-LuaEventQueue<Ship> *Pi::luaOnEnterSystem;
-LuaEventQueue<Ship> *Pi::luaOnLeaveSystem;
-LuaEventQueue<Body> *Pi::luaOnFrameChanged;
-LuaEventQueue<Ship,Body> *Pi::luaOnShipDestroyed;
-LuaEventQueue<Ship,Body> *Pi::luaOnShipHit;
-LuaEventQueue<Ship,Body> *Pi::luaOnShipCollided;
-LuaEventQueue<Ship,SpaceStation> *Pi::luaOnShipDocked;
-LuaEventQueue<Ship,SpaceStation> *Pi::luaOnShipUndocked;
-LuaEventQueue<Ship,Body> *Pi::luaOnShipLanded;
-LuaEventQueue<Ship,Body> *Pi::luaOnShipTakeOff;
-LuaEventQueue<Ship,const char *> *Pi::luaOnShipAlertChanged;
-LuaEventQueue<Ship,CargoBody> *Pi::luaOnJettison;
-LuaEventQueue<Ship,const char *> *Pi::luaOnAICompleted;
-LuaEventQueue<SpaceStation> *Pi::luaOnCreateBB;
-LuaEventQueue<SpaceStation> *Pi::luaOnUpdateBB;
-LuaEventQueue<> *Pi::luaOnSongFinished;
-LuaEventQueue<Ship> *Pi::luaOnShipFlavourChanged;
-LuaEventQueue<Ship,const char *> *Pi::luaOnShipEquipmentChanged;
 int Pi::keyModState;
 char Pi::keyState[SDLK_LAST];
 char Pi::mouseButton[6];
@@ -208,53 +186,8 @@ static void LuaInit()
 	LuaObject<LuaChatForm>::RegisterClass();
 	LuaObject<LuaEventQueueBase>::RegisterClass();
 
-	Pi::luaSerializer = new LuaSerializer();
-	Pi::luaTimer = new LuaTimer();
-
 	LuaObject<LuaSerializer>::RegisterClass();
 	LuaObject<LuaTimer>::RegisterClass();
-
-	Pi::luaOnGameStart = new LuaEventQueue<>("onGameStart");
-	Pi::luaOnGameEnd = new LuaEventQueue<>("onGameEnd");
-	Pi::luaOnEnterSystem = new LuaEventQueue<Ship>("onEnterSystem");
-	Pi::luaOnLeaveSystem = new LuaEventQueue<Ship>("onLeaveSystem");
-	Pi::luaOnFrameChanged = new LuaEventQueue<Body>("onFrameChanged");
-	Pi::luaOnShipDestroyed = new LuaEventQueue<Ship,Body>("onShipDestroyed");
-	Pi::luaOnShipHit = new LuaEventQueue<Ship,Body>("onShipHit");
-	Pi::luaOnShipCollided = new LuaEventQueue<Ship,Body>("onShipCollided");
-	Pi::luaOnShipDocked = new LuaEventQueue<Ship,SpaceStation>("onShipDocked");
-	Pi::luaOnShipUndocked = new LuaEventQueue<Ship,SpaceStation>("onShipUndocked");
-	Pi::luaOnShipLanded = new LuaEventQueue<Ship,Body>("onShipLanded");
-	Pi::luaOnShipTakeOff = new LuaEventQueue<Ship,Body>("onShipTakeOff");
-	Pi::luaOnShipAlertChanged = new LuaEventQueue<Ship,const char *>("onShipAlertChanged");
-	Pi::luaOnJettison = new LuaEventQueue<Ship,CargoBody>("onJettison");
-	Pi::luaOnAICompleted = new LuaEventQueue<Ship,const char *>("onAICompleted");
-	Pi::luaOnCreateBB = new LuaEventQueue<SpaceStation>("onCreateBB");
-	Pi::luaOnUpdateBB = new LuaEventQueue<SpaceStation>("onUpdateBB");
-	Pi::luaOnSongFinished = new LuaEventQueue<>("onSongFinished");
-	Pi::luaOnShipFlavourChanged = new LuaEventQueue<Ship>("onShipFlavourChanged");
-	Pi::luaOnShipEquipmentChanged = new LuaEventQueue<Ship,const char *>("onShipEquipmentChanged");
-
-	Pi::luaOnGameStart->RegisterEventQueue();
-	Pi::luaOnGameEnd->RegisterEventQueue();
-	Pi::luaOnEnterSystem->RegisterEventQueue();
-	Pi::luaOnLeaveSystem->RegisterEventQueue();
-	Pi::luaOnFrameChanged->RegisterEventQueue();
-	Pi::luaOnShipDestroyed->RegisterEventQueue();
-	Pi::luaOnShipHit->RegisterEventQueue();
-	Pi::luaOnShipCollided->RegisterEventQueue();
-	Pi::luaOnShipDocked->RegisterEventQueue();
-	Pi::luaOnShipLanded->RegisterEventQueue();
-	Pi::luaOnShipTakeOff->RegisterEventQueue();
-	Pi::luaOnShipUndocked->RegisterEventQueue();
-	Pi::luaOnShipAlertChanged->RegisterEventQueue();
-	Pi::luaOnJettison->RegisterEventQueue();
-	Pi::luaOnAICompleted->RegisterEventQueue();
-	Pi::luaOnCreateBB->RegisterEventQueue();
-	Pi::luaOnUpdateBB->RegisterEventQueue();
-	Pi::luaOnSongFinished->RegisterEventQueue();
-	Pi::luaOnShipFlavourChanged->RegisterEventQueue();
-	Pi::luaOnShipEquipmentChanged->RegisterEventQueue();
 
 	LuaConstants::Register(Pi::luaManager->GetLuaState());
 	LuaLang::Register();
@@ -276,34 +209,12 @@ static void LuaInit()
 }
 
 static void LuaUninit() {
-	delete Pi::luaOnGameStart;
-	delete Pi::luaOnGameEnd;
-	delete Pi::luaOnEnterSystem;
-	delete Pi::luaOnLeaveSystem;
-	delete Pi::luaOnFrameChanged;
-	delete Pi::luaOnShipDestroyed;
-	delete Pi::luaOnShipHit;
-	delete Pi::luaOnShipCollided;
-	delete Pi::luaOnShipDocked;
-	delete Pi::luaOnShipUndocked;
-	delete Pi::luaOnShipLanded;
-	delete Pi::luaOnShipTakeOff;
-	delete Pi::luaOnShipAlertChanged;
-	delete Pi::luaOnJettison;
-	delete Pi::luaOnAICompleted;
-	delete Pi::luaOnCreateBB;
-	delete Pi::luaOnUpdateBB;
-	delete Pi::luaOnSongFinished;
-	delete Pi::luaOnShipFlavourChanged;
-	delete Pi::luaOnShipEquipmentChanged;
-
-	delete Pi::luaSerializer;
-	delete Pi::luaTimer;
-
 	delete Pi::luaManager;
 }
 
 static void LuaInitGame() {
+#if 0
+	XXX LUA
 	Pi::luaOnGameStart->ClearEvents();
 	Pi::luaOnGameEnd->ClearEvents();
 	Pi::luaOnFrameChanged->ClearEvents();
@@ -322,6 +233,7 @@ static void LuaInitGame() {
 	Pi::luaOnSongFinished->ClearEvents();
 	Pi::luaOnShipFlavourChanged->ClearEvents();
 	Pi::luaOnShipEquipmentChanged->ClearEvents();
+#endif
 }
 
 void Pi::RedirectStdio()
