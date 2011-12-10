@@ -71,27 +71,6 @@ LuaManager::LuaManager() : m_lua(NULL) {
 	m_onShipFlavourChanged = new LuaEventQueue<Ship>(this, "onShipFlavourChanged");
 	m_onShipEquipmentChanged = new LuaEventQueue<Ship,const char *>(this, "onShipEquipmentChanged");
 
-	m_onGameStart->RegisterEventQueue();
-	m_onGameEnd->RegisterEventQueue();
-	m_onEnterSystem->RegisterEventQueue();
-	m_onLeaveSystem->RegisterEventQueue();
-	m_onFrameChanged->RegisterEventQueue();
-	m_onShipDestroyed->RegisterEventQueue();
-	m_onShipHit->RegisterEventQueue();
-	m_onShipCollided->RegisterEventQueue();
-	m_onShipDocked->RegisterEventQueue();
-	m_onShipLanded->RegisterEventQueue();
-	m_onShipTakeOff->RegisterEventQueue();
-	m_onShipUndocked->RegisterEventQueue();
-	m_onShipAlertChanged->RegisterEventQueue();
-	m_onJettison->RegisterEventQueue();
-	m_onAICompleted->RegisterEventQueue();
-	m_onCreateBB->RegisterEventQueue();
-	m_onUpdateBB->RegisterEventQueue();
-	m_onSongFinished->RegisterEventQueue();
-	m_onShipFlavourChanged->RegisterEventQueue();
-	m_onShipEquipmentChanged->RegisterEventQueue();
-
 	instantiated = true;
 }
 
