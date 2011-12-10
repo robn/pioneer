@@ -3,8 +3,9 @@
 
 #include "LuaObject.h"
 #include "DeleteEmitter.h"
-
 #include <list>
+
+class LuaManager;
 
 class LuaEventBase {
 public:
@@ -57,7 +58,7 @@ public:
 	void Emit();
 
 protected:
-	LuaEventQueueBase(const char *name) : m_name(name) {}
+	LuaEventQueueBase(LuaManager *lm, const char *name) : m_luaManager(lm), m_name(name) {}
 	virtual ~LuaEventQueueBase() { ClearEvents(); }
 
 	void EmitSingleEvent(LuaEventBase *e);
@@ -70,13 +71,14 @@ private:
 
 	virtual void PrepareLuaStack(lua_State *l, const LuaEventBase *eb) = 0;
 
+	LuaManager *m_luaManager;
 	const char *m_name;
 };
 
 template <typename T0=void, typename T1=void>
 class LuaEventQueue : public LuaEventQueueBase {
 public:
-	LuaEventQueue(const char *name) : LuaEventQueueBase(name) { }
+	LuaEventQueue(LuaManager *lm, const char *name) : LuaEventQueueBase(lm, name) {}
 
 	inline void Queue(T0 *arg0, T1 *arg1) {
 		m_events.push_back(new LuaEvent<T0,T1>(arg0, arg1));
@@ -96,7 +98,7 @@ protected:
 template <typename T0>
 class LuaEventQueue<T0,void> : public LuaEventQueueBase {
 public:
-	LuaEventQueue(const char *name) : LuaEventQueueBase(name) { }
+	LuaEventQueue(LuaManager *lm, const char *name) : LuaEventQueueBase(lm, name) {}
 
 	inline void Queue(T0 *arg0) {
 		m_events.push_back(new LuaEvent<T0,void>(arg0));
@@ -115,7 +117,7 @@ protected:
 template <typename T0>
 class LuaEventQueue<T0,const char *> : public LuaEventQueueBase {
 public:
-	LuaEventQueue(const char *name) : LuaEventQueueBase(name) { }
+	LuaEventQueue(LuaManager *lm, const char *name) : LuaEventQueueBase(lm, name) {}
 
 	inline void Queue(T0 *arg0, const char *arg1) {
 		m_events.push_back(new LuaEvent<T0,const char *>(arg0, arg1));
@@ -135,7 +137,7 @@ protected:
 template <>
 class LuaEventQueue<void,void> : public LuaEventQueueBase {
 public:
-	LuaEventQueue(const char *name) : LuaEventQueueBase(name) { }
+	LuaEventQueue(LuaManager *lm, const char *name) : LuaEventQueueBase(lm, name) {}
 
 	inline void Queue() {
 		m_events.push_back(new LuaEvent<void,void>());

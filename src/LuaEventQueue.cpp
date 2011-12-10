@@ -3,11 +3,10 @@
 #include "LuaManager.h"
 #include "LuaObject.h"
 #include "LuaUtils.h"
-#include "Pi.h"
 
 void LuaEventQueueBase::RegisterEventQueue()
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = m_luaManager->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -54,7 +53,7 @@ void LuaEventQueueBase::ClearEvents()
 
 void LuaEventQueueBase::EmitSingleEvent(LuaEventBase *e)
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = m_luaManager->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -81,7 +80,7 @@ void LuaEventQueueBase::Emit()
 {
 	if (!m_events.size()) return;
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = m_luaManager->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
