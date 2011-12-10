@@ -16,6 +16,7 @@
 #include "SpaceStationView.h"
 #include "InfoView.h"
 #include "ObjectViewerView.h"
+#include "LuaManager.h"
 
 static const int  s_saveVersion   = 43;
 static const char s_saveStart[]   = "PIONEER";
@@ -163,7 +164,7 @@ Game::Game(Serializer::Reader &rd) :
 
 	// lua
 	section = rd.RdSection("LuaModules");
-	Pi::luaSerializer->Unserialize(section);
+	Pi::luaManager->Serializer()->Unserialize(section);
 
 
 	// signature check
@@ -230,7 +231,7 @@ void Game::Serialize(Serializer::Writer &wr)
 
 	// lua
 	section = Serializer::Writer();
-	Pi::luaSerializer->Serialize(section);
+	Pi::luaManager->Serializer()->Serialize(section);
 	wr.WrSection("LuaModules", section.GetData());
 
 
@@ -510,7 +511,7 @@ void Game::SwitchToNormalSpace()
 
 			m_space->AddBody(ship);
 
-			Pi::luaOnEnterSystem->Queue(ship);
+			Pi::luaManager->OnEnterSystem()->Queue(ship);
 		}
 	}
 	m_hyperspaceClouds.clear();

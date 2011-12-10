@@ -6,6 +6,7 @@
 #include "Lang.h"
 #include "Pi.h"
 #include "Game.h"
+#include "LuaManager.h"
 
 Missile::Missile(ShipType::Type type, Body *owner, Body *target): Ship(type)
 {
@@ -95,7 +96,7 @@ void Missile::Explode()
 			// linear damage decay with distance
 			(*i)->OnDamage(m_owner, kgDamage * (damageRadius - dist) / damageRadius);
 			if ((*i)->IsType(Object::SHIP))
-				Pi::luaOnShipHit->Queue(dynamic_cast<Ship*>(*i), m_owner);
+				Pi::luaManager->OnShipHit()->Queue(dynamic_cast<Ship*>(*i), m_owner);
 		}
 	}
 

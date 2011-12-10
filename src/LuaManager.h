@@ -1,6 +1,7 @@
 #ifndef _LUAMANAGER_H
 #define _LUAMANAGER_H
 
+#include "LuaObject.h"
 #include "LuaEventQueue.h"
 #include "LuaSerializer.h"
 #include "LuaTimer.h"

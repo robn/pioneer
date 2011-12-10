@@ -16,6 +16,7 @@
 #include "StringF.h"
 #include <algorithm>
 #include "Game.h"
+#include "LuaManager.h"
 
 #define ARG_STATION_BAY1_STAGE 6
 #define ARG_STATION_BAY1_POS   10
@@ -426,7 +427,7 @@ void SpaceStation::DoDockingAnimation(const double timeStep)
 			if (dt.stage >= 0) {
 				// set docked
 				dt.ship->SetDockedWith(this, i);
-				Pi::luaOnShipDocked->Queue(dt.ship, this);
+				Pi::luaManager->OnShipDocked()->Queue(dt.ship, this);
 			} else {
 				if (!dt.ship->IsEnabled()) {
 					// launch ship
@@ -441,7 +442,7 @@ void SpaceStation::DoDockingAnimation(const double timeStep)
 						dt.ship->SetVelocity(GetFrame()->GetStasisVelocityAtPosition(dt.ship->GetPosition()));
 						dt.ship->SetThrusterState(2, -1.0);		// forward
 					}
-					Pi::luaOnShipUndocked->Queue(dt.ship, this);
+					Pi::luaManager->OnShipUndocked()->Queue(dt.ship, this);
 				}
 			}
 		}
@@ -502,7 +503,7 @@ void SpaceStation::TimeStepUpdate(const float timeStep)
 {
 	if (Pi::game->GetTime() > m_lastUpdatedShipyard) {
         if (m_bbCreated)
-			Pi::luaOnUpdateBB->Queue(this);
+			Pi::luaManager->OnUpdateBB()->Queue(this);
 		else if (GetFreeDockingPort() != 0)	// only create a BB if there's ships here
 			CreateBB();
 		UpdateShipyard();
@@ -742,7 +743,7 @@ bool SpaceStation::OnCollision(Object *b, Uint32 flags, double relVel)
 					s->SetFlightState(Ship::DOCKING);
 				} else {
 					s->SetDockedWith(this, port);
-					Pi::luaOnShipDocked->Queue(s, this);
+					Pi::luaManager->OnShipDocked()->Queue(s, this);
 				}
 			}
 		}
@@ -828,7 +829,7 @@ void SpaceStation::CreateBB()
 		}
 	}
 
-	Pi::luaOnCreateBB->Queue(this);
+	Pi::luaManager->OnCreateBB()->Queue(this);
 	m_bbCreated = true;
 }
 

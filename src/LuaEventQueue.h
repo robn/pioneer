@@ -1,7 +1,6 @@
 #ifndef _LUAEVENTQUEUE_H
 #define _LUAEVENTQUEUE_H
 
-#include "LuaManager.h"
 #include "LuaObject.h"
 #include "DeleteEmitter.h"
 

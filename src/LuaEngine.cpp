@@ -1,6 +1,5 @@
 #include "LuaEngine.h"
-#include "LuaObject.h"
-#include "LuaUtils.h"
+#include "LuaManager.h"
 #include "LuaRand.h"
 #include "Pi.h"
 #include "utils.h"

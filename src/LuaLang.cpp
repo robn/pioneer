@@ -1,6 +1,5 @@
 #include "LuaLang.h"
-#include "LuaObject.h"
-#include "LuaUtils.h"
+#include "LuaManager.h"
 #include "Pi.h"
 #include "Lang.h"
 

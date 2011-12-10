@@ -1,5 +1,5 @@
 #include "LuaSerializer.h"
-#include "LuaObject.h"
+#include "LuaManager.h"
 #include "LuaBody.h"
 #include "LuaShip.h"
 #include "LuaSpaceStation.h"

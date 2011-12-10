@@ -1,6 +1,5 @@
 #include "LuaMusic.h"
-#include "LuaObject.h"
-#include "LuaUtils.h"
+#include "LuaManager.h"
 #include "Pi.h"
 #include "SoundMusic.h"
 

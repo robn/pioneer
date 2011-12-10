@@ -215,24 +215,24 @@ static void LuaUninit() {
 static void LuaInitGame() {
 #if 0
 	XXX LUA
-	Pi::luaOnGameStart->ClearEvents();
-	Pi::luaOnGameEnd->ClearEvents();
-	Pi::luaOnFrameChanged->ClearEvents();
-	Pi::luaOnShipDestroyed->ClearEvents();
-	Pi::luaOnShipHit->ClearEvents();
-	Pi::luaOnShipCollided->ClearEvents();
-	Pi::luaOnShipDocked->ClearEvents();
-	Pi::luaOnShipUndocked->ClearEvents();
-	Pi::luaOnShipLanded->ClearEvents();
-	Pi::luaOnShipTakeOff->ClearEvents();
-	Pi::luaOnShipAlertChanged->ClearEvents();
-	Pi::luaOnJettison->ClearEvents();
-	Pi::luaOnAICompleted->ClearEvents();
-	Pi::luaOnCreateBB->ClearEvents();
-	Pi::luaOnUpdateBB->ClearEvents();
-	Pi::luaOnSongFinished->ClearEvents();
-	Pi::luaOnShipFlavourChanged->ClearEvents();
-	Pi::luaOnShipEquipmentChanged->ClearEvents();
+	Pi::luaManager->OnGameStart()->ClearEvents();
+	Pi::luaManager->OnGameEnd()->ClearEvents();
+	Pi::luaManager->OnFrameChanged()->ClearEvents();
+	Pi::luaManager->OnShipDestroyed()->ClearEvents();
+	Pi::luaManager->OnShipHit()->ClearEvents();
+	Pi::luaManager->OnShipCollided()->ClearEvents();
+	Pi::luaManager->OnShipDocked()->ClearEvents();
+	Pi::luaManager->OnShipUndocked()->ClearEvents();
+	Pi::luaManager->OnShipLanded()->ClearEvents();
+	Pi::luaManager->OnShipTakeOff()->ClearEvents();
+	Pi::luaManager->OnShipAlertChanged()->ClearEvents();
+	Pi::luaManager->OnJettison()->ClearEvents();
+	Pi::luaManager->OnAICompleted()->ClearEvents();
+	Pi::luaManager->OnCreateBB()->ClearEvents();
+	Pi::luaManager->OnUpdateBB()->ClearEvents();
+	Pi::luaManager->OnSongFinished()->ClearEvents();
+	Pi::luaManager->OnShipFlavourChanged()->ClearEvents();
+	Pi::luaManager->OnShipEquipmentChanged()->ClearEvents();
 #endif
 }
 
@@ -885,7 +885,7 @@ void Pi::StartGame()
 	cpan->SetAlertState(Ship::ALERT_NONE);
 	OnPlayerChangeEquipment(Equip::NONE);
 	SetView(worldView);
-	Pi::luaOnGameStart->Signal();
+	Pi::luaManager->OnGameStart()->Signal();
 }
 
 bool Pi::menuDone = false;
@@ -1096,7 +1096,7 @@ void Pi::EndGame()
 {
 	Pi::musicPlayer.Stop();
 	Sound::DestroyAllEvents();
-	Pi::luaOnGameEnd->Signal();
+	Pi::luaManager->OnGameEnd()->Signal();
 	Pi::luaManager->CollectGarbage();
 
 	if (!config.Int("DisableSound")) AmbientSounds::Uninit();

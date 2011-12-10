@@ -1,6 +1,5 @@
 #include "LuaNameGen.h"
-#include "LuaObject.h"
-#include "LuaUtils.h"
+#include "LuaManager.h"
 #include "LuaRand.h"
 #include "NameGenerator.h"
 #include "Pi.h"

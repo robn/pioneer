@@ -9,7 +9,7 @@
 #include "SpaceStation.h"
 #include "Space.h"
 #include "LuaConstants.h"
-
+#include "LuaManager.h"
 
 
 void Ship::AIModelCoordsMatchAngVel(vector3d desiredAngVel, double softness)
@@ -86,7 +86,7 @@ bool Ship::AITimeStep(float timeStep)
 	if (m_curAICmd->TimeStepUpdate()) {
 		AIClearInstructions();
 //		ClearThrusterState();		// otherwise it does one timestep at 10k and gravity is fatal
-		Pi::luaOnAICompleted->Queue(this, LuaConstants::GetConstantString(Pi::luaManager->GetLuaState(), "ShipAIError", AIMessage()));
+		Pi::luaManager->OnAICompleted()->Queue(this, LuaConstants::GetConstantString(Pi::luaManager->GetLuaState(), "ShipAIError", AIMessage()));
 		return true;
 	}
 	else return false;

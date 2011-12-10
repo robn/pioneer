@@ -1,7 +1,6 @@
 #ifndef _LUASERIALIZER_H
 #define _LUASERIALIZER_H
 
-#include "LuaManager.h"
 #include "LuaObject.h"
 #include "DeleteEmitter.h"
 #include "Serializer.h"

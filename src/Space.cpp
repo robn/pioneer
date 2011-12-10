@@ -20,6 +20,7 @@
 #include "Lang.h"
 #include "Game.h"
 #include "MathUtil.h"
+#include "LuaManager.h"
 
 Space::Space(Game *game) : m_game(game), m_frameIndexValid(false), m_bodyIndexValid(false), m_sbodyIndexValid(false)
 {
