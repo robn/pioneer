@@ -1,5 +1,5 @@
 #include "LuaGame.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "LuaPlayer.h"
 #include "LuaStarSystem.h"
 #include "Pi.h"
@@ -80,7 +80,7 @@ static int l_game_meta_index(lua_State *l)
 
 void LuaGame::Register()
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 

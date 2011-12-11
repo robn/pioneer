@@ -1,5 +1,5 @@
 #include "SoundMusic.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "libs.h" //for clamp
 #include "Pi.h"
 #include <map>
@@ -93,7 +93,7 @@ void MusicPlayer::Update()
 {
 	if (m_playing) { //expecting report
 		if ((m_eventOnePlaying && !m_eventOne.IsPlaying()) || (!m_eventOnePlaying && !m_eventTwo.IsPlaying())) {
-			Pi::luaManager->OnSongFinished()->Signal();
+			Pi::lua->OnSongFinished()->Signal();
 			m_playing = false;
 		}
 	}

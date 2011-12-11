@@ -32,7 +32,7 @@
 #include "AmbientSounds.h"
 #include "CustomSystem.h"
 #include "CityOnPlanet.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "LuaBody.h"
 #include "LuaShip.h"
 #include "LuaSpaceStation.h"
@@ -80,7 +80,7 @@ sigc::signal<void> Pi::onPlayerChangeTarget;
 sigc::signal<void> Pi::onPlayerChangeFlightControlState;
 sigc::signal<void> Pi::onPlayerChangeEquipment;
 sigc::signal<void, const SpaceStation*> Pi::onDockingClearanceExpired;
-LuaManager *Pi::luaManager;
+Lua *Pi::lua;
 int Pi::keyModState;
 char Pi::keyState[SDLK_LAST];
 char Pi::mouseButton[6];
@@ -161,9 +161,9 @@ static void draw_progress(float progress)
 
 static void LuaInit()
 {
-	Pi::luaManager = new LuaManager();
+	Pi::lua = new Lua();
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	// XXX kill CurrentDirectory
 	lua_pushstring(l, PIONEER_DATA_DIR);
@@ -189,7 +189,7 @@ static void LuaInit()
 	LuaObject<LuaSerializer>::RegisterClass();
 	LuaObject<LuaTimer>::RegisterClass();
 
-	LuaConstants::Register(Pi::luaManager->GetLuaState());
+	LuaConstants::Register(Pi::lua->GetLuaState());
 	LuaLang::Register();
 	LuaEngine::Register();
 	LuaGame::Register();
@@ -209,30 +209,30 @@ static void LuaInit()
 }
 
 static void LuaUninit() {
-	delete Pi::luaManager;
+	delete Pi::lua;
 }
 
 static void LuaInitGame() {
 #if 0
 	XXX LUA
-	Pi::luaManager->OnGameStart()->ClearEvents();
-	Pi::luaManager->OnGameEnd()->ClearEvents();
-	Pi::luaManager->OnFrameChanged()->ClearEvents();
-	Pi::luaManager->OnShipDestroyed()->ClearEvents();
-	Pi::luaManager->OnShipHit()->ClearEvents();
-	Pi::luaManager->OnShipCollided()->ClearEvents();
-	Pi::luaManager->OnShipDocked()->ClearEvents();
-	Pi::luaManager->OnShipUndocked()->ClearEvents();
-	Pi::luaManager->OnShipLanded()->ClearEvents();
-	Pi::luaManager->OnShipTakeOff()->ClearEvents();
-	Pi::luaManager->OnShipAlertChanged()->ClearEvents();
-	Pi::luaManager->OnJettison()->ClearEvents();
-	Pi::luaManager->OnAICompleted()->ClearEvents();
-	Pi::luaManager->OnCreateBB()->ClearEvents();
-	Pi::luaManager->OnUpdateBB()->ClearEvents();
-	Pi::luaManager->OnSongFinished()->ClearEvents();
-	Pi::luaManager->OnShipFlavourChanged()->ClearEvents();
-	Pi::luaManager->OnShipEquipmentChanged()->ClearEvents();
+	Pi::lua->OnGameStart()->ClearEvents();
+	Pi::lua->OnGameEnd()->ClearEvents();
+	Pi::lua->OnFrameChanged()->ClearEvents();
+	Pi::lua->OnShipDestroyed()->ClearEvents();
+	Pi::lua->OnShipHit()->ClearEvents();
+	Pi::lua->OnShipCollided()->ClearEvents();
+	Pi::lua->OnShipDocked()->ClearEvents();
+	Pi::lua->OnShipUndocked()->ClearEvents();
+	Pi::lua->OnShipLanded()->ClearEvents();
+	Pi::lua->OnShipTakeOff()->ClearEvents();
+	Pi::lua->OnShipAlertChanged()->ClearEvents();
+	Pi::lua->OnJettison()->ClearEvents();
+	Pi::lua->OnAICompleted()->ClearEvents();
+	Pi::lua->OnCreateBB()->ClearEvents();
+	Pi::lua->OnUpdateBB()->ClearEvents();
+	Pi::lua->OnSongFinished()->ClearEvents();
+	Pi::lua->OnShipFlavourChanged()->ClearEvents();
+	Pi::lua->OnShipEquipmentChanged()->ClearEvents();
 #endif
 }
 
@@ -885,7 +885,7 @@ void Pi::StartGame()
 	cpan->SetAlertState(Ship::ALERT_NONE);
 	OnPlayerChangeEquipment(Equip::NONE);
 	SetView(worldView);
-	Pi::luaManager->OnGameStart()->Signal();
+	Pi::lua->OnGameStart()->Signal();
 }
 
 bool Pi::menuDone = false;
@@ -1096,8 +1096,8 @@ void Pi::EndGame()
 {
 	Pi::musicPlayer.Stop();
 	Sound::DestroyAllEvents();
-	Pi::luaManager->OnGameEnd()->Signal();
-	Pi::luaManager->CollectGarbage();
+	Pi::lua->OnGameEnd()->Signal();
+	Pi::lua->CollectGarbage();
 
 	if (!config.Int("DisableSound")) AmbientSounds::Uninit();
 	Sound::DestroyAllEvents();
@@ -1238,7 +1238,7 @@ void Pi::MainLoop()
 
 #ifdef DEVKEYS
 		if (Pi::showDebugInfo && SDL_GetTicks() - last_stats > 1000) {
-			size_t lua_mem = Pi::luaManager->GetMemoryUsage();
+			size_t lua_mem = Pi::lua->GetMemoryUsage();
 			int lua_memB = int(lua_mem & ((1u << 10) - 1));
 			int lua_memKB = int(lua_mem >> 10) % 1024;
 			int lua_memMB = int(lua_mem >> 20);

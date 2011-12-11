@@ -1,5 +1,5 @@
 #include "LuaObject.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "Pi.h"
 
 #include <map>
@@ -83,7 +83,7 @@
  *   stable
  */
 
-// since LuaManager is a singleton, these must be heap-allocated. If they're
+// since Lua is a singleton, these must be heap-allocated. If they're
 // stack-allocated, they will be torn down at program shutdown before the
 // singleton is. This will cause LuaObject to crash during garbage collection
 static bool instantiated = false;
@@ -117,7 +117,7 @@ void LuaObjectBase::Deregister(LuaObjectBase *lo)
 	lo->m_deleteConnection.disconnect();
 	registry->erase(lo->m_id);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -261,7 +261,7 @@ void LuaObjectBase::CreateClass(const char *type, const char *parent, const luaL
 {
 	assert(type);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	_instantiate();
 
@@ -350,7 +350,7 @@ bool LuaObjectBase::PushRegistered(DeleteEmitter *o)
 {
 	assert(instantiated);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -422,7 +422,7 @@ void LuaObjectBase::Push(LuaObjectBase *lo, bool wantdelete)
 
 	registry->insert(std::make_pair(lo->m_id, lo));
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -449,7 +449,7 @@ DeleteEmitter *LuaObjectBase::CheckFromLua(int index, const char *type)
 {
 	assert(instantiated);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -477,7 +477,7 @@ DeleteEmitter *LuaObjectBase::GetFromLua(int index, const char *type)
 {
 	assert(instantiated);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -508,7 +508,7 @@ bool LuaObjectBase::Isa(const char *base) const
 
 	assert(instantiated);
 
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 

@@ -1,7 +1,7 @@
 #ifndef _LUACONSOLE_H
 #define _LUACONSOLE_H
 
-#include "LuaManager.h"
+#include "Lua.h"
 #include "gui/GuiBox.h"
 #include <deque>
 

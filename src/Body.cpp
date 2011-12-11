@@ -13,7 +13,7 @@
 #include "Pi.h"
 #include "Space.h"
 #include "Game.h"
-#include "LuaManager.h"
+#include "Lua.h"
 
 Body::Body()
 {
@@ -190,7 +190,7 @@ void Body::UpdateFrame()
 			SetFrame(new_frame);
 			SetPosition(new_pos);
 
-			Pi::luaManager->OnFrameChanged()->Queue(this);
+			Pi::lua->OnFrameChanged()->Queue(this);
 			
 			return;
 		}
@@ -218,7 +218,7 @@ void Body::UpdateFrame()
 		SetVelocity(m*(GetVelocity() - kid->GetVelocity())
 			+ kid->GetStasisVelocityAtPosition(pos));
 
-		Pi::luaManager->OnFrameChanged()->Queue(this);
+		Pi::lua->OnFrameChanged()->Queue(this);
 
 		break;
 	}

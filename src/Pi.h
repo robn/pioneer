@@ -26,7 +26,7 @@ class SpaceStation;
 class GalacticView;
 class Ship;
 class GameMenuView;
-class LuaManager;
+class Lua;
 class LuaConsole;
 namespace Sound { class MusicPlayer; }
 
@@ -97,7 +97,7 @@ public:
 	static sigc::signal<void> onPlayerChangeEquipment;
 	static sigc::signal<void, const SpaceStation*> onDockingClearanceExpired;
 
-	static LuaManager *luaManager;
+	static Lua *lua;
 
 	static MTRand rng;
 	static int statSceneTris;

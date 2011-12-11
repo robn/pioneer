@@ -1,4 +1,4 @@
-#include "LuaManager.h"
+#include "Lua.h"
 #include "LuaBody.h"
 #include "LuaShip.h"
 #include "LuaSpaceStation.h"
@@ -7,9 +7,9 @@
 
 bool instantiated = false;
 
-LuaManager::LuaManager() : m_lua(NULL) {
+Lua::Lua() : m_lua(NULL) {
 	if (instantiated) {
-		fprintf(stderr, "Can't instantiate more than one LuaManager");
+		fprintf(stderr, "Can't instantiate more than one Lua");
 		abort();
 	}
 
@@ -74,7 +74,7 @@ LuaManager::LuaManager() : m_lua(NULL) {
 	instantiated = true;
 }
 
-LuaManager::~LuaManager() {
+Lua::~Lua() {
 	delete m_onGameStart;
 	delete m_onGameEnd;
 	delete m_onEnterSystem;
@@ -104,7 +104,7 @@ LuaManager::~LuaManager() {
 	instantiated = false;
 }
 
-void LuaManager::Tick() {
+void Lua::Tick() {
 	m_onEnterSystem->Emit();
 	m_onLeaveSystem->Emit();
 	m_onFrameChanged->Emit();
@@ -126,12 +126,12 @@ void LuaManager::Tick() {
 	m_timer->Tick();
 }
 
-size_t LuaManager::GetMemoryUsage() const {
+size_t Lua::GetMemoryUsage() const {
 	int kb = lua_gc(m_lua, LUA_GCCOUNT, 0);
 	int b = lua_gc(m_lua, LUA_GCCOUNTB, 0);
 	return (size_t(kb) * 1024) + b;
 }
 
-void LuaManager::CollectGarbage() {
+void Lua::CollectGarbage() {
 	lua_gc(m_lua, LUA_GCCOLLECT, 0);
 }

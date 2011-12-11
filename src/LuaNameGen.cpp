@@ -1,5 +1,5 @@
 #include "LuaNameGen.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "LuaRand.h"
 #include "NameGenerator.h"
 #include "Pi.h"
@@ -118,7 +118,7 @@ static int l_namegen_planet_name(lua_State *l)
 
 void LuaNameGen::Register()
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 

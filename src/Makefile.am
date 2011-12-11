@@ -47,6 +47,7 @@ noinst_HEADERS = \
 	KeyBindings.h \
 	Lang.h \
 	LmrModel.h \
+	Lua.h \
 	LuaBody.h \
 	LuaCargoBody.h \
 	LuaChatForm.h \
@@ -58,7 +59,6 @@ noinst_HEADERS = \
 	LuaFormat.h \
 	LuaGame.h \
 	LuaLang.h \
-	LuaManager.h \
 	LuaMusic.h \
 	LuaNameGen.h \
 	LuaObject.h \
@@ -179,6 +179,7 @@ pioneer_SOURCES	= \
 	KeyBindings.cpp \
 	Lang.cpp \
 	LmrModel.cpp \
+	Lua.cpp \
 	LuaBody.cpp \
 	LuaCargoBody.cpp \
 	LuaChatForm.cpp \
@@ -190,7 +191,6 @@ pioneer_SOURCES	= \
 	LuaFormat.cpp \
 	LuaGame.cpp \
 	LuaLang.cpp \
-	LuaManager.cpp \
 	LuaMusic.cpp \
 	LuaNameGen.cpp \
 	LuaObject.cpp \

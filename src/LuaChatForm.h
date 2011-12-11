@@ -4,7 +4,7 @@
 #include "StationAdvertForm.h"
 #include "MarketAgent.h"
 #include "DeleteEmitter.h"
-#include "LuaManager.h"
+#include "Lua.h"
 
 struct BBAdvert;
 class CommodityTradeWidget;

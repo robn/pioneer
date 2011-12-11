@@ -13,7 +13,7 @@
 #include "Ship.h"
 #include "TextureManager.h"
 #include "Game.h"
-#include "LuaManager.h"
+#include "Lua.h"
 
 Projectile::Projectile(): Body()
 {
@@ -130,7 +130,7 @@ void Projectile::StaticUpdate(const float timeStep)
 				hit->OnDamage(m_parent, GetDamage());
 				Pi::game->GetSpace()->KillBody(this);
 				if (hit->IsType(Object::SHIP))
-					Pi::luaManager->OnShipHit()->Queue(dynamic_cast<Ship*>(hit), dynamic_cast<Body*>(m_parent));
+					Pi::lua->OnShipHit()->Queue(dynamic_cast<Ship*>(hit), dynamic_cast<Body*>(m_parent));
 			}
 		}
 	}

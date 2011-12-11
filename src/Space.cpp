@@ -20,7 +20,7 @@
 #include "Lang.h"
 #include "Game.h"
 #include "MathUtil.h"
-#include "LuaManager.h"
+#include "Lua.h"
 
 Space::Space(Game *game) : m_game(game), m_frameIndexValid(false), m_bodyIndexValid(false), m_sbodyIndexValid(false)
 {
@@ -607,7 +607,7 @@ void Space::TimeStep(float step)
 	// invalid when Lua goes and queries for it. we need to consider whether
 	// there's anything useful that can be done with events in hyperspace
 	if (m_starSystem)
-		Pi::luaManager->Tick();
+		Pi::lua->Tick();
 
 	UpdateBodies();
 }

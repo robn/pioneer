@@ -24,7 +24,7 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
-#include "LuaManager.h"
+#include "Lua.h"
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
@@ -239,7 +239,7 @@ bool Ship::OnDamage(Object *attacker, float kgDamage)
 				if (attacker->IsType(Object::BODY)) {
 					// XXX remove this call. kill stuff (including elite rating) should be in a script
 					static_cast<Body*>(attacker)->OnHaveKilled(this);
-					Pi::luaManager->OnShipDestroyed()->Queue(this, dynamic_cast<Body*>(attacker));
+					Pi::lua->OnShipDestroyed()->Queue(this, dynamic_cast<Body*>(attacker));
 				}
 
 				if (attacker->IsType(Object::SHIP))
@@ -309,7 +309,7 @@ bool Ship::OnCollision(Object *b, Uint32 flags, double relVel)
 		b->IsType(Object::STAR) ||
 		b->IsType(Object::CARGOBODY))
 	{
-		Pi::luaManager->OnShipCollided()->Queue(this,
+		Pi::lua->OnShipCollided()->Queue(this,
 			b->IsType(Object::CITYONPLANET) ? dynamic_cast<CityOnPlanet*>(b)->GetPlanet() : dynamic_cast<Body*>(b));
 	}
 
@@ -601,7 +601,7 @@ void Ship::Blastoff()
 	SetPosition(up*planetRadius - aabb.min.y*up);
 	SetThrusterState(1, 1.0);		// thrust upwards
 
-	Pi::luaManager->OnShipTakeOff()->Queue(this, GetFrame()->m_astroBody);
+	Pi::lua->OnShipTakeOff()->Queue(this, GetFrame()->m_astroBody);
 }
 
 void Ship::TestLanded()
@@ -649,7 +649,7 @@ void Ship::TestLanded()
 				ClearThrusterState();
 				m_flightState = LANDED;
 				Sound::PlaySfx("Rough_Landing", 1.0f, 1.0f, 0);
-				Pi::luaManager->OnShipLanded()->Queue(this, GetFrame()->GetBodyFor());
+				Pi::lua->OnShipLanded()->Queue(this, GetFrame()->GetBodyFor());
 			}
 		}
 	}
@@ -730,7 +730,7 @@ void Ship::UpdateAlertState()
 		// clear existing alert state if there was one
 		if (GetAlertState() != ALERT_NONE) {
 			SetAlertState(ALERT_NONE);
-			Pi::luaManager->OnShipAlertChanged()->Queue(this, LuaConstants::GetConstantString(Pi::luaManager->GetLuaState(), "ShipAlertStatus", ALERT_NONE));
+			Pi::lua->OnShipAlertChanged()->Queue(this, LuaConstants::GetConstantString(Pi::lua->GetLuaState(), "ShipAlertStatus", ALERT_NONE));
 		}
 		return;
 	}
@@ -801,7 +801,7 @@ void Ship::UpdateAlertState()
 	}
 
 	if (changed)
-		Pi::luaManager->OnShipAlertChanged()->Queue(this, LuaConstants::GetConstantString(Pi::luaManager->GetLuaState(), "ShipAlertStatus", GetAlertState()));
+		Pi::lua->OnShipAlertChanged()->Queue(this, LuaConstants::GetConstantString(Pi::lua->GetLuaState(), "ShipAlertStatus", GetAlertState()));
 }
 
 void Ship::StaticUpdate(const float timeStep)
@@ -1123,7 +1123,7 @@ bool Ship::Jettison(Equip::Type t)
 		cargo->SetVelocity(GetVelocity()+rot*vector3d(0,-10,0));
 		Pi::game->GetSpace()->AddBody(cargo);
 
-		Pi::luaManager->OnJettison()->Queue(this, cargo);
+		Pi::lua->OnJettison()->Queue(this, cargo);
 
 		return true;
 	} else {
@@ -1133,14 +1133,14 @@ bool Ship::Jettison(Equip::Type t)
 
 void Ship::OnEquipmentChange(Equip::Type e)
 {
-	Pi::luaManager->OnShipEquipmentChanged()->Queue(this, LuaConstants::GetConstantString(Pi::luaManager->GetLuaState(), "EquipType", e));
+	Pi::lua->OnShipEquipmentChanged()->Queue(this, LuaConstants::GetConstantString(Pi::lua->GetLuaState(), "EquipType", e));
 }
 
 void Ship::UpdateFlavour(const ShipFlavour *f)
 {
 	assert(f->type == m_shipFlavour.type);
 	m_shipFlavour = *f;
-	Pi::luaManager->OnShipFlavourChanged()->Queue(this);
+	Pi::lua->OnShipFlavourChanged()->Queue(this);
 }
 
 /*
@@ -1152,7 +1152,7 @@ void Ship::ResetFlavour(const ShipFlavour *f)
 	m_equipment.InitSlotSizes(f->type);
 	SetLabel(f->regid);
 	Init();
-	Pi::luaManager->OnShipFlavourChanged()->Queue(this);
+	Pi::lua->OnShipFlavourChanged()->Queue(this);
 }
 
 void Ship::EnterHyperspace() {
@@ -1170,7 +1170,7 @@ void Ship::EnterHyperspace() {
 
 	UseHyperspaceFuel(&dest);
 
-	Pi::luaManager->OnLeaveSystem()->Queue(this);
+	Pi::lua->OnLeaveSystem()->Queue(this);
 
 	SetFlightState(Ship::HYPERSPACE);
 
@@ -1197,7 +1197,7 @@ void Ship::EnterSystem() {
 
 	SetFlightState(Ship::FLYING);
 
-	Pi::luaManager->OnEnterSystem()->Queue(this);
+	Pi::lua->OnEnterSystem()->Queue(this);
 }
 
 void Ship::OnEnterSystem() {

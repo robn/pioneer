@@ -1,5 +1,5 @@
-#ifndef _LUAMANAGER_H
-#define _LUAMANAGER_H
+#ifndef _LUA_H
+#define _LUA_H
 
 #include "LuaObject.h"
 #include "LuaEventQueue.h"
@@ -12,10 +12,10 @@ class Ship;
 class SpaceStation;
 class CargoBody;
 
-class LuaManager {
+class Lua {
 public:
-	LuaManager();
-	~LuaManager();
+	Lua();
+	~Lua();
 
 	lua_State *GetLuaState() { return m_lua; }
 
@@ -49,8 +49,8 @@ public:
 	LuaEventQueue<Ship,const char *> *OnShipEquipmentChanged() const { return m_onShipEquipmentChanged; }
 
 private:
-	LuaManager(const LuaManager &);
-	LuaManager &operator=(const LuaManager &);
+	Lua(const Lua &);
+	Lua &operator=(const Lua &);
 
 	lua_State *m_lua;
 

@@ -32,7 +32,7 @@
 //
 //   Ship *s = LuaShip::GetFromLua(1);
 //
-// note that it uses the singleton lua state provided by LuaManager. there's
+// note that it uses the singleton lua state provided by Lua. there's
 // no facility to use a different lua state. if you think you need to you're
 // probably doing something wrong. ask the devs if you're not sure.
 //
@@ -57,7 +57,7 @@
 //  LuaObjectBase system. read on and ask for help :)
 //
 //  - arrange for the wrapper class RegisterClass() method to be called in
-//    LuaManager::Init in LuaManager.cpp
+//    Lua::Init in Lua.cpp
 //
 //      LuaShip::RegisterClass();
 //

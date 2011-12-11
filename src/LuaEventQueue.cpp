@@ -1,12 +1,12 @@
 #include "libs.h"
 #include "LuaEventQueue.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "LuaObject.h"
 #include "LuaUtils.h"
 
 void LuaEventQueueBase::RegisterEventQueue()
 {
-	lua_State *l = m_luaManager->GetLuaState();
+	lua_State *l = m_lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -53,7 +53,7 @@ void LuaEventQueueBase::ClearEvents()
 
 void LuaEventQueueBase::EmitSingleEvent(LuaEventBase *e)
 {
-	lua_State *l = m_luaManager->GetLuaState();
+	lua_State *l = m_lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
@@ -80,7 +80,7 @@ void LuaEventQueueBase::Emit()
 {
 	if (!m_events.size()) return;
 
-	lua_State *l = m_luaManager->GetLuaState();
+	lua_State *l = m_lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 

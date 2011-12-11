@@ -1,5 +1,5 @@
 #include "LuaUI.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "Pi.h"
 #include "ShipCpanel.h"
 
@@ -88,7 +88,7 @@ static int l_ui_important_message(lua_State *l)
 
 void LuaUI::Register()
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 

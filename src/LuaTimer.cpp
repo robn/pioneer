@@ -1,11 +1,11 @@
 #include "LuaTimer.h"
-#include "LuaManager.h"
+#include "Lua.h"
 #include "Game.h"
 #include "Pi.h"
 
 void LuaTimer::Tick()
 {
-	lua_State *l = Pi::luaManager->GetLuaState();
+	lua_State *l = Pi::lua->GetLuaState();
 
 	LUA_DEBUG_START(l);
 
