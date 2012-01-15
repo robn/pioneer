@@ -48,3 +48,15 @@ void ViewManager::Draw3D()
 	if (m_currentView)
 		m_currentView->Draw3D();
 }
+
+// XXX should not call HideAll()/ShowAll(), but that requires all the base
+// container stuff to be fixed first
+void ViewManager::SwitchTo(View *v)
+{
+	if (m_currentView) m_currentView->HideAll();
+	m_currentView = v;
+	if (m_currentView) {
+		m_currentView->OnSwitchTo();
+		m_currentView->ShowAll();
+	}
+}

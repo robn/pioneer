@@ -24,6 +24,9 @@ public:
 	void Draw();
 	void Draw3D();
 
+	// XXX should be restricted to our own views
+	void SwitchTo(View *v);
+
 	View *GetCurrentView() const { return m_currentView; }
 
 	ShipCpanel *GetShipCpanel() const { return m_cpanel.Get(); }
