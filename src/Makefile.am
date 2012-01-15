@@ -133,6 +133,7 @@ noinst_HEADERS = \
 	VectorFont.h \
 	VideoLink.h \
 	View.h \
+	ViewManager.h \
 	WorldView.h \
 	SmartPtr.h \
 	buildopts.h \
@@ -258,6 +259,7 @@ pioneer_SOURCES	= \
 	TextureFont.cpp \
 	TextureManager.cpp \
 	VectorFont.cpp \
+	ViewManager.cpp \
 	WorldView.cpp \
 	main.cpp \
 	mtrand.cpp \
