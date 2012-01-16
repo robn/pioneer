@@ -70,7 +70,10 @@ ViewManager::~ViewManager()
 void ViewManager::Update()
 {
 	m_cpanel->Update();
+	m_currentView->Update();
 
+#if 0
+XXX VIEWMANAGER
 	m_sectorView->Update();
 	m_worldView->Update();
 	m_galacticView->Update();
@@ -80,6 +83,7 @@ void ViewManager::Update()
 	m_infoView->Update();
 #if WITH_OBJECTVIEWER
 	m_objectViewerView->Update();
+#endif
 #endif
 }
 

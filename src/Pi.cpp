@@ -995,11 +995,12 @@ void Pi::StartGame()
 	Pi::player->onDock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
 	Pi::player->onUndock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
 	Pi::player->m_equipment.onChange.connect(sigc::ptr_fun(&OnPlayerChangeEquipment));
-	/* XXX VIEWMANAGER
-	cpan->ShowAll();
-	cpan->SetAlertState(Ship::ALERT_NONE);
-	SetView(worldView);
-	*/
+
+	// XXX VIEWMANAGER
+	Pi::game->GetViewManager()->GetShipCpanel()->ShowAll();
+	Pi::game->GetViewManager()->GetShipCpanel()->SetAlertState(Ship::ALERT_NONE);
+	Pi::game->GetViewManager()->SwitchTo(View::WORLD);
+
 	OnPlayerChangeEquipment(Equip::NONE);
 	Pi::luaOnGameStart->Signal();
 }
@@ -1349,7 +1350,6 @@ void Pi::MainLoop()
 			if (!config.Int("DisableSound")) AmbientSounds::Update();
 			StarSystem::ShrinkCache();
 		}
-		Pi::game->GetViewManager()->GetShipCpanel()->Update();
 		musicPlayer.Update();
 
 #if WITH_DEVKEYS
