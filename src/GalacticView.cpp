@@ -11,7 +11,8 @@
 #include "Lang.h"
 #include "StringF.h"
 
-GalacticView::GalacticView()
+GalacticView::GalacticView() :
+	View(GALACTIC)
 {
 	const SDL_Surface *s = Galaxy::GetGalaxyBitmap();
 	glEnable(GL_TEXTURE_2D);

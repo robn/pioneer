@@ -11,7 +11,8 @@
 #include "StringF.h"
 #include "Game.h"
 
-SystemInfoView::SystemInfoView()
+SystemInfoView::SystemInfoView() :
+	View(SYSTEMINFO)
 {
 	SetTransparency(true);
 	m_refresh = false;

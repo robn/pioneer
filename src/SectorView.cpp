@@ -16,7 +16,8 @@
 #define INNER_RADIUS (Sector::SIZE*1.5f)
 #define OUTER_RADIUS (Sector::SIZE*3.0f)
 
-SectorView::SectorView()
+SectorView::SectorView() :
+	View(SECTOR)
 {
 	InitDefaults();
 	
@@ -42,7 +43,8 @@ SectorView::SectorView()
 	InitObject();
 }
 
-SectorView::SectorView(Serializer::Reader &rd)
+SectorView::SectorView(Serializer::Reader &rd) :
+	View(SECTOR)
 {
 	InitDefaults();
 

@@ -284,7 +284,8 @@ private:
 	Gui::Label *info1, *info2;
 };
 
-InfoView::InfoView(): View(),
+InfoView::InfoView() :
+	View(INFO),
 	m_spinner(0)
 {
 	SetTransparency(true);

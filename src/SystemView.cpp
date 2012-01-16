@@ -11,7 +11,8 @@
 
 const double SystemView::PICK_OBJECT_RECT_SIZE = 12.0;
 
-SystemView::SystemView()
+SystemView::SystemView() :
+	View(SYSTEM)
 {
 	SetTransparency(true);
 

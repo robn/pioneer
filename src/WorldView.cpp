@@ -23,7 +23,8 @@ static const Color s_hudTextColor(0.0f,1.0f,0.0f,0.8f);
 
 #define HUD_CROSSHAIR_SIZE	24.0f
 
-WorldView::WorldView(): View()
+WorldView::WorldView() :
+	View(WORLD)
 {
 	m_showHyperspaceButton = false;
 	m_externalViewRotX = m_externalViewRotY = 0;
@@ -33,7 +34,8 @@ WorldView::WorldView(): View()
 	InitObject();
 }
 
-WorldView::WorldView(Serializer::Reader &rd): View()
+WorldView::WorldView(Serializer::Reader &rd) :
+	View(WORLD)
 {
 	m_externalViewRotX = rd.Float();
 	m_externalViewRotY = rd.Float();

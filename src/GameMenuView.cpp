@@ -163,7 +163,8 @@ GameMenuView::~GameMenuView()
 	delete m_languageGroup;
 }
 
-GameMenuView::GameMenuView(): View()
+GameMenuView::GameMenuView() :
+	View(GAMEMENU)
 {
 	m_subview = 0;
 

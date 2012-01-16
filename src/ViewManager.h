@@ -3,9 +3,9 @@
 
 #include "buildopts.h"
 #include "SmartPtr.h"
+#include "View.h"
 
 class ShipCpanel;
-class View;
 class SectorView;
 class WorldView;
 class GalacticView;
@@ -13,7 +13,7 @@ class SystemView;
 class SystemInfoView;
 class SpaceStationView;
 class InfoView;
-#if OBJECTVIEWER
+#if WITH_OBJECTVIEWER
 class ObjectViewerView;
 #endif
 
@@ -26,8 +26,7 @@ public:
 	void Draw();
 	void Draw3D();
 
-	// XXX should be restricted to our own views
-	void SwitchTo(View *v);
+	void SwitchTo(View::Type type);
 
 	View *GetCurrentView() const { return m_currentView; }
 
@@ -40,7 +39,7 @@ public:
 	SystemInfoView   *GetSystemInfoView()   const { return m_systemInfoView.Get(); }
 	SpaceStationView *GetSpaceStationView() const { return m_spaceStationView.Get(); }
 	InfoView         *GetInfoView()         const { return m_infoView.Get(); }
-#if OBJECTVIEWER
+#if WITH_OBJECTVIEWER
 	ObjectViewerView *GetObjectViewerView() const { return m_objectViewerView.Get(); }
 #endif
 
@@ -56,7 +55,7 @@ private:
 	ScopedPtr<SystemInfoView>   m_systemInfoView;
 	ScopedPtr<SpaceStationView> m_spaceStationView;
 	ScopedPtr<InfoView>         m_infoView;
-#if OBJECTVIEWER
+#if WITH_OBJECTVIEWER
 	ScopedPtr<ObjectViewerView> m_objectViewerView;
 #endif
 };

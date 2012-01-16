@@ -10,7 +10,8 @@
 
 #if WITH_OBJECTVIEWER
 
-ObjectViewerView::ObjectViewerView(): View()
+ObjectViewerView::ObjectViewerView() :
+	View(OBJECTVIEWER)
 {
 	SetTransparency(true);
 	viewingDist = 1000.0f;

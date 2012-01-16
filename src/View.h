@@ -14,7 +14,24 @@
  */
 class View: public Gui::Fixed {
 public:
-	View(): Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-64)) {
+	enum Type {
+		SECTOR,
+		WORLD,
+		GALACTIC,
+		SYSTEM,
+		SYSTEMINFO,
+		SPACESTATION,
+		INFO,
+		GAMEMENU
+#if WITH_OBJECTVIEWER
+		,OBJECTVIEWER
+#endif
+	};
+
+	View(Type type) :
+		Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-64)),
+		m_type(type)
+	{
 		Gui::Screen::AddBaseWidget(this, 0, 0);
 		
 		m_rightButtonBar = new Gui::Fixed(128, 26);
@@ -29,6 +46,7 @@ public:
 		m_rightRegion1->SetTransparency(true);
 		Gui::Screen::AddBaseWidget(m_rightRegion1, Gui::Screen::GetWidth()-123, Gui::Screen::GetHeight()-62);
 	}
+
 	virtual ~View() {
 		Gui::Screen::RemoveBaseWidget(m_rightButtonBar);
 		Gui::Screen::RemoveBaseWidget(m_rightRegion2);
@@ -37,18 +55,21 @@ public:
 		delete m_rightRegion2;
 		delete m_rightRegion1;
 	}
+
 	virtual void ShowAll() {
 		m_rightButtonBar->ShowAll();
 		m_rightRegion2->ShowAll();
 		m_rightRegion1->ShowAll();
 		Gui::Fixed::ShowAll();
 	}
+
 	virtual void HideAll() {
 		m_rightButtonBar->HideAll();
 		m_rightRegion2->HideAll();
 		m_rightRegion1->HideAll();
 		Gui::Fixed::HideAll();
 	}
+
 	// called before Gui::Draw will call widget ::Draw methods.
 	virtual void Draw3D() = 0;
 	// for checking key states, mouse crud
@@ -56,11 +77,17 @@ public:
 	virtual void Save(Serializer::Writer &wr) {}
 	virtual void Load(Serializer::Reader &rd) {}
 	virtual void OnSwitchTo() = 0;
+
+	Type GetViewType() const { return m_type; }
+
 protected:
 	// each view can put some buttons in the bottom right of the cpanel
 	Gui::Fixed *m_rightButtonBar;
 	Gui::Fixed *m_rightRegion1;
 	Gui::Fixed *m_rightRegion2;
+
+private:
+	Type m_type;
 };
 
 #endif /* _VIEW_H */

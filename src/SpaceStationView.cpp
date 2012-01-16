@@ -7,7 +7,8 @@
 
 #include "StationServicesForm.h"
 
-SpaceStationView::SpaceStationView(): View()
+SpaceStationView::SpaceStationView() :
+	View(SPACESTATION)
 {
 	Gui::Label *l = new Gui::Label(Lang::COMMS_LINK);
 	l->Color(1,.7,0);
