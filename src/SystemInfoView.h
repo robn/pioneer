@@ -4,11 +4,11 @@
 #include "libs.h"
 #include "gui/Gui.h"
 #include "View.h"
-#include "View.h"
 #include <vector>
 
 class StarSystem;
 class SBody;
+class SystemPath;
 
 class SystemInfoView: public View {
 public:

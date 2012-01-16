@@ -1,18 +1,20 @@
 #ifndef _VIEWMANAGER_H
 #define _VIEWMANAGER_H
 
+#include "buildopts.h"
 #include "SmartPtr.h"
 
-#include "ShipCpanel.h"
-#include "SectorView.h"
-#include "WorldView.h"
-#include "GalacticView.h"
-#include "SystemView.h"
-#include "SystemInfoView.h"
-#include "SpaceStationView.h"
-#include "InfoView.h"
+class ShipCpanel;
+class View;
+class SectorView;
+class WorldView;
+class GalacticView;
+class SystemView;
+class SystemInfoView;
+class SpaceStationView;
+class InfoView;
 #if OBJECTVIEWER
-#include "ObjectViewerView.h"
+class ObjectViewerView;
 #endif
 
 class ViewManager {

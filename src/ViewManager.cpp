@@ -1,5 +1,17 @@
 #include "ViewManager.h"
 
+#include "ShipCpanel.h"
+#include "SectorView.h"
+#include "WorldView.h"
+#include "GalacticView.h"
+#include "SystemView.h"
+#include "SystemInfoView.h"
+#include "SpaceStationView.h"
+#include "InfoView.h"
+#if OBJECTVIEWER
+#include "ObjectViewerView.h"
+#endif
+
 ViewManager::ViewManager() :
 	m_currentView(0)
 {
