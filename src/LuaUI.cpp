@@ -2,6 +2,7 @@
 #include "LuaObject.h"
 #include "LuaUtils.h"
 #include "Pi.h"
+#include "ViewManager.h"
 #include "ShipCpanel.h"
 
 /*
@@ -43,7 +44,7 @@ static int l_ui_message(lua_State *l)
 	if (lua_gettop(l) >= 2)
 		from = luaL_checkstring(l, 2);
 
-	Pi::cpan->MsgLog()->Message(from, msg);
+	Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message(from, msg);
 	return 0;
 }
 
@@ -83,7 +84,7 @@ static int l_ui_important_message(lua_State *l)
 	if (lua_gettop(l) >= 2)
 		from = luaL_checkstring(l, 2);
 
-	Pi::cpan->MsgLog()->ImportantMessage(from, msg);
+	Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage(from, msg);
 	return 0;
 }
 

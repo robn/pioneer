@@ -14,15 +14,20 @@
 #include "GameMenuView.h"
 #include "Lang.h"
 #include "Game.h"
+#include "ViewManager.h"
 
-ShipCpanel::ShipCpanel(): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
+ShipCpanel::ShipCpanel(ViewManager *viewManager) :
+	Gui::Fixed(float(Gui::Screen::GetWidth()), 80),
+	m_viewManager(viewManager)
 {
 	m_scanner = new ScannerWidget();
 
 	InitObject();
 }
 
-ShipCpanel::ShipCpanel(Serializer::Reader &rd): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
+ShipCpanel::ShipCpanel(ViewManager *viewManager, Serializer::Reader &rd) :
+	Gui::Fixed(float(Gui::Screen::GetWidth()), 80),
+	m_viewManager(viewManager)
 {
 	m_scanner = new ScannerWidget(rd);
 
@@ -253,9 +258,8 @@ void ShipCpanel::Draw()
 	std::string time = format_date(Pi::game->GetTime());
 	m_clock->SetText(time);
 
-	View *cur = Pi::GetView();
-	if ((cur != Pi::sectorView) && (cur != Pi::systemView) &&
-	    (cur != Pi::systemInfoView) && (cur != Pi::galacticView)) {
+	View::Type type = m_viewManager->GetCurrentView()->GetViewType();
+	if (type != View::SECTOR && type != View::SYSTEM && type != View::SYSTEMINFO && type != View::GALACTIC) {
 		HideMapviewButtons();
 	}
 
@@ -265,18 +269,18 @@ void ShipCpanel::Draw()
 void ShipCpanel::OnChangeCamView(Gui::MultiStateImageButton *b)
 {
 	Pi::BoinkNoise();
-	Pi::worldView->SetCamType(WorldView::CamType(b->GetState()));
-	Pi::SetView(Pi::worldView);
+	m_viewManager->GetWorldView()->SetCamType(WorldView::CamType(b->GetState()));
+	m_viewManager->SwitchTo(View::WORLD);
 }
 
 void ShipCpanel::OnChangeInfoView(Gui::MultiStateImageButton *b)
 {
 	Pi::BoinkNoise();
-	if (Pi::GetView() == Pi::infoView) {
-		Pi::infoView->NextPage();
+	if (m_viewManager->GetCurrentView()->GetViewType() == View::INFO) {
+		m_viewManager->GetInfoView()->NextPage();
 	} else {
-		Pi::infoView->UpdateInfo();
-		Pi::SetView(Pi::infoView);
+		m_viewManager->GetInfoView()->UpdateInfo();
+		m_viewManager->SwitchTo(View::INFO);
 	}
 }
 
@@ -290,16 +294,16 @@ void ShipCpanel::OnChangeMapView(enum MapView view)
 {
 	m_currentMapView = view;
 	switch (m_currentMapView) {
-		case MAP_SECTOR: Pi::SetView(Pi::sectorView); break;
-		case MAP_SYSTEM: Pi::SetView(Pi::systemView); break;
+		case MAP_SECTOR: m_viewManager->SwitchTo(View::SECTOR); break;
+		case MAP_SYSTEM: m_viewManager->SwitchTo(View::SYSTEM); break;
 		case MAP_INFO:
-			if (Pi::GetView() == Pi::systemInfoView) {
-				Pi::systemInfoView->NextPage();
+			if (m_viewManager->GetCurrentView()->GetViewType() == View::SYSTEMINFO) {
+				m_viewManager->GetSystemInfoView()->NextPage();
 			} else {
-				Pi::SetView(Pi::systemInfoView);
+				m_viewManager->SwitchTo(View::SYSTEMINFO);
 			}
 			break;
-		case MAP_GALACTIC: Pi::SetView(Pi::galacticView); break;
+		case MAP_GALACTIC: m_viewManager->SwitchTo(View::GALACTIC); break;
 	}
 	for (int i=0; i<4; i++) m_mapViewButtons[i]->Show();
 }
@@ -311,6 +315,8 @@ void ShipCpanel::HideMapviewButtons()
 
 void ShipCpanel::OnClickTimeaccel(Game::TimeAccel val)
 {
+#if 0
+XXX VIEWMANAGER
 	Pi::BoinkNoise();
 	if ((Pi::game->GetTimeAccel() == val) && (val == Game::TIMEACCEL_PAUSED)) {
 		if (Pi::GetView() != Pi::gameMenuView)
@@ -323,15 +329,16 @@ void ShipCpanel::OnClickTimeaccel(Game::TimeAccel val)
 			Pi::SetView(Pi::worldView);
 		Pi::game->RequestTimeAccel(val, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
 	}
+#endif
 }
 
 void ShipCpanel::OnClickComms(Gui::MultiStateImageButton *b)
 {
 	Pi::BoinkNoise();
-	if (Pi::player->GetFlightState() == Ship::DOCKED) Pi::SetView(Pi::spaceStationView);
+	if (Pi::player->GetFlightState() == Ship::DOCKED) m_viewManager->SwitchTo(View::SPACESTATION);
 	else {
-		Pi::SetView(Pi::worldView);
-		Pi::worldView->ToggleTargetActions();
+		m_viewManager->SwitchTo(View::WORLD);
+		m_viewManager->GetWorldView()->ToggleTargetActions();
 	}
 }
 

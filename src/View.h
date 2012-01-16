@@ -5,6 +5,8 @@
 #include "Serializer.h"
 #include "gui/Gui.h"
 
+class ViewManager;
+
 /*
  * For whatever draws crap into the main area of the screen.
  * Eg:
@@ -28,8 +30,9 @@ public:
 #endif
 	};
 
-	View(Type type) :
+	View(ViewManager *viewManager, Type type) :
 		Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-64)),
+		m_viewManager(viewManager),
 		m_type(type)
 	{
 		Gui::Screen::AddBaseWidget(this, 0, 0);
@@ -78,6 +81,7 @@ public:
 	virtual void Load(Serializer::Reader &rd) {}
 	virtual void OnSwitchTo() = 0;
 
+	ViewManager *GetViewManager() const { return m_viewManager; }
 	Type GetViewType() const { return m_type; }
 
 protected:
@@ -87,6 +91,7 @@ protected:
 	Gui::Fixed *m_rightRegion2;
 
 private:
+	ViewManager *m_viewManager;
 	Type m_type;
 };
 

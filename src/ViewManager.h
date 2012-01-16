@@ -4,6 +4,7 @@
 #include "buildopts.h"
 #include "SmartPtr.h"
 #include "View.h"
+#include "Serializer.h"
 
 class ShipCpanel;
 class SectorView;
@@ -20,6 +21,7 @@ class ObjectViewerView;
 class ViewManager {
 public:
 	ViewManager();
+	ViewManager(Serializer::Reader &rd);
 	~ViewManager();
 
 	void Update();

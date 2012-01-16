@@ -1,4 +1,5 @@
 #include "ViewManager.h"
+#include "WorldView.h"
 
 #include "ShipCpanel.h"
 #include "SectorView.h"
@@ -15,17 +16,50 @@
 ViewManager::ViewManager() :
 	m_currentView(0)
 {
-	m_cpanel.Reset(new ShipCpanel());
+	m_cpanel.Reset(new ShipCpanel(this));
 
-	m_sectorView.Reset(new SectorView());
-	m_worldView.Reset(new WorldView());
-	m_galacticView.Reset(new GalacticView());
-	m_systemView.Reset(new SystemView());
-	m_systemInfoView.Reset(new SystemInfoView());
-	m_spaceStationView.Reset(new SpaceStationView());
-	m_infoView.Reset(new InfoView());
+	m_sectorView.Reset(new SectorView(this));
+	m_worldView.Reset(new WorldView(this));
+	m_galacticView.Reset(new GalacticView(this));
+	m_systemView.Reset(new SystemView(this));
+	m_systemInfoView.Reset(new SystemInfoView(this));
+	m_spaceStationView.Reset(new SpaceStationView(this));
+	m_infoView.Reset(new InfoView(this));
 #if WITH_OBJECTVIEWER
-	m_objectViewerView.Reset(new ObjectViewerView());
+	m_objectViewerView.Reset(new ObjectViewerView(this));
+#endif
+}
+
+ViewManager::ViewManager(Serializer::Reader &rd)
+{
+	assert(0);
+
+#if 0
+XXX VIEWMANAGER
+	Pi::SetView(0);
+
+	// XXX views expect Pi::game and Pi::player to exist
+	Pi::game = this;
+	Pi::player = m_player.Get();
+
+	Serializer::Reader section = rd.RdSection("ShipCpanel");
+	Pi::cpan = new ShipCpanel(section);
+
+	section = rd.RdSection("SectorView");
+	Pi::sectorView = new SectorView(section);
+
+	section = rd.RdSection("WorldView");
+	Pi::worldView = new WorldView(section);
+
+	Pi::galacticView = new GalacticView();
+	Pi::systemView = new SystemView();
+	Pi::systemInfoView = new SystemInfoView();
+	Pi::spaceStationView = new SpaceStationView();
+	Pi::infoView = new InfoView();
+
+#if OBJECTVIEWER
+	Pi::objectViewerView = new ObjectViewerView();
+#endif
 #endif
 }
 

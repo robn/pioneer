@@ -7,7 +7,6 @@
 #include "Planet.h"
 #include "Sound.h"
 #include "SpaceStation.h"
-#include "Game.h"
 
 static int astroNoiseSeed;
 static Sound::Event stationNoise;
@@ -18,7 +17,7 @@ static sigc::connection onChangeCamTypeConnection;
 
 void AmbientSounds::Init()
 {
-	onChangeCamTypeConnection = Pi::worldView->onChangeCamType.connect(sigc::ptr_fun(&AmbientSounds::UpdateForCamType));
+	// XXX VIEWMANAGER onChangeCamTypeConnection = Pi::worldView->onChangeCamType.connect(sigc::ptr_fun(&AmbientSounds::UpdateForCamType));
 }
 
 void AmbientSounds::Uninit()
@@ -28,6 +27,8 @@ void AmbientSounds::Uninit()
 
 void AmbientSounds::Update()
 {
+#if 0
+XXX VIEWMANAGER
 	WorldView::CamType cam = Pi::worldView->GetCamType();
 	float v_env = (cam == WorldView::CAM_EXTERNAL ? 1.0f : 0.5f) * Sound::GetSfxVolume();
 
@@ -215,10 +216,13 @@ void AmbientSounds::Update()
 			atmosphereNoise.SetOp(Sound::OP_REPEAT | Sound::OP_STOP_AT_TARGET_VOLUME);
 		}
 	}
+#endif
 }
 
 void AmbientSounds::UpdateForCamType()
 {
+#if 0
+XXX VIEWMANAGER
 	const WorldView::CamType cam = Pi::worldView->GetCamType();
 	float v_env = (cam == WorldView::CAM_EXTERNAL ? 1.0f : 0.5f) * Sound::GetSfxVolume();
 
@@ -228,4 +232,5 @@ void AmbientSounds::UpdateForCamType()
 		starNoise.SetVolume(0.3f*v_env, 0.3f*v_env);
 	if (planetSurfaceNoise.IsPlaying())
 		planetSurfaceNoise.SetVolume(0.3f*v_env, 0.3f*v_env);
+#endif
 }

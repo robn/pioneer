@@ -17,24 +17,11 @@
 #include <vector>
 
 class Player;
-class SectorView;
-class SystemView;
-class WorldView;
-class SystemInfoView;
-class ShipCpanel;
-class StarSystem;
-class SpaceStationView;
-class InfoView;
 class SpaceStation;
-class GalacticView;
 class Ship;
 class GameMenuView;
 class LuaConsole;
 namespace Sound { class MusicPlayer; }
-
-#if WITH_OBJECTVIEWER
-class ObjectViewerView;
-#endif
 
 struct DetailLevel {
 	int planets;
@@ -129,29 +116,14 @@ public:
 	static MTRand rng;
 	static int statSceneTris;
 
-	static void SetView(View *v);
-	static View *GetView() { return currentView; }
-
 #if WITH_DEVKEYS
 	static bool showDebugInfo;
 #endif
 	static Player *player;
-	static SectorView *sectorView;
-	static GalacticView *galacticView;
 	static GameMenuView *gameMenuView;
-	static SystemInfoView *systemInfoView;
-	static SystemView *systemView;
-	static WorldView *worldView;
-	static SpaceStationView *spaceStationView;
-	static InfoView *infoView;
 	static LuaConsole *luaConsole;
-	static ShipCpanel *cpan;
 	static GLUquadric *gluQuadric;
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
-
-#if WITH_OBJECTVIEWER
-	static ObjectViewerView *objectViewerView;
-#endif
 
 	static Game *game;
 
@@ -166,8 +138,6 @@ private:
 	static void InitJoysticks();
 
 	static bool menuDone;
-
-	static View *currentView;
 
 	/** So, the game physics rate (50Hz) can run slower
 	  * than the frame rate. gameTickAlpha is the interpolation

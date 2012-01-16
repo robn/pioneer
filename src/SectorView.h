@@ -12,8 +12,8 @@
 
 class SectorView: public View {
 public:
-	SectorView();
-	SectorView(Serializer::Reader &rd);
+	SectorView(ViewManager *viewManager);
+	SectorView(ViewManager *viewManager, Serializer::Reader &rd);
 	virtual ~SectorView();
 
 	virtual void Update();

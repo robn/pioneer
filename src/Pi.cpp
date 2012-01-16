@@ -8,22 +8,14 @@
 #include "Frame.h"
 #include "ShipCpanel.h"
 #include "ShipType.h"
-#include "SectorView.h"
-#include "SystemView.h"
-#include "SystemInfoView.h"
-#include "WorldView.h"
-#include "ObjectViewerView.h"
 #include "StarSystem.h"
 #include "SpaceStation.h"
-#include "SpaceStationView.h"
 #include "CargoBody.h"
-#include "InfoView.h"
 #include "Serializer.h"
 #include "NameGenerator.h"
 #include "GeoSphere.h"
 #include "Sound.h"
 #include "Polit.h"
-#include "GalacticView.h"
 #include "Galaxy.h"
 #include "GameMenuView.h"
 #include "Missile.h"
@@ -66,6 +58,10 @@
 #include "TextureManager.h"
 #include "Game.h"
 #include "GameLoaderSaver.h"
+#include "ViewManager.h"
+#ifdef OBJECTVIEWER
+#include "ObjectViewerView.h"
+#endif
 
 float Pi::gameTickAlpha;
 int Pi::scrWidth;
@@ -110,16 +106,7 @@ char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;
 Player *Pi::player;
-View *Pi::currentView;
-WorldView *Pi::worldView;
-SpaceStationView *Pi::spaceStationView;
-InfoView *Pi::infoView;
-SectorView *Pi::sectorView;
-GalacticView *Pi::galacticView;
 GameMenuView *Pi::gameMenuView;
-SystemView *Pi::systemView;
-SystemInfoView *Pi::systemInfoView;
-ShipCpanel *Pi::cpan;
 LuaConsole *Pi::luaConsole;
 Game *Pi::game;
 MTRand Pi::rng;
@@ -145,10 +132,6 @@ const char * const Pi::combatRating[] = {
 	Lang::DEADLY,
 	Lang::ELITE
 };
-
-#if WITH_OBJECTVIEWER
-ObjectViewerView *Pi::objectViewerView;
-#endif
 
 Sound::MusicPlayer Pi::musicPlayer;
 
@@ -659,16 +642,6 @@ void Pi::BoinkNoise()
 	Sound::PlaySfx("Click", 0.3f, 0.3f, false);
 }
 
-void Pi::SetView(View *v)
-{
-	if (currentView) currentView->HideAll();
-	currentView = v;
-	if (currentView) {
-		currentView->OnSwitchTo();
-		currentView->ShowAll();
-	}
-}
-
 void Pi::OnChangeDetailLevel()
 {
 	GeoSphere::OnChangeDetailLevel();
@@ -688,6 +661,7 @@ void Pi::HandleEvents()
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
 					if (Pi::game) {
 						// only accessible once game started
+                        /* XXX VIEWMANAGER
 						if (currentView != 0) {
 							if (currentView != gameMenuView) {
 								Pi::game->SetTimeAccel(Game::TIMEACCEL_PAUSED);
@@ -698,6 +672,7 @@ void Pi::HandleEvents()
 								SetView(worldView);
 							}
 						}
+                        */
 					}
 					break;
 				}
@@ -787,7 +762,7 @@ void Pi::HandleEvents()
 #endif /* DEVKEYS */
 #if WITH_OBJECTVIEWER
 						case SDLK_F10:
-							Pi::SetView(Pi::objectViewerView);
+							Pi::game->GetViewManager()->SwitchTo(View::OBJECTVIEWER);
 							break;
 #endif
 						case SDLK_F11:
@@ -798,13 +773,13 @@ void Pi::HandleEvents()
 						{
 							if(Pi::game) {
 								if (Pi::game->IsHyperspace())
-									Pi::cpan->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
+									Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
 
 								else {
 									std::string name = join_path(GetPiSavefileDir().c_str(), "_quicksave", 0);
 									GameSaver saver(Pi::game);
 									if (saver.SaveToFile(name))
-										Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO+name);
+										Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::GAME_SAVED_TO+name);
 								}
 							}
 							break;
@@ -963,8 +938,10 @@ void Pi::TombStoneLoop()
 
 	Uint32 last_time = SDL_GetTicks();
 	float _time = 0;
+	/* XXX VIEWMANAGER
 	cpan->HideAll();
 	currentView->HideAll();
+	*/
 	do {
 		Render::PrepareFrame();
 		glMatrixMode(GL_PROJECTION);
@@ -1018,10 +995,12 @@ void Pi::StartGame()
 	Pi::player->onDock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
 	Pi::player->onUndock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
 	Pi::player->m_equipment.onChange.connect(sigc::ptr_fun(&OnPlayerChangeEquipment));
+	/* XXX VIEWMANAGER
 	cpan->ShowAll();
 	cpan->SetAlertState(Ship::ALERT_NONE);
-	OnPlayerChangeEquipment(Equip::NONE);
 	SetView(worldView);
+	*/
+	OnPlayerChangeEquipment(Equip::NONE);
 	Pi::luaOnGameStart->Signal();
 }
 
@@ -1310,8 +1289,8 @@ void Pi::MainLoop()
 		}
 		game->GetSpace()->GetRootFrame()->UpdateInterpolatedTransform(Pi::GetGameTickAlpha());
 
-		currentView->Update();
-		currentView->Draw3D();
+		game->GetViewManager()->Update();
+		game->GetViewManager()->Draw3D();
 		// XXX HandleEvents at the moment must be after view->Draw3D and before
 		// Gui::Draw so that labels drawn to screen can have mouse events correctly
 		// detected. Gui::Draw wipes memory of label positions.
@@ -1358,8 +1337,10 @@ void Pi::MainLoop()
 				}
 			} else {
 				Pi::game->SetTimeAccel(Game::TIMEACCEL_1X);
-				Pi::cpan->HideAll();
+				/* XXX VIEWMANAGER
+				Pi::game->GetViewManager()->GetShipCpanel()->HideAll();
 				Pi::SetView(static_cast<View*>(Pi::worldView));
+				*/
 				Pi::player->Disable();
 				time_player_died = Pi::game->GetTime();
 			}
@@ -1368,7 +1349,7 @@ void Pi::MainLoop()
 			if (!config.Int("DisableSound")) AmbientSounds::Update();
 			StarSystem::ShrinkCache();
 		}
-		cpan->Update();
+		Pi::game->GetViewManager()->GetShipCpanel()->Update();
 		musicPlayer.Update();
 
 #if WITH_DEVKEYS
@@ -1421,9 +1402,9 @@ float Pi::CalcHyperspaceRange(int hyperclass, int total_mass_in_tonnes)
 void Pi::Message(const std::string &message, const std::string &from, enum MsgLevel level)
 {
 	if (level == MSG_IMPORTANT) {
-		Pi::cpan->MsgLog()->ImportantMessage(from, message);
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage(from, message);
 	} else {
-		Pi::cpan->MsgLog()->Message(from, message);
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message(from, message);
 	}
 }
 

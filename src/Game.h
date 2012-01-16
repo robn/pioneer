@@ -9,6 +9,7 @@
 class Space;
 class Player;
 class HyperspaceCloud;
+class ViewManager;
 
 class Game {
 public:
@@ -30,8 +31,11 @@ public:
 	bool IsNormalSpace() const { return m_state == STATE_NORMAL; }
 	bool IsHyperspace() const { return m_state == STATE_HYPERSPACE; }
 
+	ViewManager *GetViewManager() const { return m_viewManager.Get(); }
+
 	Space *GetSpace() const { return m_space.Get(); }
 	double GetTime() const { return m_time; }
+
 	Player *GetPlayer() const { return m_player.Get(); }
 
 	// physics step
@@ -72,12 +76,10 @@ public:
 private:
 	void CreatePlayer();
 
-	void CreateViews();
-	void LoadViews(Serializer::Reader &rd);
-	void DestroyViews();
-
 	void SwitchToHyperspace();
 	void SwitchToNormalSpace();
+
+	ScopedPtr<ViewManager> m_viewManager;
 
 	ScopedPtr<Space> m_space;
 	double m_time;

@@ -17,8 +17,8 @@ class Ship;
 
 class WorldView: public View {
 public:
-	WorldView();
-	WorldView(Serializer::Reader &reader);
+	WorldView(ViewManager *viewManager);
+	WorldView(ViewManager *viewManager, Serializer::Reader &reader);
 	virtual ~WorldView();
 	virtual void ShowAll();
 	virtual void Update();

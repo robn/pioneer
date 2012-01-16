@@ -10,6 +10,8 @@
 #include "StationPoliceForm.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "Game.h"
+#include "ViewManager.h"
 
 StationServicesForm::StationServicesForm(FormController *controller) : FaceForm(controller)
 {
@@ -56,8 +58,8 @@ StationServicesForm::StationServicesForm(FormController *controller) : FaceForm(
 
 void StationServicesForm::RequestLaunch()
 {
-	Pi::worldView->OnClickBlastoff();
-	Pi::SetView(Pi::worldView);
+	Pi::game->GetViewManager()->GetWorldView()->OnClickBlastoff();
+	Pi::game->GetViewManager()->SwitchTo(View::WORLD);
 }
 
 void StationServicesForm::Shipyard()

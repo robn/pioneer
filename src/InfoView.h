@@ -11,7 +11,7 @@ class ShipSpinnerWidget;
 
 class InfoView: public View {
 public:
-	InfoView();
+	InfoView(ViewManager *viewManager);
 	void UpdateInfo();
 	virtual void Update();
 	virtual void Draw3D();

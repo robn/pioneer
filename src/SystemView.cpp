@@ -8,11 +8,12 @@
 #include "Player.h"
 #include "FloatComparison.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 const double SystemView::PICK_OBJECT_RECT_SIZE = 12.0;
 
-SystemView::SystemView() :
-	View(SYSTEM)
+SystemView::SystemView(ViewManager *viewManager) :
+    View(viewManager, SYSTEM)
 {
 	SetTransparency(true);
 
@@ -270,7 +271,7 @@ void SystemView::Draw3D()
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	SystemPath path = Pi::sectorView->GetSelectedSystem();
+	SystemPath path = GetViewManager()->GetSectorView()->GetSelectedSystem();
 	if (m_system) {
 		if (!m_system->GetPath().IsSameSystem(path)) {
 			m_system.Reset();

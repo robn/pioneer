@@ -17,14 +17,15 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 const double WorldView::PICK_OBJECT_RECT_SIZE = 20.0;
 static const Color s_hudTextColor(0.0f,1.0f,0.0f,0.8f);
 
 #define HUD_CROSSHAIR_SIZE	24.0f
 
-WorldView::WorldView() :
-	View(WORLD)
+WorldView::WorldView(ViewManager *viewManager) :
+    View(viewManager, WORLD)
 {
 	m_showHyperspaceButton = false;
 	m_externalViewRotX = m_externalViewRotY = 0;
@@ -34,8 +35,8 @@ WorldView::WorldView() :
 	InitObject();
 }
 
-WorldView::WorldView(Serializer::Reader &rd) :
-	View(WORLD)
+WorldView::WorldView(ViewManager *viewManager, Serializer::Reader &rd) :
+    View(viewManager, WORLD)
 {
 	m_externalViewRotX = rd.Float();
 	m_externalViewRotY = rd.Float();
@@ -176,7 +177,7 @@ void WorldView::InitObject()
 	m_rearCamera->SetOrientation(matrix4x4d::RotateYMatrix(M_PI));
 	
 	m_onHyperspaceTargetChangedCon =
-		Pi::sectorView->onHyperspaceTargetChanged.connect(sigc::mem_fun(this, &WorldView::OnHyperspaceTargetChanged));
+		GetViewManager()->GetSectorView()->onHyperspaceTargetChanged.connect(sigc::mem_fun(this, &WorldView::OnHyperspaceTargetChanged));
 	m_onPlayerEquipmentChangeCon =
 		Pi::player->m_equipment.onChange.connect(sigc::mem_fun(this, &WorldView::OnPlayerEquipmentChange));
 
@@ -272,8 +273,7 @@ void WorldView::OnClickBlastoff()
 	Pi::BoinkNoise();
 	if (Pi::player->GetFlightState() == Ship::DOCKED) {
 		if (!Pi::player->Undock()) {
-			Pi::cpan->MsgLog()->ImportantMessage(Pi::player->GetDockedWith()->GetLabel(),
-					Lang::LAUNCH_PERMISSION_DENIED_BUSY);
+			GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage(Pi::player->GetDockedWith()->GetLabel(), Lang::LAUNCH_PERMISSION_DENIED_BUSY);
 		}
 	} else {
 		Pi::player->Blastoff();
@@ -285,10 +285,10 @@ void WorldView::OnClickHyperspace()
 	if (Pi::player->IsHyperspaceActive()) {
 		// Hyperspace countdown in effect.. abort!
 		Pi::player->ResetHyperspaceCountdown();
-		Pi::cpan->MsgLog()->Message("", Lang::HYPERSPACE_JUMP_ABORTED);
+		GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::HYPERSPACE_JUMP_ABORTED);
 	} else {
 		// Initiate hyperspace drive
-		SystemPath path = Pi::sectorView->GetHyperspaceTarget();
+		SystemPath path = GetViewManager()->GetSectorView()->GetHyperspaceTarget();
 		Pi::player->StartHyperspaceCountdown(path);
 	}
 }
@@ -842,7 +842,7 @@ static void PlayerRequestDockingClearance(SpaceStation *s)
 {
 	std::string msg;
 	s->GetDockingClearance(Pi::player, msg);
-	Pi::cpan->MsgLog()->ImportantMessage(s->GetLabel(), msg);
+	Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage(s->GetLabel(), msg);
 }
 
 static void PlayerPayFine()
@@ -850,18 +850,18 @@ static void PlayerPayFine()
 	Sint64 crime, fine;
 	Polit::GetCrime(&crime, &fine);
 	if (Pi::player->GetMoney() == 0) {
-		Pi::cpan->MsgLog()->Message("", Lang::YOU_NO_MONEY);
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::YOU_NO_MONEY);
 	} else if (fine > Pi::player->GetMoney()) {
 		Polit::AddCrime(0, -Pi::player->GetMoney());
 		Polit::GetCrime(&crime, &fine);
-		Pi::cpan->MsgLog()->Message("", stringf(
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(
 			Lang::FINE_PAID_N_BUT_N_REMAINING,
 				formatarg("paid", format_money(Pi::player->GetMoney())),
 				formatarg("fine", format_money(fine))));
 		Pi::player->SetMoney(0);
 	} else {
 		Pi::player->SetMoney(Pi::player->GetMoney() - fine);
-		Pi::cpan->MsgLog()->Message("", stringf(Lang::FINE_PAID_N,
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(Lang::FINE_PAID_N,
 				formatarg("fine", format_money(fine))));
 		Polit::AddCrime(0, -fine);
 	}
@@ -871,13 +871,13 @@ void WorldView::OnHyperspaceTargetChanged()
 {
 	if (Pi::player->IsHyperspaceActive()) {
 		Pi::player->ResetHyperspaceCountdown();
-		Pi::cpan->MsgLog()->Message("", Lang::HYPERSPACE_JUMP_ABORTED);
+		GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::HYPERSPACE_JUMP_ABORTED);
 	}
 
-	const SystemPath path = Pi::sectorView->GetHyperspaceTarget();
+	const SystemPath path = GetViewManager()->GetSectorView()->GetHyperspaceTarget();
 
 	RefCountedPtr<StarSystem> system = StarSystem::GetCached(path);
-	Pi::cpan->MsgLog()->Message("", stringf(Lang::SET_HYPERSPACE_DESTINATION_TO, formatarg("system", system->GetName())));
+	GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(Lang::SET_HYPERSPACE_DESTINATION_TO, formatarg("system", system->GetName())));
 
 	if (Pi::game->IsHyperspace())
 		return;
@@ -889,7 +889,7 @@ void WorldView::OnHyperspaceTargetChanged()
 
 void WorldView::OnPlayerEquipmentChange(Equip::Type e)
 {
-	const SystemPath path = Pi::sectorView->GetHyperspaceTarget();
+	const SystemPath path = GetViewManager()->GetSectorView()->GetHyperspaceTarget();
 	int fuelReqd;
 	double dur;
 	m_showHyperspaceButton = Pi::player->CanHyperspaceTo(&path, fuelReqd, dur);
@@ -900,8 +900,8 @@ void WorldView::OnPlayerChangeTarget()
 	Body *b = Pi::player->GetNavTarget();
 	if (b) {
 		Ship *s = b->IsType(Object::HYPERSPACECLOUD) ? static_cast<HyperspaceCloud*>(b)->GetShip() : 0;
-		if (!s || Pi::sectorView->GetHyperspaceTarget() != s->GetHyperspaceDest())
-			Pi::sectorView->FloatHyperspaceTarget();
+		if (!s || GetViewManager()->GetSectorView()->GetHyperspaceTarget() != s->GetHyperspaceDest())
+			GetViewManager()->GetSectorView()->FloatHyperspaceTarget();
 	}
 
 	UpdateCommsOptions();
@@ -925,7 +925,7 @@ static void autopilot_orbit(Body *b, double alt)
 
 static void player_target_hypercloud(HyperspaceCloud *cloud)
 {
-	Pi::sectorView->SetHyperspaceTarget(cloud->GetShip()->GetHyperspaceDest());
+	Pi::game->GetViewManager()->GetSectorView()->SetHyperspaceTarget(cloud->GetShip()->GetHyperspaceDest());
 }
 
 void WorldView::UpdateCommsOptions()

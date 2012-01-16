@@ -10,7 +10,7 @@
 
 class GalacticView: public View {
 public:
-	GalacticView();
+	GalacticView(ViewManager *viewManager);
 	virtual ~GalacticView();
 	virtual void Update();
 	virtual void Draw3D();

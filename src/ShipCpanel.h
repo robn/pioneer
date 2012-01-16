@@ -13,8 +13,8 @@ class SpaceStation;
 
 class ShipCpanel: public Gui::Fixed {
 public:
-	ShipCpanel();
-    ShipCpanel(Serializer::Reader &rd);
+	ShipCpanel(ViewManager *viewManager);
+    ShipCpanel(ViewManager *viewManager, Serializer::Reader &rd);
 	virtual ~ShipCpanel();
 	virtual void Draw();
 	void Update();
@@ -43,6 +43,8 @@ private:
 	void OnMultiFuncGrabFocus(multifuncfunc_t);
 	void OnMultiFuncUngrabFocus(multifuncfunc_t);
 	void HideMapviewButtons();
+
+	ViewManager *m_viewManager;
 
 	enum MapView m_currentMapView;
 	multifuncfunc_t m_userSelectedMfuncWidget;

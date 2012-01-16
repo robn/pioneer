@@ -10,7 +10,7 @@
 
 class SpaceStationView: public View {
 public:
-	SpaceStationView();
+	SpaceStationView(ViewManager *viewManager);
 	virtual ~SpaceStationView();
 	virtual void Update();
 	virtual void Draw3D() {}

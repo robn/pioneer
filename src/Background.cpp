@@ -6,7 +6,6 @@
 #include "Frame.h"
 #include "Player.h"
 #include <vector>
-#include "Game.h"
 
 namespace Background
 {
@@ -72,6 +71,8 @@ void Starfield::Fill(unsigned long seed)
 
 void Starfield::Draw() const
 {
+#if 0
+XXX VIEWMANAGER
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
 
@@ -158,6 +159,7 @@ void Starfield::Draw() const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
+#endif
 }
 
 

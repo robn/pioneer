@@ -8,6 +8,7 @@
 #include "ShipCpanel.h"
 #include "Sfx.h"
 #include "MathUtil.h"
+#include "ViewManager.h"
 #include "SectorView.h"
 #include "WorldView.h"
 #include "GalacticView.h"
@@ -37,11 +38,14 @@ Game::Game(const SystemPath &path) :
 
 	m_space->AddBody(m_player.Get());
 
+	// XXX views expect Pi::game and Pi::player to exist
+	Pi::game = this;
+	Pi::player = m_player.Get();
+	m_viewManager.Reset(new ViewManager());
+
 	m_player->Enable();
 	m_player->SetFrame(station->GetFrame());
 	m_player->SetDockedWith(station, 0);
-
-	CreateViews();
 }
 
 Game::Game(const SystemPath &path, const vector3d &pos) :
@@ -60,19 +64,20 @@ Game::Game(const SystemPath &path, const vector3d &pos) :
 
 	m_space->AddBody(m_player.Get());
 
+	// XXX views expect Pi::game and Pi::player to exist
+	Pi::game = this;
+	Pi::player = m_player.Get();
+	m_viewManager.Reset(new ViewManager());
+
 	m_player->Enable();
 	m_player->SetFrame(b->GetFrame());
 
 	m_player->SetPosition(pos);
 	m_player->SetVelocity(vector3d(0,0,0));
-
-	CreateViews();
 }
 
 Game::~Game()
 {
-	DestroyViews();
-
 	// XXX this shutdown sequence is critical:
 	// 1- RemoveBody marks the Player for removal from Space,
 	// 2- Space is destroyed, which actually goes through its removal list,
@@ -143,7 +148,10 @@ Game::Game(Serializer::Reader &rd) :
 
 
 	// views
-	LoadViews(rd);
+	// XXX views expect Pi::game and Pi::player to exist
+	Pi::game = this;
+	Pi::player = m_player.Get();
+	m_viewManager.Reset(new ViewManager(rd));
 
 
 	// lua
@@ -200,6 +208,9 @@ void Game::Serialize(Serializer::Writer &wr)
 
 
 	// views. must be saved in init order
+	// XXX VIEWMANAGER
+	//     move to ViewManager::ViewManager(Serializer::Reader &rd)
+#if 0
 	section = Serializer::Writer();
 	Pi::cpan->Save(section);
 	wr.WrSection("ShipCpanel", section.GetData());
@@ -211,6 +222,8 @@ void Game::Serialize(Serializer::Writer &wr)
 	section = Serializer::Writer();
 	Pi::worldView->Save(section);
 	wr.WrSection("WorldView", section.GetData());
+#endif
+	assert(0);
 
 
 	// lua
@@ -229,8 +242,9 @@ void Game::TimeStep(float step)
 	m_space->TimeStep(step);
 
 	// XXX ui updates, not sure if they belong here
-	Pi::cpan->TimeStepUpdate(step);
-	Sfx::TimeStepAll(step, m_space->GetRootFrame());
+	// XXX VIEWMANAGER
+	//Pi::cpan->TimeStepUpdate(step);
+	//Sfx::TimeStepAll(step, m_space->GetRootFrame());
 
 	m_time += step;
 
@@ -570,89 +584,4 @@ void Game::CreatePlayer()
 	m_player->m_equipment.Add(Equip::SCANNER);
 	m_player->UpdateMass();
 	m_player->SetMoney(10000);
-}
-
-// XXX this should be in some kind of central UI management class that
-// creates a set of UI views held by the game. right now though the views
-// are rather fundamentally tied to their global points and assume they
-// can all talk to each other. given the difficulty of disentangling all
-// that and the impending move to Rocket, its better right now to just
-// manage creation and destruction here to get the timing and order right
-void Game::CreateViews()
-{
-	Pi::SetView(0);
-
-	// XXX views expect Pi::game and Pi::player to exist
-	Pi::game = this;
-	Pi::player = m_player.Get();
-
-	Pi::cpan = new ShipCpanel();
-	Pi::sectorView = new SectorView();
-	Pi::worldView = new WorldView();
-	Pi::galacticView = new GalacticView();
-	Pi::systemView = new SystemView();
-	Pi::systemInfoView = new SystemInfoView();
-	Pi::spaceStationView = new SpaceStationView();
-	Pi::infoView = new InfoView();
-
-#if WITH_OBJECTVIEWER
-	Pi::objectViewerView = new ObjectViewerView();
-#endif
-}
-
-// XXX mostly a copy of CreateViews
-void Game::LoadViews(Serializer::Reader &rd)
-{
-	Pi::SetView(0);
-
-	// XXX views expect Pi::game and Pi::player to exist
-	Pi::game = this;
-	Pi::player = m_player.Get();
-
-	Serializer::Reader section = rd.RdSection("ShipCpanel");
-	Pi::cpan = new ShipCpanel(section);
-
-	section = rd.RdSection("SectorView");
-	Pi::sectorView = new SectorView(section);
-
-	section = rd.RdSection("WorldView");
-	Pi::worldView = new WorldView(section);
-
-	Pi::galacticView = new GalacticView();
-	Pi::systemView = new SystemView();
-	Pi::systemInfoView = new SystemInfoView();
-	Pi::spaceStationView = new SpaceStationView();
-	Pi::infoView = new InfoView();
-
-#if WITH_OBJECTVIEWER
-	Pi::objectViewerView = new ObjectViewerView();
-#endif
-}
-
-void Game::DestroyViews()
-{
-	Pi::SetView(0);
-
-#if WITH_OBJECTVIEWER
-	delete Pi::objectViewerView;
-#endif
-
-	delete Pi::infoView;
-	delete Pi::spaceStationView;
-	delete Pi::systemInfoView;
-	delete Pi::systemView;
-	delete Pi::galacticView;
-	delete Pi::worldView;
-	delete Pi::sectorView;
-	delete Pi::cpan;
-
-	Pi::objectViewerView = 0;
-	Pi::infoView = 0;
-	Pi::spaceStationView = 0;
-	Pi::systemInfoView = 0;
-	Pi::systemView = 0;
-	Pi::galacticView = 0;
-	Pi::worldView = 0;
-	Pi::sectorView = 0;
-	Pi::cpan = 0;
 }

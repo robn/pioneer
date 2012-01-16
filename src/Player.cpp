@@ -11,6 +11,7 @@
 #include "Lang.h"
 #include "SectorView.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 Player::Player(ShipType::Type shipType): Ship(shipType)
 {
@@ -103,11 +104,11 @@ void Player::SetDockedWith(SpaceStation *s, int port)
 	Ship::SetDockedWith(s, port);
 	if (s) {
 		if (Pi::CombatRating(m_killCount) > Pi::CombatRating(m_knownKillCount)) {
-			Pi::cpan->MsgLog()->ImportantMessage(Lang::PIONEERING_PILOTS_GUILD, Lang::RIGHT_ON_COMMANDER);
+			Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage(Lang::PIONEERING_PILOTS_GUILD, Lang::RIGHT_ON_COMMANDER);
 		}
 		m_knownKillCount = m_killCount;
 
-		Pi::SetView(Pi::spaceStationView);
+        Pi::game->GetViewManager()->SwitchTo(View::SPACESTATION);
 	}
 }
 
@@ -121,7 +122,7 @@ void Player::StaticUpdate(const float timeStep)
 	if (GetFlightState() == Ship::FLYING) {
 		switch (m_flightControlState) {
 		case CONTROL_FIXSPEED:
-			if (Pi::GetView() == Pi::worldView) PollControls(timeStep);
+			if (Pi::game->GetViewManager()->GetCurrentView()->GetViewType() == View::WORLD) PollControls(timeStep);
 			if (IsAnyThrusterKeyDown()) break;
 			GetRotMatrix(m);
 			v = m * vector3d(0, 0, -m_setSpeed);
@@ -131,7 +132,7 @@ void Player::StaticUpdate(const float timeStep)
 			AIMatchVel(v);
 			break;
 		case CONTROL_MANUAL:
-			if (Pi::GetView() == Pi::worldView) PollControls(timeStep);
+			if (Pi::game->GetViewManager()->GetCurrentView()->GetViewType() == View::WORLD) PollControls(timeStep);
 			break;
 		case CONTROL_AUTOPILOT:
 			if (AIIsActive()) break;
@@ -149,7 +150,7 @@ void Player::StaticUpdate(const float timeStep)
 	
 	/* This wank probably shouldn't be in Player... */
 	/* Ship engine noise. less loud inside */
-	float v_env = (Pi::worldView->GetCamType() == WorldView::CAM_EXTERNAL ? 1.0f : 0.5f) * Sound::GetSfxVolume();
+	float v_env = (Pi::game->GetViewManager()->GetWorldView()->GetCamType() == WorldView::CAM_EXTERNAL ? 1.0f : 0.5f) * Sound::GetSfxVolume();
 	static Sound::Event sndev;
 	float volBoth = 0.0f;
 	volBoth += 0.5f*fabs(GetThrusterState().y);
@@ -266,7 +267,7 @@ void Player::PollControls(const float timeStep)
 			if (KeyBindings::thrustRight.IsActive()) SetThrusterState(0, 1.0);
 
 			if (KeyBindings::fireLaser.IsActive() || (Pi::MouseButtonState(SDL_BUTTON_LEFT) && Pi::MouseButtonState(SDL_BUTTON_RIGHT))) {
-					SetGunState(Pi::worldView->GetActiveWeapon(), 1);
+					SetGunState(Pi::game->GetViewManager()->GetWorldView()->GetActiveWeapon(), 1);
 			}
 
 			if (KeyBindings::yawLeft.IsActive()) wantAngVel.y += 1.0;
@@ -319,24 +320,24 @@ void Player::SetAlertState(Ship::AlertState as)
 	switch (as) {
 		case ALERT_NONE:
 			if (prev != ALERT_NONE)
-				Pi::cpan->MsgLog()->Message("", Lang::ALERT_CANCELLED);
+				Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::ALERT_CANCELLED);
 			break;
 
 		case ALERT_SHIP_NEARBY:
 			if (prev == ALERT_NONE)
-				Pi::cpan->MsgLog()->ImportantMessage("", Lang::SHIP_DETECTED_NEARBY);
+				Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage("", Lang::SHIP_DETECTED_NEARBY);
 			else
-				Pi::cpan->MsgLog()->ImportantMessage("", Lang::DOWNGRADING_ALERT_STATUS);
+				Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage("", Lang::DOWNGRADING_ALERT_STATUS);
 			Sound::PlaySfx("OK");
 			break;
 
 		case ALERT_SHIP_FIRING:
-			Pi::cpan->MsgLog()->ImportantMessage("", Lang::LASER_FIRE_DETECTED);
+			Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->ImportantMessage("", Lang::LASER_FIRE_DETECTED);
 			Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
 			break;
 	}
 
-	Pi::cpan->SetAlertState(as);
+	Pi::game->GetViewManager()->GetShipCpanel()->SetAlertState(as);
 
 	Ship::SetAlertState(as);
 }
@@ -458,5 +459,5 @@ void Player::OnEnterSystem()
 {
 	SetFlightControlState(Player::CONTROL_MANUAL);
 
-	Pi::sectorView->ResetHyperspaceTarget();
+	Pi::game->GetViewManager()->GetSectorView()->ResetHyperspaceTarget();
 }

@@ -12,12 +12,13 @@
 #include "StringF.h"
 #include "ShipCpanel.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 #define INNER_RADIUS (Sector::SIZE*1.5f)
 #define OUTER_RADIUS (Sector::SIZE*3.0f)
 
-SectorView::SectorView() :
-	View(SECTOR)
+SectorView::SectorView(ViewManager *viewManager) :
+    View(viewManager, SECTOR)
 {
 	InitDefaults();
 	
@@ -43,8 +44,8 @@ SectorView::SectorView() :
 	InitObject();
 }
 
-SectorView::SectorView(Serializer::Reader &rd) :
-	View(SECTOR)
+SectorView::SectorView(ViewManager *viewManager, Serializer::Reader &rd) :
+    View(viewManager, SECTOR)
 {
 	InitDefaults();
 
@@ -239,7 +240,7 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 					// exact match, take it and go
 					SystemPath path = (*i).first;
 					path.systemIndex = systemIndex;
-					Pi::cpan->MsgLog()->Message("", stringf(Lang::EXACT_MATCH_X, formatarg("system", ss->name)));
+					GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(Lang::EXACT_MATCH_X, formatarg("system", ss->name)));
 					GotoSystem(path);
 					return;
 				}
@@ -274,12 +275,12 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 		}
 	
 	if (gotMatch) {
-		Pi::cpan->MsgLog()->Message("", stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
+		GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
 		GotoSystem(bestMatch);
 	}
 
 	else
-		Pi::cpan->MsgLog()->Message("", Lang::NOT_FOUND);
+		GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::NOT_FOUND);
 }
 
 
@@ -663,7 +664,7 @@ void SectorView::OnSwitchTo() {
 
 void SectorView::OnKeyPressed(SDL_keysym *keysym)
 {
-	if (Pi::GetView() != this) {
+	if (GetViewManager()->GetCurrentView() != this) {
 		m_onKeyPressConnection.disconnect();
 		return;
 	}
@@ -710,9 +711,9 @@ void SectorView::OnKeyPressed(SDL_keysym *keysym)
 	if (keysym->sym == SDLK_RETURN) {
 		m_selectionFollowsMovement = !m_selectionFollowsMovement;
 		if (m_selectionFollowsMovement)
-			Pi::cpan->MsgLog()->Message("", Lang::ENABLED_AUTOMATIC_SYSTEM_SELECTION);
+			GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::ENABLED_AUTOMATIC_SYSTEM_SELECTION);
 		else
-			Pi::cpan->MsgLog()->Message("", Lang::DISABLED_AUTOMATIC_SYSTEM_SELECTION);
+			GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::DISABLED_AUTOMATIC_SYSTEM_SELECTION);
 		return;
 	}
 

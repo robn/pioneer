@@ -164,7 +164,7 @@ GameMenuView::~GameMenuView()
 }
 
 GameMenuView::GameMenuView() :
-	View(GAMEMENU)
+	View(0, GAMEMENU) // XXX VIEWMANAGER
 {
 	m_subview = 0;
 
@@ -615,15 +615,17 @@ void GameMenuView::HideAll()
 void GameMenuView::OpenSaveDialog()
 {
 	if (Pi::game->IsHyperspace()) {
-		Pi::cpan->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
+		// XXX VIEWMANAGER Pi::cpan->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
 		return;
 	}
 
 	GameSaver saver(Pi::game);
 	saver.DialogMainLoop();
 	const std::string filename = saver.GetFilename();
+	/* XXX VIEWMANAGER
 	if (!filename.empty())
 		Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO+filename);
+	*/
 }
 
 void GameMenuView::OpenLoadDialog()
@@ -648,6 +650,7 @@ void GameMenuView::OnSwitchTo() {
 		m_subview = 0;
 	}
 	// don't want to switch to this view if game not running
+	/* XXX VIEWMANAGER
 	if (!Pi::game) {
 		Pi::SetView(Pi::worldView);
 	} else {
@@ -661,4 +664,5 @@ void GameMenuView::OnSwitchTo() {
 		m_toggleJoystick->SetPressed(Pi::IsJoystickEnabled());
 		m_toggleMouseYInvert->SetPressed(Pi::IsMouseYInvert());
 	}
+	*/
 }

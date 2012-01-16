@@ -24,6 +24,7 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
@@ -1037,7 +1038,7 @@ void Ship::Render(const vector3d &viewCoords, const matrix4x4d &viewTransform)
 	LmrObjParams &params = GetLmrObjParams();
 	
 	if ( (!this->IsType(Object::PLAYER)) ||
-	     (Pi::worldView->GetCamType() == WorldView::CAM_EXTERNAL) ) {
+	     (Pi::game->GetViewManager()->GetWorldView()->GetCamType() == WorldView::CAM_EXTERNAL) ) {
 		m_shipFlavour.ApplyTo(&params);
 		SetLmrTimeParams();
 		params.angthrust[0] = float(-m_angThrusters.x);

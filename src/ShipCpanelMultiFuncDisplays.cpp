@@ -12,6 +12,7 @@
 #include "StringF.h"
 #include "KeyBindings.h"
 #include "Game.h"
+#include "ViewManager.h"
 
 #define SCANNER_RANGE_MAX	100000.0f
 #define SCANNER_RANGE_MIN	1000.0f
@@ -514,7 +515,7 @@ void UseEquipWidget::GetSizeRequested(float size[2])
 void UseEquipWidget::FireMissile(int idx)
 {
 	if (!Pi::player->GetCombatTarget()) {
-		Pi::cpan->MsgLog()->Message("", Lang::SELECT_A_TARGET);
+		Pi::game->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", Lang::SELECT_A_TARGET);
 		return;
 	}
 

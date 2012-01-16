@@ -10,9 +10,10 @@
 #include "Galaxy.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "ViewManager.h"
 
-GalacticView::GalacticView() :
-	View(GALACTIC)
+GalacticView::GalacticView(ViewManager *viewManager) :
+	View(viewManager, GALACTIC)
 {
 	const SDL_Surface *s = Galaxy::GetGalaxyBitmap();
 	glEnable(GL_TEXTURE_2D);
@@ -97,7 +98,7 @@ void GalacticView::PutLabels(vector3d offset)
 
 void GalacticView::Draw3D()
 {
-	vector3f pos = Pi::sectorView->GetPosition();
+	vector3f pos = GetViewManager()->GetSectorView()->GetPosition();
 	float offset_x = (pos.x*Sector::SIZE + Galaxy::SOL_OFFSET_X)/Galaxy::GALAXY_RADIUS;
 	float offset_y = (-pos.y*Sector::SIZE + Galaxy::SOL_OFFSET_Y)/Galaxy::GALAXY_RADIUS;
 

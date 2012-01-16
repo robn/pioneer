@@ -8,6 +8,7 @@
 #include "render/Render.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "ViewManager.h"
 
 class InfoViewPage: public Gui::Fixed {
 public:
@@ -139,7 +140,7 @@ public:
 private:
 	void JettisonCargo(Equip::Type t) {
 		if (Pi::player->Jettison(t)) {
-			Pi::cpan->MsgLog()->Message("", stringf(Lang::JETTISONED_1T_OF_X, formatarg("commodity", Equip::types[t].name)));
+			m_infoView->GetViewManager()->GetShipCpanel()->MsgLog()->Message("", stringf(Lang::JETTISONED_1T_OF_X, formatarg("commodity", Equip::types[t].name)));
 			m_infoView->UpdateInfo();
 		}
 	}
@@ -284,8 +285,8 @@ private:
 	Gui::Label *info1, *info2;
 };
 
-InfoView::InfoView() :
-	View(INFO),
+InfoView::InfoView(ViewManager *viewManager) :
+	View(viewManager, INFO),
 	m_spinner(0)
 {
 	SetTransparency(true);

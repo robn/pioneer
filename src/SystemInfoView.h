@@ -12,7 +12,7 @@ class SystemPath;
 
 class SystemInfoView: public View {
 public:
-	SystemInfoView();
+	SystemInfoView(ViewManager *viewManager);
 	virtual void Update();
 	virtual void Draw3D();
 	virtual void OnSwitchTo();

@@ -10,9 +10,10 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "ViewManager.h"
 
-SystemInfoView::SystemInfoView() :
-	View(SYSTEMINFO)
+SystemInfoView::SystemInfoView(ViewManager *viewManager) :
+    View(viewManager, SYSTEMINFO)
 {
 	SetTransparency(true);
 	m_refresh = false;
@@ -392,14 +393,14 @@ void SystemInfoView::Draw3D()
 void SystemInfoView::Update()
 {
 	if (m_refresh) {
-		SystemChanged(Pi::sectorView->GetSelectedSystem());
+		SystemChanged(GetViewManager()->GetSectorView()->GetSelectedSystem());
 		m_refresh = false;
 	}
 }
 
 void SystemInfoView::OnSwitchTo()
 {
-	if (!m_system || !Pi::sectorView->GetSelectedSystem().IsSameSystem(m_system->GetPath()))
+	if (!m_system || !GetViewManager()->GetSectorView()->GetSelectedSystem().IsSameSystem(m_system->GetPath()))
 		m_refresh = true;
 }
 

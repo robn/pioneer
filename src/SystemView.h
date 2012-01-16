@@ -10,7 +10,7 @@ class SBody;
 
 class SystemView: public View {
 public:
-	SystemView();
+	SystemView(ViewManager *viewManager);
 	virtual ~SystemView();
 	virtual void Update();
 	virtual void Draw3D();

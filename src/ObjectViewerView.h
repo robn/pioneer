@@ -11,7 +11,7 @@ class Body;
 
 class ObjectViewerView: public View {
 public:
-	ObjectViewerView();
+	ObjectViewerView(ViewManager *viewManager);
 	virtual void Update();
 	virtual void Draw3D();
 	virtual void OnSwitchTo();
