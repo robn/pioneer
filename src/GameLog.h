@@ -7,7 +7,7 @@
 
 class Game;
 
-class GameLog : public Gui::HBox {
+class GameLog : public Gui::Fixed {
 public:
 
 	enum Priority {
@@ -29,10 +29,14 @@ public:
 
 	void AddMessage(const std::string &text, Priority priority = PRIORITY_NORMAL);
 
+	virtual void GetSizeRequested(float size[2]);
+
 private:
 
 	Game *m_game;
 	unsigned int m_size;
+
+	Gui::Label *m_label;
 
 	std::list<Message> m_messages;
 };
