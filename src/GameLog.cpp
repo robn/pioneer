@@ -4,7 +4,8 @@
 GameLog::GameLog(Game *game, unsigned int size) :
 	Gui::Fixed(),
 	m_game(game),
-	m_size(size)
+	m_size(size),
+	m_index(0)
 {
 	assert(game);
 	assert(m_size > 0);
@@ -16,27 +17,53 @@ GameLog::GameLog(Game *game, unsigned int size) :
 	box->SetSpacing(2);
 	Add(box, 2, 2);
 
-	Gui::LabelButton *buttonLeft = new Gui::LabelButton(new Gui::Label("<"));
-	Gui::LabelButton *buttonRight = new Gui::LabelButton(new Gui::Label(">"));
+	Gui::LabelButton *buttonPrev = new Gui::LabelButton(new Gui::Label("<"));
+	Gui::LabelButton *buttonNext = new Gui::LabelButton(new Gui::Label(">"));
 	m_label = new Gui::Label("");
 
-	box->PackEnd(buttonLeft);
-	box->PackEnd(buttonRight);
+	box->PackEnd(buttonPrev);
+	box->PackEnd(buttonNext);
 	box->PackEnd(m_label);
-}
 
-void GameLog::AddMessage(const std::string &text, Priority priority)
-{
-	if (m_messages.size() == m_size)
-		m_messages.erase(m_messages.begin());
-	m_messages.push_back(Message(m_game->GetTime(), text, priority));
-
-	m_label->SetText(text);
-	ResizeRequest();
+	buttonPrev->onClick.connect(sigc::mem_fun(this, &GameLog::MessagePrev));
+	buttonNext->onClick.connect(sigc::mem_fun(this, &GameLog::MessageNext));
 }
 
 void GameLog::GetSizeRequested(float size[2])
 {
 	size[0] = FLT_MAX;
 	size[1] = 24.0f;	// 16px button + 4px labelbutton padding + 4px our padding
+}
+
+void GameLog::AddMessage(const std::string &text, Priority priority)
+{
+	bool jump = m_index == m_messages.size()-1;
+
+	if (m_messages.size() == m_size)
+		m_messages.erase(m_messages.begin());
+	m_messages.push_back(Message(m_game->GetTime(), text, priority));
+
+	if (jump) {
+		m_index = m_messages.size()-1;
+		m_label->SetText(text);
+	}
+}
+
+void GameLog::MessagePrev()
+{
+	if (m_index == 0)
+		return;
+
+	m_index--;
+
+	m_label->SetText(m_messages[m_index].text);
+}
+
+void GameLog::MessageNext()
+{
+	if (m_index == m_messages.size()-1)
+		return;
+
+	m_index++;
+	m_label->SetText(m_messages[m_index].text);
 }

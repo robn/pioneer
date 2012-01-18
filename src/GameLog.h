@@ -2,7 +2,7 @@
 #define _GAMELOG_H
 
 #include "gui/Gui.h"
-#include <list>
+#include <vector>
 #include <string>
 
 class Game;
@@ -33,12 +33,17 @@ public:
 
 private:
 
+	void MessagePrev();
+	void MessageNext();
+
 	Game *m_game;
 	unsigned int m_size;
 
 	Gui::Label *m_label;
 
-	std::list<Message> m_messages;
+	std::vector<Message> m_messages;
+
+	unsigned int m_index;
 };
 
 #endif

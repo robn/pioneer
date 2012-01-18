@@ -56,7 +56,9 @@ void WorldView::InitObject()
 	SetTransparency(true);
 
 	m_gameLog = new GameLog(Pi::game, 10);
-	m_gameLog->AddMessage("flibble");
+	m_gameLog->AddMessage("foo");
+	m_gameLog->AddMessage("bar");
+	m_gameLog->AddMessage("baz");
 	Add(m_gameLog, 0, 0);
 
 	m_commsOptions = new Fixed(size[0], size[1]/2);
