@@ -14,6 +14,7 @@ class Body;
 class Frame;
 class LabelSet;
 class Ship;
+class GameLog;
 
 class WorldView: public View {
 public:
@@ -103,6 +104,8 @@ private:
 
 	Gui::ImageButton *m_hyperspaceButton;
 	bool m_showHyperspaceButton;
+
+	GameLog *m_gameLog;
 
 	Gui::Fixed *m_commsOptions;
 	Gui::VBox *m_commsNavOptions;
