@@ -128,8 +128,9 @@ noinst_HEADERS = \
 	SystemPath.h \
 	SystemView.h \
 	TerrainBody.h \
+	Texture.h \
 	TextureFont.h \
-	TextureManager.h \
+	TextureCache.h \
 	VectorFont.h \
 	VideoLink.h \
 	View.h \
@@ -255,8 +256,9 @@ pioneer_SOURCES	= \
 	SystemInfoView.cpp \
 	SystemView.cpp \
 	TerrainBody.cpp \
+	Texture.cpp \
 	TextureFont.cpp \
-	TextureManager.cpp \
+	TextureCache.cpp \
 	VectorFont.cpp \
 	WorldView.cpp \
 	main.cpp \
@@ -288,8 +290,9 @@ modelviewer_SOURCES = \
 	ShipType.cpp \
 	MyLuaMathTypes.cpp \
 	StringF.cpp \
+	Texture.cpp \
 	TextureFont.cpp \
-	TextureManager.cpp \
+	TextureCache.cpp \
 	VectorFont.cpp \
 	perlin.cpp \
 	utils.cpp \
