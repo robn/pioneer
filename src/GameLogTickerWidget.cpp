@@ -55,7 +55,8 @@ void GameLogTickerWidget::SwitchMessagePrev()
 
 void GameLogTickerWidget::SwitchMessageNext()
 {
-	if (m_index == m_gameLog->GetMessageCount()-1)
+	unsigned int count = m_gameLog->GetMessageCount();
+	if (count == 0 || m_index == count-1)
 		return;
 
 	m_index++;
