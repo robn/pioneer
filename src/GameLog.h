@@ -1,13 +1,11 @@
 #ifndef _GAMELOG_H
 #define _GAMELOG_H
 
-#include "gui/Gui.h"
-#include <vector>
-#include <string>
+#include "libs.h"
 
 class Game;
 
-class GameLog : public Gui::Fixed {
+class GameLog {
 public:
 
 	enum Priority {
@@ -29,17 +27,19 @@ public:
 
 	void AddMessage(const std::string &text, Priority priority = PRIORITY_NORMAL);
 
-	virtual void GetSizeRequested(float size[2]);
+	typedef std::vector<Message>::iterator MessageIterator;
+	MessageIterator MessagesBegin() { return m_messages.begin(); }
+	MessageIterator MessagesEnd() { return m_messages.end(); }
+
+	const Message &GetMessage(unsigned int n) const { assert(n >= 0 && n < m_messages.size()); return m_messages[n]; }
+	unsigned int GetMessageCount() const { return m_messages.size(); }
+
+	sigc::signal<void> onNewMessage;
 
 private:
 
-	void MessagePrev();
-	void MessageNext();
-
 	Game *m_game;
 	unsigned int m_size;
-
-	Gui::Label *m_label;
 
 	std::vector<Message> m_messages;
 

@@ -38,6 +38,7 @@ noinst_HEADERS = \
 	Game.h \
 	GameLoaderSaver.h \
 	GameLog.h \
+	GameLogTickerWidget.h \
 	GameMenuView.h \
 	GeoSphere.h \
 	HyperspaceCloud.h \
@@ -171,6 +172,7 @@ pioneer_SOURCES	= \
 	Game.cpp \
 	GameLoaderSaver.cpp \
 	GameLog.cpp \
+	GameLogTickerWidget.cpp \
 	GameMenuView.cpp \
 	GeoSphere.cpp \
 	HyperspaceCloud.cpp \

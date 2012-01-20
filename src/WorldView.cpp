@@ -18,6 +18,7 @@
 #include "StringF.h"
 #include "Game.h"
 #include "GameLog.h"
+#include "GameLogTickerWidget.h"
 
 const double WorldView::PICK_OBJECT_RECT_SIZE = 20.0;
 static const Color s_hudTextColor(0.0f,1.0f,0.0f,0.8f);
@@ -59,7 +60,7 @@ void WorldView::InitObject()
 	m_gameLog->AddMessage("foo");
 	m_gameLog->AddMessage("bar");
 	m_gameLog->AddMessage("baz");
-	Add(m_gameLog, 0, 0);
+	Add(new GameLogTickerWidget(m_gameLog), 0, 0);
 
 	m_commsOptions = new Fixed(size[0], size[1]/2);
 	m_commsOptions->SetTransparency(true);
