@@ -55,12 +55,6 @@ void WorldView::InitObject()
 	m_labelsOn = true;
 	SetTransparency(true);
 
-	GameLog *gameLog = Pi::game->GetGameLog();
-	gameLog->AddMessage("foo");
-	gameLog->AddMessage("bar");
-	gameLog->AddMessage("baz");
-	Add(new GameLogTickerWidget(gameLog), 0, 0);
-
 	m_commsOptions = new Fixed(size[0], size[1]/2);
 	m_commsOptions->SetTransparency(true);
 	Add(m_commsOptions, 10, 200);

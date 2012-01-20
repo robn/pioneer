@@ -65,6 +65,7 @@
 #include "TextureCache.h"
 #include "Game.h"
 #include "GameLoaderSaver.h"
+#include "GameLogTickerWidget.h"
 
 float Pi::gameTickAlpha;
 int Pi::scrWidth;
@@ -122,6 +123,7 @@ SystemView *Pi::systemView;
 SystemInfoView *Pi::systemInfoView;
 ShipCpanel *Pi::cpan;
 LuaConsole *Pi::luaConsole;
+GameLogTickerWidget *Pi::gameLogTicker;
 Game *Pi::game;
 MTRand Pi::rng;
 float Pi::frameTime;
@@ -620,6 +622,21 @@ void Pi::ToggleLuaConsole()
 	}
 }
 
+void Pi::ToggleGameLogTicker()
+{
+	if (gameLogTicker->IsVisible()) {
+		gameLogTicker->Hide();
+		Gui::Screen::RemoveBaseWidget(gameLogTicker);
+	}
+	else {
+		// gameLogTicker is added and removed from the base widget set
+		// (rather than just using Show()/Hide())
+		// so that it's forced in front of any other base widgets when it opens
+		Gui::Screen::AddBaseWidget(gameLogTicker, 0, 0);
+		gameLogTicker->ShowAll();
+	}
+}
+
 void Pi::InitOpenGL()
 {
 	glShadeModel(GL_SMOOTH);
@@ -1003,6 +1020,10 @@ void Pi::InitGame()
 	if (!config.Int("DisableSound")) AmbientSounds::Init();
 
 	LuaInitGame();
+
+	gameLogTicker = new GameLogTickerWidget(game->GetGameLog());
+	ToggleGameLogTicker();
+
 }
 
 static void OnPlayerDockOrUndock()
@@ -1239,6 +1260,10 @@ void Pi::EndGame()
 
 	if (!config.Int("DisableSound")) AmbientSounds::Uninit();
 	Sound::DestroyAllEvents();
+
+	if (gameLogTicker->IsVisible())
+		ToggleGameLogTicker();
+	delete gameLogTicker;
 
 	assert(game);
 	delete game;

@@ -33,6 +33,7 @@ class LuaConsole;
 class LuaNameGen;
 namespace Sound { class MusicPlayer; }
 class TextureCache;
+class GameLogTickerWidget;
 
 #if WITH_OBJECTVIEWER
 class ObjectViewerView;
@@ -67,6 +68,7 @@ public:
 	static void HandleMenuKey(int n);
 	static void OnChangeDetailLevel();
 	static void ToggleLuaConsole();
+	static void ToggleGameLogTicker();
 	static void Quit() __attribute((noreturn));
 	static float GetFrameTime() { return frameTime; }
 	static float GetGameTickAlpha() { return gameTickAlpha; }
@@ -151,6 +153,7 @@ public:
 	static SpaceStationView *spaceStationView;
 	static InfoView *infoView;
 	static LuaConsole *luaConsole;
+	static GameLogTickerWidget *gameLogTicker;
 	static ShipCpanel *cpan;
 	static GLUquadric *gluQuadric;
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
