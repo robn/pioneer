@@ -51,6 +51,7 @@ void GameLogTickerWidget::SwitchMessagePrev()
 
 	m_index--;
 	m_label->SetText(m_gameLog->GetMessage(m_index).text);
+	ResizeRequest();
 }
 
 void GameLogTickerWidget::SwitchMessageNext()
@@ -61,6 +62,7 @@ void GameLogTickerWidget::SwitchMessageNext()
 
 	m_index++;
 	m_label->SetText(m_gameLog->GetMessage(m_index).text);
+	ResizeRequest();
 }
 
 void GameLogTickerWidget::OnNewMessage()
@@ -74,4 +76,5 @@ void GameLogTickerWidget::OnNewMessage()
 		m_index--;
 
 	m_label->SetText(m_gameLog->GetMessage(m_index).text);
+	ResizeRequest();
 }
