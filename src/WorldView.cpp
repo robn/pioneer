@@ -17,7 +17,6 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
-#include "GameLog.h"
 #include "GameLogTickerWidget.h"
 
 const double WorldView::PICK_OBJECT_RECT_SIZE = 20.0;
@@ -56,11 +55,11 @@ void WorldView::InitObject()
 	m_labelsOn = true;
 	SetTransparency(true);
 
-	m_gameLog = new GameLog(Pi::game, 10);
-	m_gameLog->AddMessage("foo");
-	m_gameLog->AddMessage("bar");
-	m_gameLog->AddMessage("baz");
-	Add(new GameLogTickerWidget(m_gameLog), 0, 0);
+	GameLog *gameLog = Pi::game->GetGameLog();
+	gameLog->AddMessage("foo");
+	gameLog->AddMessage("bar");
+	gameLog->AddMessage("baz");
+	Add(new GameLogTickerWidget(gameLog), 0, 0);
 
 	m_commsOptions = new Fixed(size[0], size[1]/2);
 	m_commsOptions->SetTransparency(true);

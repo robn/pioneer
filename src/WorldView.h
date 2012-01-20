@@ -105,8 +105,6 @@ private:
 	Gui::ImageButton *m_hyperspaceButton;
 	bool m_showHyperspaceButton;
 
-	GameLog *m_gameLog;
-
 	Gui::Fixed *m_commsOptions;
 	Gui::VBox *m_commsNavOptions;
 	Gui::HBox *m_commsNavOptionsContainer;

@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameLog.h"
 #include "Space.h"
 #include "Player.h"
 #include "Body.h"
@@ -31,6 +32,8 @@ Game::Game(const SystemPath &path) :
 {
 	CreatePlayer();
 
+	m_gameLog.Reset(new GameLog(this, 10));
+
 	m_space.Reset(new Space(this, path));
 	SpaceStation *station = static_cast<SpaceStation*>(m_space->FindBodyForPath(&path));
 	assert(station);
@@ -53,6 +56,8 @@ Game::Game(const SystemPath &path, const vector3d &pos) :
 	m_forceTimeAccel(false)
 {
 	CreatePlayer();
+
+	m_gameLog.Reset(new GameLog(this, 10));
 
 	m_space.Reset(new Space(this, path));
 	Body *b = m_space->FindBodyForPath(&path);

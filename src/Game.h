@@ -8,6 +8,7 @@
 
 class Space;
 class Player;
+class GameLog;
 class HyperspaceCloud;
 
 class Game {
@@ -30,8 +31,11 @@ public:
 	bool IsNormalSpace() const { return m_state == STATE_NORMAL; }
 	bool IsHyperspace() const { return m_state == STATE_HYPERSPACE; }
 
+	GameLog *GetGameLog() const { return m_gameLog.Get(); }
+
 	Space *GetSpace() const { return m_space.Get(); }
 	double GetTime() const { return m_time; }
+
 	Player *GetPlayer() const { return m_player.Get(); }
 
 	// physics step
@@ -78,6 +82,8 @@ private:
 
 	void SwitchToHyperspace();
 	void SwitchToNormalSpace();
+
+	ScopedPtr<GameLog> m_gameLog;
 
 	ScopedPtr<Space> m_space;
 	double m_time;
