@@ -27,12 +27,15 @@ public:
 	MsgLogWidget();
 	void GetSizeRequested(float size[2]);
 
+#if 0
 	void ImportantMessage(const std::string &sender, const std::string &msg) {
 		m_msgQueue.push_back(message_t(sender, msg, MUST_SEE));
 	}
 	void Message(const std::string &sender, const std::string &msg) {
 		m_msgQueue.push_back(message_t(sender, msg, NOT_IMPORTANT));
 	}
+#endif 
+
 	virtual void Update();
 private:
 	enum Type {

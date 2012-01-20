@@ -24,6 +24,7 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "GameLog.h"
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
@@ -282,7 +283,7 @@ bool Ship::OnCollision(Object *b, Uint32 flags, double relVel)
 		m_equipment.Add(item);
 		Pi::game->GetSpace()->KillBody(dynamic_cast<Body*>(b));
 		if (this->IsType(Object::PLAYER))
-			Pi::Message(stringf(Lang::CARGO_SCOOP_ACTIVE_1_TONNE_X_COLLECTED, formatarg("item", Equip::types[item].name)));
+			Pi::game->GetGameLog()->AddMessage(stringf(Lang::CARGO_SCOOP_ACTIVE_1_TONNE_X_COLLECTED, formatarg("item", Equip::types[item].name)));
 		// XXX Sfx::Add(this, Sfx::TYPE_SCOOP);
 		UpdateMass();
 		return true;
@@ -834,7 +835,7 @@ void Ship::StaticUpdate(const float timeStep)
 					if (Pi::rng.Double() < rate) {
 						m_equipment.Add(Equip::HYDROGEN);
 						if (this->IsType(Object::PLAYER)) {
-							Pi::Message(stringf(Lang::FUEL_SCOOP_ACTIVE_N_TONNES_H_COLLECTED,
+							Pi::game->GetGameLog()->AddMessage(stringf(Lang::FUEL_SCOOP_ACTIVE_N_TONNES_H_COLLECTED,
 									formatarg("quantity", m_equipment.Count(Equip::SLOT_CARGO, Equip::HYDROGEN))));
 						}
 						UpdateMass();
@@ -856,7 +857,7 @@ void Ship::StaticUpdate(const float timeStep)
 			if (m_equipment.Remove(t, 1)) {
 				m_equipment.Add(Equip::FERTILIZER);
 				if (this->IsType(Object::PLAYER)) {
-					Pi::Message(Lang::CARGO_BAY_LIFE_SUPPORT_LOST);
+					Pi::game->GetGameLog()->AddMessage(Lang::CARGO_BAY_LIFE_SUPPORT_LOST);
 				}
 			}
 		}

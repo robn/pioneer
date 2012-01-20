@@ -12,6 +12,7 @@
 #include "StringF.h"
 #include "ShipCpanel.h"
 #include "Game.h"
+#include "GameLog.h"
 
 #define INNER_RADIUS (Sector::SIZE*1.5f)
 #define OUTER_RADIUS (Sector::SIZE*3.0f)
@@ -237,7 +238,7 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 					// exact match, take it and go
 					SystemPath path = (*i).first;
 					path.systemIndex = systemIndex;
-					Pi::cpan->MsgLog()->Message("", stringf(Lang::EXACT_MATCH_X, formatarg("system", ss->name)));
+					Pi::game->GetGameLog()->AddMessage(stringf(Lang::EXACT_MATCH_X, formatarg("system", ss->name)));
 					GotoSystem(path);
 					return;
 				}
@@ -272,12 +273,12 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 		}
 	
 	if (gotMatch) {
-		Pi::cpan->MsgLog()->Message("", stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
+		Pi::game->GetGameLog()->AddMessage(stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
 		GotoSystem(bestMatch);
 	}
 
 	else
-		Pi::cpan->MsgLog()->Message("", Lang::NOT_FOUND);
+		Pi::game->GetGameLog()->AddMessage(Lang::NOT_FOUND);
 }
 
 
@@ -708,9 +709,9 @@ void SectorView::OnKeyPressed(SDL_keysym *keysym)
 	if (keysym->sym == SDLK_RETURN) {
 		m_selectionFollowsMovement = !m_selectionFollowsMovement;
 		if (m_selectionFollowsMovement)
-			Pi::cpan->MsgLog()->Message("", Lang::ENABLED_AUTOMATIC_SYSTEM_SELECTION);
+			Pi::game->GetGameLog()->AddMessage(Lang::ENABLED_AUTOMATIC_SYSTEM_SELECTION);
 		else
-			Pi::cpan->MsgLog()->Message("", Lang::DISABLED_AUTOMATIC_SYSTEM_SELECTION);
+			Pi::game->GetGameLog()->AddMessage(Lang::DISABLED_AUTOMATIC_SYSTEM_SELECTION);
 		return;
 	}
 

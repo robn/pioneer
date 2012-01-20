@@ -10,6 +10,7 @@
 #include "StringF.h"
 #include "GameLoaderSaver.h"
 #include "Game.h"
+#include "GameLog.h"
 
 class KeyGetter: public Gui::Fixed {
 public:
@@ -614,7 +615,7 @@ void GameMenuView::HideAll()
 void GameMenuView::OpenSaveDialog()
 {
 	if (Pi::game->IsHyperspace()) {
-		Pi::cpan->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
+		Pi::game->GetGameLog()->AddMessage(Lang::CANT_SAVE_IN_HYPERSPACE);
 		return;
 	}
 
@@ -622,7 +623,7 @@ void GameMenuView::OpenSaveDialog()
 	saver.DialogMainLoop();
 	const std::string filename = saver.GetFilename();
 	if (!filename.empty())
-		Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO+filename);
+		Pi::game->GetGameLog()->AddMessage(Lang::GAME_SAVED_TO+filename);
 }
 
 void GameMenuView::OpenLoadDialog()

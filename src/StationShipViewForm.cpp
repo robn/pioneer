@@ -6,6 +6,7 @@
 #include "FormController.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "GameLog.h"
 
 StationShipViewForm::StationShipViewForm(FormController *controller, int marketIndex) :
 	BlankForm(controller),
@@ -121,7 +122,7 @@ void StationShipViewForm::BuyShip()
 {
 	Sint64 cost = m_flavour.price - Pi::player->GetFlavour()->price;
 	if (Pi::player->GetMoney() < cost) {
-		Pi::cpan->MsgLog()->Message("", Lang::YOU_NOT_ENOUGH_MONEY);
+		Pi::game->GetGameLog()->AddMessage(Lang::YOU_NOT_ENOUGH_MONEY);
 		return;
 	}
 
@@ -134,7 +135,7 @@ void StationShipViewForm::BuyShip()
 
 	m_station->ReplaceShipOnSale(m_marketIndex, &old);
 
-    Pi::cpan->MsgLog()->Message("", Lang::THANKS_AND_REMEMBER_TO_BUY_FUEL);
+    Pi::game->GetGameLog()->AddMessage(Lang::THANKS_AND_REMEMBER_TO_BUY_FUEL);
 
     m_formController->CloseForm();
 }

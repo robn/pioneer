@@ -8,6 +8,7 @@
 #include "render/Render.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "GameLog.h"
 
 class InfoViewPage: public Gui::Fixed {
 public:
@@ -139,7 +140,7 @@ public:
 private:
 	void JettisonCargo(Equip::Type t) {
 		if (Pi::player->Jettison(t)) {
-			Pi::cpan->MsgLog()->Message("", stringf(Lang::JETTISONED_1T_OF_X, formatarg("commodity", Equip::types[t].name)));
+			Pi::game->GetGameLog()->AddMessage(stringf(Lang::JETTISONED_1T_OF_X, formatarg("commodity", Equip::types[t].name)));
 			m_infoView->UpdateInfo();
 		}
 	}

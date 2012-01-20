@@ -4,6 +4,7 @@
 #include "ShipCpanel.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "GameLog.h"
 
 StationShipRepairForm::StationShipRepairForm(FormController *controller) : FaceForm(controller)
 {
@@ -66,7 +67,7 @@ void StationShipRepairForm::RepairHull(float percent)
 	if (percent > hullDamage) percent = hullDamage;
 	int cost = GetRepairCost(percent);
 	if (Pi::player->GetMoney() < cost) {
-		Pi::cpan->MsgLog()->Message("", Lang::YOU_NOT_ENOUGH_MONEY);
+		Pi::game->GetGameLog()->AddMessage(Lang::YOU_NOT_ENOUGH_MONEY);
 	} else {
 		Pi::player->SetMoney(Pi::player->GetMoney() - cost);
 		Pi::player->SetPercentHull(Pi::player->GetPercentHull() + percent);

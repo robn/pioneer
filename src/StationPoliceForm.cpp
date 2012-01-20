@@ -7,6 +7,7 @@
 #include "SpaceStationView.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "GameLog.h"
 
 void StationPoliceForm::OnOptionClicked(int option)
 {
@@ -40,7 +41,7 @@ void StationPoliceForm::OnOptionClicked(int option)
 			Polit::GetCrime(&crime, &fine);
 
 			if (fine > Pi::player->GetMoney()) {
-				Pi::cpan->MsgLog()->Message("", Lang::YOU_NOT_ENOUGH_MONEY);
+				Pi::game->GetGameLog()->AddMessage(Lang::YOU_NOT_ENOUGH_MONEY);
 				return;
 			}
 

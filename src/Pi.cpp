@@ -818,13 +818,13 @@ void Pi::HandleEvents()
 						{
 							if(Pi::game) {
 								if (Pi::game->IsHyperspace())
-									Pi::cpan->MsgLog()->Message("", Lang::CANT_SAVE_IN_HYPERSPACE);
+									Pi::game->GetGameLog()->AddMessage(Lang::CANT_SAVE_IN_HYPERSPACE);
 
 								else {
 									std::string name = join_path(GetPiSavefileDir().c_str(), "_quicksave", 0);
 									GameSaver saver(Pi::game);
 									if (saver.SaveToFile(name))
-										Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO+name);
+										Pi::game->GetGameLog()->AddMessage(Lang::GAME_SAVED_TO+name);
 								}
 							}
 							break;
@@ -1444,15 +1444,6 @@ float Pi::CalcHyperspaceRange(int hyperclass, int total_mass_in_tonnes)
 	// to scale the entire jump range calculation after things like ship mass,
 	// cargo mass, hyperdrive class, fuel use and fun were factored in."
 	return 200.0f * hyperclass * hyperclass / (total_mass_in_tonnes * 0.6f);
-}
-
-void Pi::Message(const std::string &message, const std::string &from, enum MsgLevel level)
-{
-	if (level == MSG_IMPORTANT) {
-		Pi::cpan->MsgLog()->ImportantMessage(from, message);
-	} else {
-		Pi::cpan->MsgLog()->Message(from, message);
-	}
 }
 
 void Pi::InitJoysticks() {

@@ -14,6 +14,7 @@
 #include "GameMenuView.h"
 #include "Lang.h"
 #include "Game.h"
+#include "GameLog.h"
 
 ShipCpanel::ShipCpanel(): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
 {
@@ -227,7 +228,7 @@ void ShipCpanel::OnMultiFuncUngrabFocus(multifuncfunc_t f)
 
 void ShipCpanel::OnDockingClearanceExpired(const SpaceStation *s)
 {
-	MsgLog()->ImportantMessage(s->GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED);
+	Pi::game->GetGameLog()->AddMessageFrom(s->GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED, GameLog::PRIORITY_IMPORTANT);
 }
 
 void ShipCpanel::Update()

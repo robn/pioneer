@@ -26,6 +26,7 @@ public:
 	GameLog(Game *game, unsigned int size);
 
 	void AddMessage(const std::string &text, Priority priority = PRIORITY_NORMAL);
+	void AddMessageFrom(const std::string &from, const std::string &text, Priority priorty = PRIORITY_NORMAL);
 
 	typedef std::vector<Message>::iterator MessageIterator;
 	MessageIterator MessagesBegin() { return m_messages.begin(); }

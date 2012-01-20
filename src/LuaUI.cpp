@@ -3,6 +3,8 @@
 #include "LuaUtils.h"
 #include "Pi.h"
 #include "ShipCpanel.h"
+#include "Game.h"
+#include "GameLog.h"
 
 /*
  * Interface: UI
@@ -42,8 +44,12 @@ static int l_ui_message(lua_State *l)
 	std::string from;
 	if (lua_gettop(l) >= 2)
 		from = luaL_checkstring(l, 2);
+	
+	if (from.length())
+		Pi::game->GetGameLog()->AddMessageFrom(from, msg);
+	else
+		Pi::game->GetGameLog()->AddMessage(msg);
 
-	Pi::cpan->MsgLog()->Message(from, msg);
 	return 0;
 }
 
@@ -83,7 +89,11 @@ static int l_ui_important_message(lua_State *l)
 	if (lua_gettop(l) >= 2)
 		from = luaL_checkstring(l, 2);
 
-	Pi::cpan->MsgLog()->ImportantMessage(from, msg);
+	if (from.length())
+		Pi::game->GetGameLog()->AddMessageFrom(from, msg, GameLog::PRIORITY_IMPORTANT);
+	else
+		Pi::game->GetGameLog()->AddMessage(msg, GameLog::PRIORITY_IMPORTANT);
+
 	return 0;
 }
 

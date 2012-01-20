@@ -16,6 +16,7 @@
 #include "StringF.h"
 #include <algorithm>
 #include "Game.h"
+#include "GameLog.h"
 
 #define ARG_STATION_BAY1_STAGE 6
 #define ARG_STATION_BAY1_POS   10
@@ -672,7 +673,7 @@ bool SpaceStation::CanBuy(Equip::Type t, bool verbose) const {
 bool SpaceStation::CanSell(Equip::Type t, bool verbose) const {
 	bool result = (m_equipmentStock[int(t)] > 0);
 	if (verbose && !result) {
-		Pi::Message(Lang::ITEM_IS_OUT_OF_STOCK);
+		Pi::game->GetGameLog()->AddMessage(Lang::ITEM_IS_OUT_OF_STOCK);
 	}
 	return result;
 }

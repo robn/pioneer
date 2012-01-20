@@ -11,6 +11,7 @@
 #include "Lang.h"
 #include "SectorView.h"
 #include "Game.h"
+#include "GameLog.h"
 
 Player::Player(ShipType::Type shipType): Ship(shipType)
 {
@@ -106,7 +107,7 @@ void Player::SetDockedWith(SpaceStation *s, int port)
 	Ship::SetDockedWith(s, port);
 	if (s) {
 		if (Pi::CombatRating(m_killCount) > Pi::CombatRating(m_knownKillCount)) {
-			Pi::cpan->MsgLog()->ImportantMessage(Lang::PIONEERING_PILOTS_GUILD, Lang::RIGHT_ON_COMMANDER);
+			Pi::game->GetGameLog()->AddMessageFrom(Lang::PIONEERING_PILOTS_GUILD, Lang::RIGHT_ON_COMMANDER, GameLog::PRIORITY_IMPORTANT);
 		}
 		m_knownKillCount = m_killCount;
 
@@ -330,19 +331,19 @@ void Player::SetAlertState(Ship::AlertState as)
 	switch (as) {
 		case ALERT_NONE:
 			if (prev != ALERT_NONE)
-				Pi::cpan->MsgLog()->Message("", Lang::ALERT_CANCELLED);
+				Pi::game->GetGameLog()->AddMessage(Lang::ALERT_CANCELLED);
 			break;
 
 		case ALERT_SHIP_NEARBY:
 			if (prev == ALERT_NONE)
-				Pi::cpan->MsgLog()->ImportantMessage("", Lang::SHIP_DETECTED_NEARBY);
+				Pi::game->GetGameLog()->AddMessage(Lang::SHIP_DETECTED_NEARBY, GameLog::PRIORITY_IMPORTANT);
 			else
-				Pi::cpan->MsgLog()->ImportantMessage("", Lang::DOWNGRADING_ALERT_STATUS);
+				Pi::game->GetGameLog()->AddMessage(Lang::DOWNGRADING_ALERT_STATUS, GameLog::PRIORITY_IMPORTANT);
 			Sound::PlaySfx("OK");
 			break;
 
 		case ALERT_SHIP_FIRING:
-			Pi::cpan->MsgLog()->ImportantMessage("", Lang::LASER_FIRE_DETECTED);
+			Pi::game->GetGameLog()->AddMessage(Lang::LASER_FIRE_DETECTED, GameLog::PRIORITY_IMPORTANT);
 			Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
 			break;
 	}
@@ -421,10 +422,10 @@ bool Player::CanBuy(Equip::Type t, bool verbose) const
 	bool freecapacity = (m_stats.free_capacity >= Equip::types[int(t)].mass);
 	if (verbose) {
 		if (!freespace) {
-			Pi::Message(Lang::NO_FREE_SPACE_FOR_ITEM);
+			Pi::game->GetGameLog()->AddMessage(Lang::NO_FREE_SPACE_FOR_ITEM);
 		}
 		else if (!freecapacity) {
-			Pi::Message(Lang::SHIP_IS_FULLY_LADEN);
+			Pi::game->GetGameLog()->AddMessage(Lang::SHIP_IS_FULLY_LADEN);
 		}
 	}
 	return (freespace && freecapacity);
@@ -436,7 +437,7 @@ bool Player::CanSell(Equip::Type t, bool verbose) const
 	bool cansell = (m_equipment.Count(slot, t) > 0);
 	if (verbose) {
 		if (!cansell) {
-			Pi::Message(stringf(Lang::YOU_DO_NOT_HAVE_ANY_X, formatarg("item", Equip::types[int(t)].name)));
+			Pi::game->GetGameLog()->AddMessage(stringf(Lang::YOU_DO_NOT_HAVE_ANY_X, formatarg("item", Equip::types[int(t)].name)));
 		}
 	}
 	return cansell;

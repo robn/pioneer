@@ -10,6 +10,7 @@ GameLog::GameLog(Game *game, unsigned int size) :
 	assert(m_size > 0);
 
 }
+
 void GameLog::AddMessage(const std::string &text, Priority priority)
 {
 	if (m_messages.size() == m_size)
@@ -18,4 +19,9 @@ void GameLog::AddMessage(const std::string &text, Priority priority)
 	m_messages.push_back(Message(m_game->GetTime(), text, priority));
 
 	onNewMessage.emit();
+}
+
+void GameLog::AddMessageFrom(const std::string &from, const std::string &text, Priority priority)
+{
+	AddMessage("Message from " + from + ": " + text, priority);
 }

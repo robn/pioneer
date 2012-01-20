@@ -13,6 +13,8 @@
 #include "StationPoliceForm.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "Game.h"
+#include "GameLog.h"
 
 void LuaChatForm::OnOptionClicked(int option)
 {
@@ -197,7 +199,7 @@ void LuaChatForm::OnClickBuy(int t) {
 
 	if (allow_buy) {
 		if (SellTo(Pi::player, static_cast<Equip::Type>(t), true)) {
-			Pi::Message(stringf(Lang::BOUGHT_1T_OF, formatarg("commodity", Equip::types[t].name)));
+			Pi::game->GetGameLog()->AddMessage(stringf(Lang::BOUGHT_1T_OF, formatarg("commodity", Equip::types[t].name)));
 		}
 		m_commodityTradeWidget->UpdateStock(t);
 	}
@@ -221,7 +223,7 @@ void LuaChatForm::OnClickSell(int t) {
 
 	if (allow_sell) {
 		if (BuyFrom(Pi::player, static_cast<Equip::Type>(t), true)) {
-			Pi::Message(stringf(Lang::SOLD_1T_OF, formatarg("commodity", Equip::types[t].name)));
+			Pi::game->GetGameLog()->AddMessage(stringf(Lang::SOLD_1T_OF, formatarg("commodity", Equip::types[t].name)));
 		}
 		m_commodityTradeWidget->UpdateStock(t);
 	}
