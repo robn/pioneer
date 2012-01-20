@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-SUBDIRS = collider gui graphics terrain
+SUBDIRS = collider gui graphics terrain galaxy
 
 include $(top_srcdir)/Makefile.common
 
@@ -21,7 +21,6 @@ noinst_HEADERS = \
 	CityOnPlanet.h \
 	Color.h \
 	CommodityTradeWidget.h \
-	CustomSystem.h \
 	DeadVideoLink.h \
 	DeleteEmitter.h \
 	DynamicBody.h \
@@ -35,7 +34,6 @@ noinst_HEADERS = \
 	FormController.h \
 	Frame.h \
 	GalacticView.h \
-	Galaxy.h \
 	Game.h \
 	GameLoaderSaver.h \
 	GameMenuView.h \
@@ -96,7 +94,6 @@ noinst_HEADERS = \
 	Quaternion.h \
 	RefCounted.h \
 	RefList.h \
-	Sector.h \
 	SectorView.h \
 	Serializer.h \
 	StationAdvertForm.h \
@@ -124,9 +121,7 @@ noinst_HEADERS = \
 	SpaceStation.h \
 	SpaceStationView.h \
 	Star.h \
-	StarSystem.h \
 	SystemInfoView.h \
-	SystemPath.h \
 	SystemView.h \
 	TerrainBody.h \
 	Texture.h \
@@ -159,7 +154,6 @@ pioneer_SOURCES	= \
 	ChatForm.cpp \
 	CityOnPlanet.cpp \
 	CommodityTradeWidget.cpp \
-	CustomSystem.cpp \
 	DeadVideoLink.cpp \
 	DynamicBody.cpp \
 	EquipType.cpp \
@@ -170,7 +164,6 @@ pioneer_SOURCES	= \
 	FormController.cpp \
 	Frame.cpp \
 	GalacticView.cpp \
-	Galaxy.cpp \
 	Game.cpp \
 	GameLoaderSaver.cpp \
 	GameMenuView.cpp \
@@ -226,7 +219,6 @@ pioneer_SOURCES	= \
 	Player.cpp \
 	Polit.cpp \
 	Projectile.cpp \
-	Sector.cpp \
 	SectorView.cpp \
 	Serializer.cpp \
 	StationAdvertForm.cpp \
@@ -255,7 +247,6 @@ pioneer_SOURCES	= \
 	SpaceStation.cpp \
 	SpaceStationView.cpp \
 	Star.cpp \
-	StarSystem.cpp \
 	SystemInfoView.cpp \
 	SystemView.cpp \
 	TerrainBody.cpp \
@@ -271,7 +262,7 @@ pioneer_SOURCES	= \
 	utils.cpp \
 	enum_table.cpp
 
-pioneer_LDADD = ../contrib/oolua/liboolua.a collider/libcollider.a gui/libgui.a graphics/libgraphics.a terrain/libterrain.a \
+pioneer_LDADD = ../contrib/oolua/liboolua.a collider/libcollider.a gui/libgui.a graphics/libgraphics.a terrain/libterrain.a galaxy/libgalaxy.a \
 		$(MINGW_LIBS) \
 		$(FREETYPE_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) \
 		$(SDL_LIBS) $(SIGC_LIBS) $(LUA_LIBS) $(VORBIS_LIBS) \
