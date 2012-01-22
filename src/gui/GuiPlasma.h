@@ -16,6 +16,7 @@ public:
 
 private:
 	unsigned int m_width, m_height;
+	double m_radians;
 	ScopedPtr<UITexture> m_texture;
 };
 
