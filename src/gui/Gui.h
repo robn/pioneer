@@ -69,5 +69,6 @@ namespace Gui {
 #include "GuiScreen.h"
 #include "GuiStack.h"
 #include "GuiGradient.h"
+#include "GuiPlasma.h"
 
 #endif /* _GUI_H */

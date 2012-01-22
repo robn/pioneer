@@ -24,6 +24,7 @@ noinst_HEADERS = \
 	GuiLabelSet.h \
 	GuiMeterBar.h \
 	GuiMultiStateImageButton.h \
+	GuiPlasma.h \
 	GuiRadioButton.h \
 	GuiRadioGroup.h \
 	GuiRepeaterButton.h \
@@ -52,6 +53,7 @@ libgui_a_SOURCES = \
 	GuiLabelSet.cpp \
 	GuiMeterBar.cpp \
 	GuiMultiStateImageButton.cpp \
+	GuiPlasma.cpp \
 	GuiRadioButton.cpp \
 	GuiRadioGroup.cpp \
 	GuiRepeaterButton.cpp \
