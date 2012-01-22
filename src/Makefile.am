@@ -133,6 +133,7 @@ noinst_HEADERS = \
 	View.h \
 	WorldView.h \
 	SmartPtr.h \
+	SDLWrappers.h \
 	buildopts.h \
 	fixed.h \
 	gameconsts.h \
