@@ -47,7 +47,7 @@ protected:
 class AICmdJourney : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
-	AICmdJourney(Ship *ship, SBodyPath &dest) : AICommand(ship, CMD_JOURNEY) {
+	AICmdJourney(Ship *ship, SystemBodyPath &dest) : AICommand(ship, CMD_JOURNEY) {
 		m_dest = dest;
 	}
 
@@ -56,11 +56,11 @@ public:
 		m_dest.Serialize(wr);
 	}
 	AICmdJourney(Serializer::Reader &rd) : AICommand(rd, CMD_JOURNEY) {
-		SBodyPath::Unserialize(rd, &m_dest);
+		SystemBodyPath::Unserialize(rd, &m_dest);
 	}
 
 private:
-	SBodyPath m_dest;
+	SystemBodyPath m_dest;
 };
 */
 

@@ -144,7 +144,7 @@ bool AICmdJourney::TimeStepUpdate()
 	else {
 		// we are in the desired system. fly to the target and dock
 		// then specific instructions to get us there
-		Body *b = Space::FindBodyForSBodyPath(&m_dest);
+		Body *b = Space::FindBodyForSystemBodyPath(&m_dest);
 		if (b->IsType(Object::SPACESTATION))
 			m_child = new AICmdDock(m_ship, static_cast<SpaceStation*>(b));
 		else m_child = new AICmdFlyTo(m_ship, b);

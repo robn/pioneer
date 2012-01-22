@@ -23,7 +23,7 @@ void CustomSystem::Init()
 	LuaConstants::Register(L);
 
 	OOLUA::register_class<CustomSystem>(L);
-	OOLUA::register_class<CustomSBody>(L);
+	OOLUA::register_class<CustomSystemBody>(L);
 
 	lua_register(L, "load_lua", pi_load_lua);
 
@@ -94,17 +94,17 @@ CustomSystem::CustomSystem(std::string s, OOLUA::Lua_table t)
 	std::string stype;
 	bool done = false;
 	for (int i=0 ; i<4; i++) {
-		int type = SBody::TYPE_GRAVPOINT;
+		int type = SystemBody::TYPE_GRAVPOINT;
 		if (t.safe_at(i+1, stype)) {
 			type = LuaConstants::GetConstant(csLua, "BodyType", stype.c_str());
-			if ( type < SBody::TYPE_STAR_MIN || type > SBody::TYPE_STAR_MAX ) {
+			if ( type < SystemBody::TYPE_STAR_MIN || type > SystemBody::TYPE_STAR_MAX ) {
 				printf("system star %d does not have a valid star type\n", i+1);
 				assert(0);
 			}
 		}
-		primaryType[i] = static_cast<SBody::BodyType>(type);
+		primaryType[i] = static_cast<SystemBody::BodyType>(type);
 
-		if (type == SBody::TYPE_GRAVPOINT) done = true;
+		if (type == SystemBody::TYPE_GRAVPOINT) done = true;
 		if (!done) numStars++;
 	}
 
@@ -112,19 +112,19 @@ CustomSystem::CustomSystem(std::string s, OOLUA::Lua_table t)
 	govType = Polit::GOV_NONE;
 }
 
-static void _add_children_to_sbody(lua_State* L, CustomSBody* sbody, OOLUA::Lua_table children)
+static void _add_children_to_sbody(lua_State* L, CustomSystemBody* sbody, OOLUA::Lua_table children)
 {
 	int i=1;
 	while (1) {
-		CustomSBody *kid;
+		CustomSystemBody *kid;
 
 		if (!children.safe_at(i++, kid))
 			break;
 
 		if (kid == NULL) {
 			luaL_error(L,
-				"invalid element (must be CustomSBody or table of CustomSBody)\n"
-				"invalid element is child of CustomSBody '%s'", sbody->name.c_str());
+				"invalid element (must be CustomSystemBody or table of CustomSystemBody)\n"
+				"invalid element is child of CustomSystemBody '%s'", sbody->name.c_str());
 		}
 
 		while (1) {
@@ -151,9 +151,9 @@ CustomSystem *CustomSystem::l_govtype(std::string st)
 	return this;
 }
 
-void CustomSystem::l_bodies(lua_State* L, CustomSBody& primary_star, OOLUA::Lua_table children)
+void CustomSystem::l_bodies(lua_State* L, CustomSystemBody& primary_star, OOLUA::Lua_table children)
 {
-	if ( primary_star.type < SBody::TYPE_STAR_MIN || primary_star.type > SBody::TYPE_STAR_MAX )
+	if ( primary_star.type < SystemBody::TYPE_STAR_MIN || primary_star.type > SystemBody::TYPE_STAR_MAX )
 		luaL_error(L, "first body does not have a valid star type");
 	if ( primary_star.type != primaryType[0] )
 		luaL_error(L, "first body is not of same type as system primary star");
@@ -176,12 +176,12 @@ void CustomSystem::l_add_to_sector(int x, int y, int z, pi_vector& v)
 EXPORT_OOLUA_FUNCTIONS_0_CONST(CustomSystem)
 EXPORT_OOLUA_FUNCTIONS_6_NON_CONST(CustomSystem, seed, govtype, short_desc, long_desc, bodies, add_to_sector)
 
-CustomSBody::CustomSBody(std::string s, std::string stype)
+CustomSystemBody::CustomSystemBody(std::string s, std::string stype)
 {
 	name = s;
-	type = static_cast<SBody::BodyType>(LuaConstants::GetConstant(csLua, "BodyType", stype.c_str()));
+	type = static_cast<SystemBody::BodyType>(LuaConstants::GetConstant(csLua, "BodyType", stype.c_str()));
 
-	if ( type < SBody::TYPE_MIN || type > SBody::TYPE_MAX ) {
+	if ( type < SystemBody::TYPE_MIN || type > SystemBody::TYPE_MAX ) {
 		printf("body '%s' does not have a valid type\n", s.c_str());
 		assert(0);
 	}
@@ -192,20 +192,20 @@ CustomSBody::CustomSBody(std::string s, std::string stype)
 	want_rand_seed = true;
 }
 
-CustomSBody* CustomSBody::l_height_map(lua_State *L, std::string f, unsigned int n) {
+CustomSystemBody* CustomSystemBody::l_height_map(lua_State *L, std::string f, unsigned int n) {
 	heightMapFilename = std::string(PIONEER_DATA_DIR)+"/heightmaps/"+f;
 	heightMapFractal = n;
 	if (n >= 2) luaL_error(L, "invalid terrain fractal type");
 		return this; 
 }
 
-EXPORT_OOLUA_FUNCTIONS_0_CONST(CustomSBody)
+EXPORT_OOLUA_FUNCTIONS_0_CONST(CustomSystemBody)
 
 // this is the same as EXPORT_OOLUA_FUNCTIONS_*_NON_CONST. oolua doesn't
 // provide a macro for that many members, and the varargs version seems to
 // fail after 16 parameters
-CLASS_LIST_MEMBERS_START_OOLUA_NON_CONST(CustomSBody)
-LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSBody>, seed, radius, mass, temp, semi_major_axis, eccentricity, orbital_offset, latitude, inclination)
-LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSBody>, longitude, rotation_period, axial_tilt, height_map, metallicity, volcanicity, atmos_density, atmos_oxidizing, ocean_cover)
-LUA_MEMBER_FUNC_2(OOLUA::Proxy_class<CustomSBody>, ice_cover, life)
+CLASS_LIST_MEMBERS_START_OOLUA_NON_CONST(CustomSystemBody)
+LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSystemBody>, seed, radius, mass, temp, semi_major_axis, eccentricity, orbital_offset, latitude, inclination)
+LUA_MEMBER_FUNC_9(OOLUA::Proxy_class<CustomSystemBody>, longitude, rotation_period, axial_tilt, height_map, metallicity, volcanicity, atmos_density, atmos_oxidizing, ocean_cover)
+LUA_MEMBER_FUNC_2(OOLUA::Proxy_class<CustomSystemBody>, ice_cover, life)
 CLASS_LIST_MEMBERS_END

@@ -1,5 +1,5 @@
 #include "LuaObject.h"
-#include "LuaSBody.h"
+#include "LuaSystemBody.h"
 #include "LuaUtils.h"
 #include "LuaConstants.h"
 #include "galaxy/StarSystem.h"
@@ -29,9 +29,9 @@
  *
  *  stable
  */
-static int l_sbody_attr_index(lua_State *l)
+static int l_systembody_attr_index(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->path.bodyIndex);
 	return 1;
 }
@@ -49,9 +49,9 @@ static int l_sbody_attr_index(lua_State *l)
  *
  *  stable
  */
-static int l_sbody_attr_name(lua_State *l)
+static int l_systembody_attr_name(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, sbody->name.c_str());
 	return 1;
 }
@@ -69,9 +69,9 @@ static int l_sbody_attr_name(lua_State *l)
  *
  *  stable
  */
-static int l_sbody_attr_type(lua_State *l)
+static int l_systembody_attr_type(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, LuaConstants::GetConstantString(l, "BodyType", sbody->type));
 	return 1;
 }
@@ -89,9 +89,9 @@ static int l_sbody_attr_type(lua_State *l)
  *
  *  stable
  */
-static int l_sbody_attr_super_type(lua_State *l)
+static int l_systembody_attr_super_type(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, LuaConstants::GetConstantString(l, "BodySuperType", sbody->GetSuperType()));
 	return 1;
 }
@@ -115,9 +115,9 @@ static int l_sbody_attr_super_type(lua_State *l)
  *
  *   stable
  */
-static int l_sbody_attr_seed(lua_State *l)
+static int l_systembody_attr_seed(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->seed);
 	return 1;
 }
@@ -135,19 +135,19 @@ static int l_sbody_attr_seed(lua_State *l)
  *
  *   stable
  */
-static int l_sbody_attr_parent(lua_State *l)
+static int l_systembody_attr_parent(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 
 	// sbody->parent is 0 as it was cleared by the acquirer. we need to go
 	// back to the starsystem proper to get what we need.
 	RefCountedPtr<StarSystem> s = StarSystem::GetCached(sbody->path);
-	SBody *live_sbody = s->GetBodyByPath(sbody->path);
+	SystemBody *live_sbody = s->GetBodyByPath(sbody->path);
 
 	if (!live_sbody->parent)
 		return 0;
 
-	LuaSBody::PushToLua(live_sbody->parent);
+	LuaSystemBody::PushToLua(live_sbody->parent);
 	return 1;
 }
 
@@ -164,9 +164,9 @@ static int l_sbody_attr_parent(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_population(lua_State *l)
+static int l_systembody_attr_population(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->m_population.ToDouble());
 	return 1;
 }
@@ -184,9 +184,9 @@ static int l_sbody_attr_population(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_radius(lua_State *l)
+static int l_systembody_attr_radius(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->GetRadius());
 	return 1;
 }
@@ -204,9 +204,9 @@ static int l_sbody_attr_radius(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_mass(lua_State *l)
+static int l_systembody_attr_mass(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->GetMass());
 	return 1;
 }
@@ -224,9 +224,9 @@ static int l_sbody_attr_mass(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_periapsis(lua_State *l)
+static int l_systembody_attr_periapsis(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbMin.ToDouble()*AU);
 	return 1;
 }
@@ -244,9 +244,9 @@ static int l_sbody_attr_periapsis(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_apoapsis(lua_State *l)
+static int l_systembody_attr_apoapsis(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbMax.ToDouble()*AU);
 	return 1;
 }
@@ -264,9 +264,9 @@ static int l_sbody_attr_apoapsis(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_rotation_period(lua_State *l)
+static int l_systembody_attr_rotation_period(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->rotationPeriod.ToDouble());
 	return 1;
 }
@@ -284,9 +284,9 @@ static int l_sbody_attr_rotation_period(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_semi_major_axis(lua_State *l)
+static int l_systembody_attr_semi_major_axis(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->semiMajorAxis.ToDouble()*AU);
 	return 1;
 }
@@ -304,9 +304,9 @@ static int l_sbody_attr_semi_major_axis(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_eccentricty(lua_State *l)
+static int l_systembody_attr_eccentricty(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->eccentricity.ToDouble());
 	return 1;
 }
@@ -324,9 +324,9 @@ static int l_sbody_attr_eccentricty(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_axial_tilt(lua_State *l)
+static int l_systembody_attr_axial_tilt(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->axialTilt.ToDouble());
 	return 1;
 }
@@ -344,34 +344,34 @@ static int l_sbody_attr_axial_tilt(lua_State *l)
  *
  *   experimental
  */
-static int l_sbody_attr_average_temp(lua_State *l)
+static int l_systembody_attr_average_temp(lua_State *l)
 {
-	SBody *sbody = LuaSBody::GetFromLua(1);
+	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->averageTemp);
 	return 1;
 }
 
-template <> const char *LuaObject<LuaUncopyable<SBody> >::s_type = "SystemBody";
+template <> const char *LuaObject<LuaUncopyable<SystemBody> >::s_type = "SystemBody";
 
-template <> void LuaObject<LuaUncopyable<SBody> >::RegisterClass()
+template <> void LuaObject<LuaUncopyable<SystemBody> >::RegisterClass()
 {
 	static const luaL_reg l_attrs[] = {
-		{ "index",          l_sbody_attr_index           },
-		{ "name",           l_sbody_attr_name            },
-		{ "type",           l_sbody_attr_type            },
-		{ "superType",      l_sbody_attr_super_type      },
-		{ "seed",           l_sbody_attr_seed            },
-		{ "parent",         l_sbody_attr_parent          },
-		{ "population",     l_sbody_attr_population      },
-		{ "radius",         l_sbody_attr_radius          },
-		{ "mass",           l_sbody_attr_mass            },
-		{ "periapsis",      l_sbody_attr_periapsis       },
-		{ "apoapsis",       l_sbody_attr_apoapsis        },
-		{ "rotationPeriod", l_sbody_attr_rotation_period },
-		{ "semiMajorAxis",  l_sbody_attr_semi_major_axis },
-		{ "eccentricity",   l_sbody_attr_eccentricty     },
-		{ "axialTilt",      l_sbody_attr_axial_tilt      },
-		{ "averageTemp",    l_sbody_attr_average_temp    },
+		{ "index",          l_systembody_attr_index           },
+		{ "name",           l_systembody_attr_name            },
+		{ "type",           l_systembody_attr_type            },
+		{ "superType",      l_systembody_attr_super_type      },
+		{ "seed",           l_systembody_attr_seed            },
+		{ "parent",         l_systembody_attr_parent          },
+		{ "population",     l_systembody_attr_population      },
+		{ "radius",         l_systembody_attr_radius          },
+		{ "mass",           l_systembody_attr_mass            },
+		{ "periapsis",      l_systembody_attr_periapsis       },
+		{ "apoapsis",       l_systembody_attr_apoapsis        },
+		{ "rotationPeriod", l_systembody_attr_rotation_period },
+		{ "semiMajorAxis",  l_systembody_attr_semi_major_axis },
+		{ "eccentricity",   l_systembody_attr_eccentricty     },
+		{ "axialTilt",      l_systembody_attr_axial_tilt      },
+		{ "averageTemp",    l_systembody_attr_average_temp    },
 		{ 0, 0 }
 	};
 
