@@ -2,11 +2,21 @@
 #include "Galaxy.h"
 #include "Pi.h"
 #include "Sector.h"
+#include "Lang.h"
 
 // lightyears
 const float Galaxy::GALAXY_RADIUS = 50000.0;
 const float Galaxy::SOL_OFFSET_X = 25000.0;
 const float Galaxy::SOL_OFFSET_Y = 0.0;
+
+const Galaxy::FeatureLabel Galaxy::GALACTIC_FEATURES[] = {
+	{ Lang::NORMA_ARM            , Galaxy::GALAXY_RADIUS * vector3d( 0.0 , -0.3 , 0.0) },
+	{ Lang::PERSEUS_ARM          , Galaxy::GALAXY_RADIUS * vector3d( 0.57,  0.0 , 0.0) },
+	{ Lang::OUTER_ARM            , Galaxy::GALAXY_RADIUS * vector3d( 0.65,  0.4 , 0.0) },
+	{ Lang::SAGITTARIUS_ARM      , Galaxy::GALAXY_RADIUS * vector3d(-0.3 ,  0.2 , 0.0) },
+	{ Lang::SCUTUM_CENTAURUS_ARM , Galaxy::GALAXY_RADIUS * vector3d(-0.45, -0.45, 0.0) },
+	{ 0, vector3d(0.0, 0.0, 0.0) }
+};
 
 Galaxy::Galaxy() {
 	m_densityMap.Reset(SDL_LoadBMP(PIONEER_DATA_DIR "/galaxy.bmp"));

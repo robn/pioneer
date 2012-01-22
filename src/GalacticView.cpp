@@ -55,31 +55,18 @@ void GalacticView::Load(Serializer::Reader &rd)
 {
 }
 
-
-struct galaclabel_t {
-	const char *label;
-	vector3d pos;
-} s_labels[] = {
-	{ Lang::NORMA_ARM, vector3d(0.0,-0.3,0.0) },
-	{ Lang::PERSEUS_ARM, vector3d(0.57,0.0,0.0) },
-	{ Lang::OUTER_ARM, vector3d(0.65,0.4,0.0) },
-	{ Lang::SAGITTARIUS_ARM, vector3d(-.3,0.2,0.0) },
-	{ Lang::SCUTUM_CENTAURUS_ARM, vector3d(-.45,-0.45,0.0) },
-	{ 0, vector3d(0.0, 0.0, 0.0) }
-};
-
 static void dummy() {}
 
 void GalacticView::PutLabels(vector3d offset)
 {
 	Gui::Screen::EnterOrtho();
 	glColor3f(1,1,1);
-	
-	for (int i=0; s_labels[i].label; i++) {
-		vector3d p = m_zoom * (s_labels[i].pos + offset);
+
+	for (const Galaxy::FeatureLabel *feature = Galaxy::GALACTIC_FEATURES; feature->text; ++feature) {
+		const vector3d p = m_zoom * (feature->position / Pi::galaxy->GetRadius() + offset);
 		vector3d pos;
 		if (Gui::Screen::Project(p, pos)) {
-			m_labels->Add(s_labels[i].label, sigc::ptr_fun(&dummy), float(pos.x), float(pos.y));
+			m_labels->Add(feature->text, sigc::ptr_fun(&dummy), float(pos.x), float(pos.y));
 		}
 	}
 

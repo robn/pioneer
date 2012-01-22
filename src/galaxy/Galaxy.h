@@ -5,6 +5,12 @@
 
 class Galaxy {
 public:
+	struct FeatureLabel {
+		const char *text;
+		vector3d position;
+	};
+	static const FeatureLabel GALACTIC_FEATURES[];
+
 	Galaxy();
 	~Galaxy();
 
