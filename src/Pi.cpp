@@ -109,6 +109,7 @@ LuaEventQueue<Ship,const char *> *Pi::luaOnShipEquipmentChanged;
 LuaEventQueue<Ship,const char *> *Pi::luaOnShipFuelChanged;
 LuaNameGen *Pi::luaNameGen;
 TextureCache *Pi::textureCache;
+Galaxy *Pi::galaxy;
 int Pi::keyModState;
 char Pi::keyState[SDLK_LAST];
 char Pi::mouseButton[6];
@@ -513,7 +514,7 @@ void Pi::Init()
 
 	draw_progress(0.1f);
 
-	Galaxy::Init();
+	galaxy = new Galaxy;
 	draw_progress(0.2f);
 
 	CustomSystem::Init();
@@ -636,7 +637,7 @@ void Pi::Quit()
 	CityOnPlanet::Uninit();
 	GeoSphere::Uninit();
 	LmrModelCompilerUninit();
-	Galaxy::Uninit();
+	delete galaxy;
 	Graphics::Uninit();
 	LuaUninit();
 	Gui::Uninit();

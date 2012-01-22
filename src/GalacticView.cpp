@@ -17,7 +17,7 @@ using namespace Graphics;
 
 GalacticView::GalacticView()
 {
-	m_texture.Reset(new UITexture(Galaxy::GetGalaxyBitmap()));
+	m_texture.Reset(new UITexture(Pi::galaxy->GetGalaxyBitmap()));
 
 	SetTransparency(true);
 	m_zoom = 1.0f;
@@ -89,9 +89,13 @@ void GalacticView::PutLabels(vector3d offset)
 
 void GalacticView::Draw3D()
 {
-	vector3f pos = Pi::sectorView->GetPosition();
-	float offset_x = (pos.x*Sector::SIZE + Galaxy::SOL_OFFSET_X)/Galaxy::GALAXY_RADIUS;
-	float offset_y = (-pos.y*Sector::SIZE + Galaxy::SOL_OFFSET_Y)/Galaxy::GALAXY_RADIUS;
+	const vector3f solpos = Pi::galaxy->GetSolPosition();
+	const vector3f sectorpos = Pi::sectorView->GetPosition();
+	const vector3f pos(
+			(sectorpos.x*Sector::SIZE + solpos.x) / Pi::galaxy->GetRadius(),
+			(-sectorpos.y*Sector::SIZE + solpos.y) / Pi::galaxy->GetRadius(),
+			0.0f
+		);
 
 	m_renderer->SetOrthographicProjection(-Pi::GetScrAspect(), Pi::GetScrAspect(), 1.f, -1.f, -1.f, 1.f);
 	m_renderer->ClearScreen();
@@ -109,7 +113,7 @@ void GalacticView::Draw3D()
 	m_renderer->SetTransform(
 		matrix4x4f::Identity() *
 		matrix4x4f::ScaleMatrix(m_zoom, m_zoom, 0.f) *
-		matrix4x4f::Translation(-offset_x, -offset_y, 0.f));
+		matrix4x4f::Translation(-pos.x, -pos.y, 0.f));
 
 	// galaxy image
 	VertexArray va(ATTRIB_POSITION | ATTRIB_UV0);
@@ -128,7 +132,7 @@ void GalacticView::Draw3D()
 
 	// "you are here" dot
 	Color green(0.f, 1.f, 0.f, 1.f);
-	vector2f offs(offset_x, offset_y);
+	vector2f offs(pos.x, pos.y);
 	m_renderer->DrawPoints2D(1, &offs, &green, 3.f);
 
 	// scale at the top
@@ -143,7 +147,7 @@ void GalacticView::Draw3D()
 	m_renderer->DrawLines2D(4, vts, white, LINE_STRIP);
 
 	m_labels->Clear();
-	PutLabels(-vector3d(offset_x, offset_y, 0.0));
+	PutLabels(-vector3d(pos));
 
 	m_renderer->SetDepthTest(true);
 }
@@ -161,7 +165,7 @@ void GalacticView::Update()
 	}
 	m_zoom = Clamp(m_zoom, 0.5f, 100.0f);
 
-	m_scaleReadout->SetText(stringf(Lang::INT_LY, formatarg("scale", int(0.5*Galaxy::GALAXY_RADIUS/m_zoom))));
+	m_scaleReadout->SetText(stringf(Lang::INT_LY, formatarg("scale", int(0.5*Pi::galaxy->GetRadius()/m_zoom))));
 }
 
 void GalacticView::MouseButtonDown(int button, int x, int y)

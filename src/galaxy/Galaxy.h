@@ -1,18 +1,26 @@
 #ifndef _GALAXY_H
 #define _GALAXY_H
 
-/* Sector density lookup */
-namespace Galaxy {
-	// lightyears
-	extern const float GALAXY_RADIUS;
-	extern const float SOL_OFFSET_X;
-	extern const float SOL_OFFSET_Y;
+#include "SDLWrappers.h"
 
-	void Init();
-	void Uninit();
-	SDL_Surface *GetGalaxyBitmap();
-	/* 0 - 255 */
-	Uint8 GetSectorDensity(int sx, int sy, int sz);
-}
+class Galaxy {
+public:
+	Galaxy();
+	~Galaxy();
+
+	// these values in light-years
+	float GetRadius() const { return GALAXY_RADIUS; }
+	vector3f GetSolPosition() const { return vector3f(SOL_OFFSET_X, SOL_OFFSET_Y, 0.0f); }
+
+	SDL_Surface *GetGalaxyBitmap() const { return m_densityMap.Get(); }
+	Uint8 GetSectorDensity(int sx, int sy, int sz) const;
+
+private:
+	static const float GALAXY_RADIUS;
+	static const float SOL_OFFSET_X;
+	static const float SOL_OFFSET_Y;
+
+	SDLSurfacePtr m_densityMap;
+};
 
 #endif /* _GALAXY_H */

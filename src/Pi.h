@@ -34,6 +34,7 @@ class LuaNameGen;
 namespace Graphics { class Renderer; }
 namespace Sound { class MusicPlayer; }
 class TextureCache;
+class Galaxy;
 
 #if WITH_OBJECTVIEWER
 class ObjectViewerView;
@@ -133,6 +134,7 @@ public:
 	static LuaNameGen *luaNameGen;
 
 	static TextureCache *textureCache;
+	static Galaxy *galaxy;
 
 	static MTRand rng;
 	static int statSceneTris;
