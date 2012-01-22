@@ -1146,6 +1146,9 @@ void Pi::Start()
 	Gui::Screen::AddBaseWidget(menu, 0, 0);
 	menu->SetTransparency(true);
 
+	Gui::Plasma *plasma = new Gui::Plasma(800, 600);
+	menu->Add(plasma, 0, 0);
+
 	Gui::Screen::PushFont("OverlayFont");
 
 	const float w = Gui::Screen::GetWidth() / 2.0f;

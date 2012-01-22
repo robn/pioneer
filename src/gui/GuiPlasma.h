@@ -5,11 +5,14 @@ namespace Gui {
 
 class Plasma : public Widget {
 public:
-	Plasma();
+	Plasma(unsigned int width, unsigned int height);
+	virtual ~Plasma();
 
-	virtual void Update();
 	virtual void Draw();
 	virtual void GetSizeRequested(float size[2]);
+
+private:
+	unsigned int m_width, m_height;
 };
 
 }
