@@ -3,55 +3,31 @@
 
 namespace Gui {
 
-bool Screen::initted = false;
-int Screen::width;
-int Screen::height;
-int Screen::realWidth;
-int Screen::realHeight;
-float Screen::invRealWidth;
-float Screen::invRealHeight;
-float Screen::fontScale[2];
-std::list<Widget*> Screen::kbshortcut_widgets;
-Gui::Fixed *Screen::baseContainer;
-Gui::Widget *Screen::focusedWidget;
-GLdouble Screen::modelMatrix[16];
-GLdouble Screen::projMatrix[16];
-GLint Screen::viewport[4];
-
-FontManager Screen::s_fontManager;
-std::stack<TextureFont*> Screen::s_fontStack;
-TextureFont *Screen::s_defaultFont;
-
-TextureCache Screen::s_textureCache;
-
-void Screen::Init(int real_width, int real_height, int ui_width, int ui_height)
+Screen::Screen(int real_width, int real_height, int ui_width, int ui_height)
 {
-	Screen::width = ui_width;
-	Screen::height = ui_height;
-	Screen::realWidth = real_width;
-	Screen::realHeight = real_height;
-	Screen::invRealWidth = 1.0f/real_width;
-	Screen::invRealHeight = 1.0f/real_height;
-	Screen::initted = true;
+	width = ui_width;
+	height = ui_height;
+	realWidth = real_width;
+	realHeight = real_height;
+	invRealWidth = 1.0f/real_width;
+	invRealHeight = 1.0f/real_height;
 	// Why? because although our font textures get bigger with screen
 	// resolution, our Gui Ortho projection is still 800x600 so vertex
 	// coords must be scaled.
-	Screen::fontScale[0] = ui_width / float(real_width);
-	Screen::fontScale[1] = ui_height / float(real_height);
+	fontScale[0] = ui_width / float(real_width);
+	fontScale[1] = ui_height / float(real_height);
     s_defaultFont = s_fontManager.GetTextureFont("GuiFont");
     PushFont(s_defaultFont);
-	Screen::baseContainer = new Gui::Fixed();
-	Screen::baseContainer->SetSize(float(Screen::width), float(Screen::height));
-	Screen::baseContainer->Show();
+	baseContainer = new Gui::Fixed();
+	baseContainer->SetSize(float(Screen::width), float(Screen::height));
+	baseContainer->Show();
 }
 
-void Screen::Uninit()
+Screen::~Screen()
 {
-	Screen::baseContainer->RemoveAllChildren();		// children deleted elsewhere?
-	delete Screen::baseContainer;
+	baseContainer->RemoveAllChildren();		// children deleted elsewhere?
+	delete baseContainer;
 }
-
-static sigc::connection _focusedWidgetOnDelete;
 
 void Screen::OnDeleteFocusedWidget()
 {
@@ -65,7 +41,7 @@ void Screen::SetFocused(Widget *w, bool enableKeyRepeat)
 	ClearFocus();
 	if (enableKeyRepeat)
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-	_focusedWidgetOnDelete = w->onDelete.connect(sigc::ptr_fun(&Screen::OnDeleteFocusedWidget));
+	_focusedWidgetOnDelete = w->onDelete.connect(sigc::mem_fun(this, &Screen::OnDeleteFocusedWidget));
 	focusedWidget = w;
 }
 
@@ -83,7 +59,7 @@ void Screen::ShowBadError(const char *msg)
 	baseContainer->HideChildren();
 	
 	Gui::Fixed *f = new Gui::Fixed(6*GetWidth()/8.0f, 6*GetHeight()/8.0f);
-	Gui::Screen::AddBaseWidget(f, GetWidth()/8, GetHeight()/8);
+	AddBaseWidget(f, GetWidth()/8, GetHeight()/8);
 	f->SetTransparency(false);
 	f->SetBgColor(0.4,0,0,1.0);
 	f->Add(new Gui::Label(msg), 10, 10);
@@ -99,7 +75,7 @@ void Screen::ShowBadError(const char *msg)
 		SDL_Delay(10);
 	} while (!okButton->IsPressed());
 
-	Gui::Screen::RemoveBaseWidget(f);
+	RemoveBaseWidget(f);
 	delete f;
 	baseContainer->ShowAll();
 }
@@ -142,7 +118,6 @@ void Screen::LeaveOrtho()
 
 void Screen::Draw()
 {
-	assert(Screen::initted);
 	EnterOrtho();
 	baseContainer->Draw();
 	LeaveOrtho();
@@ -173,7 +148,7 @@ void Screen::OnMouseMotion(SDL_MouseMotionEvent *e)
 {
 	MouseMotionEvent ev;
 	float x, y;
-	Screen::SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
+	SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
 	ev.screenX = ev.x = x;
 	ev.screenY = ev.y = y;
 	baseContainer->OnMouseMotion(&ev);
@@ -186,7 +161,7 @@ void Screen::OnClick(SDL_MouseButtonEvent *e)
 {
 	MouseButtonEvent ev;
 	float x, y;
-	Screen::SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
+	SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
 	ev.button = e->button;
 	ev.isdown = (e->type == SDL_MOUSEBUTTONDOWN);
 	ev.screenX = ev.x = x;
@@ -269,9 +244,9 @@ void Screen::RenderString(const std::string &s, float xoff, float yoff, TextureF
 	float x = modelMatrix_[12] + xoff;
 	float y = modelMatrix_[13] + yoff;
 	glLoadIdentity();
-	glTranslatef(floor(x/Screen::fontScale[0])*Screen::fontScale[0],
-			floor(y/Screen::fontScale[1])*Screen::fontScale[1], 0);
-	glScalef(Screen::fontScale[0], Screen::fontScale[1], 1);
+	glTranslatef(floor(x/fontScale[0])*fontScale[0],
+			floor(y/fontScale[1])*fontScale[1], 0);
+	glScalef(fontScale[0], fontScale[1], 1);
 	font->RenderString(s.c_str(), 0, 0);
 	glPopMatrix();
 }
@@ -286,9 +261,9 @@ void Screen::RenderMarkup(const std::string &s, TextureFont *font)
 	float x = modelMatrix_[12];
 	float y = modelMatrix_[13];
 	glLoadIdentity();
-	glTranslatef(floor(x/Screen::fontScale[0])*Screen::fontScale[0],
-			floor(y/Screen::fontScale[1])*Screen::fontScale[1], 0);
-	glScalef(Screen::fontScale[0], Screen::fontScale[1], 1);
+	glTranslatef(floor(x/fontScale[0])*fontScale[0],
+			floor(y/fontScale[1])*fontScale[1], 0);
+	glScalef(fontScale[0], fontScale[1], 1);
 	font->RenderMarkup(s.c_str(), 0, 0);
 	glPopMatrix();
 }
