@@ -64,7 +64,6 @@ void Box::GetSizeRequestedOrMinimum(float size[2], bool minimum)
 
 Box::~Box()
 {
-	Screen::RemoveBaseWidget(this);
 }
 
 void Box::OnChildResizeRequest(Widget *child)
