@@ -7,7 +7,7 @@ namespace Gui {
 
 Image::Image(const char *filename): Widget()
 {
-	m_texture = Gui::Screen::GetTextureCache()->GetUITexture(filename);
+	m_texture = Gui::screen->GetTextureCache()->GetUITexture(filename);
 
 	SetSize(float(m_texture->GetWidth()), float(m_texture->GetHeight()));
 

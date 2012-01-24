@@ -23,7 +23,7 @@ void Label::Init(const std::string &text, TextLayout::ColourMarkupMode colourMar
 	m_shadow = false;
 	m_layout = 0;
 	m_dlist = 0;
-	m_font = Gui::Screen::GetFont();
+	m_font = Gui::screen->GetFont();
 	m_color = ::Color(1.0f, 1.0f, 1.0f, 1.0f);
 	SetText(text);
 }

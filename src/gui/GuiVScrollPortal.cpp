@@ -119,7 +119,7 @@ void VScrollPortal::Draw()
 	if (toScroll < 0) toScroll = 0;
 	
 	float scale[2];
-	Screen::GetCoords2Pixels(scale);
+	Gui::screen->GetCoords2Pixels(scale);
 
 	glPushMatrix();
 	// scroll to whole pixel locations whatever the resolution

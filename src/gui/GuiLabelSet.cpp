@@ -8,7 +8,7 @@ LabelSet::LabelSet() : Widget()
 	m_labelsVisible = true;
 	m_labelsClickable = true;
 	m_labelColor = Color(1.0f,1.0f,1.0f,1.0f);
-	m_font = Screen::GetFont();
+	m_font = Gui::screen->GetFont();
 }
 
 bool LabelSet::OnMouseDown(Gui::MouseButtonEvent *e)
@@ -63,7 +63,7 @@ void LabelSet::Draw()
 			if ((*i).color.a < 1.0f) glEnable(GL_BLEND);
 			glColor4fv((*i).color);
 		}
-		Gui::Screen::RenderString((*i).text, (*i).screenx, (*i).screeny - Gui::Screen::GetFontHeight()*0.5f, m_font);
+		Gui::screen->RenderString((*i).text, (*i).screenx, (*i).screeny - Gui::screen->GetFontHeight()*0.5f, m_font);
 	}
 	glDisable(GL_BLEND);
 }

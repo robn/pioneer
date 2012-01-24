@@ -31,8 +31,8 @@ static void init_clip_test()
 static bool line_clip_test(float topy, float bottomy)
 {
 	if (!_do_clip) return true;
-	topy = _clipoffset.y + topy*Gui::Screen::GetCoords2Pixels()[1];
-	bottomy = _clipoffset.y + bottomy*Gui::Screen::GetCoords2Pixels()[1];
+	topy = _clipoffset.y + topy*Gui::screen->GetCoords2Pixels()[1];
+	bottomy = _clipoffset.y + bottomy*Gui::screen->GetCoords2Pixels()[1];
 
 	if ((bottomy*_clip[0][1] + _clip[0][3] > 0) &&
 	    (topy*_clip[1][1] + _clip[1][3] > 0)) return true;
@@ -45,7 +45,7 @@ TextLayout::TextLayout(const char *_str, TextureFont *font, ColourMarkupMode mar
 	assert(markup != ColourMarkupSkip);
 
 	m_colourMarkup = markup;
-	m_font = font ? font : Gui::Screen::GetFont();
+	m_font = font ? font : Gui::screen->GetFont();
 
 	str = reinterpret_cast<char *>(malloc(strlen(_str)+1));
 	strcpy(str, _str);
@@ -92,7 +92,7 @@ TextLayout::TextLayout(const char *_str, TextureFont *font, ColourMarkupMode mar
 void TextLayout::MeasureSize(const float width, float outSize[2]) const
 {
 	float fontScale[2];
-	Gui::Screen::GetCoords2Pixels(fontScale);
+	Gui::screen->GetCoords2Pixels(fontScale);
 	_MeasureSizeRaw(width / fontScale[0], outSize);
 	outSize[0] = ceil(outSize[0] * fontScale[0]);
 	outSize[1] = ceil(outSize[1] * fontScale[1]);
@@ -101,7 +101,7 @@ void TextLayout::MeasureSize(const float width, float outSize[2]) const
 void TextLayout::Render(const float width) const
 {
 	float fontScale[2];
-	Gui::Screen::GetCoords2Pixels(fontScale);
+	Gui::screen->GetCoords2Pixels(fontScale);
 	GLdouble modelMatrix[16];
 	glPushMatrix();
 	glGetDoublev (GL_MODELVIEW_MATRIX, modelMatrix);

@@ -39,7 +39,7 @@ void MeterBar::Draw()
 void MeterBar::GetSizeRequested(float size[2])
 {
 	size[0] = m_requestedWidth;
-	size[1] = METERBAR_PADDING*2.0f + METERBAR_BAR_HEIGHT + Gui::Screen::GetFontHeight();
+	size[1] = METERBAR_PADDING*2.0f + METERBAR_BAR_HEIGHT + Gui::screen->GetFontHeight();
 }
 
 }
