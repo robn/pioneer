@@ -4,6 +4,8 @@
 
 namespace Gui {
 
+Screen *screen = 0;
+
 namespace RawEvents {
 	sigc::signal<void, MouseMotionEvent *> onMouseMotion;
 	sigc::signal<void, MouseButtonEvent *> onMouseDown;
@@ -21,21 +23,21 @@ void HandleSDLEvent(SDL_Event *event)
 {
 	switch (event->type) {
 		case SDL_MOUSEBUTTONDOWN:
-			Screen::OnClick(&event->button);
+			screen->OnClick(&event->button);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			Screen::OnClick(&event->button);
+			screen->OnClick(&event->button);
 			break;
 		case SDL_KEYDOWN:
-			Screen::OnKeyDown(&event->key.keysym);
+			screen->OnKeyDown(&event->key.keysym);
 			RawEvents::onKeyDown.emit(&event->key);
 			break;
 		case SDL_KEYUP:
-			Screen::OnKeyUp(&event->key.keysym);
+			screen->OnKeyUp(&event->key.keysym);
 			RawEvents::onKeyUp.emit(&event->key);
 			break;
 		case SDL_MOUSEMOTION:
-			Screen::OnMouseMotion(&event->motion);
+			screen->OnMouseMotion(&event->motion);
 			break;
 		case SDL_JOYAXISMOTION:
 			RawEvents::onJoyAxisMotion(&event->jaxis);
@@ -83,13 +85,13 @@ void Draw()
 	}
 //	ExpireTimers(t);
 
-	Screen::Draw();
+	screen->Draw();
 }
 
 void Init(int screen_width, int screen_height, int ui_width, int ui_height)
 {
 	SDL_EnableUNICODE(1);
-	Screen::Init(screen_width, screen_height, ui_width, ui_height);
+	screen = new Screen(screen_width, screen_height, ui_width, ui_height);
 }
 
 void Uninit()
@@ -97,7 +99,8 @@ void Uninit()
 	std::list<TimerSignal*>::iterator i;
 	for (i=g_timeSignals.begin(); i!=g_timeSignals.end(); ++i) delete *i;
 
-	Screen::Uninit();
+	delete screen;
+	screen = 0;
 }
 
 void MainLoopIteration()

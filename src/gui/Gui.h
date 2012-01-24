@@ -6,6 +6,8 @@
 
 namespace Gui {
 
+	class Screen;
+
 	namespace Theme {
 		void DrawRoundEdgedRect(const float size[2], float rad);
 		void DrawIndent(const float size[2]);
@@ -18,6 +20,7 @@ namespace Gui {
 		}
 	}
 
+	extern Screen *screen;
 
 	void HandleSDLEvent(SDL_Event *event);
 	void Draw();
