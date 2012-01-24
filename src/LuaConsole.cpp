@@ -18,9 +18,9 @@ LuaConsole::LuaConsole(int displayedOutputLines):
 	SetTransparency(false);
 	SetBgColor(0.6f, 0.1f, 0.0f, 0.6f);
 
-	Gui::Screen::PushFont("ConsoleFont");
+	Gui::screen->PushFont("ConsoleFont");
 	m_entryField = new Gui::TextEntry();
-	Gui::Screen::PopFont();
+	Gui::screen->PopFont();
 	m_entryField->SetNewlineMode(Gui::TextEntry::AcceptCtrlNewline);
 	m_outputLines.reserve(displayedOutputLines);
 	m_nextOutputLine = 0;
@@ -98,9 +98,9 @@ void LuaConsole::AddOutput(const std::string &line) {
 		label = m_outputLines[m_nextOutputLine];
 		Remove(label);
 	} else {
-		Gui::Screen::PushFont("ConsoleFont");
+		Gui::screen->PushFont("ConsoleFont");
 		label = new Gui::Label("", Gui::TextLayout::ColourMarkupNone);
-		Gui::Screen::PopFont();
+		Gui::screen->PopFont();
 		m_outputLines.push_back(label);
 	}
 	m_nextOutputLine = (m_nextOutputLine + 1) % m_maxOutputLines;
@@ -108,7 +108,7 @@ void LuaConsole::AddOutput(const std::string &line) {
 	label->SetText(line);
 	float size[2];
 	label->GetSizeRequested(size);
-	label->SetSize(float(Gui::Screen::GetWidth()), size[1]);
+	label->SetSize(float(Gui::screen->GetWidth()), size[1]);
 	label->Show();
 
 	Remove(m_entryField);

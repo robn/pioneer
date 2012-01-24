@@ -102,7 +102,7 @@ public:
 		m_geom = 0;
 		m_space = new CollisionSpace();
 		m_showBoundingRadius = false;
-		Gui::Screen::AddBaseWidget(this, 0, 0);
+		Gui::screen->AddBaseWidget(this, 0, 0);
 		SetTransparency(true);
 
 		m_trisReadout = new Gui::Label("");
@@ -152,29 +152,29 @@ public:
 		}
 #endif /* 0 */	
 		{
-			Add(new Gui::Label("Linear thrust"), 0, Gui::Screen::GetHeight()-140.0f);
+			Add(new Gui::Label("Linear thrust"), 0, Gui::screen->GetHeight()-140.0f);
 			for (int i=0; i<3; i++) {
 				m_linthrust[i] = new Gui::Adjustment();
 				m_linthrust[i]->SetValue(0.5);
 				Gui::VScrollBar *v = new Gui::VScrollBar();
 				v->SetAdjustment(m_linthrust[i]);
-				Add(v, float(i*25), Gui::Screen::GetHeight()-120.0f);
+				Add(v, float(i*25), Gui::screen->GetHeight()-120.0f);
 			}
 			
-			Add(new Gui::Label("Angular thrust"), 100, Gui::Screen::GetHeight()-140.0f);
+			Add(new Gui::Label("Angular thrust"), 100, Gui::screen->GetHeight()-140.0f);
 			for (int i=0; i<3; i++) {
 				m_angthrust[i] = new Gui::Adjustment();
 				m_angthrust[i]->SetValue(0.5);
 				Gui::VScrollBar *v = new Gui::VScrollBar();
 				v->SetAdjustment(m_angthrust[i]);
-				Add(v, float(100 + i*25), Gui::Screen::GetHeight()-120.0f);
+				Add(v, float(100 + i*25), Gui::screen->GetHeight()-120.0f);
 			}
 			
 			Add(new Gui::Label("Animations (0 gear, 1-4 are time - ignore them comrade)"),
-					200, Gui::Screen::GetHeight()-140.0f);
+					200, Gui::screen->GetHeight()-140.0f);
 			for (int i=0; i<LMR_ARG_MAX; i++) {
 				Gui::Fixed *box = new Gui::Fixed(32.0f, 120.0f);
-				Add(box, float(200 + i*25), Gui::Screen::GetHeight()-120.0f);
+				Add(box, float(200 + i*25), Gui::screen->GetHeight()-120.0f);
 
 				m_anim[i] = new Gui::Adjustment();
 				m_anim[i]->SetValue(0);
@@ -306,8 +306,8 @@ void Viewer::TryModel(const SDL_keysym *sym, Gui::TextEntry *entry, Gui::Label *
 void Viewer::PickModel(const std::string &initial_name, const std::string &initial_errormsg)
 {
 	Gui::Fixed *f = new Gui::Fixed();
-	f->SetSizeRequest(Gui::Screen::GetWidth()*0.5f, Gui::Screen::GetHeight()*0.5);
-	Gui::Screen::AddBaseWidget(f, Gui::Screen::GetWidth()*0.25f, Gui::Screen::GetHeight()*0.25f);
+	f->SetSizeRequest(Gui::screen->GetWidth()*0.5f, Gui::screen->GetHeight()*0.5);
+	Gui::screen->AddBaseWidget(f, Gui::screen->GetWidth()*0.25f, Gui::screen->GetHeight()*0.25f);
 
 	f->Add(new Gui::Label("Enter the name of the model you want to view:"), 0, 0);
 
@@ -334,7 +334,7 @@ void Viewer::PickModel(const std::string &initial_name, const std::string &initi
 		glError();
 		Render::SwapBuffers();
 	}
-	Gui::Screen::RemoveBaseWidget(f);
+	Gui::screen->RemoveBaseWidget(f);
 	delete f;
 	this->Show();
 }

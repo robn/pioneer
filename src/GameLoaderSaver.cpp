@@ -10,7 +10,7 @@ GameLoaderSaver::GameLoaderSaver(FileSelectorWidget::Type type, const std::strin
 
 void GameLoaderSaver::DialogMainLoop()
 {
-	Gui::Fixed *background = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()));
+	Gui::Fixed *background = new Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()));
 	background->SetTransparency(false);
 	background->SetBgColor(0,0,0,1.0);
 
@@ -27,14 +27,14 @@ void GameLoaderSaver::DialogMainLoop()
 	fileSelector->onClickAction.connect(sigc::mem_fun(this, &GameLoaderSaver::OnClickLoad));
 	fileSelector->onClickCancel.connect(sigc::mem_fun(this, &GameLoaderSaver::OnClickBack));
 
-	Gui::Screen::AddBaseWidget(background, 0, 0);
+	Gui::screen->AddBaseWidget(background, 0, 0);
 	background->ShowAll();
 
 	m_done = false;
 	while (!m_done)
 		Gui::MainLoopIteration();
 	
-	Gui::Screen::RemoveBaseWidget(background);
+	Gui::screen->RemoveBaseWidget(background);
 	delete background;
 }
 
@@ -75,10 +75,10 @@ bool GameLoader::LoadFromFile(const std::string &filename)
 		m_game = new Game(rd);
 	}
 	catch (SavedGameCorruptException) {
-		Gui::Screen::ShowBadError(Lang::GAME_LOAD_CORRUPT);
+		Gui::screen->ShowBadError(Lang::GAME_LOAD_CORRUPT);
 	}
 	catch (CouldNotOpenFileException) {
-		Gui::Screen::ShowBadError(Lang::GAME_LOAD_CANNOT_OPEN);
+		Gui::screen->ShowBadError(Lang::GAME_LOAD_CANNOT_OPEN);
 	}
 
 	return m_game != 0;
@@ -114,10 +114,10 @@ bool GameSaver::SaveToFile(const std::string &filename)
 		success = true;
 	}
 	catch (CouldNotOpenFileException) {
-		Gui::Screen::ShowBadError(Lang::GAME_LOAD_CANNOT_OPEN);
+		Gui::screen->ShowBadError(Lang::GAME_LOAD_CANNOT_OPEN);
 	}
 	catch (CouldNotWriteToFileException) {
-		Gui::Screen::ShowBadError(Lang::GAME_SAVE_CANNOT_WRITE);
+		Gui::screen->ShowBadError(Lang::GAME_SAVE_CANNOT_WRITE);
 	}
 
 	return success;

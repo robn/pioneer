@@ -17,7 +17,7 @@ ObjectViewerView::ObjectViewerView(): View()
 	m_camRot = matrix4x4d::Identity();
 	
 	m_infoLabel = new Gui::Label("");
-	Add(m_infoLabel, 2, Gui::Screen::GetHeight()-66-Gui::Screen::GetFontHeight());
+	Add(m_infoLabel, 2, Gui::screen->GetHeight()-66-Gui::screen->GetFontHeight());
 
 	Gui::VBox *vbox = new Gui::VBox();
 	Add(vbox, 580, 2);

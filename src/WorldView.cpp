@@ -112,10 +112,10 @@ void WorldView::InitObject()
 	m_rightRegion2->Add(m_flightStatus, 2, 0);
 
 #if WITH_DEVKEYS
-	Gui::Screen::PushFont("ConsoleFont");
+	Gui::screen->PushFont("ConsoleFont");
 	m_debugInfo = (new Gui::Label(""))->Color(0.8f, 0.8f, 0.8f);
 	Add(m_debugInfo, 10, 200);
-	Gui::Screen::PopFont();
+	Gui::screen->PopFont();
 #endif
 
 	m_hudVelocity = (new Gui::Label(""))->Color(s_hudTextColor);
@@ -127,34 +127,34 @@ void WorldView::InitObject()
 	m_hudTargetDist->SetToolTip(Lang::DISTANCE_FROM_SHIP_TO_NAV_TARGET);
 	m_hudAltitude->SetToolTip(Lang::SHIP_ALTITUDE_ABOVE_TERRAIN);
 	m_hudPressure->SetToolTip(Lang::EXTERNAL_ATMOSPHERIC_PRESSURE);
-	Add(m_hudVelocity, 170.0f, Gui::Screen::GetHeight()-Gui::Screen::GetFontHeight()-65.0f);
-	Add(m_hudTargetDist, 500.0f, Gui::Screen::GetHeight()-Gui::Screen::GetFontHeight()-65.0f);
-	Add(m_hudAltitude, 580.0f, Gui::Screen::GetHeight()-Gui::Screen::GetFontHeight()-4.0f);
-	Add(m_hudPressure, 150.0f, Gui::Screen::GetHeight()-Gui::Screen::GetFontHeight()-4.0f);
-	Add(m_hudHyperspaceInfo, Gui::Screen::GetWidth()*0.4f, Gui::Screen::GetHeight()*0.3f);
+	Add(m_hudVelocity, 170.0f, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-65.0f);
+	Add(m_hudTargetDist, 500.0f, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-65.0f);
+	Add(m_hudAltitude, 580.0f, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-4.0f);
+	Add(m_hudPressure, 150.0f, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-4.0f);
+	Add(m_hudHyperspaceInfo, Gui::screen->GetWidth()*0.4f, Gui::screen->GetHeight()*0.3f);
 
 	m_hudHullTemp = new Gui::MeterBar(100.0f, Lang::HULL_TEMP, Color(1.0f,0.0f,0.0f,0.8f));
 	m_hudWeaponTemp = new Gui::MeterBar(100.0f, Lang::WEAPON_TEMP, Color(1.0f,0.5f,0.0f,0.8f));
 	m_hudHullIntegrity = new Gui::MeterBar(100.0f, Lang::HULL_INTEGRITY, Color(1.0f,1.0f,0.0f,0.8f));
 	m_hudShieldIntegrity = new Gui::MeterBar(100.0f, Lang::SHIELD_INTEGRITY, Color(1.0f,1.0f,0.0f,0.8f));
-	Add(m_hudHullTemp, 5.0f, Gui::Screen::GetHeight() - 104.0f);
-	Add(m_hudWeaponTemp, 5.0f, Gui::Screen::GetHeight() - 144.0f);
-	Add(m_hudHullIntegrity, Gui::Screen::GetWidth() - 105.0f, Gui::Screen::GetHeight() - 104.0f);
-	Add(m_hudShieldIntegrity, Gui::Screen::GetWidth() - 105.0f, Gui::Screen::GetHeight() - 144.0f);
+	Add(m_hudHullTemp, 5.0f, Gui::screen->GetHeight() - 104.0f);
+	Add(m_hudWeaponTemp, 5.0f, Gui::screen->GetHeight() - 144.0f);
+	Add(m_hudHullIntegrity, Gui::screen->GetWidth() - 105.0f, Gui::screen->GetHeight() - 104.0f);
+	Add(m_hudShieldIntegrity, Gui::screen->GetWidth() - 105.0f, Gui::screen->GetHeight() - 144.0f);
 
 	m_hudTargetHullIntegrity = new Gui::MeterBar(100.0f, Lang::HULL_INTEGRITY, Color(1.0f,1.0f,0.0f,0.8f));
 	m_hudTargetShieldIntegrity = new Gui::MeterBar(100.0f, Lang::SHIELD_INTEGRITY, Color(1.0f,1.0f,0.0f,0.8f));
-	Add(m_hudTargetHullIntegrity, Gui::Screen::GetWidth() - 105.0f, 5.0f);
-	Add(m_hudTargetShieldIntegrity, Gui::Screen::GetWidth() - 105.0f, 45.0f);
+	Add(m_hudTargetHullIntegrity, Gui::screen->GetWidth() - 105.0f, 5.0f);
+	Add(m_hudTargetShieldIntegrity, Gui::screen->GetWidth() - 105.0f, 45.0f);
 
 	m_hudTargetInfo = (new Gui::Label(""))->Color(s_hudTextColor);
 	Add(m_hudTargetInfo, 0, 85.0f);
 
-	Gui::Screen::PushFont("OverlayFont");
+	Gui::screen->PushFont("OverlayFont");
 	m_bodyLabels = new Gui::LabelSet();
 	m_bodyLabels->SetLabelColor(Color(1.0f, 1.0f, 1.0f, 0.5f));
 	Add(m_bodyLabels, 0, 0);
-	Gui::Screen::PopFont();
+	Gui::screen->PopFont();
 
 	m_navTargetIndicator.label = (new Gui::Label(""))->Color(0.0f, 1.0f, 0.0f);
 	m_navVelIndicator.label = (new Gui::Label(""))->Color(0.0f, 1.0f, 0.0f);
@@ -643,7 +643,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 			text += "\n";
 
 			m_hudTargetInfo->SetText(text);
-			MoveChild(m_hudTargetInfo, Gui::Screen::GetWidth() - 150.0f, 85.0f);
+			MoveChild(m_hudTargetInfo, Gui::screen->GetWidth() - 150.0f, 85.0f);
 			m_hudTargetInfo->Show();
 		}
 
@@ -675,7 +675,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 			}
 
 			m_hudTargetInfo->SetText(text);
-			MoveChild(m_hudTargetInfo, Gui::Screen::GetWidth() - 180.0f, 5.0f);
+			MoveChild(m_hudTargetInfo, Gui::screen->GetWidth() - 180.0f, 5.0f);
 			m_hudTargetInfo->Show();
 		}
 
@@ -742,7 +742,7 @@ void WorldView::Update()
 			}
 			if (KeyBindings::targetObject.IsActive()) {
 				/* Hitting tab causes objects in the crosshairs to be selected */
-				Body* const target = PickBody(double(Gui::Screen::GetWidth())/2.0, double(Gui::Screen::GetHeight())/2.0);
+				Body* const target = PickBody(double(Gui::screen->GetWidth())/2.0, double(Gui::screen->GetHeight())/2.0);
 				SelectBody(target, false);
 			}
 		}
@@ -1061,13 +1061,13 @@ static inline bool project_to_screen(const vector3d &in, vector3d &out, const Re
 {
 	if (!frustum.ProjectPoint(in, out)) return false;
 	out.x *= guiSize[0];
-	out.y = Gui::Screen::GetHeight() - out.y * guiSize[1];
+	out.y = Gui::screen->GetHeight() - out.y * guiSize[1];
 	return true;
 }
 
 void WorldView::UpdateProjectedObjects()
 {
-	const int guiSize[2] = { Gui::Screen::GetWidth(), Gui::Screen::GetHeight() };
+	const int guiSize[2] = { Gui::screen->GetWidth(), Gui::screen->GetHeight() };
 	const Render::Frustum frustum = m_activeCamera->GetFrustum();
 
 	const Frame *cam_frame = m_activeCamera->GetFrame();
@@ -1217,15 +1217,15 @@ void WorldView::UpdateProjectedObjects()
 
 void WorldView::UpdateIndicator(Indicator &indicator, const vector3d &cameraSpacePos)
 {
-	const int guiSize[2] = { Gui::Screen::GetWidth(), Gui::Screen::GetHeight() };
+	const int guiSize[2] = { Gui::screen->GetWidth(), Gui::screen->GetHeight() };
 	const Render::Frustum frustum = m_activeCamera->GetFrustum();
 
 	const float BORDER = 10.0;
 	const float BORDER_BOTTOM = 90.0;
 	// XXX BORDER_BOTTOM is 10+the control panel height and shouldn't be needed at all
 
-	const float w = Gui::Screen::GetWidth();
-	const float h = Gui::Screen::GetHeight();
+	const float w = Gui::screen->GetWidth();
+	const float h = Gui::screen->GetHeight();
 
 	if (cameraSpacePos.LengthSqr() < 1e-6) { // length < 1e-3
 		indicator.pos[0] = w/2.0f;
@@ -1421,9 +1421,9 @@ void WorldView::Draw()
 	// normal crosshairs
 	glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 	if (GetCamType() == WorldView::CAM_FRONT)
-		DrawCrosshair(Gui::Screen::GetWidth()/2.0f, Gui::Screen::GetHeight()/2.0f, HUD_CROSSHAIR_SIZE);
+		DrawCrosshair(Gui::screen->GetWidth()/2.0f, Gui::screen->GetHeight()/2.0f, HUD_CROSSHAIR_SIZE);
 	else if (GetCamType() == WorldView::CAM_REAR)
-		DrawCrosshair(Gui::Screen::GetWidth()/2.0f, Gui::Screen::GetHeight()/2.0f, HUD_CROSSHAIR_SIZE/2.0f);
+		DrawCrosshair(Gui::screen->GetWidth()/2.0f, Gui::screen->GetHeight()/2.0f, HUD_CROSSHAIR_SIZE/2.0f);
 
 	glPopAttrib();
 
@@ -1585,8 +1585,8 @@ void WorldView::DrawEdgeMarker(const Indicator &marker)
 	const float sz = HUD_CROSSHAIR_SIZE;
 
 	// this would be easier with a vector2 class
-	float dirx = Gui::Screen::GetWidth()/2.0f - float(marker.pos[0]);
-	float diry = Gui::Screen::GetHeight()/2.0f - float(marker.pos[1]);
+	float dirx = Gui::screen->GetWidth()/2.0f - float(marker.pos[0]);
+	float diry = Gui::screen->GetHeight()/2.0f - float(marker.pos[1]);
 	float len = sqrt(dirx*dirx + diry*diry);
 	dirx *= sz/len;
 	diry *= sz/len;

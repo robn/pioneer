@@ -232,7 +232,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 	
 	m_system = StarSystem::GetCached(path);
 
-	m_sbodyInfoTab = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-100));
+	m_sbodyInfoTab = new Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()-100));
 
 	if (m_system->m_unexplored) {
 		Add(m_sbodyInfoTab, 0, 0);
@@ -247,7 +247,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		return;
 	}
 
-	m_econInfoTab = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-100));
+	m_econInfoTab = new Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()-100));
 	Gui::Fixed *demographicsTab = new Gui::Fixed();
 	
 	m_tabs = new Gui::Tabbed();
@@ -346,7 +346,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		Gui::Fixed *col2 = new Gui::Fixed();
 		demographicsTab->Add(col2, 400, 350);
 	
-		const float YSEP = floor(Gui::Screen::GetFontHeight() * 1.5f);
+		const float YSEP = floor(Gui::screen->GetFontHeight() * 1.5f);
 
 		col1->Add((new Gui::Label(Lang::SYSTEM_TYPE))->Color(1,1,0), 0, 0);
 		col2->Add(new Gui::Label(m_system->GetShortDescription()), 0, 0);

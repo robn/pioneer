@@ -29,10 +29,10 @@ GalacticView::GalacticView()
 	m_scaleReadout = new Gui::Label("");
 	Add(m_scaleReadout, 500.0f, 10.0f);
 
-	Gui::Screen::PushFont("OverlayFont");
+	Gui::screen->PushFont("OverlayFont");
 	m_labels = new Gui::LabelSet();
 	Add(m_labels, 0, 0);
-	Gui::Screen::PopFont();
+	Gui::screen->PopFont();
 
 	m_onMouseButtonDown = 
 		Pi::onMouseButtonDown.connect(sigc::mem_fun(this, &GalacticView::MouseButtonDown));
@@ -68,18 +68,18 @@ static void dummy() {}
 
 void GalacticView::PutLabels(vector3d offset)
 {
-	Gui::Screen::EnterOrtho();
+	Gui::screen->EnterOrtho();
 	glColor3f(1,1,1);
 	
 	for (int i=0; s_labels[i].label; i++) {
 		vector3d p = m_zoom * (s_labels[i].pos + offset);
 		vector3d pos;
-		if (Gui::Screen::Project(p, pos)) {
+		if (Gui::screen->Project(p, pos)) {
 			m_labels->Add(s_labels[i].label, sigc::ptr_fun(&dummy), float(pos.x), float(pos.y));
 		}
 	}
 
-	Gui::Screen::LeaveOrtho();
+	Gui::screen->LeaveOrtho();
 	glDisable(GL_LIGHTING);			// what
 }
 

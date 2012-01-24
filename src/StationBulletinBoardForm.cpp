@@ -54,7 +54,7 @@ void StationBulletinBoardForm::UpdateAdverts()
 {
 	m_advertbox->DeleteAllChildren();
 
-	const float YSEP = floor(Gui::Screen::GetFontHeight() * 5);
+	const float YSEP = floor(Gui::screen->GetFontHeight() * 5);
 
 	const std::list<const BBAdvert*> adverts = m_station->GetBBAdverts();
 

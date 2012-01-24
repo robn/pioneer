@@ -172,14 +172,14 @@ static void draw_progress(float progress)
 	float w, h;
 	Render::PrepareFrame();
 	Render::PostProcess();
-	Gui::Screen::EnterOrtho();
+	Gui::screen->EnterOrtho();
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	std::string msg = stringf(Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, formatarg("age", progress * 13.7f));
-	Gui::Screen::MeasureString(msg, w, h);
+	Gui::screen->MeasureString(msg, w, h);
 	glColor3f(1.0f,1.0f,1.0f);
-	Gui::Screen::RenderString(msg, 0.5f*(Gui::Screen::GetWidth()-w), 0.5f*(Gui::Screen::GetHeight()-h));
-	Gui::Screen::LeaveOrtho();
+	Gui::screen->RenderString(msg, 0.5f*(Gui::screen->GetWidth()-w), 0.5f*(Gui::screen->GetHeight()-h));
+	Gui::screen->LeaveOrtho();
 	Render::SwapBuffers();
 }
 
@@ -608,13 +608,13 @@ void Pi::ToggleLuaConsole()
 	if (luaConsole->IsVisible()) {
 		luaConsole->Hide();
 		if (luaConsole->GetTextEntryField()->IsFocused())
-			Gui::Screen::ClearFocus();
-		Gui::Screen::RemoveBaseWidget(luaConsole);
+			Gui::screen->ClearFocus();
+		Gui::screen->RemoveBaseWidget(luaConsole);
 	} else {
 		// luaConsole is added and removed from the base widget set
 		// (rather than just using Show()/Hide())
 		// so that it's forced in front of any other base widgets when it opens
-		Gui::Screen::AddBaseWidget(luaConsole, 0, 0);
+		Gui::screen->AddBaseWidget(luaConsole, 0, 0);
 		luaConsole->Show();
 		luaConsole->GetTextEntryField()->Show();
 	}
@@ -1142,14 +1142,14 @@ void Pi::Start()
 {
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
-	Gui::Fixed *menu = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()));
-	Gui::Screen::AddBaseWidget(menu, 0, 0);
+	Gui::Fixed *menu = new Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()));
+	Gui::screen->AddBaseWidget(menu, 0, 0);
 	menu->SetTransparency(true);
 
-	Gui::Screen::PushFont("OverlayFont");
+	Gui::screen->PushFont("OverlayFont");
 
-	const float w = Gui::Screen::GetWidth() / 2.0f;
-	const float h = Gui::Screen::GetHeight() / 2.0f;
+	const float w = Gui::screen->GetWidth() / 2.0f;
+	const float h = Gui::screen->GetHeight() / 2.0f;
 	const int OPTS = 5;
 	Gui::SolidButton *opts[OPTS];
 	opts[0] = new Gui::SolidButton(); opts[0]->SetShortcut(SDLK_1, KMOD_NONE);
@@ -1176,9 +1176,9 @@ void Pi::Start()
 	std::string version("Pioneer " PIONEER_VERSION);
 	if (strlen(PIONEER_EXTRAVERSION)) version += " (" PIONEER_EXTRAVERSION ")";
 
-	menu->Add(new Gui::Label(version), Gui::Screen::GetWidth()-200.0f, Gui::Screen::GetHeight()-32.0f);
+	menu->Add(new Gui::Label(version), Gui::screen->GetWidth()-200.0f, Gui::screen->GetHeight()-32.0f);
 
-	Gui::Screen::PopFont();
+	Gui::screen->PopFont();
 
 	menu->ShowAll();
 	
@@ -1213,7 +1213,7 @@ void Pi::Start()
 	}
 	menu->HideAll();
 	
-	Gui::Screen::RemoveBaseWidget(menu);
+	Gui::screen->RemoveBaseWidget(menu);
 	delete menu;
 	delete background;
 
@@ -1328,12 +1328,12 @@ void Pi::MainLoop()
 
 #if WITH_DEVKEYS
 		if (Pi::showDebugInfo) {
-			Gui::Screen::EnterOrtho();
+			Gui::screen->EnterOrtho();
 			glColor3f(1,1,1);
-			Gui::Screen::PushFont("ConsoleFont");
-			Gui::Screen::RenderString(fps_readout, 0, 0);
-			Gui::Screen::PopFont();
-			Gui::Screen::LeaveOrtho();
+			Gui::screen->PushFont("ConsoleFont");
+			Gui::screen->RenderString(fps_readout, 0, 0);
+			Gui::screen->PopFont();
+			Gui::screen->LeaveOrtho();
 		}
 #endif
 

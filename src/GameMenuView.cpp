@@ -29,7 +29,7 @@ private:
 		if (m_infoTooltip) return;
 		std::string msg = Lang::PRESS_BUTTON_WANTED_FOR + m_function;
 		Gui::ToolTip *t = new Gui::ToolTip(msg);
-		Gui::Screen::AddBaseWidget(t, 300, 300);
+		Gui::screen->AddBaseWidget(t, 300, 300);
 		t->Show();
 		t->GrabFocus();
 		m_keyUpConnection = Gui::RawEvents::onKeyUp.connect(sigc::mem_fun(this, &KeyGetter::OnKeyUpPick));
@@ -42,7 +42,7 @@ private:
 		m_keyUpConnection.disconnect();
 		m_joyButtonUpConnection.disconnect();
 		m_joyHatConnection.disconnect();
-		Gui::Screen::RemoveBaseWidget(m_infoTooltip);
+		Gui::screen->RemoveBaseWidget(m_infoTooltip);
 		delete m_infoTooltip;
 		m_infoTooltip = 0;
 	}
@@ -106,7 +106,7 @@ private:
 		if (m_infoTooltip) return;
 		std::string msg = Lang::MOVE_AXIS_WANTED_FOR + m_function;
 		Gui::ToolTip *t = new Gui::ToolTip(msg);
-		Gui::Screen::AddBaseWidget(t, 300, 300);
+		Gui::screen->AddBaseWidget(t, 300, 300);
 		t->Show();
 		t->GrabFocus();
 		m_keyUpConnection.disconnect();
@@ -119,7 +119,7 @@ private:
 			return;
 
 		m_keyUpConnection.disconnect();
-		Gui::Screen::RemoveBaseWidget(m_infoTooltip);
+		Gui::screen->RemoveBaseWidget(m_infoTooltip);
 		delete m_infoTooltip;
 		m_infoTooltip = 0;
 
