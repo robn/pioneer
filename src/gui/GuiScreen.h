@@ -10,10 +10,14 @@
 
 namespace Gui {
 
+class Context;
+
 class Screen {
 public:
-	Screen(int real_width, int real_height, int ui_width, int ui_height);
+	Screen(Context *context, int real_width, int real_height, int ui_width, int ui_height);
 	virtual ~Screen();
+
+	Context *GetContext() const { return m_context; }
 
 	void Draw();
 	void ShowBadError(const char *msg);
@@ -64,6 +68,8 @@ private:
 	void AddShortcutWidget(Widget *w);
 	void RemoveShortcutWidget(Widget *w);
 	void SDLEventCoordToScreenCoord(int sdlev_x, int sdlev_y, float *x, float *y);
+
+	Context *m_context;
 
 	int width, height;
 	int realWidth, realHeight;

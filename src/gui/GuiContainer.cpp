@@ -1,5 +1,6 @@
 #include "Gui.h"
 #include "GuiContainer.h"
+#include "GuiContext.h"
 
 //#define GUI_DEBUG_CONTAINER
 
@@ -110,6 +111,7 @@ void Container::DeleteAllChildren()
 void Container::RemoveAllChildren()
 {
 	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+		i->w->SetContext(0);
 		i->w->SetParent(0);
 	}
 	m_children.clear();
@@ -121,6 +123,7 @@ void Container::PrependChild(Widget *child, float x, float y)
 	wp.w = child;
 	wp.pos[0] = x; wp.pos[1] = y;
 	wp.flags = 0;
+	child->SetContext(GetContext());
 	child->SetParent(this);
 	m_children.push_front(wp);
 }
@@ -131,6 +134,7 @@ void Container::AppendChild(Widget *child, float x, float y)
 	wp.w = child;
 	wp.pos[0] = x; wp.pos[1] = y;
 	wp.flags = 0;
+	child->SetContext(GetContext());
 	child->SetParent(this);
 	m_children.push_back(wp);
 }
@@ -150,6 +154,7 @@ void Container::RemoveChild(Widget *child)
 {
 	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
 		if ((*i).w == child) {
+			child->SetContext(0);
 			child->SetParent(0);
 			m_children.erase(i);
 			return;

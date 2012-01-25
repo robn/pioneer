@@ -3,7 +3,8 @@
 
 namespace Gui {
 
-Screen::Screen(int real_width, int real_height, int ui_width, int ui_height)
+Screen::Screen(Context *context, int real_width, int real_height, int ui_width, int ui_height) :
+	m_context(context),
 {
 	width = ui_width;
 	height = ui_height;
@@ -131,6 +132,7 @@ bool Screen::IsBaseWidget(const Widget *w)
 void Screen::AddBaseWidget(Widget *w, int x, int y)
 {
 	baseContainer->Add(w, float(x), float(y));
+	w->SetContext(m_context);
 }
 
 void Screen::RemoveBaseWidget(Widget *w)

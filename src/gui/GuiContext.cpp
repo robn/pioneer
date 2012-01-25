@@ -7,7 +7,7 @@ namespace Gui {
 Context::Context(int screen_width, int screen_height, int ui_width, int ui_height)
 {
 	SDL_EnableUNICODE(1);
-	screen = new Screen(screen_width, screen_height, ui_width, ui_height);
+	screen = new Screen(this, screen_width, screen_height, ui_width, ui_height);
 }
 
 Context::~Context()

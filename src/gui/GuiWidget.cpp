@@ -2,7 +2,8 @@
 
 namespace Gui {
 
-Widget::Widget()
+Widget::Widget() :
+	m_context(0)
 {
 	m_parent = 0;
 	m_enabled = true;

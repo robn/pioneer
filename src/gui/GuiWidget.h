@@ -5,6 +5,7 @@
 #include "GuiEvents.h"
 
 namespace Gui {
+	class Context;
 	class Container;
 	class ToolTip;
 	class Widget {
@@ -12,6 +13,10 @@ namespace Gui {
 		Widget();
 		virtual void Draw() = 0;
 		virtual ~Widget();
+
+		void SetContext(Context *c) { m_context = c; }
+		Context *GetContext() const { return m_context; }
+
 		/** containers call this on children. input: size[] will contain max permissible size
 		 *  output: size[] will contain what space the widget desires */
 		virtual void GetSizeRequested(float size[2]) = 0;
@@ -33,7 +38,9 @@ namespace Gui {
 		virtual void Hide();
 		bool IsVisible() const;
 		Container *GetParent() const { return m_parent; }
+
 		void SetParent(Container *p) { m_parent = p; }
+
 		void SetToolTip(std::string s) { m_tooltip = s; }
 		const std::string &GetToolTip() const { return m_tooltip; }
 
@@ -73,6 +80,8 @@ namespace Gui {
 		virtual std::string GetOverrideTooltip() { return ""; }
 		void UpdateOverriddenTooltip();
 	private:
+		Context *m_context;
+
 		struct {
 			float w,h;
 		} m_size;
