@@ -13,6 +13,7 @@ noinst_HEADERS = \
 	GuiBox.h \
 	GuiButton.h \
 	GuiContainer.h \
+	GuiContext.h \
 	GuiEvents.h \
 	GuiFixed.h \
 	GuiGradient.h \
@@ -43,6 +44,7 @@ libgui_a_SOURCES = \
 	GuiBox.cpp \
 	GuiButton.cpp \
 	GuiContainer.cpp \
+	GuiContext.cpp \
 	GuiFixed.cpp \
 	GuiGradient.cpp \
 	GuiImage.cpp \
