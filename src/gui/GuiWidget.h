@@ -38,9 +38,9 @@ namespace Gui {
 		const std::string &GetToolTip() const { return m_tooltip; }
 
 		// event handlers should return false to stop propagating event
-		virtual bool OnMouseDown(MouseButtonEvent *e) { return true; }
-		virtual bool OnMouseUp(MouseButtonEvent *e) { return true; }
-		virtual bool OnMouseMotion(MouseMotionEvent *e) { return true; }
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e) { return true; }
+		virtual bool OnMouseUp(GuiExtra::MouseButtonEvent *e) { return true; }
+		virtual bool OnMouseMotion(GuiExtra::MouseMotionEvent *e) { return true; }
 		virtual void OnActivate() {}
 		virtual void OnMouseEnter();
 		virtual void OnMouseLeave();

@@ -8,7 +8,7 @@ namespace Gui {
 Container::Container()
 {
 	m_transparent = true;
-	SetBgColor(Theme::Colors::bg);
+	SetBgColor(GuiExtra::Theme::Colors::bg);
 	onMouseLeave.connect(sigc::mem_fun(this, &Container::_OnMouseLeave));
 	onSetSize.connect(sigc::mem_fun(this, &Container::_OnSetSize));
 }
@@ -31,7 +31,7 @@ void Container::_OnMouseLeave()
 	}
 }
 
-bool Container::OnMouseMotion(MouseMotionEvent *e)
+bool Container::OnMouseMotion(GuiExtra::MouseMotionEvent *e)
 {
 	float x = e->x;
 	float y = e->y;
@@ -65,7 +65,7 @@ bool Container::OnMouseMotion(MouseMotionEvent *e)
 	return true;
 }
 
-bool Container::HandleMouseEvent(MouseButtonEvent *e)
+bool Container::HandleMouseEvent(GuiExtra::MouseButtonEvent *e)
 {
 	float x = e->x;
 	float y = e->y;
@@ -203,12 +203,12 @@ void Container::Draw()
 	}
 }
 
-bool Container::OnMouseDown(MouseButtonEvent *e)
+bool Container::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	return HandleMouseEvent(e);
 }
 
-bool Container::OnMouseUp(MouseButtonEvent *e)
+bool Container::OnMouseUp(GuiExtra::MouseButtonEvent *e)
 {
 	return HandleMouseEvent(e);
 }

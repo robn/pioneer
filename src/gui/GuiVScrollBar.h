@@ -8,7 +8,7 @@ namespace Gui {
 	public:
 		ScrollBar(bool isHoriz);
 		virtual ~ScrollBar();
-		virtual bool OnMouseDown(MouseButtonEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
 		virtual void GetSizeRequested(float size[2]);
 		virtual void GetMinimumSize(float size[2]);
 		virtual void Draw();
@@ -18,8 +18,8 @@ namespace Gui {
 	protected:
 		Adjustment *m_adjustment;
 	private:
-		void OnRawMouseUp(MouseButtonEvent *e);
-		void OnRawMouseMotion(MouseMotionEvent *e);
+		void OnRawMouseUp(GuiExtra::MouseButtonEvent *e);
+		void OnRawMouseMotion(GuiExtra::MouseMotionEvent *e);
 		bool m_isPressed, m_isHoriz;
 		sigc::connection _m_release, _m_motion;
 	};

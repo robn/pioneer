@@ -17,18 +17,18 @@ Button::~Button()
 	_m_kbrelease.disconnect();
 }
 
-bool Button::OnMouseDown(MouseButtonEvent *e)
+bool Button::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->button == 1) {
 		m_isPressed = true;
 		onPress.emit();
 		// wait for mouse release, regardless of where on screen
-		_m_release = RawEvents::onMouseUp.connect(sigc::mem_fun(this, &Button::OnRawMouseUp));
+		_m_release = GuiExtra::RawEvents::onMouseUp.connect(sigc::mem_fun(this, &Button::OnRawMouseUp));
 	}
 	return false;
 }
 
-bool Button::OnMouseUp(MouseButtonEvent *e)
+bool Button::OnMouseUp(GuiExtra::MouseButtonEvent *e)
 {
 	if ((e->button == 1) && m_isPressed) {
 		m_isPressed = false;
@@ -43,7 +43,7 @@ void Button::OnActivate()
 {
 	// activated by keyboard shortcut
 	m_isPressed = true;
-	_m_kbrelease = RawEvents::onKeyUp.connect(sigc::mem_fun(this, &Button::OnRawKeyUp));
+	_m_kbrelease = GuiExtra::RawEvents::onKeyUp.connect(sigc::mem_fun(this, &Button::OnRawKeyUp));
 	onPress.emit();
 }
 
@@ -57,7 +57,7 @@ void Button::OnRawKeyUp(SDL_KeyboardEvent *e)
 	}
 }
 
-void Button::OnRawMouseUp(MouseButtonEvent *e)
+void Button::OnRawMouseUp(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->button == 1) {
 		m_isPressed = false;
@@ -81,9 +81,9 @@ void SolidButton::Draw()
 	float size[2];
 	GetSize(size);
 	if (IsPressed()) {
-		Theme::DrawIndent(size);
+		GuiExtra::Theme::DrawIndent(size);
 	} else {
-		Theme::DrawOutdent(size);
+		GuiExtra::Theme::DrawOutdent(size);
 	}
 }
 void TransparentButton::Draw()
@@ -91,7 +91,7 @@ void TransparentButton::Draw()
 	float size[2];
 	GetSize(size);
 	glColor3f(1,1,1);
-	Theme::DrawHollowRect(size);
+	GuiExtra::Theme::DrawHollowRect(size);
 }
 
 LabelButton::LabelButton(Label *label): Button()
@@ -116,11 +116,11 @@ void LabelButton::Draw()
 	GetSize(size);
 	//printf("%f,%f\n", size[0], size[1]);
 	glColor3f(1,1,1);
-	//Theme::DrawHollowRect(size);
+	//GuiExtra::Theme::DrawHollowRect(size);
 	if (IsPressed()) {
-		Theme::DrawIndent(size);
+		GuiExtra::Theme::DrawIndent(size);
 	} else {
-		Theme::DrawOutdent(size);
+		GuiExtra::Theme::DrawOutdent(size);
 	}
 	glPushMatrix();
 	glTranslatef(m_padding, m_padding*0.5, 0);

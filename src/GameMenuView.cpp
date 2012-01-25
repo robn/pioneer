@@ -32,9 +32,9 @@ private:
 		Gui::screen->AddBaseWidget(t, 300, 300);
 		t->Show();
 		t->GrabFocus();
-		m_keyUpConnection = Gui::RawEvents::onKeyUp.connect(sigc::mem_fun(this, &KeyGetter::OnKeyUpPick));
-		m_joyButtonUpConnection = Gui::RawEvents::onJoyButtonUp.connect(sigc::mem_fun(this, &KeyGetter::OnJoyButtonUp));
-		m_joyHatConnection = Gui::RawEvents::onJoyHatMotion.connect(sigc::mem_fun(this, &KeyGetter::OnJoyHatMotion));
+		m_keyUpConnection = GuiExtra::RawEvents::onKeyUp.connect(sigc::mem_fun(this, &KeyGetter::OnKeyUpPick));
+		m_joyButtonUpConnection = GuiExtra::RawEvents::onJoyButtonUp.connect(sigc::mem_fun(this, &KeyGetter::OnJoyButtonUp));
+		m_joyHatConnection = GuiExtra::RawEvents::onJoyHatMotion.connect(sigc::mem_fun(this, &KeyGetter::OnJoyHatMotion));
 		m_infoTooltip = t;
 	}
 
@@ -110,7 +110,7 @@ private:
 		t->Show();
 		t->GrabFocus();
 		m_keyUpConnection.disconnect();
-		m_keyUpConnection = Gui::RawEvents::onJoyAxisMotion.connect(sigc::mem_fun(this, &AxisGetter::OnAxisPick));
+		m_keyUpConnection = GuiExtra::RawEvents::onJoyAxisMotion.connect(sigc::mem_fun(this, &AxisGetter::OnAxisPick));
 		m_infoTooltip = t;
 	}
 

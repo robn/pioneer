@@ -213,7 +213,7 @@ void SystemInfoView::PutBodies(SBody *body, Gui::Fixed *container, int dir, floa
 	}
 }
 
-void SystemInfoView::OnClickBackground(Gui::MouseButtonEvent *e)
+void SystemInfoView::OnClickBackground(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->isdown) {
 		// XXX reinit view unnecessary - we only want to show

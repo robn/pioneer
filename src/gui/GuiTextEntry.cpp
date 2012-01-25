@@ -133,9 +133,9 @@ void TextEntry::GetSizeRequested(float size[2])
 	size[1] = (m_newlineCount*1.5f+1.0f)*Gui::screen->GetFontHeight(m_font) + 2.0f;
 }
 
-bool TextEntry::OnMouseDown(MouseButtonEvent *e)
+bool TextEntry::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
-	m_clickout = RawEvents::onMouseDown.connect(sigc::mem_fun(this, &TextEntry::OnRawMouseDown));
+	m_clickout = GuiExtra::RawEvents::onMouseDown.connect(sigc::mem_fun(this, &TextEntry::OnRawMouseDown));
 	GrabFocus();
 	m_justFocused = true;
 
@@ -145,7 +145,7 @@ bool TextEntry::OnMouseDown(MouseButtonEvent *e)
 	return false;
 }
 
-void TextEntry::OnRawMouseDown(MouseButtonEvent *e)
+void TextEntry::OnRawMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if (!m_justFocused)
 		Unfocus();

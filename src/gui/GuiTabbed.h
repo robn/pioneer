@@ -16,7 +16,7 @@ namespace Gui {
 		virtual void GetSizeRequested(float size[2]);
 		virtual void OnChildResizeRequest(Widget *);
 		virtual void UpdateAllChildSizes();
-		virtual bool OnMouseDown(MouseButtonEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
 		void SelectPage(int page);
 		int GetCurrentPage() const { return m_page; }
 		sigc::signal<void,int> onSelectPage;

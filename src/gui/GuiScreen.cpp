@@ -146,7 +146,7 @@ void Screen::SDLEventCoordToScreenCoord(int sdlev_x, int sdlev_y, float *x, floa
 
 void Screen::OnMouseMotion(SDL_MouseMotionEvent *e)
 {
-	MouseMotionEvent ev;
+	GuiExtra::MouseMotionEvent ev;
 	float x, y;
 	SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
 	ev.screenX = ev.x = x;
@@ -154,12 +154,12 @@ void Screen::OnMouseMotion(SDL_MouseMotionEvent *e)
 	baseContainer->OnMouseMotion(&ev);
 	ev.screenX = ev.x = x;
 	ev.screenY = ev.y = y;
-	RawEvents::onMouseMotion.emit(&ev);
+	GuiExtra::RawEvents::onMouseMotion.emit(&ev);
 }
 
 void Screen::OnClick(SDL_MouseButtonEvent *e)
 {
-	MouseButtonEvent ev;
+	GuiExtra::MouseButtonEvent ev;
 	float x, y;
 	SDLEventCoordToScreenCoord(e->x, e->y, &x, &y);
 	ev.button = e->button;
@@ -168,10 +168,10 @@ void Screen::OnClick(SDL_MouseButtonEvent *e)
 	ev.screenY = ev.y = y;
 	if (ev.isdown) {
 		baseContainer->OnMouseDown(&ev);
-		RawEvents::onMouseDown.emit(&ev);
+		GuiExtra::RawEvents::onMouseDown.emit(&ev);
 	} else {
 		baseContainer->OnMouseUp(&ev);
-		RawEvents::onMouseUp.emit(&ev);
+		GuiExtra::RawEvents::onMouseUp.emit(&ev);
 	}
 }
 

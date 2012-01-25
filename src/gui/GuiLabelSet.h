@@ -36,7 +36,7 @@ public:
 	};
 
 	LabelSet();
-	bool OnMouseDown(MouseButtonEvent *e);
+	bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
 	virtual void Draw();
 	virtual void GetSizeRequested(float size[2]);
 	void Clear();

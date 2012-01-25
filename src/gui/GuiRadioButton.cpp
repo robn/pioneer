@@ -14,7 +14,7 @@ RadioButton::~RadioButton()
 {
 	
 }
-bool RadioButton::OnMouseDown(MouseButtonEvent *e)
+bool RadioButton::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	onPress.emit();
 	OnActivate();
@@ -37,9 +37,9 @@ void RadioButton::Draw()
 	float size[2];
 	GetSize(size);
 	if (m_pressed) {
-		Theme::DrawIndent(size);
+		GuiExtra::Theme::DrawIndent(size);
 	} else {
-		Theme::DrawOutdent(size);
+		GuiExtra::Theme::DrawOutdent(size);
 	}
 }
 }

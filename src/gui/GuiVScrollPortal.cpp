@@ -84,7 +84,7 @@ float VScrollPortal::GetScrollPixels()
 	return m_scrollY*((m_childSizeY-size[1]) > 0 ? (m_childSizeY-size[1]) : 0);
 }
 
-bool VScrollPortal::OnMouseDown(MouseButtonEvent *e)
+bool VScrollPortal::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->button == 4 || e->button == 5) {
 		float change = e->button == 4 ? -0.1 : 0.1;
@@ -96,12 +96,12 @@ bool VScrollPortal::OnMouseDown(MouseButtonEvent *e)
 	e->y += GetScrollPixels();
 	return Container::OnMouseDown(e);
 }
-bool VScrollPortal::OnMouseUp(MouseButtonEvent *e)
+bool VScrollPortal::OnMouseUp(GuiExtra::MouseButtonEvent *e)
 {
 	e->y += GetScrollPixels();
 	return Container::OnMouseUp(e);
 }
-bool VScrollPortal::OnMouseMotion(MouseMotionEvent *e)
+bool VScrollPortal::OnMouseMotion(GuiExtra::MouseMotionEvent *e)
 {
 	e->y += GetScrollPixels();
 	return Container::OnMouseMotion(e);

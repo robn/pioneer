@@ -50,7 +50,7 @@ void Tabbed::OnActivate()
 	SelectPage((m_page+1)%m_pages.size());
 }
 
-bool Tabbed::OnMouseDown(MouseButtonEvent *e)
+bool Tabbed::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->y < TAB_BAR_HEIGHT) {
 		float xpos = 0.0;
@@ -151,7 +151,7 @@ void Tabbed::Draw()
 	float xpos = 0;
 	unsigned int index = 0;
 
-	glColor3fv(Theme::Colors::bgShadow);
+	glColor3fv(GuiExtra::Theme::Colors::bgShadow);
 	glBegin(GL_QUADS);
 		glVertex2f(0, TAB_BAR_HEIGHT);
 		glVertex2f(size[0], TAB_BAR_HEIGHT);
@@ -165,7 +165,7 @@ void Tabbed::Draw()
 		(*i).first->GetSize(csize);
 		csize[0] += 2*LABEL_PADDING;
 		if (index == m_page) {
-			glColor3fv(Theme::Colors::bg);
+			glColor3fv(GuiExtra::Theme::Colors::bg);
 			glBegin(GL_QUADS);
 				glVertex2f(xpos, TAB_BAR_HEIGHT);
 				glVertex2f(xpos+csize[0], TAB_BAR_HEIGHT);

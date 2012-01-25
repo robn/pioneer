@@ -11,8 +11,8 @@ namespace Gui {
 	public:
 		Button();
 		virtual ~Button();
-		virtual bool OnMouseDown(MouseButtonEvent *e);
-		virtual bool OnMouseUp(MouseButtonEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
+		virtual bool OnMouseUp(GuiExtra::MouseButtonEvent *e);
 		virtual void OnActivate();
 		
 		// onClick only happens when press and release are both on widget (release can be elsewhere)
@@ -21,7 +21,7 @@ namespace Gui {
 		sigc::signal<void> onClick;
 		bool IsPressed() { return m_isPressed; }
 	private:
-		void OnRawMouseUp(MouseButtonEvent *e);
+		void OnRawMouseUp(GuiExtra::MouseButtonEvent *e);
 		void OnRawKeyUp(SDL_KeyboardEvent *e);
 
 		bool m_isPressed;

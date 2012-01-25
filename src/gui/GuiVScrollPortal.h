@@ -11,9 +11,9 @@ namespace Gui {
 		VScrollPortal();
 		void Add(Widget *child);
 		void Remove(Widget *child);
-		virtual bool OnMouseDown(MouseButtonEvent *e);
-		virtual bool OnMouseUp(MouseButtonEvent *e);
-		virtual bool OnMouseMotion(MouseMotionEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
+		virtual bool OnMouseUp(GuiExtra::MouseButtonEvent *e);
+		virtual bool OnMouseMotion(GuiExtra::MouseMotionEvent *e);
 		virtual void Draw();
 		virtual void GetSizeRequested(float size[2]);
 		virtual void GetMinimumSize(float size[2]);

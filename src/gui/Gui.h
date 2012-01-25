@@ -5,8 +5,19 @@
 #include "Color.h"
 
 namespace Gui {
-
 	class Screen;
+
+	extern Screen *screen;
+
+	void HandleSDLEvent(SDL_Event *event);
+	void Draw();
+	void MainLoopIteration();
+	sigc::connection AddTimer(Uint32 ms, sigc::slot<void> slot);
+	void Init(int screen_width, int screen_height, int ui_width, int ui_height);
+	void Uninit();
+}
+
+namespace GuiExtra {
 
 	namespace Theme {
 		void DrawRoundEdgedRect(const float size[2], float rad);
@@ -19,20 +30,11 @@ namespace Gui {
 			extern const float tableHeading[];
 		}
 	}
-
-	extern Screen *screen;
-
-	void HandleSDLEvent(SDL_Event *event);
-	void Draw();
-	void MainLoopIteration();
-	sigc::connection AddTimer(Uint32 ms, sigc::slot<void> slot);
-	void Init(int screen_width, int screen_height, int ui_width, int ui_height);
-	void Uninit();
 }
 
 #include "GuiEvents.h"
 
-namespace Gui {
+namespace GuiExtra {
 	namespace RawEvents {
 		extern sigc::signal<void, MouseMotionEvent *> onMouseMotion;
 		extern sigc::signal<void, MouseButtonEvent *> onMouseDown;

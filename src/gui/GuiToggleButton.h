@@ -11,7 +11,7 @@ namespace Gui {
 		virtual void Draw();
 		virtual ~ToggleButton() {}
 		virtual void GetSizeRequested(float size[2]);
-		virtual bool OnMouseDown(MouseButtonEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
 		virtual void OnActivate();
 		void SetPressed(bool s) { m_pressed = s; }
 		bool GetPressed() { return m_pressed != 0; }

@@ -12,9 +12,9 @@ namespace Gui {
 	public:
 		Container();
 		virtual ~Container();
-		bool OnMouseDown(MouseButtonEvent *e);
-		bool OnMouseUp(MouseButtonEvent *e);
-		bool OnMouseMotion(MouseMotionEvent *e);
+		bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
+		bool OnMouseUp(GuiExtra::MouseButtonEvent *e);
+		bool OnMouseMotion(GuiExtra::MouseMotionEvent *e);
 		void RemoveAllChildren();
 		void DeleteAllChildren();
 		void GetChildPosition(const Widget *child, float outPos[2]) const;
@@ -32,11 +32,11 @@ namespace Gui {
 		virtual void UpdateAllChildSizes() = 0;
 		void RemoveChild(Widget *w);
 		// only fired if child widgets do not eat event
-		sigc::signal<void, MouseButtonEvent*> onMouseButtonEvent;
+		sigc::signal<void, GuiExtra::MouseButtonEvent*> onMouseButtonEvent;
 	private:
 		void _OnMouseLeave();
 		void _OnSetSize();
-		bool HandleMouseEvent(MouseButtonEvent *e);
+		bool HandleMouseEvent(GuiExtra::MouseButtonEvent *e);
 		float m_bgcol[4];
 		bool m_transparent;
 	protected:

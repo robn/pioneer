@@ -11,7 +11,7 @@ LabelSet::LabelSet() : Widget()
 	m_font = Gui::screen->GetFont();
 }
 
-bool LabelSet::OnMouseDown(Gui::MouseButtonEvent *e)
+bool LabelSet::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if ((e->button == 1) && (m_labelsClickable)) {
 		for (std::vector<LabelSetItem>::iterator i = m_items.begin(); i != m_items.end(); ++i) {

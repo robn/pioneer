@@ -2,14 +2,11 @@
 #include "Gui.h"
 #include "render/Render.h"
 
-namespace Gui {
-
-Screen *screen = 0;
-
+namespace GuiExtra {
 namespace RawEvents {
-	sigc::signal<void, MouseMotionEvent *> onMouseMotion;
-	sigc::signal<void, MouseButtonEvent *> onMouseDown;
-	sigc::signal<void, MouseButtonEvent *> onMouseUp;
+	sigc::signal<void, GuiExtra::MouseMotionEvent *> onMouseMotion;
+	sigc::signal<void, GuiExtra::MouseButtonEvent *> onMouseDown;
+	sigc::signal<void, GuiExtra::MouseButtonEvent *> onMouseUp;
 	sigc::signal<void, SDL_KeyboardEvent *> onKeyDown;
 	sigc::signal<void, SDL_KeyboardEvent *> onKeyUp;
 	sigc::signal<void, SDL_JoyAxisEvent *> onJoyAxisMotion;
@@ -17,6 +14,11 @@ namespace RawEvents {
 	sigc::signal<void, SDL_JoyButtonEvent *> onJoyButtonUp;
 	sigc::signal<void, SDL_JoyHatEvent *> onJoyHatMotion;
 }
+}
+
+namespace Gui {
+
+Screen *screen = 0;
 
 
 void HandleSDLEvent(SDL_Event *event)
@@ -30,26 +32,26 @@ void HandleSDLEvent(SDL_Event *event)
 			break;
 		case SDL_KEYDOWN:
 			screen->OnKeyDown(&event->key.keysym);
-			RawEvents::onKeyDown.emit(&event->key);
+			GuiExtra::RawEvents::onKeyDown.emit(&event->key);
 			break;
 		case SDL_KEYUP:
 			screen->OnKeyUp(&event->key.keysym);
-			RawEvents::onKeyUp.emit(&event->key);
+			GuiExtra::RawEvents::onKeyUp.emit(&event->key);
 			break;
 		case SDL_MOUSEMOTION:
 			screen->OnMouseMotion(&event->motion);
 			break;
 		case SDL_JOYAXISMOTION:
-			RawEvents::onJoyAxisMotion(&event->jaxis);
+			GuiExtra::RawEvents::onJoyAxisMotion(&event->jaxis);
 			break;
 		case SDL_JOYBUTTONUP:
-			RawEvents::onJoyButtonUp(&event->jbutton);
+			GuiExtra::RawEvents::onJoyButtonUp(&event->jbutton);
 			break;
 		case SDL_JOYBUTTONDOWN:
-			RawEvents::onJoyButtonDown(&event->jbutton);
+			GuiExtra::RawEvents::onJoyButtonDown(&event->jbutton);
 			break;
 		case SDL_JOYHATMOTION:
-			RawEvents::onJoyHatMotion(&event->jhat);
+			GuiExtra::RawEvents::onJoyHatMotion(&event->jhat);
 			break;
 	}
 }
@@ -129,6 +131,9 @@ void MainLoopIteration()
 	Render::SwapBuffers();
 }
 
+}
+
+namespace GuiExtra {
 namespace Theme {
 	namespace Colors {
 		const float bg[] = { .25f,.37f,.63f };

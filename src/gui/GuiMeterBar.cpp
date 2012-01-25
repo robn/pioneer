@@ -22,14 +22,14 @@ void MeterBar::Draw()
 
 	glEnable(GL_BLEND);
 	glColor4f(1.0f,1.0f,1.0f,.125f);
-	Gui::Theme::DrawRoundEdgedRect(size, 5.0);
+	GuiExtra::Theme::DrawRoundEdgedRect(size, 5.0);
 
 	glPushMatrix();
 	glColor4fv(m_barColor);
 	glTranslatef(METERBAR_PADDING, METERBAR_PADDING, 0.0f);
 	size[0] = m_barValue * (size[0] - 2.0f*METERBAR_PADDING);
 	size[1] = METERBAR_BAR_HEIGHT;
-	Gui::Theme::DrawRoundEdgedRect(size, 3.0f);
+	GuiExtra::Theme::DrawRoundEdgedRect(size, 3.0f);
 	glPopMatrix();
 	glDisable(GL_BLEND);
 

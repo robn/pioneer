@@ -19,7 +19,7 @@ namespace Gui {
 		virtual ~TextEntry();
 		virtual void GetSizeRequested(float size[2]);
 		virtual void Draw();
-		virtual bool OnMouseDown(MouseButtonEvent *e);
+		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e);
 		void SetText(const std::string &text);
 		std::string GetText() const { return m_text; }
 		void SetCursorPos(int pos) { m_cursPos = Clamp(pos, 0, signed(m_text.size())); }
@@ -40,7 +40,7 @@ namespace Gui {
 		sigc::signal<void> onValueChanged;
 	private:
 
-		void OnRawMouseDown(MouseButtonEvent *e);
+		void OnRawMouseDown(GuiExtra::MouseButtonEvent *e);
 
 		std::string m_text;
 		int m_cursPos;

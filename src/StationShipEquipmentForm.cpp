@@ -85,7 +85,7 @@ StationShipEquipmentForm::StationShipEquipmentForm(FormController *controller) :
 	portal->Add(innerbox);
 
 	Gui::Fixed *heading = new Gui::Fixed(470, Gui::screen->GetFontHeight());
-	const float *col = Gui::Theme::Colors::tableHeading;
+	const float *col = GuiExtra::Theme::Colors::tableHeading;
 	heading->Add((new Gui::Label(Lang::ITEM))->Color(col), 0, 0);
 	heading->Add((new Gui::Label(Lang::PRICE_TO_FIT))->Color(col), 200, 0);
 	heading->Add((new Gui::Label(Lang::PRICE_TO_REMOVE))->Color(col), 275, 0);

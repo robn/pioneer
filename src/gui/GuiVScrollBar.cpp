@@ -20,7 +20,7 @@ ScrollBar::~ScrollBar()
 	if (_m_motion) _m_motion.disconnect();
 }
 
-bool ScrollBar::OnMouseDown(MouseButtonEvent *e)
+bool ScrollBar::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	float size[2];
 	GetSize(size);
@@ -31,8 +31,8 @@ bool ScrollBar::OnMouseDown(MouseButtonEvent *e)
 		} else {
 			m_adjustment->SetValue(e->y / float(size[1]));
 		}
-		_m_release = RawEvents::onMouseUp.connect(sigc::mem_fun(this, &ScrollBar::OnRawMouseUp));
-		_m_motion = RawEvents::onMouseMotion.connect(sigc::mem_fun(this, &ScrollBar::OnRawMouseMotion));
+		_m_release = GuiExtra::RawEvents::onMouseUp.connect(sigc::mem_fun(this, &ScrollBar::OnRawMouseUp));
+		_m_motion = GuiExtra::RawEvents::onMouseMotion.connect(sigc::mem_fun(this, &ScrollBar::OnRawMouseMotion));
 	}
 	else if (e->button == 4 || e->button == 5) {
 		float change = e->button == 4 ? -0.1 : 0.1;
@@ -42,7 +42,7 @@ bool ScrollBar::OnMouseDown(MouseButtonEvent *e)
 	return false;
 }
 
-void ScrollBar::OnRawMouseUp(MouseButtonEvent *e) {
+void ScrollBar::OnRawMouseUp(GuiExtra::MouseButtonEvent *e) {
 	if (e->button == 1) {
 		m_isPressed = false;
 		_m_release.disconnect();
@@ -50,7 +50,7 @@ void ScrollBar::OnRawMouseUp(MouseButtonEvent *e) {
 	}
 }
 
-void ScrollBar::OnRawMouseMotion(MouseMotionEvent *e)
+void ScrollBar::OnRawMouseMotion(GuiExtra::MouseMotionEvent *e)
 {
 	if (m_isPressed) {
 		float pos[2];
@@ -68,7 +68,7 @@ void ScrollBar::OnRawMouseMotion(MouseMotionEvent *e)
 void ScrollBar::Draw()
 {
 	float size[2]; GetSize(size);
-	Theme::DrawIndent(size);
+	GuiExtra::Theme::DrawIndent(size);
 	float pos = m_adjustment->GetValue();
 	glColor3f(1,1,1);
 	glBegin(GL_LINES);

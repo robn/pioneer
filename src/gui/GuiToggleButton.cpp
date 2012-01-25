@@ -9,7 +9,7 @@ ToggleButton::ToggleButton()
 	m_pressed = false;
 	SetSize(BUTTON_SIZE, BUTTON_SIZE);
 }
-bool ToggleButton::OnMouseDown(MouseButtonEvent *e)
+bool ToggleButton::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 {
 	if (e->button == 1) {
 		onPress.emit();
@@ -44,9 +44,9 @@ void ToggleButton::Draw()
 	float size[2];
 	GetSize(size);
 	if (m_pressed) {
-		Theme::DrawIndent(size);
+		GuiExtra::Theme::DrawIndent(size);
 	} else {
-		Theme::DrawOutdent(size);
+		GuiExtra::Theme::DrawOutdent(size);
 	}
 }
 

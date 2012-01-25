@@ -1,7 +1,7 @@
 #ifndef _GUIEVENTS_H
 #define _GUIEVENTS_H
 
-namespace Gui {
+namespace GuiExtra {
 	struct MouseButtonEvent {
 		Uint8 isdown;
 		Uint8 button;
