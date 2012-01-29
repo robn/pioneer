@@ -1,5 +1,6 @@
 #include "libs.h"
 #include "Gui.h"
+#include "GuiContext.h"
 
 #define MINIMUM_HEIGHT (100.0f)
 
@@ -119,7 +120,7 @@ void VScrollPortal::Draw()
 	if (toScroll < 0) toScroll = 0;
 	
 	float scale[2];
-	Gui::screen->GetCoords2Pixels(scale);
+	GetContext()->screen->GetCoords2Pixels(scale);
 
 	glPushMatrix();
 	// scroll to whole pixel locations whatever the resolution

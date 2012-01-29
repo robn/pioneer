@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "GuiContext.h"
 
 #define METERBAR_PADDING 5.0f
 #define METERBAR_BAR_HEIGHT 8.0f
@@ -39,7 +40,7 @@ void MeterBar::Draw()
 void MeterBar::GetSizeRequested(float size[2])
 {
 	size[0] = m_requestedWidth;
-	size[1] = METERBAR_PADDING*2.0f + METERBAR_BAR_HEIGHT + Gui::screen->GetFontHeight();
+	size[1] = METERBAR_PADDING*2.0f + METERBAR_BAR_HEIGHT + GetContext()->screen->GetFontHeight();
 }
 
 }

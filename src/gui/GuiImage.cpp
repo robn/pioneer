@@ -1,13 +1,14 @@
 #include "libs.h"
 #include "GuiImage.h"
 #include "GuiScreen.h"
+#include "GuiContext.h"
 #include "Texture.h"
 
 namespace Gui {
 
 Image::Image(const char *filename): Widget()
 {
-	m_texture = Gui::screen->GetTextureCache()->GetUITexture(filename);
+	m_texture = GetContext()->GetTextureCache()->GetUITexture(filename);
 
 	SetSize(float(m_texture->GetWidth()), float(m_texture->GetHeight()));
 

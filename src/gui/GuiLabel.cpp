@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "GuiContext.h"
 
 namespace Gui {
 
@@ -23,7 +24,7 @@ void Label::Init(const std::string &text, TextLayout::ColourMarkupMode colourMar
 	m_shadow = false;
 	m_layout = 0;
 	m_dlist = 0;
-	m_font = Gui::screen->GetFont();
+	m_font = GetContext()->GetFont();
 	m_color = ::Color(1.0f, 1.0f, 1.0f, 1.0f);
 	SetText(text);
 }
@@ -31,7 +32,7 @@ void Label::Init(const std::string &text, TextLayout::ColourMarkupMode colourMar
 void Label::UpdateLayout()
 {
 	if (m_layout) delete m_layout;
-	m_layout = new TextLayout(m_text.c_str(), m_font, m_colourMarkupMode);
+	m_layout = new TextLayout(GetContext(), m_text.c_str(), m_font, m_colourMarkupMode);
 }
 
 void Label::RecalcSize()

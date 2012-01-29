@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "GuiContext.h"
 
 namespace Gui {
 
@@ -8,7 +9,7 @@ LabelSet::LabelSet() : Widget()
 	m_labelsVisible = true;
 	m_labelsClickable = true;
 	m_labelColor = Color(1.0f,1.0f,1.0f,1.0f);
-	m_font = Gui::screen->GetFont();
+	m_font = GetContext()->GetFont();
 }
 
 bool LabelSet::OnMouseDown(GuiExtra::MouseButtonEvent *e)
@@ -63,7 +64,7 @@ void LabelSet::Draw()
 			if ((*i).color.a < 1.0f) glEnable(GL_BLEND);
 			glColor4fv((*i).color);
 		}
-		Gui::screen->RenderString((*i).text, (*i).screenx, (*i).screeny - Gui::screen->GetFontHeight()*0.5f, m_font);
+		GetContext()->screen->RenderString((*i).text, (*i).screenx, (*i).screeny - GetContext()->screen->GetFontHeight()*0.5f, m_font);
 	}
 	glDisable(GL_BLEND);
 }

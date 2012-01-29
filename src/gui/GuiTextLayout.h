@@ -4,6 +4,8 @@
 #include "TextureFont.h"
 
 namespace Gui {
+
+class Context;
 class TextLayout {
 public:
 	enum ColourMarkupMode {
@@ -11,14 +13,19 @@ public:
 		ColourMarkupSkip, // skips markup tags
 		ColourMarkupUse   // interprets markup tags
 	};
-	explicit TextLayout(const char *_str, TextureFont *font = 0, ColourMarkupMode markup = ColourMarkupUse);
+	explicit TextLayout(Context *context, const char *_str, TextureFont *font = 0, ColourMarkupMode markup = ColourMarkupUse);
 	void Render(float layoutWidth) const;
 	void MeasureSize(const float layoutWidth, float outSize[2]) const;
 	void _RenderRaw(float layoutWidth) const;
 	void _MeasureSizeRaw(const float layoutWidth, float outSize[2]) const;
 	~TextLayout() { free(str); }
 	void SetJustified(bool v) { m_justify = v; }
+
 private:
+	bool LineClipTest(float top, float bottom) const;
+
+	Context *m_context;
+
 	struct word_t {
 		char *word;
 		float advx;

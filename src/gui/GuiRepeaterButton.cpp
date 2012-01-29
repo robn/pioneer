@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "GuiContext.h"
 #include "GuiRepeaterButton.h"
 
 namespace Gui {
@@ -19,7 +20,7 @@ RepeaterButton::~RepeaterButton()
 
 void RepeaterButton::OnPress()
 {
-	m_repeatCon = Gui::AddTimer(m_delay, sigc::mem_fun(this, &RepeaterButton::OnRepeat));
+	m_repeatCon = GetContext()->AddTimer(m_delay, sigc::mem_fun(this, &RepeaterButton::OnRepeat));
 }
 
 void RepeaterButton::OnRelease()
@@ -29,7 +30,7 @@ void RepeaterButton::OnRelease()
 
 void RepeaterButton::OnRepeat()
 {
-	m_repeatCon = Gui::AddTimer(m_repeat, sigc::mem_fun(this, &RepeaterButton::OnRepeat));
+	m_repeatCon = GetContext()->AddTimer(m_repeat, sigc::mem_fun(this, &RepeaterButton::OnRepeat));
 
 	onClick.emit();
 }

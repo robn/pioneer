@@ -36,7 +36,7 @@ void ToolTip::SetText(const char *text)
 {
 	m_text = text;
 	if (m_layout) delete m_layout;
-	m_layout = new TextLayout(text);
+	m_layout = new TextLayout(GetContext(), text);
 	CalcSize();
 }
 

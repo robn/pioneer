@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "GuiContext.h"
 
 namespace Gui {
 
@@ -23,7 +24,7 @@ bool Widget::IsVisible() const
 		if (parent->m_visible == false) return false;
 		parent = parent->m_parent;
 	}
-	if (Gui::screen->IsBaseWidget(parent))
+	if (GetContext()->screen->IsBaseWidget(parent))
 		return parent->m_visible;
 	else
 		return false;
@@ -55,12 +56,12 @@ void Widget::EndClipping()
 
 void Widget::GrabFocus()
 {
-	Gui::screen->SetFocused(this);
+	GetContext()->screen->SetFocused(this);
 }
 
 bool Widget::IsFocused()
 {
-	return Gui::screen->IsFocused(this);
+	return GetContext()->screen->IsFocused(this);
 }
 
 void Widget::SetShortcut(SDLKey key, SDLMod mod)
@@ -68,7 +69,7 @@ void Widget::SetShortcut(SDLKey key, SDLMod mod)
 	assert(m_shortcut.sym == 0); // because AddShortcutWidget will add more than once. fix this otherwise on destruct we leave bad pointers in the Screen shortcut widgets list
 	m_shortcut.sym = key;
 	m_shortcut.mod = mod;
-	Gui::screen->AddShortcutWidget(this);
+	GetContext()->screen->AddShortcutWidget(this);
 }
 
 void Widget::OnPreShortcut(const SDL_keysym *sym)
@@ -97,7 +98,7 @@ void Widget::GetAbsolutePosition(float pos[2]) const
 void Widget::OnMouseEnter()
 {
 	m_mouseOver = true;
-	m_tooltipTimerConnection = Gui::AddTimer(1000, sigc::mem_fun(this, &Widget::OnToolTip));
+	m_tooltipTimerConnection = GetContext()->AddTimer(1000, sigc::mem_fun(this, &Widget::OnToolTip));
 	onMouseEnter.emit();
 }
 
@@ -105,7 +106,7 @@ void Widget::OnMouseLeave()
 {
 	m_mouseOver = false;
 	if (m_tooltipWidget) {
-		Gui::screen->RemoveBaseWidget(m_tooltipWidget);
+		GetContext()->screen->RemoveBaseWidget(m_tooltipWidget);
 		delete m_tooltipWidget;
 		m_tooltipWidget = 0;
 	}
@@ -133,12 +134,12 @@ void Widget::OnToolTip()
 		float pos[2];
 		GetAbsolutePosition(pos);
 		m_tooltipWidget = new ToolTip(text);
-		if (m_tooltipWidget->m_size.w + pos[0] > Gui::screen->GetWidth())
-			pos[0] = Gui::screen->GetWidth() - m_tooltipWidget->m_size.w;
-		if (m_tooltipWidget->m_size.h + pos[1] > Gui::screen->GetHeight())
-			pos[1] = Gui::screen->GetHeight() - m_tooltipWidget->m_size.h;
+		if (m_tooltipWidget->m_size.w + pos[0] > GetContext()->screen->GetWidth())
+			pos[0] = GetContext()->screen->GetWidth() - m_tooltipWidget->m_size.w;
+		if (m_tooltipWidget->m_size.h + pos[1] > GetContext()->screen->GetHeight())
+			pos[1] = GetContext()->screen->GetHeight() - m_tooltipWidget->m_size.h;
 
-		Gui::screen->AddBaseWidget(m_tooltipWidget, int(pos[0]), int(pos[1]));
+		GetContext()->screen->AddBaseWidget(m_tooltipWidget, int(pos[0]), int(pos[1]));
 		m_tooltipWidget->Show();
 	}
 }
@@ -147,7 +148,7 @@ void Widget::Hide()
 {
 	m_visible = false;
 	if (m_tooltipWidget) {
-		Gui::screen->RemoveBaseWidget(m_tooltipWidget);
+		GetContext()->screen->RemoveBaseWidget(m_tooltipWidget);
 		delete m_tooltipWidget;
 		m_tooltipWidget = 0;
 	}
@@ -169,10 +170,10 @@ Widget::~Widget()
 {
 	onDelete.emit();
 	if (m_tooltipWidget) {
-		Gui::screen->RemoveBaseWidget(m_tooltipWidget);
+		GetContext()->screen->RemoveBaseWidget(m_tooltipWidget);
 		delete m_tooltipWidget;
 	}
-	Gui::screen->RemoveShortcutWidget(this);
+	GetContext()->screen->RemoveShortcutWidget(this);
 	m_tooltipTimerConnection.disconnect();
 }
 
