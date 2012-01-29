@@ -17,7 +17,7 @@ Context::~Context()
 	delete screen;
 }
 
-void Gui::Context::HandleSDLEvent(SDL_Event *event)
+void Context::HandleSDLEvent(SDL_Event *event)
 {
 	switch (event->type) {
 		case SDL_MOUSEBUTTONDOWN:
@@ -52,7 +52,7 @@ void Gui::Context::HandleSDLEvent(SDL_Event *event)
 	}
 }
 
-void Gui::Context::Draw()
+void Context::Draw()
 {
 	Uint32 t = SDL_GetTicks();
 	// also abused like an update() function...
@@ -70,7 +70,7 @@ void Gui::Context::Draw()
 	screen->Draw();
 }
 
-void Gui::Context::MainLoopIteration()
+void Context::MainLoopIteration()
 {
 	Render::PrepareFrame();
 	glMatrixMode(GL_PROJECTION);
@@ -96,7 +96,7 @@ void Gui::Context::MainLoopIteration()
 	Render::SwapBuffers();
 }
 
-sigc::connection Gui::Context::AddTimer(Uint32 ms, sigc::slot<void> slot)
+sigc::connection Context::AddTimer(Uint32 ms, sigc::slot<void> slot)
 {
 	TimerSignal *s = new TimerSignal(SDL_GetTicks() + ms);
 	sigc::connection con = s->sig.connect(slot);
