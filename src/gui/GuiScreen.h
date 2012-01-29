@@ -47,22 +47,12 @@ public:
 		return w == focusedWidget;
 	}
 
-	FontManager *GetFontManager() { return &s_fontManager; }
-
-	void PushFont(TextureFont* f) { s_fontStack.push(f); }
-	void PushFont(std::string name) { PushFont(s_fontManager.GetTextureFont(name)); }
-	void PopFont() { s_fontStack.pop(); };
-	TextureFont *GetFont() { return s_fontStack.size() ? s_fontStack.top() : s_defaultFont; }
-	TextureFont *GetDefaultFont() { return s_defaultFont; }
-
 	float GetFontHeight(TextureFont *font = 0);
 	void RenderString(const std::string &s, float xoff, float yoff, TextureFont *font = 0);
 	void MeasureString(const std::string &s, float &w, float &h, TextureFont *font = 0);
 	int PickCharacterInString(const std::string &s, float x, float y, TextureFont *font = 0);
 	void MeasureCharacterPos(const std::string &s, int charIndex, float &x, float &y, TextureFont *font = 0);
 	void RenderMarkup(const std::string &s, TextureFont *font = 0);
-
-	TextureCache *GetTextureCache() { return &s_textureCache; }
 
 private:
 	void AddShortcutWidget(Widget *w);
@@ -83,12 +73,6 @@ private:
 	GLdouble modelMatrix[16];
 	GLdouble projMatrix[16];
 	GLint viewport[4];
-
-	FontManager s_fontManager;
-	std::stack<TextureFont*> s_fontStack;
-	TextureFont *s_defaultFont;
-
-	TextureCache s_textureCache;
 
 	sigc::connection _focusedWidgetOnDelete;
 };

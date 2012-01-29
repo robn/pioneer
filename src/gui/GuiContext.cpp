@@ -6,6 +6,12 @@ namespace Gui {
 
 Context::Context(int screen_width, int screen_height, int ui_width, int ui_height)
 {
+	m_fontManager.Reset(new FontManager);
+	m_defaultFont = m_fontManager->GetTextureFont("GuiFont");
+	PushFont(m_defaultFont);
+
+	m_textureCache.Reset(new TextureCache);
+
 	SDL_EnableUNICODE(1);
 	screen = new Screen(this, screen_width, screen_height, ui_width, ui_height);
 }

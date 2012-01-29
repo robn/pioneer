@@ -17,6 +17,18 @@ public:
 	void MainLoopIteration();
 	sigc::connection AddTimer(Uint32 ms, sigc::slot<void> slot);
 
+
+	FontManager *GetFontManager() { return m_fontManager.Get(); }
+
+	void PushFont(TextureFont* f) { m_fontStack.push(f); }
+	void PushFont(std::string name) { PushFont(m_fontManager->GetTextureFont(name)); }
+	void PopFont() { m_fontStack.pop(); };
+	TextureFont *GetFont() { return m_fontStack.size() ? m_fontStack.top() : m_defaultFont; }
+	TextureFont *GetDefaultFont() { return m_defaultFont; }
+
+	TextureCache *GetTextureCache() { return m_textureCache.Get(); }
+
+
 	Screen *screen;
 
 private:
@@ -26,6 +38,12 @@ private:
 		sigc::signal<void> sig;
 	};
 	std::list<TimerSignal*> m_timeSignals;
+
+	ScopedPtr<FontManager> m_fontManager;
+	std::stack<TextureFont*> m_fontStack;
+	TextureFont *m_defaultFont;
+
+	ScopedPtr<TextureCache> m_textureCache;
 };
 
 }
