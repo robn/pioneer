@@ -110,4 +110,8 @@ sigc::connection Context::AddTimer(Uint32 ms, sigc::slot<void> slot)
 	return con;
 }
 
+void Context::PushFont(const std::string &name) {
+	PushFont(m_fontManager->GetTextureFont(name));
+}
+
 }

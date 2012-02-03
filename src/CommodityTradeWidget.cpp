@@ -73,7 +73,7 @@ void CommodityTradeWidget::ShowAll()
 	//int GetStock(Equip::Type t) const { return m_equipmentStock[t]; }
 
 	int NUM_ITEMS = 0;
-	const float YSEP = floor(Gui::screen->GetFontHeight() * 2.5f);
+	const float YSEP = floor(GetContext()->screen->GetFontHeight() * 2.5f);
 	for (int i=Equip::FIRST_COMMODITY; i<=Equip::LAST_COMMODITY; i++) {
 		assert(Equip::types[i].slot == Equip::SLOT_CARGO);
 
@@ -128,7 +128,7 @@ void CommodityTradeWidget::ShowAll()
 	portal->Add(innerbox);
 	portal->ShowAll();
 
-	Gui::Fixed *heading = new Gui::Fixed(470, Gui::screen->GetFontHeight());
+	Gui::Fixed *heading = new Gui::Fixed(470, GetContext()->screen->GetFontHeight());
 	const float *col = GuiExtra::Theme::Colors::tableHeading;
 	heading->Add((new Gui::Label(Lang::ITEM))->Color(col), 0, 0);
 	heading->Add((new Gui::Label(Lang::PRICE))->Color(col), 200, 0);
@@ -143,7 +143,7 @@ void CommodityTradeWidget::ShowAll()
 	body->PackEnd(scroll);
 	PackEnd(body);
 
-	SetSpacing(YSEP-Gui::screen->GetFontHeight());
+	SetSpacing(YSEP-GetContext()->screen->GetFontHeight());
 
 	Gui::VBox::ShowAll();
 }

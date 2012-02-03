@@ -1,7 +1,9 @@
 #include "libs.h"
 #include "StringF.h"
-#include "gui/Gui.h"
 #include "Lang.h"
+#include "Pi.h"
+#include "gui/GuiContext.h"
+#include "gui/GuiScreen.h"
 
 #define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
@@ -254,7 +256,7 @@ void Error(const char *format, ...)
 	vsnprintf(buf, sizeof(buf), format, ap);
 	va_end(ap);
 	fprintf(stderr, "Error: %s\n", buf);
-	Gui::screen->ShowBadError((std::string("Error: ") + buf).c_str());
+	Pi::guiContext->screen->ShowBadError((std::string("Error: ") + buf).c_str());
 	abort();
 }
 
@@ -266,7 +268,7 @@ void Warning(const char *format, ...)
 	vsnprintf(buf, sizeof(buf), format, ap);
 	va_end(ap);
 	fprintf(stderr, "%s\n", buf);
-	Gui::screen->ShowBadError(buf);
+	Pi::guiContext->screen->ShowBadError(buf);
 }
 
 void SilentWarning(const char *format, ...)

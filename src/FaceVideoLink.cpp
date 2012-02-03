@@ -209,10 +209,10 @@ CharacterInfoText::CharacterInfoText(float w, float h,
 	SetSize(w, h);
 	m_background = new Gui::Gradient(w, h, Color(0.1f, 0.1f, 0.1f, 0.8f),
 		Color(0.f, 0.f, 0.1f, 0.f), Gui::Gradient::HORIZONTAL);
-	Gui::screen->PushFont("OverlayFont");
+	GetContext()->PushFont("OverlayFont");
 	m_nameLabel = new Gui::Label(m_characterName);
 	m_titleLabel = new Gui::Label(m_characterTitle);
-	Gui::screen->PopFont();
+	GetContext()->PopFont();
 	Add(m_background, 0.f, 0.f);
 	Add(m_nameLabel, 25.f, 5.f);
 	Add(m_titleLabel, 25.f, m_height/2);

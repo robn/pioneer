@@ -1,4 +1,6 @@
 #include "TextureFont.h"
+#include "Pi.h"
+#include "gui/GuiContext.h"
 #include "gui/GuiScreen.h"
 #include "libs.h"
 
@@ -277,7 +279,7 @@ TextureFont::TextureFont(FontManager &fm, const std::string &config_filename) : 
 	}
 
 	float scale[2];
-	Gui::screen->GetCoords2Pixels(scale);
+	Pi::guiContext->screen->GetCoords2Pixels(scale);
 
 	int a_width = int(GetConfig().Int("PixelWidth") / scale[0]);
 	int a_height = int(GetConfig().Int("PixelHeight") / scale[1]);

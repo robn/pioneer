@@ -36,7 +36,7 @@ StationShipEquipmentForm::StationShipEquipmentForm(FormController *controller) :
 	scroll->SetAdjustment(&portal->vscrollAdjust);
 
 	int NUM_ITEMS = 0;
-	const float YSEP = floor(Gui::screen->GetFontHeight() * 1.5f);
+	const float YSEP = floor(GetContext()->screen->GetFontHeight() * 1.5f);
 	for (int i=Equip::FIRST_SHIPEQUIP; i<=Equip::LAST_SHIPEQUIP; i++) {
 		if (m_station->GetStock(static_cast<Equip::Type>(i)))
 			NUM_ITEMS++;
@@ -84,7 +84,7 @@ StationShipEquipmentForm::StationShipEquipmentForm(FormController *controller) :
 
 	portal->Add(innerbox);
 
-	Gui::Fixed *heading = new Gui::Fixed(470, Gui::screen->GetFontHeight());
+	Gui::Fixed *heading = new Gui::Fixed(470, GetContext()->screen->GetFontHeight());
 	const float *col = GuiExtra::Theme::Colors::tableHeading;
 	heading->Add((new Gui::Label(Lang::ITEM))->Color(col), 0, 0);
 	heading->Add((new Gui::Label(Lang::PRICE_TO_FIT))->Color(col), 200, 0);
@@ -99,7 +99,7 @@ StationShipEquipmentForm::StationShipEquipmentForm(FormController *controller) :
 	body->PackEnd(scroll);
 	outerbox->PackEnd(body);
 
-	outerbox->SetSpacing(YSEP-Gui::screen->GetFontHeight());
+	outerbox->SetSpacing(YSEP-GetContext()->screen->GetFontHeight());
 	Add(outerbox, 0, 0);
 
 }

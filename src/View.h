@@ -4,6 +4,7 @@
 #include "libs.h"
 #include "Serializer.h"
 #include "gui/Gui.h"
+#include "gui/GuiContext.h"
 
 /*
  * For whatever draws crap into the main area of the screen.
@@ -14,25 +15,25 @@
  */
 class View: public Gui::Fixed {
 public:
-	View(): Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()-64)) {
-		Gui::screen->AddBaseWidget(this, 0, 0);
+	View(): Gui::Fixed(float(GetContext()->screen->GetWidth()), float(GetContext()->screen->GetHeight()-64)) {
+		GetContext()->screen->AddBaseWidget(this, 0, 0);
 		
 		m_rightButtonBar = new Gui::Fixed(128, 26);
 		m_rightButtonBar->SetBgColor(.65f, .65f, .65f, 1.0f);
-		Gui::screen->AddBaseWidget(m_rightButtonBar, Gui::screen->GetWidth()-128, Gui::screen->GetHeight()-26);
+		GetContext()->screen->AddBaseWidget(m_rightButtonBar, GetContext()->screen->GetWidth()-128, GetContext()->screen->GetHeight()-26);
 
 		m_rightRegion2 = new Gui::Fixed(126, 17);
 		m_rightRegion2->SetTransparency(true);
-		Gui::screen->AddBaseWidget(m_rightRegion2, Gui::screen->GetWidth()-127, Gui::screen->GetHeight()-45);
+		GetContext()->screen->AddBaseWidget(m_rightRegion2, GetContext()->screen->GetWidth()-127, GetContext()->screen->GetHeight()-45);
 		
 		m_rightRegion1 = new Gui::Fixed(122, 17);
 		m_rightRegion1->SetTransparency(true);
-		Gui::screen->AddBaseWidget(m_rightRegion1, Gui::screen->GetWidth()-123, Gui::screen->GetHeight()-62);
+		GetContext()->screen->AddBaseWidget(m_rightRegion1, GetContext()->screen->GetWidth()-123, GetContext()->screen->GetHeight()-62);
 	}
 	virtual ~View() {
-		Gui::screen->RemoveBaseWidget(m_rightButtonBar);
-		Gui::screen->RemoveBaseWidget(m_rightRegion2);
-		Gui::screen->RemoveBaseWidget(m_rightRegion1);
+		GetContext()->screen->RemoveBaseWidget(m_rightButtonBar);
+		GetContext()->screen->RemoveBaseWidget(m_rightRegion2);
+		GetContext()->screen->RemoveBaseWidget(m_rightRegion1);
 		delete m_rightButtonBar;
 		delete m_rightRegion2;
 		delete m_rightRegion1;

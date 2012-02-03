@@ -15,14 +15,14 @@
 #include "Lang.h"
 #include "Game.h"
 
-ShipCpanel::ShipCpanel(): Gui::Fixed(float(Gui::screen->GetWidth()), 80)
+ShipCpanel::ShipCpanel(): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
 {
 	m_scanner = new ScannerWidget();
 
 	InitObject();
 }
 
-ShipCpanel::ShipCpanel(Serializer::Reader &rd): Gui::Fixed(float(Gui::screen->GetWidth()), 80)
+ShipCpanel::ShipCpanel(Serializer::Reader &rd): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
 {
 	m_scanner = new ScannerWidget(rd);
 
@@ -31,7 +31,7 @@ ShipCpanel::ShipCpanel(Serializer::Reader &rd): Gui::Fixed(float(Gui::screen->Ge
 
 void ShipCpanel::InitObject()
 {
-	Gui::screen->AddBaseWidget(this, 0, Gui::screen->GetHeight()-80);
+	GetContext()->screen->AddBaseWidget(this, 0, GetContext()->screen->GetHeight()-80);
 	SetTransparency(true);
 
 	Gui::Image *img = new Gui::Image(PIONEER_DATA_DIR "/icons/cpanel.png");

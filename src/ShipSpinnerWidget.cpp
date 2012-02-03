@@ -26,7 +26,7 @@ void ShipSpinnerWidget::Draw()
 	m_params.time = Pi::game->GetTime();
 
 	float guiscale[2];
-	Gui::screen->GetCoords2Pixels(guiscale);
+	GetContext()->screen->GetCoords2Pixels(guiscale);
 	static float rot1, rot2;
 	if (Pi::MouseButtonState(SDL_BUTTON_RIGHT)) {
 		int m[2];
@@ -75,7 +75,7 @@ void ShipSpinnerWidget::Draw()
 
 	glViewport(
 		GLint(roundf(pos[0]/guiscale[0])),
-		GLint(roundf((Gui::screen->GetHeight() - pos[1] - m_height)/guiscale[1])),
+		GLint(roundf((GetContext()->screen->GetHeight() - pos[1] - m_height)/guiscale[1])),
 		GLsizei(m_width/guiscale[0]),
 		GLsizei(m_height/guiscale[1]));
 	

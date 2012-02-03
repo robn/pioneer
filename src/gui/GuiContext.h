@@ -2,6 +2,11 @@
 #define _GUICONTEXT_H 1
 
 #include "libs.h"
+#include <stack>
+
+class FontManager;
+class TextureCache;
+class TextureFont;
 
 namespace Gui {
 
@@ -21,7 +26,7 @@ public:
 	FontManager *GetFontManager() { return m_fontManager.Get(); }
 
 	void PushFont(TextureFont* f) { m_fontStack.push(f); }
-	void PushFont(std::string name) { PushFont(m_fontManager->GetTextureFont(name)); }
+	void PushFont(const std::string &name);
 	void PopFont() { m_fontStack.pop(); };
 	TextureFont *GetFont() { return m_fontStack.size() ? m_fontStack.top() : m_defaultFont; }
 	TextureFont *GetDefaultFont() { return m_defaultFont; }

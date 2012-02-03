@@ -1,4 +1,5 @@
 #include "libs.h"
+#include "gui/GuiContext.h"
 #include "gui/Gui.h"
 #include "collider/collider.h"
 #include "LmrModel.h"
@@ -24,6 +25,7 @@ static const char *ANIMATION_NAMESPACES[] = {
 static const int LMR_ARG_MAX = 40;
 
 static SDL_Surface *g_screen;
+Gui::Context *guiContext;
 static int g_width, g_height;
 static int g_mouseMotion[2];
 static char g_keyState[SDLK_LAST];
@@ -102,7 +104,7 @@ public:
 		m_geom = 0;
 		m_space = new CollisionSpace();
 		m_showBoundingRadius = false;
-		Gui::screen->AddBaseWidget(this, 0, 0);
+		guiContext->screen->AddBaseWidget(this, 0, 0);
 		SetTransparency(true);
 
 		m_trisReadout = new Gui::Label("");
@@ -152,29 +154,29 @@ public:
 		}
 #endif /* 0 */	
 		{
-			Add(new Gui::Label("Linear thrust"), 0, Gui::screen->GetHeight()-140.0f);
+			Add(new Gui::Label("Linear thrust"), 0, guiContext->screen->GetHeight()-140.0f);
 			for (int i=0; i<3; i++) {
 				m_linthrust[i] = new Gui::Adjustment();
 				m_linthrust[i]->SetValue(0.5);
 				Gui::VScrollBar *v = new Gui::VScrollBar();
 				v->SetAdjustment(m_linthrust[i]);
-				Add(v, float(i*25), Gui::screen->GetHeight()-120.0f);
+				Add(v, float(i*25), guiContext->screen->GetHeight()-120.0f);
 			}
 			
-			Add(new Gui::Label("Angular thrust"), 100, Gui::screen->GetHeight()-140.0f);
+			Add(new Gui::Label("Angular thrust"), 100, guiContext->screen->GetHeight()-140.0f);
 			for (int i=0; i<3; i++) {
 				m_angthrust[i] = new Gui::Adjustment();
 				m_angthrust[i]->SetValue(0.5);
 				Gui::VScrollBar *v = new Gui::VScrollBar();
 				v->SetAdjustment(m_angthrust[i]);
-				Add(v, float(100 + i*25), Gui::screen->GetHeight()-120.0f);
+				Add(v, float(100 + i*25), guiContext->screen->GetHeight()-120.0f);
 			}
 			
 			Add(new Gui::Label("Animations (0 gear, 1-4 are time - ignore them comrade)"),
-					200, Gui::screen->GetHeight()-140.0f);
+					200, guiContext->screen->GetHeight()-140.0f);
 			for (int i=0; i<LMR_ARG_MAX; i++) {
 				Gui::Fixed *box = new Gui::Fixed(32.0f, 120.0f);
-				Add(box, float(200 + i*25), Gui::screen->GetHeight()-120.0f);
+				Add(box, float(200 + i*25), guiContext->screen->GetHeight()-120.0f);
 
 				m_anim[i] = new Gui::Adjustment();
 				m_anim[i]->SetValue(0);
@@ -306,8 +308,8 @@ void Viewer::TryModel(const SDL_keysym *sym, Gui::TextEntry *entry, Gui::Label *
 void Viewer::PickModel(const std::string &initial_name, const std::string &initial_errormsg)
 {
 	Gui::Fixed *f = new Gui::Fixed();
-	f->SetSizeRequest(Gui::screen->GetWidth()*0.5f, Gui::screen->GetHeight()*0.5);
-	Gui::screen->AddBaseWidget(f, Gui::screen->GetWidth()*0.25f, Gui::screen->GetHeight()*0.25f);
+	f->SetSizeRequest(guiContext->screen->GetWidth()*0.5f, guiContext->screen->GetHeight()*0.5);
+	guiContext->screen->AddBaseWidget(f, guiContext->screen->GetWidth()*0.25f, guiContext->screen->GetHeight()*0.25f);
 
 	f->Add(new Gui::Label("Enter the name of the model you want to view:"), 0, 0);
 
@@ -330,11 +332,11 @@ void Viewer::PickModel(const std::string &initial_name, const std::string &initi
 		glClearColor(0,0,0,0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Render::PostProcess();
-		Gui::Draw();
+		guiContext->Draw();
 		glError();
 		Render::SwapBuffers();
 	}
-	Gui::screen->RemoveBaseWidget(f);
+	guiContext->screen->RemoveBaseWidget(f);
 	delete f;
 	this->Show();
 }
@@ -641,7 +643,7 @@ void Viewer::MainLoop()
 		}
 		
 		Render::PostProcess();
-		Gui::Draw();
+		guiContext->Draw();
 		
 		glError();
 		Render::SwapBuffers();
@@ -667,7 +669,7 @@ static void PollEvents()
 
 	g_mouseMotion[0] = g_mouseMotion[1] = 0;
 	while (SDL_PollEvent(&event)) {
-		Gui::HandleSDLEvent(&event);
+		guiContext->HandleSDLEvent(&event);
 		switch (event.type) {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
@@ -793,7 +795,7 @@ int main(int argc, char **argv)
 	TextureCache *textureCache = new TextureCache;
 
 	Render::Init(g_width, g_height);
-	Gui::Init(g_width, g_height, g_width, g_height);
+	guiContext = new Gui::Context(g_width, g_height, g_width, g_height);
 
 	LmrModelCompilerInit(textureCache);
 	LmrNotifyScreenWidth(g_width);

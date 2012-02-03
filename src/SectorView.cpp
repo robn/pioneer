@@ -76,16 +76,16 @@ void SectorView::InitObject()
 {
 	SetTransparency(true);
 
-	Gui::screen->PushFont("OverlayFont");
+	GetContext()->PushFont("OverlayFont");
 	m_clickableLabels = new Gui::LabelSet();
 	m_clickableLabels->SetLabelColor(Color(.7f,.7f,.7f,0.75f));
 	Add(m_clickableLabels, 0, 0);
-	Gui::screen->PopFont();
+	GetContext()->PopFont();
 
 	m_sectorLabel = new Gui::Label("");
-	Add(m_sectorLabel, 2, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()*2-66);
+	Add(m_sectorLabel, 2, GetContext()->screen->GetHeight()-GetContext()->screen->GetFontHeight()*2-66);
 	m_distanceLabel = new Gui::Label("");
-	Add(m_distanceLabel, 2, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-66);
+	Add(m_distanceLabel, 2, GetContext()->screen->GetHeight()-GetContext()->screen->GetFontHeight()-66);
 	
 	m_zoomInButton = new Gui::ImageButton(PIONEER_DATA_DIR "/icons/zoom_in.png");
 	m_zoomInButton->SetToolTip(Lang::ZOOM_IN);
@@ -411,12 +411,12 @@ void SectorView::OnClickSystem(const SystemPath &path)
 
 void SectorView::PutClickableLabel(const std::string &text, const Color &labelCol, const SystemPath &path)
 {
-	Gui::screen->EnterOrtho();
+	GetContext()->screen->EnterOrtho();
 	vector3d pos;
-	if (Gui::screen->Project(vector3d(0.0), pos)) {
+	if (GetContext()->screen->Project(vector3d(0.0), pos)) {
 		m_clickableLabels->Add(text, sigc::bind(sigc::mem_fun(this, &SectorView::OnClickSystem), path), pos.x, pos.y, labelCol);
 	}
-	Gui::screen->LeaveOrtho();
+	GetContext()->screen->LeaveOrtho();
 }
 
 void SectorView::UpdateSystemLabels(SystemLabels &labels, const SystemPath &path)

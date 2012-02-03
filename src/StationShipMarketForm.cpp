@@ -17,7 +17,7 @@ StationShipMarketForm::StationShipMarketForm(FormController *controller) : FaceF
 	Gui::VScrollPortal *portal = new Gui::VScrollPortal(450);
 	scroll->SetAdjustment(&portal->vscrollAdjust);
 
-	float line_height = Gui::screen->GetFontHeight();
+	float line_height = GetContext()->screen->GetFontHeight();
 
 	m_shiplistBox = new Gui::VBox();
 	m_shiplistBox->SetSpacing(line_height*0.5f);
@@ -30,7 +30,7 @@ StationShipMarketForm::StationShipMarketForm(FormController *controller) : FaceF
 	Gui::VBox *outerbox = new Gui::VBox();
 	outerbox->SetSpacing(line_height);
 
-	Gui::Fixed *heading = new Gui::Fixed(470, Gui::screen->GetFontHeight());
+	Gui::Fixed *heading = new Gui::Fixed(470, GetContext()->screen->GetFontHeight());
 	const float *col = GuiExtra::Theme::Colors::tableHeading;
 	heading->Add((new Gui::Label(Lang::SHIP))->Color(col), 0, 0);
 	heading->Add((new Gui::Label(Lang::PRICE))->Color(col), 200, 0);
@@ -65,7 +65,7 @@ void StationShipMarketForm::UpdateShipList()
 {
 	m_shiplistBox->DeleteAllChildren();
 
-	float line_height = Gui::screen->GetFontHeight();
+	float line_height = GetContext()->screen->GetFontHeight();
 
 	std::vector<ShipFlavour> &ships = m_station->GetShipsOnSale();
 

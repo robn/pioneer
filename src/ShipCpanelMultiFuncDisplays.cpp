@@ -152,7 +152,7 @@ void ScannerWidget::Draw()
 	m_y = size[1] * 0.5f;
 	Widget::SetClipping(size[0], size[1]);
 	float c2p[2];
-	Gui::screen->GetCoords2Pixels(c2p);
+	GetContext()->screen->GetCoords2Pixels(c2p);
 	
 	// draw objects below player (and below scanner)
 	if (!m_contacts.empty()) DrawBlobs(true);

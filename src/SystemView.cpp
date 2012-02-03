@@ -15,13 +15,13 @@ SystemView::SystemView()
 {
 	SetTransparency(true);
 
-	Gui::screen->PushFont("OverlayFont");
+	GetContext()->PushFont("OverlayFont");
 	m_objectLabels = new Gui::LabelSet();
 	Add(m_objectLabels, 0, 0);
-	Gui::screen->PopFont();
+	GetContext()->PopFont();
 
 	m_timePoint = (new Gui::Label(""))->Color(0.7f, 0.7f, 0.7f);
-	Add(m_timePoint, 2, Gui::screen->GetHeight()-Gui::screen->GetFontHeight()-66);
+	Add(m_timePoint, 2, GetContext()->screen->GetHeight()-GetContext()->screen->GetFontHeight()-66);
 	
 	m_infoLabel = (new Gui::Label(""))->Color(0.7f, 0.7f, 0.7f);
 	Add(m_infoLabel, 2, 0);
@@ -148,15 +148,15 @@ void SystemView::OnClickObject(SBody *b)
 
 void SystemView::PutLabel(SBody *b, vector3d offset)
 {
-	Gui::screen->EnterOrtho();
+	GetContext()->screen->EnterOrtho();
 
 	vector3d pos;
-	if (Gui::screen->Project(offset, pos)) {
+	if (GetContext()->screen->Project(offset, pos)) {
 		// libsigc++ is a beautiful thing
 		m_objectLabels->Add(b->name, sigc::bind(sigc::mem_fun(this, &SystemView::OnClickObject), b), pos.x, pos.y);
 	}
 
-	Gui::screen->LeaveOrtho();
+	GetContext()->screen->LeaveOrtho();
 	glDisable(GL_LIGHTING);
 }
 
@@ -222,10 +222,10 @@ void SystemView::PutSelectionBox(const SBody *b, const vector3d &rootPos, const 
 
 void SystemView::PutSelectionBox(const vector3d &worldPos, const Color &col)
 {
-	Gui::screen->EnterOrtho();
+	GetContext()->screen->EnterOrtho();
 
 	vector3d screenPos;
-	if (Gui::screen->Project(worldPos, screenPos)) {
+	if (GetContext()->screen->Project(worldPos, screenPos)) {
 		// XXX copied from WorldView::DrawTargetSquare -- these should be unified
 		const float x1 = float(screenPos.x - SystemView::PICK_OBJECT_RECT_SIZE * 0.5);
 		const float x2 = float(x1 + SystemView::PICK_OBJECT_RECT_SIZE);
@@ -245,7 +245,7 @@ void SystemView::PutSelectionBox(const vector3d &worldPos, const Color &col)
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	Gui::screen->LeaveOrtho();
+	GetContext()->screen->LeaveOrtho();
 }
 
 static const GLfloat fogDensity = 0.1;

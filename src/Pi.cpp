@@ -111,6 +111,7 @@ char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;
 Player *Pi::player;
+Gui::Context *Pi::guiContext;
 View *Pi::currentView;
 WorldView *Pi::worldView;
 SpaceStationView *Pi::spaceStationView;
@@ -172,14 +173,14 @@ static void draw_progress(float progress)
 	float w, h;
 	Render::PrepareFrame();
 	Render::PostProcess();
-	Gui::screen->EnterOrtho();
+	Pi::guiContext->screen->EnterOrtho();
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	std::string msg = stringf(Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, formatarg("age", progress * 13.7f));
-	Gui::screen->MeasureString(msg, w, h);
+	Pi::guiContext->screen->MeasureString(msg, w, h);
 	glColor3f(1.0f,1.0f,1.0f);
-	Gui::screen->RenderString(msg, 0.5f*(Gui::screen->GetWidth()-w), 0.5f*(Gui::screen->GetHeight()-h));
-	Gui::screen->LeaveOrtho();
+	Pi::guiContext->screen->RenderString(msg, 0.5f*(Pi::guiContext->screen->GetWidth()-w), 0.5f*(Pi::guiContext->screen->GetHeight()-h));
+	Pi::guiContext->screen->LeaveOrtho();
 	Render::SwapBuffers();
 }
 
@@ -495,9 +496,9 @@ void Pi::Init()
 
 	InitOpenGL();
 
-	// Gui::Init shouldn't initialise any VBOs, since we haven't tested
+	// Gui::Context shouldn't initialise any VBOs, since we haven't tested
 	// that the capability exists. (Gui does not use VBOs so far)
-	Gui::Init(scrWidth, scrHeight, 800, 600);
+	guiContext = new Gui::Context(scrWidth, scrHeight, 800, 600);
 	if (!glewIsSupported("GL_ARB_vertex_buffer_object")) {
 		Error("OpenGL extension ARB_vertex_buffer_object not supported. Pioneer can not run on your graphics card.");
 	}
@@ -608,13 +609,13 @@ void Pi::ToggleLuaConsole()
 	if (luaConsole->IsVisible()) {
 		luaConsole->Hide();
 		if (luaConsole->GetTextEntryField()->IsFocused())
-			Gui::screen->ClearFocus();
-		Gui::screen->RemoveBaseWidget(luaConsole);
+			guiContext->screen->ClearFocus();
+		guiContext->screen->RemoveBaseWidget(luaConsole);
 	} else {
 		// luaConsole is added and removed from the base widget set
 		// (rather than just using Show()/Hide())
 		// so that it's forced in front of any other base widgets when it opens
-		Gui::screen->AddBaseWidget(luaConsole, 0, 0);
+		guiContext->screen->AddBaseWidget(luaConsole, 0, 0);
 		luaConsole->Show();
 		luaConsole->GetTextEntryField()->Show();
 	}
@@ -650,7 +651,7 @@ void Pi::Quit()
 	Galaxy::Uninit();
 	Render::Uninit();
 	LuaUninit();
-	Gui::Uninit();
+	delete guiContext;
 	delete Pi::textureCache;
 	StarSystem::ShrinkCache();
 	SDL_Quit();
@@ -683,7 +684,7 @@ void Pi::HandleEvents()
 
 	Pi::mouseMotion[0] = Pi::mouseMotion[1] = 0;
 	while (SDL_PollEvent(&event)) {
-		Gui::HandleSDLEvent(&event);
+		guiContext->HandleSDLEvent(&event);
 		KeyBindings::DispatchSDLEvent(&event);
 
 		switch (event.type) {
@@ -984,7 +985,7 @@ void Pi::TombStoneLoop()
 
 		draw_tombstone(_time);
 		Render::PostProcess();
-		Gui::Draw();
+		guiContext->Draw();
 		Render::SwapBuffers();
 		
 		Pi::frameTime = 0.001f*(SDL_GetTicks() - last_time);
@@ -1142,14 +1143,14 @@ void Pi::Start()
 {
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
-	Gui::Fixed *menu = new Gui::Fixed(float(Gui::screen->GetWidth()), float(Gui::screen->GetHeight()));
-	Gui::screen->AddBaseWidget(menu, 0, 0);
+	Gui::Fixed *menu = new Gui::Fixed(float(guiContext->screen->GetWidth()), float(guiContext->screen->GetHeight()));
+	guiContext->screen->AddBaseWidget(menu, 0, 0);
 	menu->SetTransparency(true);
 
-	Gui::screen->PushFont("OverlayFont");
+	guiContext->PushFont("OverlayFont");
 
-	const float w = Gui::screen->GetWidth() / 2.0f;
-	const float h = Gui::screen->GetHeight() / 2.0f;
+	const float w = guiContext->screen->GetWidth() / 2.0f;
+	const float h = guiContext->screen->GetHeight() / 2.0f;
 	const int OPTS = 5;
 	Gui::SolidButton *opts[OPTS];
 	opts[0] = new Gui::SolidButton(); opts[0]->SetShortcut(SDLK_1, KMOD_NONE);
@@ -1176,9 +1177,9 @@ void Pi::Start()
 	std::string version("Pioneer " PIONEER_VERSION);
 	if (strlen(PIONEER_EXTRAVERSION)) version += " (" PIONEER_EXTRAVERSION ")";
 
-	menu->Add(new Gui::Label(version), Gui::screen->GetWidth()-200.0f, Gui::screen->GetHeight()-32.0f);
+	menu->Add(new Gui::Label(version), guiContext->screen->GetWidth()-200.0f, guiContext->screen->GetHeight()-32.0f);
 
-	Gui::screen->PopFont();
+	guiContext->PopFont();
 
 	menu->ShowAll();
 	
@@ -1204,7 +1205,7 @@ void Pi::Start()
 
 		draw_intro(background, _time);
 		Render::PostProcess();
-		Gui::Draw();
+		guiContext->Draw();
 		Render::SwapBuffers();
 		
 		Pi::frameTime = 0.001f*(SDL_GetTicks() - last_time);
@@ -1213,7 +1214,7 @@ void Pi::Start()
 	}
 	menu->HideAll();
 	
-	Gui::screen->RemoveBaseWidget(menu);
+	guiContext->screen->RemoveBaseWidget(menu);
 	delete menu;
 	delete background;
 
@@ -1324,16 +1325,16 @@ void Pi::MainLoop()
 		SetMouseGrab(Pi::MouseButtonState(SDL_BUTTON_RIGHT));
 
 		Render::PostProcess();
-		Gui::Draw();
+		guiContext->Draw();
 
 #if WITH_DEVKEYS
 		if (Pi::showDebugInfo) {
-			Gui::screen->EnterOrtho();
+			guiContext->screen->EnterOrtho();
 			glColor3f(1,1,1);
-			Gui::screen->PushFont("ConsoleFont");
-			Gui::screen->RenderString(fps_readout, 0, 0);
-			Gui::screen->PopFont();
-			Gui::screen->LeaveOrtho();
+			guiContext->PushFont("ConsoleFont");
+			guiContext->screen->RenderString(fps_readout, 0, 0);
+			guiContext->PopFont();
+			guiContext->screen->LeaveOrtho();
 		}
 #endif
 

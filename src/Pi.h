@@ -2,7 +2,7 @@
 #define _PI_H
 
 #include "libs.h"
-#include "gui/Gui.h"
+#include "gui/GuiContext.h"
 #include "View.h"
 #include "mtrand.h"
 #include "gameconsts.h"
@@ -91,6 +91,8 @@ public:
 	static void BoinkNoise();
 	static float CalcHyperspaceRange(int hyperclass, int total_mass_in_tonnes);
 	static void Message(const std::string &message, const std::string &from = "", enum MsgLevel level = MSG_NORMAL);
+
+	static Gui::Context *guiContext;
 
 	static sigc::signal<void, SDL_keysym*> onKeyPress;
 	static sigc::signal<void, SDL_keysym*> onKeyRelease;
