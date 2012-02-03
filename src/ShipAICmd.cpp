@@ -738,7 +738,10 @@ static bool ParentSafetyAdjust(Ship *ship, Frame *targframe, const vector3d &pos
 		double sdist = ship->GetPositionRelTo(frame).Length();				// ship position in that frame
 		if (sdist < frame->GetRadius()) break;
 
-		body = frame->GetBodyFor();
+		while (frame && !(body = frame->GetBodyFor()))
+			frame = frame->m_parent;
+		if (!frame) return false;
+
 		frame = body->GetFrame()->m_parent;
 		if (body->HasDoubleFrame()) frame = frame->m_parent;
 	}
