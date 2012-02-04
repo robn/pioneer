@@ -19,6 +19,7 @@ Screen::Screen(Context *context, int real_width, int real_height, int ui_width, 
 	fontScale[0] = ui_width / float(real_width);
 	fontScale[1] = ui_height / float(real_height);
 	baseContainer = new Gui::Fixed();
+	baseContainer->SetContext(context);
 	baseContainer->SetSize(float(Screen::width), float(Screen::height));
 	baseContainer->Show();
 }
