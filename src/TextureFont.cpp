@@ -278,11 +278,8 @@ TextureFont::TextureFont(FontManager &fm, const std::string &config_filename) : 
 		abort();
 	}
 
-	float scale[2];
-	Pi::guiContext->screen->GetCoords2Pixels(scale);
-
-	int a_width = int(GetConfig().Int("PixelWidth") / scale[0]);
-	int a_height = int(GetConfig().Int("PixelHeight") / scale[1]);
+	vector2f dim = fm.ScaleDimensions(vector2f(GetConfig().Int("PixelWidth"), GetConfig().Int("PixelHeight")));
+	int a_width = dim.x, a_height = dim.y;
 
 	float advx_adjust = GetConfig().Float("AdvanceXAdjustment");
 

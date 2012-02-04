@@ -3,7 +3,7 @@
 #include "VectorFont.h"
 #include "gui/GuiScreen.h"
 
-FontManager::FontManager()
+FontManager::FontManager(const vector2f &scale) : m_scale(scale)
 {
 	FT_Error err = FT_Init_FreeType(&m_library);
 	if (err != 0) {

@@ -237,7 +237,7 @@ static LmrShader *s_sunlightShader[4];
 static LmrShader *s_pointlightShader[4];
 static float s_scrWidth = 800.0f;
 static bool s_buildDynamic;
-static FontManager s_fontManager;
+static FontManager s_fontManager(vector2f(0,0));    // XXX no scaling because we're not getting TextureFonts through this manager
 static VectorFont *s_font;
 static float NEWMODEL_ZBIAS = 0.0002f;
 static LmrGeomBuffer *s_curBuf;

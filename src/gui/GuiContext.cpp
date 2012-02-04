@@ -1,12 +1,13 @@
 #include "Gui.h"
 #include "GuiContext.h"
 #include "render/Render.h"
+#include "vector2.h"
 
 namespace Gui {
 
 Context::Context(int screen_width, int screen_height, int ui_width, int ui_height)
 {
-	m_fontManager.Reset(new FontManager);
+	m_fontManager.Reset(new FontManager(vector2f(float(ui_width)/screen_width, float(ui_height)/screen_height)));
 	m_defaultFont = m_fontManager->GetTextureFont("GuiFont");
 	PushFont(m_defaultFont);
 
