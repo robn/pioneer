@@ -1,99 +1,184 @@
 #ifndef _GUIWIDGET_H
 #define _GUIWIDGET_H
 
-#include "Color.h"
-#include "GuiEvents.h"
+#include "libs.h"
+#include "vector2.h"
+
+// Widget is the base class for all UI elements. There's a couple of things it
+// must implement, and a few more it might want to implement if it wants to do
+// something fancy.
+//
+// At minimum, a widget must implement Metrics() and Draw().
+//
+// - Metrics() returns a Gui::Metrics object that tells the layout manager how
+//   much space the widget wants/needs.
+//
+// - Draw() actually draws the widget, using regular GL calls. The GL state
+//   will be set such that widget's top-left corner is at [0,0] with a scissor
+//   region to prevent drawing outside of the widget's allocated space.
+//
+// More advanced widgets can implement Layout() and Draw() to do more advanced
+// things.
+//
+// - Layout() will usually only be implemented by container widgets. Its job is
+//   to call Metrics() on its children, followed by SetSize() to give them
+//   their dimensions as determined by the container's layout strategy.
+//
+// - Update() will be called after Layout() but before Draw(). The widget may
+//   get its allocated size by calling GetSize(), and can do any preparation
+//   for the actual draw at this point. Update() will always be called even if
+//   if the widget is disabled.
+//
+// The GUI mainloop runs in the following order:
+//
+//  - input handlers
+//  - Layout() (calls Metrics())
+//  - Update()
+//  - Draw()
+//
+// Container widgets will call Layout()/Update()/Draw() for their children.
+// Thus, the GUI is a hierarchy of widgets.
+//
+// Input is handled via the various signals in the Widget class. A widget must
+// connect to any input signals that it is interested in. External users may
+// also connect to signals so they can do things (eg register button click
+// handlers).
+//
+// Input handlers are called before Layout(), which gives a widget an
+// opportunity to modify its metrics based on input. Handlers return a bool to
+// indicate if the event was "handled" or not. If a handler returns true, then
+// it handled the event and no more handlers will be called for it. If it
+// returns false, the next handler is called.
+//
+// Input handlers are called against the "leaf" widgets first. If that widget
+// has no handlers for the event, or they all return false, then handlers for
+// the widget's parent widget are called, and so on until either a handler
+// returns true or the root widget is reached. Note that no guarantees are
+// made about the order that multiple handlers attached to a single widget
+// event will be called, so attaching more than one handler to an individual
+// widget event is highly discouraged.
 
 namespace Gui {
-	class Context;
-	class Container;
-	class ToolTip;
-	class Widget {
-	public:
-		Widget();
-		virtual void Draw() = 0;
-		virtual ~Widget();
 
-		void SetContext(Context *c) { m_context = c; }
-		Context *GetContext() const { return m_context; }
+class Context;
+class Container;
+	
+class Widget {
+protected:
+	// can't instantiate a base widget directly
+	Widget() : m_context(0), m_container(0), m_position(0), m_size(0) {}
 
-		/** containers call this on children. input: size[] will contain max permissible size
-		 *  output: size[] will contain what space the widget desires */
-		virtual void GetSizeRequested(float size[2]) = 0;
-		// the minimum size the widget requires to operate effectively
-		virtual void GetMinimumSize(float size[2]) { GetSizeRequested(size); }
-		void GetAbsolutePosition(float pos[2]) const;
-		void GetSize(float size[2]) { size[0] = m_size.w; size[1] = m_size.h; }
-		void SetSize(float w, float h) { m_size.w = w; m_size.h = h; onSetSize.emit(); }
-		void ResizeRequest();
-		void SetShortcut(SDLKey key, SDLMod mod);
-		void SetClipping(float width, float height);
-		void EndClipping();
-		bool GetEnabled() { return m_enabled; }
-		void SetEnabled(bool v) { m_enabled = v; }
-		virtual void GrabFocus();
-		bool IsFocused();
-		virtual void ShowAll() { m_visible = true; }
-		virtual void Show() { m_visible = true; }
-		virtual void Hide();
-		bool IsVisible() const;
-		Container *GetParent() const { return m_parent; }
+public:
+	virtual ~Widget();
 
-		void SetParent(Container *p) { m_parent = p; }
+	virtual void Metrics() = 0;
+	virtual void Layout() {}
+	virtual void Update() {}
+	virtual void Draw() = 0;
 
-		void SetToolTip(std::string s) { m_tooltip = s; }
-		const std::string &GetToolTip() const { return m_tooltip; }
+	// gui context
+	Context *GetContext() const { return m_context; }
 
-		// event handlers should return false to stop propagating event
-		virtual bool OnMouseDown(GuiExtra::MouseButtonEvent *e) { return true; }
-		virtual bool OnMouseUp(GuiExtra::MouseButtonEvent *e) { return true; }
-		virtual bool OnMouseMotion(GuiExtra::MouseMotionEvent *e) { return true; }
-		virtual void OnActivate() {}
-		virtual void OnMouseEnter();
-		virtual void OnMouseLeave();
-		virtual bool OnKeyPress(const SDL_keysym *sym) { return false; }
-		bool IsMouseOver() { return m_mouseOver; }
-		// only to be called by Screen::OnKeyDown
-		void OnPreShortcut(const SDL_keysym *sym);
-		enum EventMask {
-			EVENT_NONE = 0,
-			EVENT_KEYDOWN = 1<<0,
-			EVENT_KEYUP = 1<<1,
-			EVENT_MOUSEDOWN = 1<<2,
-			EVENT_MOUSEUP = 1<<3,
-			EVENT_MOUSEMOTION = 1<<4, // needed for OnMouseEnter,Leave,IsMouseOver
-			EVENT_ALL = 0xffffffff
-		};
-		unsigned int GetEventMask() { return m_eventMask; }
+	// enclosing container
+	Container *GetContainer() const { return m_container; }
 
-		sigc::signal<void> onMouseEnter;
-		sigc::signal<void> onMouseLeave;
-		sigc::signal<void> onSetSize;
-		sigc::signal<void> onDelete;
-	protected:
-		unsigned int m_eventMask;
-		struct {
-			SDLKey sym;
-			SDLMod mod;
-		} m_shortcut;
-		
-		virtual std::string GetOverrideTooltip() { return ""; }
-		void UpdateOverriddenTooltip();
-	private:
-		Context *m_context;
+	// size allocated to widget by container
+	const vector2f &GetSize() const { return m_size; }
 
-		struct {
-			float w,h;
-		} m_size;
-		bool m_visible;
-		bool m_mouseOver;
-		bool m_enabled;
-		Container *m_parent;
-		std::string m_tooltip;
-		sigc::connection m_tooltipTimerConnection;
-		ToolTip *m_tooltipWidget;
-		void OnToolTip();
+	// position relative to container
+	const vector2f &GetPosition() const { return m_position; }
+
+	// position relative to top container
+	vector2f GetAbsolutePosition() const;
+
+
+protected:
+	// this sigc accumulator checks the return from each event handler. if
+	// the handler returns false, the accumulator returns true and the
+	// next handler is called.
+	//
+	// declared protected so that widget subclasses can make their own
+	// event signals
+	struct EventHandlerResultAccumulator {
+		typedef bool result_type;
+		template <typename T>
+		result_type operator()(T first, T last) const {
+			for (; first != last; ++first)
+				if (*first) return false;
+			return true;
+		}
 	};
+
+public:
+	
+	// data for various events
+	struct KeyboardEvent {
+		SDL_keysym keysym;
+	};
+	struct MouseButtonEvent {
+            enum ButtonType {
+                BUTTON_LEFT,
+                BUTTON_MIDDLE,
+                BUTTON_RIGHT
+            };
+            ButtonType button;
+		float x, y; // relative to widget
+	};
+	struct MouseMotionEvent {
+		float x, y; // relative to widget
+	};
+	struct MouseWheelEvent {
+		enum WheelDirection {
+			WHEEL_UP,
+			WHEEL_DOWN
+		};
+		WheelDirection direction;
+	};
+
+	// raw key events
+	sigc::signal<bool,const KeyboardEvent &>::accumulated<EventHandlerResultAccumulator> onKeyDown;
+	sigc::signal<bool,const KeyboardEvent &>::accumulated<EventHandlerResultAccumulator> onKeyUp;
+
+	// synthesised for non-control keys. repeats when key is held down
+	sigc::signal<bool,const KeyboardEvent &>::accumulated<EventHandlerResultAccumulator> onKeyPress;
+
+	// mouse button presses
+	sigc::signal<bool,const MouseButtonEvent &>::accumulated<EventHandlerResultAccumulator> onMouseDown;
+	sigc::signal<bool,const MouseButtonEvent &>::accumulated<EventHandlerResultAccumulator> onMouseUp;
+
+	// mouse movement
+	sigc::signal<bool,const MouseMotionEvent &>::accumulated<EventHandlerResultAccumulator> onMouseMove;
+
+	// mouse wheel moving
+	sigc::signal<bool,const MouseWheelEvent &>::accumulated<EventHandlerResultAccumulator> onMouseWheel;
+
+	// mouse entering or exiting widget area
+	sigc::signal<bool>::accumulated<EventHandlerResultAccumulator> onMouseOver;
+	sigc::signal<bool>::accumulated<EventHandlerResultAccumulator> onMouseOut;
+
+	// click - primary mouse button press/release over widget. also
+	// synthesised when keyboard shortcut is used
+	sigc::signal<bool>::accumulated<EventHandlerResultAccumulator> onClick;
+
+
+private:
+
+	// let container set our attributes. none of them make any sense if
+	// we're not in a container
+	friend class Container;
+
+	// things for the container to call to attach, detach and position the
+	// widget. it could modify our data directly but that's ugly
+	void Attach(Context *context, Container *container);
+	void Detach();
+	void SetDimensions(const vector2f &position, const vector2f &size);
+
+	Context *m_context;
+	Container *m_container;
+	vector2f m_position;
+	vector2f m_size;
+};
+
 }
 
 #endif /* _GUIWIDGET_H */
