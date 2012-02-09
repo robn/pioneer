@@ -21,8 +21,9 @@
 // things.
 //
 // - Layout() will usually only be implemented by container widgets. Its job is
-//   to call GetMetrics() on its children, followed by SetSize() to give them
-//   their dimensions as determined by the container's layout strategy.
+//   to ask its children for the wanted size, position and size them according
+//   to its layout strategy, and then get them to lay out their children. See
+//   GuiContainer.h for more information about implementing a container.
 //
 // - Update() will be called after Layout() but before Draw(). The widget may
 //   get its allocated size by calling GetSize(), and can do any preparation

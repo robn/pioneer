@@ -20,7 +20,7 @@ void Screen::Layout()
 	if (!m_innerContainer) return;
 
 	SetWidgetDimensions(m_innerContainer, vector2f(0,0), vector2f(m_width,m_height));
-	Container::Layout();
+	LayoutChildren();
 }
 
 void Screen::SetInnerContainer(Container *container)

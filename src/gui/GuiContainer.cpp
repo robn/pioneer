@@ -24,6 +24,12 @@ void Container::Draw()
 		(*i)->Draw();
 }
 
+void Container::LayoutChildren()
+{
+	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i)
+		(*i)->Layout();
+}
+
 void Container::AddWidget(Widget *widget)
 {
 	assert(!widget->GetContainer());
