@@ -68,3 +68,10 @@ libgui_a_SOURCES = \
 	GuiVScrollBar.cpp \
 	GuiVScrollPortal.cpp \
 	GuiWidget.cpp
+
+check_PROGRAMS = guitest
+guitest_SOURCES = \
+	guitest.cpp \
+	GuiContext.cpp \
+	GuiWidget.cpp \
+	GuiContainer.cpp
