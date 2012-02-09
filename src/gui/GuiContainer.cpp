@@ -1,282 +1,53 @@
-#include "Gui.h"
 #include "GuiContainer.h"
-#include "GuiContext.h"
-
-//#define GUI_DEBUG_CONTAINER
 
 namespace Gui {
 
-Container::Container()
-{
-	m_transparent = true;
-	SetBgColor(GuiExtra::Theme::Colors::bg);
-	onMouseLeave.connect(sigc::mem_fun(this, &Container::_OnMouseLeave));
-	onSetSize.connect(sigc::mem_fun(this, &Container::_OnSetSize));
-}
-
 Container::~Container()
 {
-	DeleteAllChildren();
-}
-
-void Container::_OnSetSize()
-{
-	if (IsVisible()) UpdateAllChildSizes();
-}
-
-void Container::_OnMouseLeave()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		if ((*i).w->IsMouseOver() == true)
-			(*i).w->OnMouseLeave();
+	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
+		(*i)->Detach();
+		delete (*i);
 	}
 }
 
-bool Container::OnMouseMotion(GuiExtra::MouseMotionEvent *e)
+void Container::Update()
 {
-	float x = e->x;
-	float y = e->y;
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		float *pos,size[2];
-		if (!(*i).w->IsVisible()) {
-			if ((*i).w->IsMouseOver() == true)
-				(*i).w->OnMouseLeave();
-			continue;
-		}
-		int evmask = (*i).w->GetEventMask();
-		if (!(evmask & Widget::EVENT_MOUSEMOTION)) continue;
-
-		pos = (*i).pos;
-		(*i).w->GetSize(size);
-
-		if ((x >= pos[0]) && (x < pos[0]+size[0]) &&
-		    (y >= pos[1]) && (y < pos[1]+size[1])) {
-			e->x = x-pos[0];
-			e->y = y-pos[1];
-			if ((*i).w->IsMouseOver() == false) {
-				(*i).w->OnMouseEnter();
-			}
-			bool alive = (*i).w->OnMouseMotion(e);
-			if (!alive) return false;
-		} else {
-			if ((*i).w->IsMouseOver() == true)
-				(*i).w->OnMouseLeave();
-		}
-	}
-	return true;
+	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i)
+		(*i)->Update();
 }
 
-bool Container::HandleMouseEvent(GuiExtra::MouseButtonEvent *e)
-{
-	float x = e->x;
-	float y = e->y;
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		float *pos,size[2];
-		if (!(*i).w->IsVisible()) continue;
-		if (!(*i).w->GetEnabled()) continue;
-		int evmask = (*i).w->GetEventMask();
-		if (e->isdown) {
-			if (!(evmask & Widget::EVENT_MOUSEDOWN)) continue;
-		} else {
-			if (!(evmask & Widget::EVENT_MOUSEUP)) continue;
-		}
-		pos = (*i).pos;
-		(*i).w->GetSize(size);
-
-		if ((x >= pos[0]) && (x < pos[0]+size[0]) &&
-		    (y >= pos[1]) && (y < pos[1]+size[1])) {
-			e->x = x-pos[0];
-			e->y = y-pos[1];
-			bool alive;
-			if (e->isdown) {
-				alive = (*i).w->OnMouseDown(e);
-			} else {
-				alive = (*i).w->OnMouseUp(e);
-			}
-			if (!alive) return false;
-		}
-	}
-	onMouseButtonEvent.emit(e);
-	return true;
-}
-
-void Container::DeleteAllChildren()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		delete (*i).w;
-	}
-	m_children.clear();
-}
-
-void Container::RemoveAllChildren()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		i->w->SetContext(0);
-		i->w->SetParent(0);
-	}
-	m_children.clear();
-}
-
-void Container::PrependChild(Widget *child, float x, float y)
-{
-	widget_pos wp;
-	wp.w = child;
-	wp.pos[0] = x; wp.pos[1] = y;
-	wp.flags = 0;
-	child->SetContext(GetContext());
-	child->SetParent(this);
-	m_children.push_front(wp);
-}
-	
-void Container::AppendChild(Widget *child, float x, float y)
-{
-	widget_pos wp;
-	wp.w = child;
-	wp.pos[0] = x; wp.pos[1] = y;
-	wp.flags = 0;
-	child->SetContext(GetContext());
-	child->SetParent(this);
-	m_children.push_back(wp);
-}
-
-void Container::MoveChild(Widget *child, float x, float y)
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		if ((*i).w == child) {
-			(*i).pos[0] = x;
-			(*i).pos[1] = y;
-			return;
-		}
-	}
-}
-
-void Container::RemoveChild(Widget *child)
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		if ((*i).w == child) {
-			child->SetContext(0);
-			child->SetParent(0);
-			m_children.erase(i);
-			return;
-		}
-	}
-}
-
-	
 void Container::Draw()
 {
-	float size[2];
-	GetSize(size);
-	if (!m_transparent) {
-		if (m_bgcol[3] < 1.0) glEnable(GL_BLEND);
-		glBegin(GL_QUADS);
-			glColor4fv(m_bgcol);
-			glVertex2f(0, size[1]);
-			glVertex2f(size[0], size[1]);
-			glVertex2f(size[0], 0);
-			glVertex2f(0, 0);
-		glEnd();
-		glDisable(GL_BLEND);
-	}
-#ifdef GUI_DEBUG_CONTAINER
-	glBegin(GL_LINE_LOOP);
-		glColor3f(1,1,1);
-		glVertex2f(0, size[1]);
-		glVertex2f(size[0], size[1]);
-		glVertex2f(size[0], 0);
-		glVertex2f(0, 0);
-	glEnd();
-#endif /* GUI_DEBUG_CONTAINER */
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		if (!(*i).w->IsVisible()) continue;
-		glPushMatrix();
-		glTranslatef((*i).pos[0], (*i).pos[1], 0);
-#ifdef GUI_DEBUG_CONTAINER
-		float csize[2];
-		(*i).w->GetSize(csize);
-		
-		glBegin(GL_LINE_LOOP);
-			glColor3f(0,0,1);
-			glVertex2f(0, csize[1]);
-			glVertex2f(csize[0], csize[1]);
-			glVertex2f(csize[0], 0);
-			glVertex2f(0, 0);
-		glEnd();
-#endif /* GUI_DEBUG_CONTAINER */
-		(*i).w->Draw();
-		glPopMatrix();
-	}
+	// XXX set scissor region
+
+	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i)
+		(*i)->Draw();
 }
 
-bool Container::OnMouseDown(GuiExtra::MouseButtonEvent *e)
+void Container::AddWidget(Widget *widget)
 {
-	return HandleMouseEvent(e);
+	assert(!widget->GetContainer());
+
+	std::list<Widget*>::iterator i;
+	for (i = m_widgets.begin(); i != m_widgets.end(); ++i)
+		if (*i == widget) break;
+	assert(i == m_widgets.end());
+
+	widget->Attach(GetContext(), this);
+	m_widgets.push_back(widget);
 }
 
-bool Container::OnMouseUp(GuiExtra::MouseButtonEvent *e)
+void Container::RemoveWidget(Widget *widget)
 {
-	return HandleMouseEvent(e);
-}
+	assert(widget->GetContainer() == this);
 
-void Container::ShowChildren()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		(*i).w->Show();
-	}
-}
+	std::list<Widget*>::iterator i;
+	for (i = m_widgets.begin(); i != m_widgets.end(); ++i)
+		if (*i == widget) break;
+	assert(i != m_widgets.end());
 
-void Container::HideChildren()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		(*i).w->Hide();
-	}
-}
-
-void Container::GetChildPosition(const Widget *child, float outPos[2]) const
-{
-	for (std::list<widget_pos>::const_iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		if ((*i).w == child) {
-			outPos[0] = (*i).pos[0];
-			outPos[1] = (*i).pos[1];
-			return;
-		}
-	}
-	assert(0);
-}
-
-void Container::Show()
-{
-	Widget::Show();
-	if (IsVisible()) {
-		ResizeRequest();
-	}
-}
-
-void Container::ShowAll()
-{
-	for (std::list<widget_pos>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		(*i).w->ShowAll();
-	}
-	Show();
-}
-
-void Container::HideAll()
-{
-	HideChildren();
-	Hide();
-}
-
-void Container::SetBgColor(const float rgb[3])
-{
-	SetBgColor(rgb[0], rgb[1], rgb[2], 1.0);
-}
-
-void Container::SetBgColor(float r, float g, float b, float a)
-{
-	m_bgcol[0] = r;
-	m_bgcol[1] = g;
-	m_bgcol[2] = b;
-	m_bgcol[3] = a;
+	widget->Detach();
+	m_widgets.erase(i);
 }
 
 }
