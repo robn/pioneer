@@ -5,7 +5,8 @@ namespace Gui {
 Screen::Screen(Context *context, int width, int height) :
 	m_context(context),
 	m_width(float(width)),
-	m_height(float(height))
+	m_height(float(height)),
+	m_innerContainer(0)
 {
 }
 
