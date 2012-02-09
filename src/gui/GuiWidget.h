@@ -8,10 +8,10 @@
 // must implement, and a few more it might want to implement if it wants to do
 // something fancy.
 //
-// At minimum, a widget must implement Metrics() and Draw().
+// At minimum, a widget must implement GetMetrics() and Draw().
 //
-// - Metrics() returns a Gui::Metrics object that tells the layout manager how
-//   much space the widget wants/needs.
+// - GetMetrics() returns a Gui::Metrics object that tells the layout manager
+//   how much space the widget wants/needs.
 //
 // - Draw() actually draws the widget, using regular GL calls. The GL state
 //   will be set such that widget's top-left corner is at [0,0] with a scissor
@@ -21,7 +21,7 @@
 // things.
 //
 // - Layout() will usually only be implemented by container widgets. Its job is
-//   to call Metrics() on its children, followed by SetSize() to give them
+//   to call GetMetrics() on its children, followed by SetSize() to give them
 //   their dimensions as determined by the container's layout strategy.
 //
 // - Update() will be called after Layout() but before Draw(). The widget may
@@ -32,7 +32,7 @@
 // The GUI mainloop runs in the following order:
 //
 //  - input handlers
-//  - Layout() (calls Metrics())
+//  - Layout() (calls GetMetrics())
 //  - Update()
 //  - Draw()
 //
@@ -62,6 +62,7 @@ namespace Gui {
 
 class Context;
 class Container;
+class Metrics;
 	
 class Widget {
 protected:
@@ -71,7 +72,7 @@ protected:
 public:
 	virtual ~Widget();
 
-	virtual void Metrics() = 0;
+	virtual const Metrics &GetMetrics() = 0;
 	virtual void Layout() {}
 	virtual void Update() {}
 	virtual void Draw() = 0;
@@ -177,6 +178,29 @@ private:
 	Container *m_container;
 	vector2f m_position;
 	vector2f m_size;
+};
+
+
+// A widget's GetMetrics() method returns a Metrics object. It tells the
+// calling container what size the widget wants to be when drawn.
+class Metrics {
+public:
+	Metrics() : ideal(vector2f(DONTCARE,DONTCARE)), minimum(vector2f(DONTCARE,DONTCARE)), maximum(vector2f(DONTCARE,DONTCARE)) {}
+	Metrics(const vector2f &_ideal) : ideal(_ideal), minimum(vector2f(DONTCARE,DONTCARE)), maximum(vector2f(DONTCARE,DONTCARE)) {}
+	Metrics(const vector2f &_ideal, const vector2f &_minimum) : ideal(_ideal), minimum(_minimum), maximum(vector2f(DONTCARE,DONTCARE)) {}
+	Metrics(const vector2f &_ideal, const vector2f &_minimum, const vector2f &_maximum) : ideal(_ideal), minimum(_minimum), maximum(_maximum) {}
+	
+	// a magic value to indicate we don't care about this particular dimension
+	static const float DONTCARE = -1.0f;
+
+	// ideal dimensions   (widget functions optimally in this space)
+	vector2f ideal;
+
+	// minimum dimensions (widget needs at least this much to function)
+	vector2f minimum;;
+	
+	// maximum dimensions (please don't give me more than this)
+	vector2f maximum;
 };
 
 }

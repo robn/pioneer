@@ -24,7 +24,6 @@ noinst_HEADERS = \
 	GuiLabel.h \
 	GuiLabelSet.h \
 	GuiMeterBar.h \
-	GuiMetrics.h \
 	GuiMultiStateImageButton.h \
 	GuiRadioButton.h \
 	GuiRadioGroup.h \
