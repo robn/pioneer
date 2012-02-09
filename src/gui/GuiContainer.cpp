@@ -50,4 +50,11 @@ void Container::RemoveWidget(Widget *widget)
 	m_widgets.erase(i);
 }
 
+void Container::SetWidgetDimensions(Widget *widget, const vector2f &position, const vector2f &size)
+{
+	assert(widget->GetContainer() == this);
+
+	widget->SetDimensions(position, size);
+}
+
 }

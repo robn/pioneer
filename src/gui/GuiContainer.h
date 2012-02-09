@@ -30,6 +30,7 @@ public:
 protected:
 	void AddWidget(Widget *);
 	void RemoveWidget(Widget *);
+	void SetWidgetDimensions(Widget *widget, const vector2f &position, const vector2f &size);
 
 	typedef std::list<Widget*>::const_iterator WidgetIterator;
 	const WidgetIterator WidgetsBegin() const { return m_widgets.begin(); }
