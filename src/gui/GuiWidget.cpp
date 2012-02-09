@@ -11,29 +11,32 @@ Widget::~Widget()
 	assert(!m_container);
 }
 
-vector2f Widget::GetAbsolutePosition() const {
+vector2f Widget::GetAbsolutePosition() const
+{
 	if (!m_container) return 0;
 	return m_container->GetAbsolutePosition() + m_position;
 }
 
-void Widget::Attach(Context *context, Container *container) {
+void Widget::Attach(Context *context, Container *container)
+{
 	assert(context);
 	assert(container);
 	m_context = context;
 	m_container = container;
 }
 
-void Widget::Detach() {
+void Widget::Detach()
+{
 	m_context = 0;
 	m_container = 0;
 	m_position = 0;
 	m_size = 0;
 }
 
-void Widget::SetDimensions(const vector2f &position, const vector2f &size) {
+void Widget::SetDimensions(const vector2f &position, const vector2f &size)
+{
 	m_position = position;
 	m_size = size;
 }
-
 
 }
