@@ -1,80 +1,38 @@
 #ifndef _GUISCREEN_H
 #define _GUISCREEN_H
 
-#include "Gui.h"
-#include "FontManager.h"
-#include "TextureFont.h"
-#include "TextureCache.h"
-#include <list>
-#include <stack>
+#include "GuiContainer.h"
+
+// Screen is the top-level container. It has the simplest layout manager
+// possible - it will only accept a single container widget and will override
+// its metrics to force it to be the full size of the screen.
+//
+// Its slightly different to other containers internally to allow it to be a
+// "live" widget but without a container (because its the top-level container)
 
 namespace Gui {
 
 class Context;
+class Metrics;
 
-class Screen {
+class Screen : public Container {
 public:
-	Screen(Context *context, int real_width, int real_height, int ui_width, int ui_height);
-	virtual ~Screen();
+	Screen(Context *context, int width, int height);
 
-	Context *GetContext() const { return m_context; }
+	virtual const Metrics &GetMetrics();
+	virtual void Layout();
 
-	void Draw();
-	void ShowBadError(const char *msg);
-	void AddBaseWidget(Widget *w, int x, int y);
-	void RemoveBaseWidget(Widget *w);
-	void OnMouseMotion(SDL_MouseMotionEvent *e);
-	void OnClick(SDL_MouseButtonEvent *e);
-	void OnKeyDown(const SDL_keysym *sym);
-	void OnKeyUp(const SDL_keysym *sym);
-	void EnterOrtho();
-	void LeaveOrtho();
-	int GetWidth() { return width; }
-	int GetHeight() { return height; }
-	// gluProject but fixes UI/screen size mismatch
-	bool Project(const vector3d &in, vector3d &out);
-	friend void Widget::SetShortcut(SDLKey key, SDLMod mod);
-	friend Widget::~Widget();
-	bool IsBaseWidget(const Widget *);
-	void GetCoords2Pixels(float scale[2]) {
-		scale[0] = fontScale[0];
-		scale[1] = fontScale[1];
-	}
-	const float* GetCoords2Pixels() { return fontScale; }
-	void SetFocused(Widget *w, bool enableKeyRepeat = false);
-	void ClearFocus();
-	bool IsFocused(Widget *w) {
-		return w == focusedWidget;
-	}
-
-	float GetFontHeight(TextureFont *font = 0);
-	void RenderString(const std::string &s, float xoff, float yoff, TextureFont *font = 0);
-	void MeasureString(const std::string &s, float &w, float &h, TextureFont *font = 0);
-	int PickCharacterInString(const std::string &s, float x, float y, TextureFont *font = 0);
-	void MeasureCharacterPos(const std::string &s, int charIndex, float &x, float &y, TextureFont *font = 0);
-	void RenderMarkup(const std::string &s, TextureFont *font = 0);
+	void SetInnerContainer(Container *container);
+	void RemoveInnerContainer();
+	Container *GetInnerContainer() const { return m_innerContainer; }
 
 private:
-	void AddShortcutWidget(Widget *w);
-	void RemoveShortcutWidget(Widget *w);
-	void SDLEventCoordToScreenCoord(int sdlev_x, int sdlev_y, float *x, float *y);
-
 	Context *m_context;
 
-	int width, height;
-	int realWidth, realHeight;
-	float invRealWidth, invRealHeight;
-	std::list<Widget*> kbshortcut_widgets;
-	std::list<Widget*> mouseHoveredWidgets;
-	float fontScale[2];
-	Gui::Fixed *baseContainer;
-	Gui::Widget *focusedWidget;
-	void OnDeleteFocusedWidget();
-	GLdouble modelMatrix[16];
-	GLdouble projMatrix[16];
-	GLint viewport[4];
+	float m_width;
+	float m_height;
 
-	sigc::connection _focusedWidgetOnDelete;
+	Container *m_innerContainer;
 };
 
 }
