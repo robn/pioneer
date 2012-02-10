@@ -7,6 +7,7 @@ Screen::Screen(Context *context, int width, int height) : Single(),
 	m_width(float(width)),
 	m_height(float(height))
 {
+	SetContext(context);
 }
 
 const Metrics &Screen::GetMetrics()

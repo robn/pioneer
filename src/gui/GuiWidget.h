@@ -175,6 +175,11 @@ private:
 	void Detach();
 	void SetDimensions(const vector2f &position, const vector2f &size);
 
+	// Screen is the top-level container and needs to set its own context
+	// directly for the context passing business to work
+	friend class Screen;
+	void SetContext(Context *context) { m_context = context; }
+
 	Context *m_context;
 	Container *m_container;
 	vector2f m_position;
