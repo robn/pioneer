@@ -2,6 +2,7 @@
 #include "SDL.h"
 #include "GuiContext.h"
 #include "GuiScreen.h"
+#include "GuiBackground.h"
 
 static const int WIDTH  = 1024;
 static const int HEIGHT = 768;
@@ -58,6 +59,8 @@ int main(int argc, char **argv)
 
 	Gui::Context *context = new Gui::Context;
 	Gui::Screen *screen = new Gui::Screen(context, WIDTH, HEIGHT);
+
+	screen->SetInnerContainer(new Gui::Background(Color(0.8f, 0.2f, 0.8f, 1.0f)));
 
 	bool done = false;
 	while (!done) {

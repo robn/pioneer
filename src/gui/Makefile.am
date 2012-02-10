@@ -75,5 +75,6 @@ guitest_SOURCES = \
 	GuiWidget.cpp \
 	GuiContainer.cpp \
 	GuiSingle.cpp \
-	GuiScreen.cpp
+	GuiScreen.cpp \
+	GuiBackground.cpp
 guitest_LDADD = $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)
