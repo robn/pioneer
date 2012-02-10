@@ -1,7 +1,7 @@
 #ifndef _GUISCREEN_H
 #define _GUISCREEN_H
 
-#include "GuiContainer.h"
+#include "GuiSingle.h"
 
 // Screen is the top-level container. It has the simplest layout manager
 // possible - it will only accept a single container widget and will override
@@ -15,24 +15,16 @@ namespace Gui {
 class Context;
 class Metrics;
 
-class Screen : public Container {
+class Screen : public Single {
 public:
 	Screen(Context *context, int width, int height);
 
 	virtual const Metrics &GetMetrics();
-	virtual void Layout();
-
-	void SetInnerContainer(Container *container);
-	void RemoveInnerContainer();
-	Container *GetInnerContainer() const { return m_innerContainer; }
 
 private:
 	Context *m_context;
-
 	float m_width;
 	float m_height;
-
-	Container *m_innerContainer;
 };
 
 }
