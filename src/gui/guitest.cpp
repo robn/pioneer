@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	Gui::Context *context = new Gui::Context;
 	Gui::Screen *screen = new Gui::Screen(context, WIDTH, HEIGHT);
 
-	screen->SetInnerContainer(new Gui::Background(Color(0.8f, 0.2f, 0.8f, 1.0f)));
+	screen->SetInnerContainer(new Gui::Background(Color(0.4f, 0.2f, 0.4f, 1.0f)));
 
 	bool done = false;
 	while (!done) {
