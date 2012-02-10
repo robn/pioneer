@@ -8,6 +8,7 @@ Screen::Screen(Context *context, int width, int height) : Single(),
 	m_height(float(height))
 {
 	SetContext(context);
+	SetSize(vector2f(m_width,m_height));
 }
 
 const Metrics &Screen::GetMetrics()
