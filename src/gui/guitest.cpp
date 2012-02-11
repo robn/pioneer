@@ -3,6 +3,7 @@
 #include "GuiContext.h"
 #include "GuiScreen.h"
 #include "GuiBackground.h"
+#include "GuiBox.h"
 
 static const int WIDTH  = 1024;
 static const int HEIGHT = 768;
@@ -60,7 +61,15 @@ int main(int argc, char **argv)
 	Gui::Context *context = new Gui::Context;
 	Gui::Screen *screen = new Gui::Screen(context, WIDTH, HEIGHT);
 
-	screen->SetInnerContainer(new Gui::Background(Color(0.4f, 0.2f, 0.4f, 1.0f)));
+	Gui::Background *background = new Gui::Background(Color(0.4f, 0.2f, 0.4f, 1.0f));
+	screen->SetInnerContainer(background);
+
+	Gui::VBox *box = new Gui::VBox();
+	background->SetInnerContainer(box);
+
+	box->PackEnd(new Gui::Background(Color(1.0f, 0.0f, 0.0f, 1.0f)));
+	box->PackEnd(new Gui::Background(Color(0.0f, 1.0f, 0.0f, 1.0f)));
+	box->PackEnd(new Gui::Background(Color(0.0f, 0.0f, 1.0f, 1.0f)));
 
 	bool done = false;
 	while (!done) {
