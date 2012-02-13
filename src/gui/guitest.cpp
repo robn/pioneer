@@ -73,6 +73,11 @@ int main(int argc, char **argv)
 	box->PackEnd(new Gui::Background(Color(0.0f, 0.0f, 1.0f, 1.0f)));
 	box->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
 
+	Gui::HBox *hbox = new Gui::HBox();
+	box->PackEnd(hbox);
+	hbox->PackEnd(new Gui::Background(Color(1.0f, 1.0f, 0.0f, 1.0f)));
+	hbox->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
+
 	bool done = false;
 	while (!done) {
 		SDL_Event event;
