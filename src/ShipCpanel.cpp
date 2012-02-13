@@ -174,6 +174,19 @@ void ShipCpanel::InitObject()
 	Add(img, 780, 37);
 	m_alertLights[2] = img;
 
+	CameraSwitchWidget *camSwitcher = new CameraSwitchWidget(this, WorldView::CAM_FRONT);
+	camSwitcher->SetShortcut(SDLK_1, KMOD_LSHIFT);
+	Add(camSwitcher,0,0);
+	camSwitcher = new CameraSwitchWidget(this, WorldView::CAM_REAR);
+	camSwitcher->SetShortcut(SDLK_2, KMOD_LSHIFT);
+	Add(camSwitcher,0,0);
+	camSwitcher = new CameraSwitchWidget(this, WorldView::CAM_EXTERNAL);
+	camSwitcher->SetShortcut(SDLK_3, KMOD_LSHIFT);
+	Add(camSwitcher,0,0);
+	camSwitcher = new CameraSwitchWidget(this, WorldView::CAM_SIDEREAL);
+	camSwitcher->SetShortcut(SDLK_4, KMOD_LSHIFT);
+	Add(camSwitcher,0,0);
+
 	m_connOnDockingClearanceExpired =
 		Pi::onDockingClearanceExpired.connect(sigc::mem_fun(this, &ShipCpanel::OnDockingClearanceExpired));
 }
@@ -258,21 +271,6 @@ void ShipCpanel::Draw()
 	if ((cur != Pi::sectorView) && (cur != Pi::systemView) &&
 	    (cur != Pi::systemInfoView) && (cur != Pi::galacticView)) {
 		HideMapviewButtons();
-	}
-
-	if (cur == Pi::worldView) {
-		// XXX committing this atrocity because we don't really have a good
-		// way to trap arbitrary keypresses and/or set multiple shortcut keys
-		if (Pi::KeyState(SDLK_LSHIFT) || Pi::KeyState(SDLK_RSHIFT)) {
-			if (Pi::KeyState(SDLK_1))
-				SwitchToCamera(WorldView::CAM_FRONT);
-			else if (Pi::KeyState(SDLK_2))
-				SwitchToCamera(WorldView::CAM_REAR);
-			else if (Pi::KeyState(SDLK_3))
-				SwitchToCamera(WorldView::CAM_EXTERNAL);
-			else if (Pi::KeyState(SDLK_4))
-				SwitchToCamera(WorldView::CAM_SIDEREAL);
-		}
 	}
 
 	Gui::Fixed::Draw();

@@ -328,10 +328,8 @@ void Viewer::PickModel(const std::string &initial_name, const std::string &initi
 		this->Hide();
 		f->ShowAll();
 		PollEvents();
-		Render::PrepareFrame();
 		glClearColor(0,0,0,0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Render::PostProcess();
 		guiContext->Draw();
 		glError();
 		Render::SwapBuffers();
@@ -546,7 +544,6 @@ void Viewer::MainLoop()
 
 	for (;;) {
 		PollEvents();
-		Render::PrepareFrame();
 
 		if (g_keyState[SDLK_LSHIFT] || g_keyState[SDLK_RSHIFT]) {
 			if (g_keyState[SDLK_UP]) g_camorient = g_camorient * matrix4x4f::RotateXMatrix(g_frameTime);
@@ -642,7 +639,6 @@ void Viewer::MainLoop()
 			m_trisReadout->SetText(buf);
 		}
 		
-		Render::PostProcess();
 		guiContext->Draw();
 		
 		glError();
