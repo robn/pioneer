@@ -4,7 +4,6 @@ namespace Gui {
 
 Box::Box(BoxOrientation orient) : Container(),
 	m_orient(orient),
-	m_spacing(0.0f),
 	m_dirty(false)
 {
 }

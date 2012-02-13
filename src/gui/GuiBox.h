@@ -22,8 +22,6 @@ public:
 	void PackEnd(Widget *child);
 	void Remove(Widget *child);
 
-	void SetSpacing(float spacing) { m_spacing = spacing; }
-
 private:
 	BoxOrientation m_orient;
 	float m_spacing;
