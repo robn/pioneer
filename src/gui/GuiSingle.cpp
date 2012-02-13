@@ -2,10 +2,9 @@
 
 namespace Gui {
 
-const Metrics &Single::GetMetrics()
+Metrics Single::GetMetrics()
 {
-	static const Metrics dontcare;
-	if (!m_innerContainer) return dontcare;
+	if (!m_innerContainer) return Metrics();
 	return m_innerContainer->GetMetrics();
 }
 

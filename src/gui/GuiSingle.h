@@ -7,7 +7,7 @@ namespace Gui {
 
 class Single : public Container {
 public:
-	virtual const Metrics &GetMetrics();
+	virtual Metrics GetMetrics();
 	virtual void Layout();
 
 	void SetInnerContainer(Container *container);

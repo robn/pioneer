@@ -8,7 +8,7 @@ Box::Box(BoxOrientation orient) : Container(),
 {
 }
 	
-const Metrics &Box::GetMetrics()
+Metrics Box::GetMetrics()
 {
 	if (!m_dirty) return m_metrics;
 

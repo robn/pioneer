@@ -19,7 +19,7 @@ class Screen : public Single {
 public:
 	Screen(Context *context, int width, int height);
 
-	virtual const Metrics &GetMetrics();
+	virtual Metrics GetMetrics();
 
 private:
 	Context *m_context;

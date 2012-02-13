@@ -13,7 +13,7 @@ class Image: public Widget {
 public:
 	Image(const std::string &filename);
 
-	virtual const Metrics &GetMetrics();
+	virtual Metrics GetMetrics();
 	virtual void Draw();
 
 private:

@@ -73,7 +73,7 @@ protected:
 public:
 	virtual ~Widget();
 
-	virtual const Metrics &GetMetrics() = 0;
+	virtual Metrics GetMetrics() = 0;
 	virtual void Layout() {}
 	virtual void Update() {}
 	virtual void Draw() = 0;

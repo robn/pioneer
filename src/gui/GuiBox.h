@@ -15,7 +15,7 @@ protected:
 	Box(BoxOrientation orient);
 
 public:
-	virtual const Metrics &GetMetrics();
+	virtual Metrics GetMetrics();
 	virtual void Layout();
 
 	void PackStart(Widget *child);

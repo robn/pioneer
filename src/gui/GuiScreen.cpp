@@ -11,10 +11,9 @@ Screen::Screen(Context *context, int width, int height) : Single(),
 	SetSize(vector2f(m_width,m_height));
 }
 
-const Metrics &Screen::GetMetrics()
+Metrics Screen::GetMetrics()
 {
-	static const Metrics metrics(vector2f(m_width,m_height), vector2f(m_width,m_height), vector2f(m_width,m_height));
-	return metrics;
+	return Metrics(vector2f(m_width,m_height), vector2f(m_width,m_height), vector2f(m_width,m_height));
 }
 
 }

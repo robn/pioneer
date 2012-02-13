@@ -8,10 +8,9 @@ Image::Image(const std::string &filename): Widget()
 	m_texture.Reset(new UITexture(filename));
 }
 
-const Metrics &Image::GetMetrics()
+Metrics Image::GetMetrics()
 {
-	static const Metrics metrics(vector2f(m_texture->GetWidth(),m_texture->GetHeight()));
-	return metrics;
+	return Metrics(vector2f(m_texture->GetWidth(),m_texture->GetHeight()));
 }
 
 void Image::Draw()
