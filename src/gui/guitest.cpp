@@ -4,6 +4,7 @@
 #include "GuiScreen.h"
 #include "GuiBackground.h"
 #include "GuiBox.h"
+#include "GuiImage.h"
 
 static const int WIDTH  = 1024;
 static const int HEIGHT = 768;
@@ -70,6 +71,7 @@ int main(int argc, char **argv)
 	box->PackEnd(new Gui::Background(Color(1.0f, 0.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 1.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 0.0f, 1.0f, 1.0f)));
+	box->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
 
 	bool done = false;
 	while (!done) {

@@ -77,5 +77,6 @@ guitest_SOURCES = \
 	GuiSingle.cpp \
 	GuiScreen.cpp \
 	GuiBackground.cpp \
-    GuiBox.cpp
-guitest_LDADD = $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)
+    GuiBox.cpp \
+	GuiImage.cpp
+guitest_LDADD = ../Texture.o $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)
