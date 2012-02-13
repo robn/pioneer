@@ -20,8 +20,13 @@ void Container::Draw()
 {
 	// XXX set scissor region
 
-	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i)
+	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
+		const vector2f &pos = (*i)->GetPosition();
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
 		(*i)->Draw();
+		glPopMatrix();
+	}
 }
 
 void Container::LayoutChildren()

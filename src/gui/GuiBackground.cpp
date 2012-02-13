@@ -4,14 +4,13 @@ namespace Gui {
 
 void Background::Draw()
 {
-	const vector2f &pos = GetPosition();
 	const vector2f &size = GetSize();
 
 	GLfloat array[4*2] = {
-		pos.x,        pos.y+size.y,
-		pos.x+size.x, pos.y+size.y,
-		pos.x+size.x, pos.y,
-		pos.x,        pos.y
+		0,      size.y,
+		size.x, size.y,
+		size.x, 0,
+		0,      0
 	};
 
 	glColor4fv(m_color);
