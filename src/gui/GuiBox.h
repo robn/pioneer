@@ -26,10 +26,17 @@ private:
 	BoxOrientation m_orient;
 	float m_spacing;
 
-	bool m_dirty;
-	Metrics m_metrics;
+	struct BoxChild {
+		BoxChild(Widget *_widget) : widget(_widget) {}
+		Widget  *widget;
+		Metrics metrics;
+	};
 
-	std::list<Widget*> m_widgets;
+	std::list<BoxChild> m_children;
+
+	void CalculateMetrics();
+	Metrics m_metrics;
+	bool m_needMetricsRecalc;
 };
 
 class VBox: public Box {

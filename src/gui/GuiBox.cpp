@@ -4,13 +4,13 @@ namespace Gui {
 
 Box::Box(BoxOrientation orient) : Container(),
 	m_orient(orient),
-	m_dirty(false)
+	m_needMetricsRecalc(true)
 {
 }
-	
-Metrics Box::GetMetrics()
+
+void Box::CalculateMetrics()
 {
-	if (!m_dirty) return m_metrics;
+	if (!m_needMetricsRecalc) return;
 
 	// interrogate children and determine metrics as follows
 	// - minimum: sum(min[orient]),   max(min[non-orient])
@@ -19,8 +19,8 @@ Metrics Box::GetMetrics()
 	
 	m_metrics = Metrics(0,0,0);
 
-	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
-		const Metrics childMetrics = (*i)->GetMetrics();
+	for (std::list<BoxChild>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+		const Metrics childMetrics = (*i).metrics = (*i).widget->GetMetrics();
 
 		switch (m_orient) {
 			case BOX_HORIZONTAL:
@@ -52,30 +52,51 @@ Metrics Box::GetMetrics()
 		}
 	}
 
-	m_dirty = false;
+	m_needMetricsRecalc = false;
+}
+
+Metrics Box::GetMetrics()
+{
+	CalculateMetrics();
 	return m_metrics;
 }
 
 void Box::Layout()
 {
-	const vector2f boxSize = GetSize();
+	CalculateMetrics();
 
-	vector2f childPos;
+	const vector2f boxSize = GetSize();
 
 	switch (m_orient) {
 		case BOX_HORIZONTAL: {
-			vector2f childSize(boxSize.x/m_widgets.size(), boxSize.y);
-			for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
-				SetWidgetDimensions((*i), childPos, childSize);
+			vector2f childPos(0);
+
+			for (std::list<BoxChild>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+				vector2f childSize;
+				if (boxSize.x >= m_metrics.ideal.x)
+					childSize = vector2f((*i).metrics.ideal.x, boxSize.y);
+				else
+					childSize = vector2f(boxSize.x/m_children.size(), boxSize.y);
+
+				SetWidgetDimensions((*i).widget, childPos, childSize);
+
 				childPos.x += childSize.x;
 			}
 			break;
 		}
 
 		case BOX_VERTICAL: {
-			vector2f childSize(boxSize.x, boxSize.y/m_widgets.size());
-			for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
-				SetWidgetDimensions((*i), childPos, childSize);
+			vector2f childPos(0);
+
+			for (std::list<BoxChild>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+				vector2f childSize;
+				if (boxSize.y >= m_metrics.ideal.y)
+					childSize = vector2f(boxSize.x, (*i).metrics.ideal.y);
+				else
+					childSize = vector2f(boxSize.x, boxSize.y/m_children.size());
+
+				SetWidgetDimensions((*i).widget, childPos, childSize);
+
 				childPos.y += childSize.y;
 			}
 			break;
@@ -86,29 +107,28 @@ void Box::Layout()
 	}
 
 	LayoutChildren();
+
+	m_needMetricsRecalc = true;
 }
 
 void Box::PackStart(Widget *widget)
 {
 	AddWidget(widget);
-	m_widgets.push_front(widget);
-	m_dirty = true;
+	m_children.push_front(BoxChild(widget));
 }
 
 void Box::PackEnd(Widget *widget)
 {
 	AddWidget(widget);
-	m_widgets.push_back(widget);
-	m_dirty = true;
+	m_children.push_back(BoxChild(widget));
 }
 
 void Box::Remove(Widget *widget)
 {
 	RemoveWidget(widget);
-	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i)
-		if ((*i) == widget) {
-			m_widgets.erase(i);
-			m_dirty = true;
+	for (std::list<BoxChild>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+		if ((*i).widget == widget) {
+			m_children.erase(i);
 			return;
 		}
 	assert(0);

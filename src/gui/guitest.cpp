@@ -68,6 +68,14 @@ int main(int argc, char **argv)
 	Gui::VBox *box = new Gui::VBox();
 	background->SetInnerContainer(box);
 
+
+
+	box->PackEnd(new Gui::Image("../../data/icons/object_star_g.png"));
+	box->PackEnd(new Gui::Image("../../data/icons/object_star_m.png"));
+
+
+
+	/*
 	box->PackEnd(new Gui::Background(Color(1.0f, 0.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 1.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 0.0f, 1.0f, 1.0f)));
@@ -77,6 +85,7 @@ int main(int argc, char **argv)
 	box->PackEnd(hbox);
 	hbox->PackEnd(new Gui::Background(Color(1.0f, 1.0f, 0.0f, 1.0f)));
 	hbox->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
+	*/
 
 	bool done = false;
 	while (!done) {
