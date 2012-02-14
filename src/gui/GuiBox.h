@@ -37,9 +37,11 @@ private:
 		Widget     *widget;
 		ChildAttrs attrs;
 		Metrics    metrics;
+		vector2f   size;
 	};
 
 	std::list<Child> m_children;
+	int m_countExpanded;
 
 	void CalculateMetrics();
 	Metrics m_metrics;

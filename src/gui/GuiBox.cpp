@@ -4,6 +4,7 @@ namespace Gui {
 
 Box::Box(BoxOrientation orient) : Container(),
 	m_orient(orient),
+	m_countExpanded(0),
 	m_needMetricsRecalc(true)
 {
 }
@@ -65,23 +66,56 @@ void Box::Layout()
 	vector2f::Component vc, fc;
 	GetComponentsForOrient(m_orient == BOX_HORIZONTAL, vc, fc);
 
+	float sizeRemaining = boxSize[vc];
+
 	vector2f childPos(0);
 
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		vector2f childSize;
-		if (boxSize[vc] >= m_metrics.ideal[vc]) {
-			childSize[vc] = (*i).metrics.ideal[vc];
-			childSize[fc] = boxSize[fc];
-		}
-		else {
-			childSize[vc] = boxSize[vc]/m_children.size();
-			childSize[fc] = boxSize[fc];
-		}
+		float childSize = 0;
 
-		SetWidgetDimensions((*i).widget, childPos, childSize);
+		if (boxSize[vc] >= m_metrics.ideal[vc])
+			childSize = (*i).metrics.ideal[vc];
+		else
+			childSize = boxSize[vc]/m_children.size();
 
-		childPos[vc] += childSize[vc];
+		(*i).size[vc] = childSize;
+		(*i).size[fc] = boxSize[fc];
+
+		sizeRemaining -= childSize;
+
+		if (m_countExpanded == 0) {
+			SetWidgetDimensions((*i).widget, childPos, (*i).size);
+			childPos[vc] += childSize;
+		}
 	}
+
+	if (m_countExpanded > 0) {
+		int candidates = m_countExpanded;
+
+		while (sizeRemaining > 0) {
+			float allocation = sizeRemaining / candidates;
+
+			for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+				if (!(*i).attrs.expand) continue;
+
+				if ((*i).size[vc] + allocation > (*i).metrics.maximum[vc]) {
+					candidates--;
+					sizeRemaining -= (*i).metrics.maximum[vc] - (*i).size[vc];
+					(*i).size[vc] = (*i).metrics.maximum[vc];
+				}
+				else {
+					(*i).size[vc] += allocation;
+					sizeRemaining -= allocation;
+				}
+			}
+		}
+
+		for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+			SetWidgetDimensions((*i).widget, childPos, (*i).size);
+			childPos[vc] += (*i).size[vc];
+		}
+	}
+
 
 	LayoutChildren();
 
@@ -92,12 +126,14 @@ void Box::PackStart(Widget *widget, const ChildAttrs &attrs)
 {
 	AddWidget(widget);
 	m_children.push_front(Child(widget, attrs));
+	if (attrs.expand) m_countExpanded++;
 }
 
 void Box::PackEnd(Widget *widget, const ChildAttrs &attrs)
 {
 	AddWidget(widget);
 	m_children.push_back(Child(widget, attrs));
+	if (attrs.expand) m_countExpanded++;
 }
 
 void Box::Remove(Widget *widget)
