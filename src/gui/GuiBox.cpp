@@ -8,6 +8,18 @@ Box::Box(BoxOrientation orient) : Container(),
 {
 }
 
+static inline void GetComponentsForOrient(bool horiz, vector2f::Component &variableComponent, vector2f::Component &fixedComponent)
+{
+	if (horiz) {
+		variableComponent = vector2f::X;
+		fixedComponent = vector2f::Y;
+	}
+	else {
+		variableComponent = vector2f::Y;
+		fixedComponent = vector2f::X;
+	}
+}
+
 void Box::CalculateMetrics()
 {
 	if (!m_needMetricsRecalc) return;
@@ -17,39 +29,22 @@ void Box::CalculateMetrics()
 	// - ideal:   sum(ideal[orient]), max(ideal[non-orient])
 	// - maximum: sum(max[orient]),   max(max[non-orient)
 	
+	vector2f::Component vc, fc;
+	GetComponentsForOrient(m_orient == BOX_HORIZONTAL, vc, fc);
+	
 	m_metrics = Metrics(0,0,0);
 
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
 		const Metrics childMetrics = (*i).metrics = (*i).widget->GetMetrics();
 
-		switch (m_orient) {
-			case BOX_HORIZONTAL:
-				m_metrics.minimum.x += childMetrics.minimum.x;
-				m_metrics.minimum.y = std::max(m_metrics.minimum.y, childMetrics.minimum.y);
+		m_metrics.minimum[vc] += childMetrics.minimum[vc];
+		m_metrics.minimum[fc] = std::max(m_metrics.minimum[fc], childMetrics.minimum[fc]);
 
-				m_metrics.ideal.x += childMetrics.ideal.x;
-				m_metrics.ideal.y = std::max(m_metrics.ideal.y, childMetrics.ideal.y);
+		m_metrics.ideal[vc] += childMetrics.ideal[vc];
+		m_metrics.ideal[fc] = std::max(m_metrics.ideal[fc], childMetrics.ideal[fc]);
 
-				m_metrics.maximum.x += childMetrics.maximum.x;
-				m_metrics.maximum.y = std::max(m_metrics.maximum.y, childMetrics.maximum.y);
-
-				break;
-
-			case BOX_VERTICAL:
-				m_metrics.minimum.x = std::max(m_metrics.minimum.x, childMetrics.minimum.x);
-				m_metrics.minimum.y += childMetrics.minimum.y;
-
-				m_metrics.ideal.x = std::max(m_metrics.ideal.x, childMetrics.ideal.x);
-				m_metrics.ideal.y += childMetrics.ideal.y;
-
-				m_metrics.maximum.x = std::max(m_metrics.maximum.x, childMetrics.maximum.x);
-				m_metrics.maximum.y += childMetrics.maximum.y;
-
-				break;
-
-			default:
-				assert(0);
-		}
+		m_metrics.maximum[vc] += childMetrics.maximum[vc];
+		m_metrics.maximum[fc] = std::max(m_metrics.maximum[fc], childMetrics.maximum[fc]);
 	}
 
 	m_needMetricsRecalc = false;
@@ -67,43 +62,25 @@ void Box::Layout()
 
 	const vector2f boxSize = GetSize();
 
-	switch (m_orient) {
-		case BOX_HORIZONTAL: {
-			vector2f childPos(0);
+	vector2f::Component vc, fc;
+	GetComponentsForOrient(m_orient == BOX_HORIZONTAL, vc, fc);
 
-			for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-				vector2f childSize;
-				if (boxSize.x >= m_metrics.ideal.x)
-					childSize = vector2f((*i).metrics.ideal.x, boxSize.y);
-				else
-					childSize = vector2f(boxSize.x/m_children.size(), boxSize.y);
+	vector2f childPos(0);
 
-				SetWidgetDimensions((*i).widget, childPos, childSize);
-
-				childPos.x += childSize.x;
-			}
-			break;
+	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+		vector2f childSize;
+		if (boxSize[vc] >= m_metrics.ideal[vc]) {
+			childSize[vc] = (*i).metrics.ideal[vc];
+			childSize[fc] = boxSize[fc];
+		}
+		else {
+			childSize[vc] = boxSize[vc]/m_children.size();
+			childSize[fc] = boxSize[fc];
 		}
 
-		case BOX_VERTICAL: {
-			vector2f childPos(0);
+		SetWidgetDimensions((*i).widget, childPos, childSize);
 
-			for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-				vector2f childSize;
-				if (boxSize.y >= m_metrics.ideal.y)
-					childSize = vector2f(boxSize.x, (*i).metrics.ideal.y);
-				else
-					childSize = vector2f(boxSize.x, boxSize.y/m_children.size());
-
-				SetWidgetDimensions((*i).widget, childPos, childSize);
-
-				childPos.y += childSize.y;
-			}
-			break;
-		}
-
-		default:
-			assert(0);
+		childPos[vc] += childSize[vc];
 	}
 
 	LayoutChildren();
