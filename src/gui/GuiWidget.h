@@ -192,9 +192,9 @@ private:
 // calling container what size the widget wants to be when drawn.
 class Metrics {
 public:
-	Metrics() {}
-	Metrics(const vector2f &_ideal) : ideal(_ideal) {}
-	Metrics(const vector2f &_ideal, const vector2f &_minimum) : ideal(_ideal), minimum(_minimum) {}
+	Metrics() : maximum(FLT_MAX) {}
+	Metrics(const vector2f &_ideal) : ideal(_ideal), maximum(FLT_MAX) {}
+	Metrics(const vector2f &_ideal, const vector2f &_minimum) : ideal(_ideal), minimum(_minimum), maximum(FLT_MAX) {}
 	Metrics(const vector2f &_ideal, const vector2f &_minimum, const vector2f &_maximum) : ideal(_ideal), minimum(_minimum), maximum(_maximum) {}
 	
 	// ideal dimensions   (widget functions optimally in this space)
