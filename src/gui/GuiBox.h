@@ -18,21 +18,28 @@ public:
 	virtual Metrics GetMetrics();
 	virtual void Layout();
 
-	void PackStart(Widget *child);
-	void PackEnd(Widget *child);
+	struct ChildAttrs {
+		ChildAttrs(bool _expand = true, bool _fill = true, float _padding = 0.0f) : expand(_expand), fill(_fill), padding(_padding) {}
+		bool expand;
+		bool fill;
+		float padding;
+	};
+	void PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
+	void PackEnd(Widget *child, const ChildAttrs &attrs = ChildAttrs());
 	void Remove(Widget *child);
 
 private:
 	BoxOrientation m_orient;
 	float m_spacing;
 
-	struct BoxChild {
-		BoxChild(Widget *_widget) : widget(_widget) {}
-		Widget  *widget;
-		Metrics metrics;
+	struct Child {
+		Child(Widget *_widget, const ChildAttrs &_attrs) : widget(_widget), attrs(_attrs) {}
+		Widget     *widget;
+		ChildAttrs attrs;
+		Metrics    metrics;
 	};
 
-	std::list<BoxChild> m_children;
+	std::list<Child> m_children;
 
 	void CalculateMetrics();
 	Metrics m_metrics;
