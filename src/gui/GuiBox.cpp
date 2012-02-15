@@ -102,7 +102,7 @@ void Box::Layout()
 	if (m_countExpanded > 0) {
 		int candidates = m_countExpanded;
 
-		while (sizeRemaining > 0) {
+		while (candidates > 0 && sizeRemaining > 0) {
 			float allocation = sizeRemaining / candidates;
 
 			for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
