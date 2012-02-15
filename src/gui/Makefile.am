@@ -78,5 +78,7 @@ guitest_SOURCES = \
 	GuiScreen.cpp \
 	GuiBackground.cpp \
     GuiBox.cpp \
-	GuiImage.cpp
+	GuiImage.cpp \
+	GuiLabel.cpp \
+	GuiTextLayout.cpp
 guitest_LDADD = ../Texture.o $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)
