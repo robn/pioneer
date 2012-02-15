@@ -15,7 +15,7 @@ protected:
 	Box(BoxOrientation orient);
 
 public:
-	virtual Metrics GetMetrics();
+	virtual Metrics GetMetrics(const vector2f &hint);
 	virtual void Layout();
 
 	struct ChildAttrs {
@@ -43,7 +43,7 @@ private:
 	std::list<Child> m_children;
 	int m_countExpanded;
 
-	void CalculateMetrics();
+	void CalculateMetrics(const vector2f &hint);
 	Metrics m_metrics;
 	bool m_needMetricsRecalc;
 };

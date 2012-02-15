@@ -21,7 +21,7 @@ static inline void GetComponentsForOrient(bool horiz, vector2f::Component &varia
 	}
 }
 
-void Box::CalculateMetrics()
+void Box::CalculateMetrics(const vector2f &hint)
 {
 	if (!m_needMetricsRecalc) return;
 
@@ -36,7 +36,7 @@ void Box::CalculateMetrics()
 	m_metrics = Metrics(0,0,0);
 
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		const Metrics childMetrics = (*i).metrics = (*i).widget->GetMetrics();
+		const Metrics childMetrics = (*i).metrics = (*i).widget->GetMetrics(hint);
 
 		m_metrics.minimum[vc] += childMetrics.minimum[vc];
 		m_metrics.minimum[fc] = std::max(m_metrics.minimum[fc], childMetrics.minimum[fc]);
@@ -51,20 +51,28 @@ void Box::CalculateMetrics()
 	m_needMetricsRecalc = false;
 }
 
-Metrics Box::GetMetrics()
+Metrics Box::GetMetrics(const vector2f &hint)
 {
-	CalculateMetrics();
+	vector2f::Component vc, fc;
+	GetComponentsForOrient(m_orient == BOX_HORIZONTAL, vc, fc);
+
+	vector2f boxHint = hint;
+	boxHint[vc] = 0;
+
+	CalculateMetrics(boxHint);
 	return m_metrics;
 }
 
 void Box::Layout()
 {
-	CalculateMetrics();
-
 	const vector2f boxSize = GetSize();
 
 	vector2f::Component vc, fc;
 	GetComponentsForOrient(m_orient == BOX_HORIZONTAL, vc, fc);
+
+	vector2f boxHint = boxSize;
+	boxHint[vc] = 0;
+	CalculateMetrics(boxHint);
 
 	float sizeRemaining = boxSize[vc];
 

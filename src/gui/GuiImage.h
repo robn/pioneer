@@ -18,7 +18,7 @@ public:
 
 	Image(const std::string &filename, StretchMode stretchMode = STRETCH_PRESERVE);
 
-	virtual Metrics GetMetrics();
+	virtual Metrics GetMetrics(const vector2f &hint);
 	virtual void Update();
 	virtual void Draw();
 

@@ -9,7 +9,7 @@ Image::Image(const std::string &filename, StretchMode stretchMode): Widget(),
 	m_texture.Reset(new UITexture(filename));
 }
 
-Metrics Image::GetMetrics()
+Metrics Image::GetMetrics(const vector2f &hint)
 {
 	return Metrics(vector2f(m_texture->GetWidth(),m_texture->GetHeight()));
 }

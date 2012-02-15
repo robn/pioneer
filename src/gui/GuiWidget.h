@@ -11,7 +11,14 @@
 // At minimum, a widget must implement GetMetrics() and Draw().
 //
 // - GetMetrics() returns a Gui::Metrics object that tells the layout manager
-//   how much space the widget wants/needs.
+//   how much space the widget wants/needs. It takes a single vector2 offering
+//   a hint at how much space the widget might be allocated. A value of 0 in
+//   one of the vector2 components means that the container has nothing useful
+//   to say about that axis. Note that the container is under absolutely no
+//   obligation to allocate that amount of space to the widget, and the widget
+//   should not expect it. If the widget has a more concrete idea of the
+//   space it needs it should use that, even if it would be larger than the
+//   hint.
 //
 // - Draw() actually draws the widget, using regular GL calls. The GL state
 //   will be set such that widget's top-left corner is at [0,0] with a scissor
@@ -73,7 +80,7 @@ protected:
 public:
 	virtual ~Widget();
 
-	virtual Metrics GetMetrics() = 0;
+	virtual Metrics GetMetrics(const vector2f &hint) = 0;
 	virtual void Layout() {}
 	virtual void Update() {}
 	virtual void Draw() = 0;

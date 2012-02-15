@@ -2,10 +2,10 @@
 
 namespace Gui {
 
-Metrics Single::GetMetrics()
+Metrics Single::GetMetrics(const vector2f &hint)
 {
 	if (!m_innerContainer) return Metrics();
-	return m_innerContainer->GetMetrics();
+	return m_innerContainer->GetMetrics(hint);
 }
 
 void Single::Layout()
