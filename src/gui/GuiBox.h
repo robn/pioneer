@@ -19,10 +19,9 @@ public:
 	virtual void Layout();
 
 	struct ChildAttrs {
-		ChildAttrs(bool _expand = true, bool _fill = true, float _padding = 0.0f) : expand(_expand), fill(_fill), padding(_padding) {}
+		ChildAttrs(bool _expand = true, bool _fill = true) : expand(_expand), fill(_fill) {}
 		bool  expand;
 		bool  fill;
-		float padding;
 	};
 	void PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
 	void PackEnd(Widget *child, const ChildAttrs &attrs = ChildAttrs());

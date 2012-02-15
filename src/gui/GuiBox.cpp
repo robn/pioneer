@@ -71,7 +71,7 @@ void Box::Layout()
 	vector2f childPos(0);
 
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-		(*i).padding = (*i).attrs.padding;
+		(*i).padding = 0;
 
 		float childSize = 0;
 
