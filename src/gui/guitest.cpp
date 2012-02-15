@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
 
 
-	box->PackEnd(new Gui::Image("../../data/icons/object_star_g.png"));
+	box->PackEnd(new Gui::Image("../../data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false));
 	box->PackEnd(new Gui::Image("../../data/icons/object_star_m.png"));
 
 

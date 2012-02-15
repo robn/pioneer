@@ -71,6 +71,8 @@ void Box::Layout()
 	vector2f childPos(0);
 
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
+		(*i).padding = (*i).attrs.padding;
+
 		float childSize = 0;
 
 		if (boxSize[vc] >= m_metrics.ideal[vc])
@@ -98,24 +100,34 @@ void Box::Layout()
 			for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
 				if (!(*i).attrs.expand) continue;
 
-				if ((*i).size[vc] + allocation > (*i).metrics.maximum[vc]) {
+				float amountAdded;
+				if (!(*i).attrs.fill) {
+					(*i).padding += allocation * 0.5;
+					amountAdded = allocation;
+				}
+				else if ((*i).size[vc] + allocation > (*i).metrics.maximum[vc]) {
 					candidates--;
-					sizeRemaining -= (*i).metrics.maximum[vc] - (*i).size[vc];
+					amountAdded = (*i).metrics.maximum[vc] - (*i).size[vc];
 					(*i).size[vc] = (*i).metrics.maximum[vc];
 				}
 				else {
 					(*i).size[vc] += allocation;
-					sizeRemaining -= allocation;
+					amountAdded = allocation;
 				}
+
+				sizeRemaining -= amountAdded;
 			}
 		}
 
 		for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
-			SetWidgetDimensions((*i).widget, childPos, (*i).size);
-			childPos[vc] += (*i).size[vc];
+			vector2f pos = childPos;
+			pos[vc] += (*i).padding;
+
+			SetWidgetDimensions((*i).widget, pos, (*i).size);
+
+			childPos[vc] += pos[vc] + (*i).size[vc] + (*i).padding;
 		}
 	}
-
 
 	LayoutChildren();
 

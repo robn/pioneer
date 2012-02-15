@@ -20,8 +20,8 @@ public:
 
 	struct ChildAttrs {
 		ChildAttrs(bool _expand = true, bool _fill = true, float _padding = 0.0f) : expand(_expand), fill(_fill), padding(_padding) {}
-		bool expand;
-		bool fill;
+		bool  expand;
+		bool  fill;
 		float padding;
 	};
 	void PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
@@ -34,10 +34,11 @@ private:
 
 	struct Child {
 		Child(Widget *_widget, const ChildAttrs &_attrs) : widget(_widget), attrs(_attrs) {}
-		Widget     *widget;
-		ChildAttrs attrs;
-		Metrics    metrics;
-		vector2f   size;
+		Widget           *widget;
+		const ChildAttrs attrs;
+		Metrics          metrics;
+		vector2f         size;
+		float            padding;
 	};
 
 	std::list<Child> m_children;
