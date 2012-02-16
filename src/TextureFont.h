@@ -3,6 +3,7 @@
 
 #include "Font.h"
 #include "Texture.h"
+#include "vector2.h"
 
 class TextureFont : public Font {
 
@@ -15,7 +16,7 @@ private:
 	};
 
 public:
-	TextureFont(const FontConfig &fc);
+	TextureFont(const FontConfig &fc, const vector2f &aspectScale);
 	~TextureFont();
 
 	void RenderString(const char *str, float x, float y);

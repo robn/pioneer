@@ -1,8 +1,7 @@
 #include "TextureFont.h"
-#include "Pi.h"
 #include "gui/GuiContext.h"
-#include "gui/GuiScreen.h"
 #include "libs.h"
+#include "vector2.h"
 
 #include FT_GLYPH_H
 #include FT_STROKER_H
@@ -270,7 +269,7 @@ void TextureFont::RenderMarkup(const char *str, float x, float y)
 	glDisable(GL_BLEND);
 }
 
-TextureFont::TextureFont(const FontConfig &fc) : Font(fc)
+TextureFont::TextureFont(const FontConfig &fc, const vector2f &aspectScale) : Font(fc)
 {
 	std::string filename_ttf = GetConfig().String("FontFile");
 	if (filename_ttf.length() == 0) {
@@ -278,8 +277,8 @@ TextureFont::TextureFont(const FontConfig &fc) : Font(fc)
 		abort();
 	}
 
-	vector2f dim = fm.ScaleDimensions(vector2f(GetConfig().Int("PixelWidth"), GetConfig().Int("PixelHeight")));
-	int a_width = dim.x, a_height = dim.y;
+	int a_width  = GetConfig().Int("PixelWidth")  / aspectScale.x;
+	int a_height = GetConfig().Int("PixelHeight") / aspectScale.y;
 
 	float advx_adjust = GetConfig().Float("AdvanceXAdjustment");
 
