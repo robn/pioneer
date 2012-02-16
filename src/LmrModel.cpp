@@ -1,6 +1,6 @@
 #include "libs.h"
 #include <map>
-#include "FontManager.h"
+#include "FontCache.h"
 #include "VectorFont.h"
 #include "LmrModel.h"
 #include "collider/collider.h"
@@ -253,8 +253,8 @@ static LmrShader *s_sunlightShader[4];
 static LmrShader *s_pointlightShader[4];
 static float s_scrWidth = 800.0f;
 static bool s_buildDynamic;
-static FontManager s_fontManager(vector2f(0,0));    // XXX no scaling because we're not getting TextureFonts through this manager
-static VectorFont *s_font;
+static FontCache s_fontCache;
+static RefCountedPtr<VectorFont> s_font;
 static float NEWMODEL_ZBIAS = 0.0002f;
 static LmrGeomBuffer *s_curBuf;
 static const LmrObjParams *s_curParams;
@@ -4437,7 +4437,7 @@ void LmrModelCompilerInit(TextureCache *textureCache)
 	s_pointlightShader[2] = new LmrShader("model-pointlit", "#define NUM_LIGHTS 3\n");
 	s_pointlightShader[3] = new LmrShader("model-pointlit", "#define NUM_LIGHTS 4\n");
 
-	PiVerify(s_font = s_fontManager.GetVectorFont("WorldFont"));
+	PiVerify(s_font = s_fontCache.GetVectorFont("WorldFont"));
 
 	lua_State *L = lua_open();
 	sLua = L;
@@ -4536,7 +4536,7 @@ void LmrModelCompilerUninit()
 		delete s_sunlightShader[i];
 		delete s_pointlightShader[i];
 	}
-	// FontManager should be ok...
+	// FontCache should be ok...
 
 	std::map<std::string, LmrModel*>::iterator it_model;
 	for (it_model=s_models.begin(); it_model != s_models.end(); ++it_model)	{
