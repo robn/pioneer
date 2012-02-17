@@ -2,6 +2,7 @@
 #include "Gui.h"
 #include "GuiContext.h"
 #include "TextureFont.h"
+#include "TextSupport.h"
 
 namespace Gui {
 

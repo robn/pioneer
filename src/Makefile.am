@@ -130,6 +130,7 @@ noinst_HEADERS = \
 	Texture.h \
 	TextureFont.h \
 	TextureCache.h \
+	TextSupport.h \
 	VectorFont.h \
 	VideoLink.h \
 	View.h \
@@ -258,6 +259,7 @@ pioneer_SOURCES	= \
 	Texture.cpp \
 	TextureFont.cpp \
 	TextureCache.cpp \
+	TextSupport.cpp \
 	VectorFont.cpp \
 	WorldView.cpp \
 	main.cpp \
@@ -292,6 +294,7 @@ modelviewer_SOURCES = \
 	Texture.cpp \
 	TextureFont.cpp \
 	TextureCache.cpp \
+	TextSupport.cpp \
 	VectorFont.cpp \
 	perlin.cpp \
 	utils.cpp \

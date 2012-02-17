@@ -1,5 +1,6 @@
 #include "TextureFont.h"
-#include "gui/GuiContext.h"
+#include "gui/GuiScreen.h"
+#include "TextSupport.h"
 #include "libs.h"
 #include "vector2.h"
 
