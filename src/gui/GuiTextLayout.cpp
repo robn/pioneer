@@ -1,8 +1,12 @@
 #include "GuiTextLayout.h"
+#include "GuiWidget.h"
+#include "RefCounted.h"
+#include "TextureFont.h"
 
 namespace Gui {
 
-TextLayout::TextLayout(const std::string &text)
+TextLayout::TextLayout(const RefCountedPtr<TextureFont> &font, const std::string &text) :
+	m_font(font)
 {
 	size_t start = 0, end = 0;
 
@@ -15,8 +19,16 @@ TextLayout::TextLayout(const std::string &text)
 	}
 }
 
+// XXX using the old TextureFont methods for now. they should be moved here.
+// TextureFont should only handle individual glyph functions (I think)
 vector2f TextLayout::ComputeSize(const vector2f &hint)
 {
+	for (std::vector<Word>::iterator i = m_words.begin(); i != m_words.end(); ++i) {
+		vector2f wordSize;
+		m_font->MeasureString((*i).text.c_str(), wordSize.x, wordSize.y);
+		printf("[%f,%f] %s\n", wordSize.x, wordSize.y, (*i).text.c_str());
+	}
+
 	return vector2f();
 }
 

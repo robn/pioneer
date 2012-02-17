@@ -17,6 +17,7 @@ public:
 	virtual void Draw();
 
 private:
+	std::string m_text;
 	ScopedPtr<TextLayout> m_layout;
 };
 

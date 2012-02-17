@@ -2,14 +2,17 @@
 #define _GUITEXTLAYOUT_H
 
 #include "vector2.h"
+#include "RefCounted.h"
 #include <string>
 #include <vector>
+
+class TextureFont;
 
 namespace Gui {
 
 class TextLayout {
 public:
-	TextLayout(const std::string &text);
+	TextLayout(const RefCountedPtr<TextureFont> &font, const std::string &text);
 
 	vector2f ComputeSize(const vector2f &hint);
 
@@ -19,6 +22,8 @@ private:
 		std::string text;
 	};
 	std::vector<Word> m_words;
+
+	RefCountedPtr<TextureFont> m_font;
 };
 
 }
