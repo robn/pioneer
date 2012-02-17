@@ -1,6 +1,9 @@
 #ifndef _GUICONTEXT_H
 #define _GUICONTEXT_H
 
+#include "RefCounted.h"
+#include "TextureFont.h"
+
 namespace Gui {
 
 // The GUI context holds resources that are shared by all widgets. Examples of
@@ -12,6 +15,11 @@ namespace Gui {
 class Context {
 public:
 	Context();
+
+	RefCountedPtr<TextureFont> GetFont() { return m_font; }
+
+private:
+	RefCountedPtr<TextureFont> m_font;
 };
 
 }
