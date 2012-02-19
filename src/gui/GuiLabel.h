@@ -13,7 +13,6 @@ public:
 	Label(const std::string &text);
 
 	virtual Metrics GetMetrics(const vector2f &hint);
-	virtual void Update();
 	virtual void Draw();
 
 private:

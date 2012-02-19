@@ -16,6 +16,8 @@ public:
 
 	vector2f ComputeSize(const vector2f &hint);
 
+	void Draw(const vector2f &size);
+
 private:
 	struct Word {
 		Word(const std::string &_text) : text(_text) {}
