@@ -23,13 +23,49 @@ TextLayout::TextLayout(const RefCountedPtr<TextureFont> &font, const std::string
 // TextureFont should only handle individual glyph functions (I think)
 vector2f TextLayout::ComputeSize(const vector2f &hint)
 {
+	if (hint.ExactlyEqual(m_lastRequested))
+		return m_lastSize;
+	
+	float spaceWidth = m_font->GetGlyph(' ').advx;
+	float lineHeight = m_font->GetHeight();
+
+	vector2f pos;
+	vector2f bounds;
+
 	for (std::vector<Word>::iterator i = m_words.begin(); i != m_words.end(); ++i) {
 		vector2f wordSize;
 		m_font->MeasureString((*i).text.c_str(), wordSize.x, wordSize.y);
-		printf("[%f,%f] %s\n", wordSize.x, wordSize.y, (*i).text.c_str());
+
+		// we add the word to this line if:
+		// - we're at the start of the line; OR
+		// - the word does not go past the right edge of the box
+		bool wordAdded = false;
+		while (!wordAdded) {
+			if (float_is_zero_exact(pos.x) || pos.x + wordSize.x < hint.x) {
+				(*i).pos = pos;
+
+				// move to the end of the word
+				pos.x += wordSize.x;
+				bounds = vector2f(std::max(bounds.x,pos.x), std::max(bounds.y,pos.y+wordSize.y));
+
+				wordAdded = true;
+			}
+
+			else
+				// retry at start of new line
+				pos = vector2f(0,std::max(bounds.y,pos.y+lineHeight));
+		}
+
+		// add a space at the end of each word. its only used to set the start
+		// point for the next word if there is one. if there's not then no
+		// words are added so it won't push the bounds out
+		pos.x += spaceWidth;
 	}
 
-	return vector2f();
+	m_lastRequested = hint;
+	m_lastSize = bounds;
+
+	return bounds;
 }
 
 }

@@ -20,8 +20,12 @@ private:
 	struct Word {
 		Word(const std::string &_text) : text(_text) {}
 		std::string text;
+		vector2f    pos;
 	};
 	std::vector<Word> m_words;
+
+	vector2f m_lastRequested;   // the layout area we were asked to compute size for
+	vector2f m_lastSize;        // and the resulting size
 
 	RefCountedPtr<TextureFont> m_font;
 };
