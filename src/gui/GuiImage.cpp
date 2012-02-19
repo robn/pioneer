@@ -50,6 +50,8 @@ void Image::Update()
 
 void Image::Draw()
 {
+	// XXX use renderer
+
 	glEnable(GL_BLEND);
 	glColor4f(1.0f,1.0f,1.0f,1.0f);
 	m_texture->DrawUIQuad(0, 0, m_scaledSize.x, m_scaledSize.y);

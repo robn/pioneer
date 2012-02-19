@@ -6,6 +6,8 @@ void Background::Draw()
 {
 	const vector2f &size = GetSize();
 
+	// XXX use renderer
+
 	GLfloat array[4*2] = {
 		0,      size.y,
 		size.x, size.y,

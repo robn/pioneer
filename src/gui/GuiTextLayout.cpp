@@ -72,6 +72,7 @@ void TextLayout::Draw(const vector2f &size)
 {
 	ComputeSize(size);
 
+	// XXX STYLE
 	glColor3f(1.0f,1.0f,1.0f);
 
 	for (std::vector<Word>::iterator i = m_words.begin(); i != m_words.end(); ++i)
