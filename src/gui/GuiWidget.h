@@ -71,11 +71,12 @@ namespace Gui {
 class Context;
 class Container;
 class Metrics;
+class Style;
 	
 class Widget {
 protected:
 	// can't instantiate a base widget directly
-	Widget() : m_context(0), m_container(0), m_position(0), m_size(0) {}
+	Widget() : m_context(0), m_container(0), m_position(0), m_size(0), m_style(0) {}
 
 public:
 	virtual ~Widget();
@@ -170,6 +171,18 @@ public:
 	sigc::signal<bool>::accumulated<EventHandlerResultAccumulator> onClick;
 
 
+protected:
+
+	// get the style. protected as it only returns the baseclass style. if a
+	// widget wants to expose its own style it should implement a public
+	// version that casts it to the correct type
+	Style *GetStyle() const { return m_style.Get(); }
+
+	// style setter. again, a widget must expose its own version with
+	// appropriate casting
+	void SetStyle(Style *style) { m_style.Reset(style); }
+
+
 private:
 
 	// let container set our attributes. none of them make any sense if
@@ -192,6 +205,8 @@ private:
 	Container *m_container;
 	vector2f m_position;
 	vector2f m_size;
+
+	ScopedPtr<Style> m_style;
 };
 
 
@@ -214,6 +229,23 @@ public:
 	vector2f maximum;
 };
 
+
+// Style is the baseclass for element styles. Styles directly influence how a
+// widget is drawn, and are used to modify and animate an already-existing
+// element (which is normally immutable). They don't change the metrics or the
+// function of an element.
+//
+// Each widget class has it own corresponding style class.
+class Style {
+public:
+	virtual ~Style() {}
+
+	float padding;
+
+protected:
+	Style(): padding(0) {}
+};
+
 }
 
-#endif /* _GUIWIDGET_H */
+#endif
