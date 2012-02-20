@@ -64,10 +64,10 @@ int main(int argc, char **argv)
 	Gui::Screen *screen = new Gui::Screen(context, WIDTH, HEIGHT);
 
 	Gui::Background *background = new Gui::Background(Color(0.4f, 0.2f, 0.4f, 1.0f));
-	screen->SetInnerContainer(background);
+	screen->SetInnerWidget(background);
 
 	Gui::HBox *hbox = new Gui::HBox();
-	background->SetInnerContainer(hbox);
+	background->SetInnerWidget(hbox);
 
 	hbox->PackEnd(new Gui::Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
 	//box->PackEnd(new Gui::Label("foo   bar"));

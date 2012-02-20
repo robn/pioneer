@@ -10,15 +10,15 @@ public:
 	virtual Metrics GetMetrics(const vector2f &hint);
 	virtual void Layout();
 
-	void SetInnerContainer(Container *container);
-	void RemoveInnerContainer();
-	Container *GetInnerContainer() const { return m_innerContainer; }
+	void SetInnerWidget(Widget *widget);
+	void RemoveInnerWidget();
+	Widget *GetInnerWidget() const { return m_innerWidget; }
 
 protected:
-	Single() : m_innerContainer(0) {}
+	Single() : m_innerWidget(0) {}
 
 private:
-	Container *m_innerContainer;
+	Widget *m_innerWidget;
 };
 
 }

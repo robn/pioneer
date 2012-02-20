@@ -4,32 +4,32 @@ namespace Gui {
 
 Metrics Single::GetMetrics(const vector2f &hint)
 {
-	if (!m_innerContainer) return Metrics();
-	return m_innerContainer->GetMetrics(hint);
+	if (!m_innerWidget) return Metrics();
+	return m_innerWidget->GetMetrics(hint);
 }
 
 void Single::Layout()
 {
-	if (!m_innerContainer) return;
-	SetWidgetDimensions(m_innerContainer, GetPosition(), GetSize());
-	m_innerContainer->Layout();
+	if (!m_innerWidget) return;
+	SetWidgetDimensions(m_innerWidget, GetPosition(), GetSize());
+	m_innerWidget->Layout();
 }
 
-void Single::SetInnerContainer(Container *container)
+void Single::SetInnerWidget(Widget *widget)
 {
-	assert(container);
-	assert(!m_innerContainer);
+	assert(widget);
+	assert(!m_innerWidget);
 
-	AddWidget(container);
-	m_innerContainer = container;
+	AddWidget(widget);
+	m_innerWidget = widget;
 }
 
-void Single::RemoveInnerContainer()
+void Single::RemoveInnerWidget()
 {
-	assert(m_innerContainer);
+	assert(m_innerWidget);
 
-	RemoveWidget(m_innerContainer);
-	m_innerContainer = 0;
+	RemoveWidget(m_innerWidget);
+	m_innerWidget = 0;
 }
 
 }
