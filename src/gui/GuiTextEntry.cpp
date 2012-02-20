@@ -132,7 +132,7 @@ bool TextEntry::OnKeyPress(const SDL_keysym *sym)
 void TextEntry::GetSizeRequested(float size[2])
 {
 	// XXX this 1.5f should be PARAGRAPH_SPACING (currently #define'd in TextureFont.h)
-	size[1] = (m_newlineCount*1.5f+1.0f)*GetContext()->screen->GetFontHeight(m_font) + 2.0f;
+	size[1] = (m_newlineCount*1.5f+1.0f)*GetContext()->screen->GetFontHeight(m_font.Get()) + 2.0f;
 }
 
 bool TextEntry::OnMouseDown(GuiExtra::MouseButtonEvent *e)
@@ -141,7 +141,7 @@ bool TextEntry::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 	GrabFocus();
 	m_justFocused = true;
 
-	int i = GetContext()->screen->PickCharacterInString(m_text, e->x - m_scroll, e->y, m_font);
+	int i = GetContext()->screen->PickCharacterInString(m_text, e->x - m_scroll, e->y, m_font.Get());
 	SetCursorPos(i);
 
 	return false;
@@ -176,7 +176,7 @@ void TextEntry::Draw()
 
 	// find cursor position
 	float curs_x, curs_y;
-	GetContext()->screen->MeasureCharacterPos(m_text, m_cursPos, curs_x, curs_y, m_font);
+	GetContext()->screen->MeasureCharacterPos(m_text, m_cursPos, curs_x, curs_y, m_font.Get());
 
 	glColor3f(1,0,0);
 	if (curs_x - m_scroll > size[0]*0.75f) {
@@ -204,12 +204,12 @@ void TextEntry::Draw()
 
 
 	SetClipping(size[0], size[1]);
-	GetContext()->screen->RenderString(m_text, 1.0f - m_scroll, 1.0f, m_font);
+	GetContext()->screen->RenderString(m_text, 1.0f - m_scroll, 1.0f, m_font.Get());
 
 	/* Cursor */
 	glColor3f(0.5f,0.5f,0.5f);
 	glBegin(GL_LINES);
-		glVertex2f(curs_x + 1.0f - m_scroll, curs_y - GetContext()->screen->GetFontHeight(m_font) - 1.0f);
+		glVertex2f(curs_x + 1.0f - m_scroll, curs_y - GetContext()->screen->GetFontHeight(m_font.Get()) - 1.0f);
 		glVertex2f(curs_x + 1.0f - m_scroll, curs_y + 1.0f);
 	glEnd();
 	

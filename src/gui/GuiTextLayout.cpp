@@ -41,7 +41,7 @@ vector2f TextLayout::ComputeSize(const vector2f &hint)
 		// - the word does not go past the right edge of the box
 		bool wordAdded = false;
 		while (!wordAdded) {
-			if (float_is_zero_exact(pos.x) || pos.x + wordSize.x < hint.x) {
+			if (is_zero_exact(pos.x) || pos.x + wordSize.x < hint.x) {
 				(*i).pos = pos;
 
 				// move to the end of the word
