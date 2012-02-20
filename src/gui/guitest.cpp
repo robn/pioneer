@@ -66,27 +66,25 @@ int main(int argc, char **argv)
 	Gui::Background *background = new Gui::Background(Color(0.4f, 0.2f, 0.4f, 1.0f));
 	screen->SetInnerContainer(background);
 
-	Gui::VBox *box = new Gui::VBox();
-	background->SetInnerContainer(box);
+	Gui::HBox *hbox = new Gui::HBox();
+	background->SetInnerContainer(hbox);
 
-	box->PackEnd(new Gui::Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
+	hbox->PackEnd(new Gui::Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
 	//box->PackEnd(new Gui::Label("foo   bar"));
 
-	/*
-	box->PackEnd(new Gui::Image("../../data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false));
-	box->PackEnd(new Gui::Image("../../data/icons/object_star_m.png"));
-	*/
+	//hbox->PackEnd(new Gui::Image("data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false));
+	hbox->PackEnd(new Gui::Image("data/icons/object_star_m.png"));
 
 	/*
 	box->PackEnd(new Gui::Background(Color(1.0f, 0.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 1.0f, 0.0f, 1.0f)));
 	box->PackEnd(new Gui::Background(Color(0.0f, 0.0f, 1.0f, 1.0f)));
-	box->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
+	box->PackEnd(new Gui::Image("data/icons/cpanel.png"));
 
 	Gui::HBox *hbox = new Gui::HBox();
 	box->PackEnd(hbox);
 	hbox->PackEnd(new Gui::Background(Color(1.0f, 1.0f, 0.0f, 1.0f)));
-	hbox->PackEnd(new Gui::Image("../../data/icons/cpanel.png"));
+	hbox->PackEnd(new Gui::Image("data/icons/cpanel.png"));
 	*/
 
 	bool done = false;
