@@ -133,7 +133,7 @@ void Box::Layout()
 
 			SetWidgetDimensions((*i).widget, pos, (*i).size);
 
-			childPos[vc] += pos[vc] + (*i).size[vc] + (*i).padding;
+			childPos[vc] = pos[vc] + (*i).size[vc] + (*i).padding;
 		}
 	}
 
