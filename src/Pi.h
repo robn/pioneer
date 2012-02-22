@@ -1,7 +1,8 @@
 #ifndef _PI_H
 #define _PI_H
 
-#include "libs.h"
+#include "utils.h"
+#include "gui/Gui.h"
 #include "gui/GuiContext.h"
 #include "View.h"
 #include "mtrand.h"
@@ -31,6 +32,7 @@ class Ship;
 class GameMenuView;
 class LuaConsole;
 class LuaNameGen;
+namespace Graphics { class Renderer; }
 namespace Sound { class MusicPlayer; }
 class TextureCache;
 
@@ -157,6 +159,7 @@ public:
 	static ShipCpanel *cpan;
 	static GLUquadric *gluQuadric;
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
+	static Graphics::Renderer* renderer; // blargh
 
 #if WITH_OBJECTVIEWER
 	static ObjectViewerView *objectViewerView;
@@ -170,7 +173,6 @@ public:
 	static struct DetailLevel detail;
 	static GameConfig config;
 private:
-	static void InitOpenGL();
 	static void HandleEvents();
 	static void InitJoysticks();
 

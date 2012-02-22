@@ -15,16 +15,33 @@
 #include "Lang.h"
 #include "Game.h"
 
-ShipCpanel::ShipCpanel(): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
+class CameraSwitchWidget : public Gui::Widget {
+public:
+	CameraSwitchWidget(ShipCpanel *panel, WorldView::CamType camType) : m_panel(panel), m_camType(camType) {}
+
+	virtual void Draw() {}
+	virtual void GetSizeRequested(float size[2]) { size[0] = size[1] = 0.0f; }
+
+	virtual void OnActivate() {
+		if (Pi::GetView() == Pi::worldView)
+			m_panel->SwitchToCamera(m_camType);
+	}
+
+private:
+	ShipCpanel *m_panel;
+	WorldView::CamType m_camType;
+};
+
+ShipCpanel::ShipCpanel(Graphics::Renderer *r): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
 {
-	m_scanner = new ScannerWidget();
+	m_scanner = new ScannerWidget(r);
 
 	InitObject();
 }
 
-ShipCpanel::ShipCpanel(Serializer::Reader &rd): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
+ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(GetContext()->screen->GetWidth()), 80)
 {
-	m_scanner = new ScannerWidget(rd);
+	m_scanner = new ScannerWidget(r, rd);
 
 	InitObject();
 }

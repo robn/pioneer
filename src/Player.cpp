@@ -96,9 +96,9 @@ void Player::SetFlightControlState(enum FlightControlState s)
 	Pi::onPlayerChangeFlightControlState.emit();
 }
 
-void Player::Render(const vector3d &viewCoords, const matrix4x4d &viewTransform)
+void Player::Render(Graphics::Renderer *r, const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {
-	if (!IsDead()) Ship::Render(viewCoords, viewTransform);
+	if (!IsDead()) Ship::Render(r, viewCoords, viewTransform);
 }
 
 void Player::SetDockedWith(SpaceStation *s, int port)
@@ -456,6 +456,8 @@ void Player::OnEnterHyperspace()
 {
 	SetNavTarget(0);
 	SetCombatTarget(0);
+
+	Pi::worldView->HideTargetActions(); // hide the comms menu
 
 	if (Pi::player->GetFlightControlState() == Player::CONTROL_AUTOPILOT)
 		Pi::player->SetFlightControlState(Player::CONTROL_MANUAL);
