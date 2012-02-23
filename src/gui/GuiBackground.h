@@ -8,9 +8,11 @@ namespace Gui {
 
 class Background : public Single {
 public:
-	Background(Context *context, const Color &color) : Single(context), m_color(color) {}
-
 	virtual void Draw();
+
+protected:
+	friend class Context;
+	Background(Context *context, const Color &color) : Single(context), m_color(color) {}
 
 private:
 	Color m_color;

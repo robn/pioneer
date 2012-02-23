@@ -49,16 +49,18 @@ private:
 };
 
 class VBox: public Box {
-public:
+protected:
+	friend class Context;
 	VBox(Context *context): Box(context, BOX_VERTICAL) {}
 };
 	
 class HBox: public Box {
-public:
+protected:
+	friend class Context;
 	HBox(Context *context): Box(context, BOX_HORIZONTAL) {}
 };
 
 }
 
-#endif /* _GUIBOX_H */
+#endif
 
