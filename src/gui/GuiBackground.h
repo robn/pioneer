@@ -8,7 +8,7 @@ namespace Gui {
 
 class Background : public Single {
 public:
-	Background(const Color &color) : m_color(color) {}
+	Background(Context *context, const Color &color) : Single(context), m_color(color) {}
 
 	virtual void Draw();
 

@@ -76,7 +76,7 @@ class Style;
 class Widget {
 protected:
 	// can't instantiate a base widget directly
-	Widget() : m_context(0), m_container(0), m_position(0), m_size(0), m_style(0) {}
+	Widget(Context *context);
 
 public:
 	virtual ~Widget();
@@ -191,14 +191,13 @@ private:
 
 	// things for the container to call to attach, detach and position the
 	// widget. it could modify our data directly but that's ugly
-	void Attach(Context *context, Container *container);
+	void Attach(Container *container);
 	void Detach();
 	void SetDimensions(const vector2f &position, const vector2f &size);
 
 	// Screen is the top-level container and needs to set its own context
 	// and size directly
 	friend class Screen;
-	void SetContext(Context *context) { m_context = context; }
 	void SetSize(const vector2f &size) { m_size = size; }
 
 	Context *m_context;

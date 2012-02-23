@@ -21,7 +21,7 @@ class Container: public Widget {
 
 protected:
 	// can't instantiate a base container directly
-	Container() : Widget() {}
+	Container(Context *context) : Widget(context) {}
 
 public:
 	virtual ~Container();

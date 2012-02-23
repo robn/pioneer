@@ -2,12 +2,10 @@
 
 namespace Gui {
 
-Screen::Screen(Context *context, int width, int height) : Single(),
-	m_context(context),
+Screen::Screen(Context *context, int width, int height) : Single(context),
 	m_width(float(width)),
 	m_height(float(height))
 {
-	SetContext(context);
 	SetSize(vector2f(m_width,m_height));
 }
 

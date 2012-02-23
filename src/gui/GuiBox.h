@@ -12,7 +12,7 @@ protected:
 		BOX_VERTICAL
 	};
 
-	Box(BoxOrientation orient);
+	Box(Context *context, BoxOrientation orient);
 
 public:
 	virtual Metrics GetMetrics(const vector2f &hint);
@@ -50,12 +50,12 @@ private:
 
 class VBox: public Box {
 public:
-	VBox(): Box(BOX_VERTICAL) {}
+	VBox(Context *context): Box(context, BOX_VERTICAL) {}
 };
 	
 class HBox: public Box {
 public:
-	HBox(): Box(BOX_HORIZONTAL) {}
+	HBox(Context *context): Box(context, BOX_HORIZONTAL) {}
 };
 
 }

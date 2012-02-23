@@ -4,7 +4,7 @@
 
 namespace Gui {
 
-Label::Label(const std::string &text) : Widget(), m_text(text)
+Label::Label(Context *context, const std::string &text) : Widget(context), m_text(text)
 {
 }
 

@@ -3,7 +3,7 @@
 
 namespace Gui {
 
-Image::Image(const std::string &filename, StretchMode stretchMode): Widget(),
+Image::Image(Context *context, const std::string &filename, StretchMode stretchMode): Widget(context),
 	m_stretchMode(stretchMode)
 {
 	m_texture.Reset(new UITexture(filename));

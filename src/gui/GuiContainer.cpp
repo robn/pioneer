@@ -44,7 +44,7 @@ void Container::AddWidget(Widget *widget)
 		if (*i == widget) break;
 	assert(i == m_widgets.end());
 
-	widget->Attach(GetContext(), this);
+	widget->Attach(this);
 	m_widgets.push_back(widget);
 }
 

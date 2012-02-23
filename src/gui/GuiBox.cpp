@@ -2,7 +2,7 @@
 
 namespace Gui {
 
-Box::Box(BoxOrientation orient) : Container(),
+Box::Box(Context *context, BoxOrientation orient) : Container(context),
 	m_orient(orient),
 	m_countExpanded(0),
 	m_needMetricsRecalc(true)

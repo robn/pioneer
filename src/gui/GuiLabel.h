@@ -10,7 +10,7 @@ class TextLayout;
 
 class Label: public Widget {
 public:
-	Label(const std::string &text);
+	Label(Context *context, const std::string &text);
 
 	virtual Metrics GetMetrics(const vector2f &hint);
 	virtual void Draw();

@@ -3,6 +3,11 @@
 
 namespace Gui {
 
+Widget::Widget(Context *context) : m_context(context), m_container(0), m_position(0), m_size(0), m_style(0)
+{
+	assert(m_context);
+}
+
 Widget::~Widget()
 {
 	// a container owns its widgets. this ensures that only the container can
@@ -17,17 +22,15 @@ vector2f Widget::GetAbsolutePosition() const
 	return m_container->GetAbsolutePosition() + m_position;
 }
 
-void Widget::Attach(Context *context, Container *container)
+void Widget::Attach(Container *container)
 {
-	assert(context);
+	assert(m_context == container->GetContext());
 	assert(container);
-	m_context = context;
 	m_container = container;
 }
 
 void Widget::Detach()
 {
-	m_context = 0;
 	m_container = 0;
 	m_position = 0;
 	m_size = 0;
