@@ -80,6 +80,7 @@ guitest_SOURCES = \
     GuiBox.cpp \
 	GuiImage.cpp \
 	GuiLabel.cpp \
-	GuiTextLayout.cpp
+	GuiTextLayout.cpp \
+	GuiMargin.cpp
 guitest_LDADD = ../Texture.o ../TextureFont.o ../Font.o ../IniConfig.o ../FontConfig.o ../StringF.o ../TextSupport.o \
     $(FREETYPE_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)
