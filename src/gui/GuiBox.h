@@ -23,8 +23,8 @@ public:
 		bool  expand;
 		bool  fill;
 	};
-	void PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
-	void PackEnd(Widget *child, const ChildAttrs &attrs = ChildAttrs());
+	Box *PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
+	Box *PackEnd(Widget *child, const ChildAttrs &attrs = ChildAttrs());
 	void Remove(Widget *child);
 
 private:

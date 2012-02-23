@@ -142,18 +142,20 @@ void Box::Layout()
 	m_needMetricsRecalc = true;
 }
 
-void Box::PackStart(Widget *widget, const ChildAttrs &attrs)
+Box *Box::PackStart(Widget *widget, const ChildAttrs &attrs)
 {
 	AddWidget(widget);
 	m_children.push_front(Child(widget, attrs));
 	if (attrs.expand) m_countExpanded++;
+	return this;
 }
 
-void Box::PackEnd(Widget *widget, const ChildAttrs &attrs)
+Box *Box::PackEnd(Widget *widget, const ChildAttrs &attrs)
 {
 	AddWidget(widget);
 	m_children.push_back(Child(widget, attrs));
 	if (attrs.expand) m_countExpanded++;
+	return this;
 }
 
 void Box::Remove(Widget *widget)

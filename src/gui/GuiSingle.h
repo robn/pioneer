@@ -10,12 +10,12 @@ public:
 	virtual Metrics GetMetrics(const vector2f &hint);
 	virtual void Layout();
 
-	void SetInnerWidget(Widget *widget);
+	Single *SetInnerWidget(Widget *widget);
 	void RemoveInnerWidget();
 	Widget *GetInnerWidget() const { return m_innerWidget; }
 
 protected:
-	Single() : m_innerWidget(0) {}
+	Single(Context *context) : Container(context), m_innerWidget(0) {}
 
 private:
 	Widget *m_innerWidget;

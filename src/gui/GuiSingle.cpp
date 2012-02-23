@@ -15,13 +15,15 @@ void Single::Layout()
 	m_innerWidget->Layout();
 }
 
-void Single::SetInnerWidget(Widget *widget)
+Single *Single::SetInnerWidget(Widget *widget)
 {
 	assert(widget);
 	assert(!m_innerWidget);
 
 	AddWidget(widget);
 	m_innerWidget = widget;
+
+	return this;
 }
 
 void Single::RemoveInnerWidget()
