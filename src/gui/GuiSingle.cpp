@@ -11,7 +11,7 @@ Metrics Single::GetMetrics(const vector2f &hint)
 void Single::Layout()
 {
 	if (!m_innerWidget) return;
-	SetWidgetDimensions(m_innerWidget, GetPosition(), GetSize());
+	SetWidgetDimensions(m_innerWidget, 0, GetSize());
 	m_innerWidget->Layout();
 }
 
