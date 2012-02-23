@@ -38,13 +38,13 @@ void Box::CalculateMetrics(const vector2f &hint)
 	for (std::list<Child>::iterator i = m_children.begin(); i != m_children.end(); ++i) {
 		const Metrics childMetrics = (*i).metrics = (*i).widget->GetMetrics(hint);
 
-		m_metrics.minimum[vc] += childMetrics.minimum[vc];
+		m_metrics.minimum[vc] = std::min(m_metrics.minimum[vc]+childMetrics.minimum[vc], FLT_MAX);
 		m_metrics.minimum[fc] = std::max(m_metrics.minimum[fc], childMetrics.minimum[fc]);
 
-		m_metrics.ideal[vc] += childMetrics.ideal[vc];
+		m_metrics.ideal[vc] = std::min(m_metrics.ideal[vc]+childMetrics.ideal[vc], FLT_MAX);
 		m_metrics.ideal[fc] = std::max(m_metrics.ideal[fc], childMetrics.ideal[fc]);
 
-		m_metrics.maximum[vc] += childMetrics.maximum[vc];
+		m_metrics.maximum[vc] = std::min(m_metrics.maximum[vc]+childMetrics.maximum[vc], FLT_MAX);
 		m_metrics.maximum[fc] = std::max(m_metrics.maximum[fc], childMetrics.maximum[fc]);
 	}
 
