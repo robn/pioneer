@@ -1,4 +1,5 @@
 #include "GuiBox.h"
+#include <typeinfo>
 
 namespace Gui {
 
@@ -46,6 +47,8 @@ void Box::CalculateMetrics(const vector2f &hint)
 
 		m_metrics.maximum[vc] = std::min(m_metrics.maximum[vc]+childMetrics.maximum[vc], FLT_MAX);
 		m_metrics.maximum[fc] = std::max(m_metrics.maximum[fc], childMetrics.maximum[fc]);
+
+		//printf("%-15s offered %g,%g   requested ideal %g,%g min %g,%g max %g,%g   box ideal %g,%g min %g,%g max %g,%g\n", typeid(*((*i).widget)).name(), hint.x, hint.y, childMetrics.ideal.x, childMetrics.ideal.y, childMetrics.minimum.x, childMetrics.minimum.y, childMetrics.maximum.x, childMetrics.maximum.y, m_metrics.ideal.x, m_metrics.ideal.y, m_metrics.minimum.x, m_metrics.minimum.y, m_metrics.maximum.x, m_metrics.maximum.y);
 	}
 
 	m_needMetricsRecalc = false;

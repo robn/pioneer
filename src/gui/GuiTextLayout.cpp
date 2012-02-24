@@ -23,6 +23,8 @@ TextLayout::TextLayout(const RefCountedPtr<TextureFont> &font, const std::string
 // TextureFont should only handle individual glyph functions (I think)
 vector2f TextLayout::ComputeSize(const vector2f &hint)
 {
+	if (hint.ExactlyEqual(0)) return 0;
+
 	if (hint.ExactlyEqual(m_lastRequested))
 		return m_lastSize;
 	
