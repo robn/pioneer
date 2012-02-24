@@ -21,12 +21,12 @@ class Context {
 public:
 	Context();
 
-	Margin *createMargin(float margin) { return new Margin(this, margin); };
-	Background *createBackground(const Color &color) { return new Background(this, color); }
-	VBox *createVBox() { return new VBox(this); }
-	HBox *createHBox() { return new HBox(this); }
-	Image *createImage(const std::string &filename, Image::StretchMode stretchMode = Image::STRETCH_PRESERVE) { return new Image(this, filename, stretchMode); }
-	Label *createLabel(const std::string &text) { return new Label(this, text); }
+	Gui::Margin *Margin(float margin) { return new Gui::Margin(this, margin); };
+	Gui::Background *Background(const Color &color) { return new Gui::Background(this, color); }
+	Gui::VBox *VBox() { return new Gui::VBox(this); }
+	Gui::HBox *HBox() { return new Gui::HBox(this); }
+	Gui::Image *Image(const std::string &filename, Image::StretchMode stretchMode = Image::STRETCH_PRESERVE) { return new Gui::Image(this, filename, stretchMode); }
+	Gui::Label *Label(const std::string &text) { return new Gui::Label(this, text); }
 
 	RefCountedPtr<TextureFont> GetFont() { return m_font; }
 

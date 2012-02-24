@@ -61,29 +61,29 @@ int main(int argc, char **argv)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	Gui::Context *context = new Gui::Context;
-	Gui::Screen *screen = new Gui::Screen(context, WIDTH, HEIGHT);
+	Gui::Context *c = new Gui::Context;
+	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
 
 	screen->SetInnerWidget(
-		context->createBackground(Color(0.4f, 0.2f, 0.4f, 1.0f))->SetInnerWidget(
-			context->createMargin(10.0f)->SetInnerWidget(
-				context->createBackground(Color(0.9f, 0.1f, 0.1f, 1.0f))->SetInnerWidget(
-					context->createVBox()->PackEnd(
-						context->createHBox()->PackEnd(
-							context->createLabel("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+		c->Background(Color(0.4f, 0.2f, 0.4f, 1.0f))->SetInnerWidget(
+			c->Margin(10.0f)->SetInnerWidget(
+				c->Background(Color(0.1f, 0.4f, 0.4f, 1.0f))->SetInnerWidget(
+					c->VBox()->PackEnd(
+						c->HBox()->PackEnd(
+							c->Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
 						)->PackEnd(
-							context->createImage("data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false)
+							c->Image("data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false)
 						)->PackEnd(
-							context->createImage("data/icons/object_star_m.png")
+							c->Image("data/icons/object_star_m.png")
 						)
 					)->PackEnd(
-						context->createBackground(Color(1.0f, 0.0f, 0.0f, 1.0f))
+						c->Background(Color(1.0f, 0.0f, 0.0f, 1.0f))
 					)->PackEnd(
-						context->createBackground(Color(0.0f, 1.0f, 0.0f, 1.0f))
+						c->Background(Color(0.0f, 1.0f, 0.0f, 1.0f))
 					)->PackEnd(
-						context->createBackground(Color(0.0f, 0.0f, 1.0f, 1.0f))
+						c->Background(Color(0.0f, 0.0f, 1.0f, 1.0f))
 					)->PackEnd(
-						context->createImage("data/icons/cpanel.png")
+						c->Image("data/icons/cpanel.png")
 					)
 				)
 			)
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	}
 
 	delete screen;
-	delete context;
+	delete c;
 
 	SDL_Quit();
 
