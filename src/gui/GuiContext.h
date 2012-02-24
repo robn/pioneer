@@ -21,10 +21,15 @@ class Context {
 public:
 	Context();
 
-	Gui::Margin *Margin(float margin) { return new Gui::Margin(this, margin); };
-	Gui::Background *Background(const Color &color) { return new Gui::Background(this, color); }
-	Gui::VBox *VBox() { return new Gui::VBox(this); }
+	// general purpose containers
 	Gui::HBox *HBox() { return new Gui::HBox(this); }
+	Gui::VBox *VBox() { return new Gui::VBox(this); }
+
+	// single containers
+	Gui::Background *Background(const Color &color) { return new Gui::Background(this, color); }
+	Gui::Margin *Margin(float margin) { return new Gui::Margin(this, margin); };
+
+	// visual elements
 	Gui::Image *Image(const std::string &filename, Image::StretchMode stretchMode = Image::STRETCH_PRESERVE) { return new Gui::Image(this, filename, stretchMode); }
 	Gui::Label *Label(const std::string &text) { return new Gui::Label(this, text); }
 
