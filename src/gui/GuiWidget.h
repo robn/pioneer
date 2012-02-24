@@ -3,6 +3,7 @@
 
 #include "libs.h"
 #include "vector2.h"
+#include "GuiEvent.h"
 
 // Widget is the base class for all UI elements. There's a couple of things it
 // must implement, and a few more it might want to implement if it wants to do
@@ -121,30 +122,6 @@ protected:
 
 public:
 	
-	// data for various events
-	struct KeyboardEvent {
-		SDL_keysym keysym;
-	};
-	struct MouseButtonEvent {
-            enum ButtonType {
-                BUTTON_LEFT,
-                BUTTON_MIDDLE,
-                BUTTON_RIGHT
-            };
-            ButtonType button;
-		float x, y; // relative to widget
-	};
-	struct MouseMotionEvent {
-		float x, y; // relative to widget
-	};
-	struct MouseWheelEvent {
-		enum WheelDirection {
-			WHEEL_UP,
-			WHEEL_DOWN
-		};
-		WheelDirection direction;
-	};
-
 	// raw key events
 	sigc::signal<bool,const KeyboardEvent &>::accumulated<EventHandlerResultAccumulator> onKeyDown;
 	sigc::signal<bool,const KeyboardEvent &>::accumulated<EventHandlerResultAccumulator> onKeyUp;
