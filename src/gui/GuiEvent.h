@@ -17,7 +17,7 @@ public:
 	};
 	const Type type;
 
-	static Event *CreateFromSDLEvent(const SDL_Event *event);
+	static Event CreateFromSDLEvent(const SDL_Event *event);
 	static bool Dispatch(const Event &event, Widget *target);
 
 protected:

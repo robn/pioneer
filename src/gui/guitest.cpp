@@ -84,13 +84,19 @@ int main(int argc, char **argv)
 		)
 	);
 
-	bool done = false;
-	while (!done) {
+	while (1) {
+		bool done = false;
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
 				done = true;
+			else
+				Gui::Event::Dispatch(Gui::Event::CreateFromSDLEvent(&event), screen);
 		}
+
+		if (done)
+			break;
 
 		screen->Layout();
 		screen->Update();
