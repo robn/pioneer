@@ -153,11 +153,25 @@ Box *Box::PackStart(Widget *widget, const ChildAttrs &attrs)
 	return this;
 }
 
+Box *Box::PackStart(const WidgetSet &set, const ChildAttrs &attrs)
+{
+	for (int i = 0; i < set.numWidgets; ++i)
+		PackStart(set.widgets[i], attrs);
+	return this;
+}
+
 Box *Box::PackEnd(Widget *widget, const ChildAttrs &attrs)
 {
 	AddWidget(widget);
 	m_children.push_back(Child(widget, attrs));
 	if (attrs.expand) m_countExpanded++;
+	return this;
+}
+
+Box *Box::PackEnd(const WidgetSet &set, const ChildAttrs &attrs)
+{
+	for (int i = 0; i < set.numWidgets; ++i)
+		PackEnd(set.widgets[i], attrs);
 	return this;
 }
 

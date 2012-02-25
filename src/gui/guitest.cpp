@@ -68,23 +68,17 @@ int main(int argc, char **argv)
 		c->Background(Color(0.4f, 0.2f, 0.4f, 1.0f))->SetInnerWidget(
 			c->Margin(10.0f)->SetInnerWidget(
 				c->Background(Color(0.1f, 0.4f, 0.4f, 1.0f))->SetInnerWidget(
-					c->VBox()->PackEnd(
-						c->HBox()->PackEnd(
-							c->Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-						)->PackEnd(
-							c->Image("data/icons/object_star_g.png"), Gui::Box::ChildAttrs(true, false)
-						)->PackEnd(
+					c->VBox()->PackEnd(Gui::WidgetSet(
+						c->HBox()->PackEnd(Gui::WidgetSet(
+							c->Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+							c->Image("data/icons/object_star_g.png"),
 							c->Image("data/icons/object_star_m.png")
-						)
-					)->PackEnd(
-						c->Background(Color(1.0f, 0.0f, 0.0f, 1.0f))
-					)->PackEnd(
-						c->Background(Color(0.0f, 1.0f, 0.0f, 1.0f))
-					)->PackEnd(
-						c->Background(Color(0.0f, 0.0f, 1.0f, 1.0f))
-					)->PackEnd(
+						)),
+						c->Background(Color(1.0f, 0.0f, 0.0f, 1.0f)),
+						c->Background(Color(0.0f, 1.0f, 0.0f, 1.0f)),
+						c->Background(Color(0.0f, 0.0f, 1.0f, 1.0f)),
 						c->Image("data/icons/cpanel.png")
-					)
+					))
 				)
 			)
 		)

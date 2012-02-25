@@ -24,7 +24,9 @@ public:
 		bool  fill;
 	};
 	Box *PackStart(Widget *child, const ChildAttrs &attrs = ChildAttrs());
+	Box *PackStart(const WidgetSet &set, const ChildAttrs &attrs = ChildAttrs());
 	Box *PackEnd(Widget *child, const ChildAttrs &attrs = ChildAttrs());
+	Box *PackEnd(const WidgetSet &set, const ChildAttrs &attrs = ChildAttrs());
 	void Remove(Widget *child);
 
 private:
