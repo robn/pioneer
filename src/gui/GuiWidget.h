@@ -55,9 +55,7 @@
 //
 // Input handlers are called before Layout(), which gives a widget an
 // opportunity to modify its metrics based on input. Handlers return a bool to
-// indicate if the event was "handled" or not. If a handler returns true, then
-// it handled the event and no more handlers will be called for it. If it
-// returns false, the next handler is called.
+// indicate if the event was "handled" or not.
 //
 // Input handlers are called against the "leaf" widgets first. If that widget
 // has no handlers for the event, or they all return false, then handlers for
@@ -104,9 +102,9 @@ public:
 
 
 protected:
-	// this sigc accumulator checks the return from each event handler. if
-	// the handler returns false, the accumulator returns true and the
-	// next handler is called.
+	// this sigc accumulator calls all the handlers for an event. if any of
+	// them return true, it returns true (indicating the event was handled),
+	// otherwise it returns false
 	//
 	// declared protected so that widget subclasses can make their own
 	// event signals
@@ -114,9 +112,10 @@ protected:
 		typedef bool result_type;
 		template <typename T>
 		result_type operator()(T first, T last) const {
+			bool result = false;
 			for (; first != last; ++first)
-				if (*first) return false;
-			return true;
+				if (*first) result = true;
+			return result;
 		}
 	};
 
