@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
 				done = true;
 			else
-				Gui::Event::Dispatch(Gui::Event::CreateFromSDLEvent(&event), screen);
+				Gui::Event::Dispatch(Gui::Event::CreateFromSDLEvent(event), screen);
 		}
 
 		if (done)
