@@ -1,38 +1,61 @@
 #ifndef _GUIEVENT_H
 #define _GUIEVENT_H
 
+#include "libs.h"
+
 namespace Gui {
 
-struct Event {};
+class Widget;
+
+class Event {
+public:
+	enum Type {
+		KEYBOARD,
+		MOUSE_BUTTON,
+		MOUSE_MOTION,
+		MOUSE_WHEEL
+	};
+	const Type type;
+
+	static Event *CreateFromSDLEvent(const SDL_Event *event);
+	static bool Dispatch(const Event &event, Widget *target);
+
+protected:
+	Event(Type _type) : type(_type) {}
+};
 
 // data for various events
-struct KeyboardEvent : Event {
-	KeyboardEvent(SDL_keysym _keysym) : keysym(_keysym) {}
+class KeyboardEvent : public Event {
+public:
+	KeyboardEvent(SDL_keysym _keysym) : Event(Event::KEYBOARD), keysym(_keysym) {}
 	const SDL_keysym keysym;
 };
 
-struct MouseButtonEvent : Event {
+class MouseButtonEvent : public Event {
+public:
 	enum ButtonType {
 		BUTTON_LEFT,
 		BUTTON_MIDDLE,
 		BUTTON_RIGHT
 	};
-	MouseButtonEvent(ButtonType _button, float _x, float _y) : button(_button), x(_x), y(_y) {}
+	MouseButtonEvent(ButtonType _button, float _x, float _y) : Event(Event::MOUSE_BUTTON), button(_button), x(_x), y(_y) {}
 	const ButtonType button;
 	const float x, y; // relative to widget
 };
 
-struct MouseMotionEvent : Event {
-	MouseMotionEvent(float _x, float _y) : x(_x), y(_y) {}
+class MouseMotionEvent : public Event {
+public:
+	MouseMotionEvent(float _x, float _y) : Event(Event::MOUSE_MOTION), x(_x), y(_y) {}
 	const float x, y; // relative to widget
 };
 
-struct MouseWheelEvent : Event {
+class MouseWheelEvent : public Event {
+public:
 	enum WheelDirection {
 		WHEEL_UP,
 		WHEEL_DOWN
 	};
-	MouseWheelEvent(WheelDirection _direction) : direction(_direction) {}
+	MouseWheelEvent(WheelDirection _direction) : Event(Event::MOUSE_WHEEL), direction(_direction) {}
 	WheelDirection direction;
 };
 
