@@ -62,16 +62,16 @@ public:
 		BUTTON_MIDDLE,
 		BUTTON_RIGHT
 	};
-	MouseButtonEvent(Action _action, ButtonType _button, float _x, float _y) : Event(Event::MOUSE_BUTTON), action(_action), button(_button), x(_x), y(_y) {}
+	MouseButtonEvent(Action _action, ButtonType _button, const vector2f &_pos) : Event(Event::MOUSE_BUTTON), action(_action), button(_button), pos(_pos) {}
 	const Action action;
 	const ButtonType button;
-	const float x, y; // relative to widget
+	const vector2f pos; // relative to widget
 };
 
 class MouseMotionEvent : public Event {
 public:
-	MouseMotionEvent(float _x, float _y) : Event(Event::MOUSE_MOTION), x(_x), y(_y) {}
-	const float x, y; // relative to widget
+	MouseMotionEvent(const vector2f &_pos) : Event(Event::MOUSE_MOTION), pos(_pos) {}
+	const vector2f pos; // relative to widget
 };
 
 class MouseWheelEvent : public Event {

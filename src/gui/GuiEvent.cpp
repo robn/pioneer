@@ -24,15 +24,15 @@ bool Event::DispatchSDLEvent(const SDL_Event &event, Widget *target)
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_WHEELUP || event.button.button == SDL_BUTTON_WHEELDOWN)
 				return Dispatch(MouseWheelEvent(event.button.button == SDL_BUTTON_WHEELUP ? MouseWheelEvent::WHEEL_UP : MouseWheelEvent::WHEEL_DOWN), target);
-			return Dispatch(MouseButtonEvent(MouseButtonEvent::BUTTON_DOWN, MouseButtonFromSDLButton(event.button.button), event.button.x, event.button.y), target);
+			return Dispatch(MouseButtonEvent(MouseButtonEvent::BUTTON_DOWN, MouseButtonFromSDLButton(event.button.button), vector2f(event.button.x,event.button.y)), target);
 
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_WHEELUP || event.button.button == SDL_BUTTON_WHEELDOWN)
 				return false;
-			return Dispatch(MouseButtonEvent(MouseButtonEvent::BUTTON_UP, MouseButtonFromSDLButton(event.button.button), event.button.x, event.button.y), target);
+			return Dispatch(MouseButtonEvent(MouseButtonEvent::BUTTON_UP, MouseButtonFromSDLButton(event.button.button), vector2f(event.button.x,event.button.y)), target);
 
 		case SDL_MOUSEMOTION:
-			return Dispatch(MouseMotionEvent(event.motion.x, event.motion.y), target);
+			return Dispatch(MouseMotionEvent(vector2f(event.motion.x,event.motion.y)), target);
 	}
 
 	return false;
@@ -93,7 +93,7 @@ bool Event::MouseDownDispatch(const MouseButtonEvent &event, Widget *target)
 	vector2f pos(target->GetAbsolutePosition());
 	vector2f size(target->GetSize());
 
-	if (!target->Contains(vector2f(event.x,event.y))) {
+	if (!target->Contains(event.pos)) {
 		printf("    outside bounds, not handled\n");
 		return false;
 	}
