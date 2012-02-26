@@ -93,7 +93,7 @@ bool Event::MouseDownDispatch(const MouseButtonEvent &event, Widget *target)
 	vector2f pos(target->GetAbsolutePosition());
 	vector2f size(target->GetSize());
 
-	if (event.x < pos.x || event.y < pos.y || event.x >= pos.x+size.x || event.y >= pos.y+size.y) {
+	if (!target->Contains(vector2f(event.x,event.y))) {
 		printf("    outside bounds, not handled\n");
 		return false;
 	}

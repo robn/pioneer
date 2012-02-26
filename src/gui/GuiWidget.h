@@ -100,6 +100,17 @@ public:
 	// position relative to top container
 	vector2f GetAbsolutePosition() const;
 
+	// determine if a point is inside a widget's bounds
+	bool Contains(const vector2f &point) const {
+		return (point.x >= m_position.x && point.y >= m_position.y && point.x < m_position.x+m_size.x && point.y < m_position.y+m_size.y);
+	}
+
+	// deterine if an absolute point is inside a widget's bounds
+	bool ContainsAbsolute(const vector2f &point) const {
+		vector2f pos = GetAbsolutePosition();
+		return (point.x >= pos.x && point.y >= pos.y && point.x < pos.x+m_size.x && point.y < pos.y+m_size.y);
+	}
+
 	// fast way to determine if the widget is a container
 	virtual bool IsContainer() const { return false; }
 
