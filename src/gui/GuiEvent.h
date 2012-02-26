@@ -7,6 +7,12 @@ namespace Gui {
 
 class Widget;
 
+class NoEvent;
+class KeyboardEvent;
+class MouseButtonEvent;
+class MouseMotionEvent;
+class MouseWheelEvent;
+
 class Event {
 public:
 	enum Type {
@@ -23,6 +29,18 @@ public:
 
 protected:
 	Event(Type _type) : type(_type) {}
+
+private:
+	static bool KeyDownDispatch(const KeyboardEvent &event, Widget *target);
+	static bool KeyUpDispatch(const KeyboardEvent &event, Widget *target);
+	static bool KeyPressDispatch(const KeyboardEvent &event, Widget *target);
+	static bool MouseDownDispatch(const MouseButtonEvent &event, Widget *target);
+	static bool MouseUpDispatch(const MouseButtonEvent &event, Widget *target);
+	static bool MouseMoveDispatch(const MouseMotionEvent &event, Widget *target);
+	static bool MouseWheelDispatch(const MouseWheelEvent &event, Widget *target);
+	static bool MouseOverDispatch(Widget *target);
+	static bool MouseOutDispatch(Widget *target);
+	static bool MouseClickDispatch(Widget *target);
 };
 
 class NoEvent : public Event {
