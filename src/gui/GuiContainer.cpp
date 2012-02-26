@@ -83,14 +83,11 @@ bool Container::HandleMouseDown(const MouseButtonEvent &event)
 	if (!Contains(event.pos)) return false;
 
 	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-GetPosition());
-
-	bool handled = false;
-
 	for (WidgetIterator i = WidgetsBegin(); i != WidgetsEnd(); ++i)
 		if ((*i)->HandleMouseDown(translatedEvent))
-			handled = true;
+			return true;
 
-	return handled ? true : Widget::HandleMouseDown(event);
+	return Widget::HandleMouseDown(event);
 }
 
 bool Container::HandleMouseUp(const MouseButtonEvent &event)
@@ -98,14 +95,11 @@ bool Container::HandleMouseUp(const MouseButtonEvent &event)
 	if (!Contains(event.pos)) return false;
 
 	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-GetPosition());
-
-	bool handled = false;
-
 	for (WidgetIterator i = WidgetsBegin(); i != WidgetsEnd(); ++i)
 		if ((*i)->HandleMouseUp(translatedEvent))
-			handled = true;
+			return true;
 
-	return handled ? true : Widget::HandleMouseUp(event);
+	return Widget::HandleMouseUp(event);
 }
 
 bool Container::HandleMouseMove(const MouseMotionEvent &event)
@@ -113,14 +107,11 @@ bool Container::HandleMouseMove(const MouseMotionEvent &event)
 	if (!Contains(event.pos)) return false;
 
 	MouseMotionEvent translatedEvent = MouseMotionEvent(event.pos-GetPosition());
-
-	bool handled = false;
-
 	for (WidgetIterator i = WidgetsBegin(); i != WidgetsEnd(); ++i)
 		if ((*i)->HandleMouseMove(translatedEvent))
-			handled = true;
+			return true;
 
-	return handled ? true : Widget::HandleMouseMove(event);
+	return Widget::HandleMouseMove(event);
 }
 
 bool Container::HandleMouseWheel(const MouseWheelEvent &event)
