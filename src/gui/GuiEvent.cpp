@@ -44,8 +44,8 @@ bool Event::Dispatch(const Event &event, Widget *target)
 		case Event::KEYBOARD: {
 			const KeyboardEvent keyEvent = static_cast<const KeyboardEvent&>(event);
 			switch (keyEvent.action) {
-				case KeyboardEvent::KEY_DOWN: return KeyDownDispatch(keyEvent, target);
-				case KeyboardEvent::KEY_UP:   return KeyUpDispatch(keyEvent, target);
+				case KeyboardEvent::KEY_DOWN: return target->HandleKeyDown(keyEvent);
+				case KeyboardEvent::KEY_UP:   return target->HandleKeyUp(keyEvent);
 			}
 			return false;
 		}
@@ -53,110 +53,26 @@ bool Event::Dispatch(const Event &event, Widget *target)
 		case Event::MOUSE_BUTTON: {
 			const MouseButtonEvent mouseButtonEvent = static_cast<const MouseButtonEvent&>(event);
 			switch (mouseButtonEvent.action) {
-				case MouseButtonEvent::BUTTON_DOWN: return MouseDownDispatch(mouseButtonEvent, target);
-				case MouseButtonEvent::BUTTON_UP:   return MouseUpDispatch(mouseButtonEvent, target);
+				case MouseButtonEvent::BUTTON_DOWN: return target->HandleMouseDown(mouseButtonEvent);
+				case MouseButtonEvent::BUTTON_UP:   return target->HandleMouseUp(mouseButtonEvent);
 			}
 			return false;
 		}
 
 		case Event::MOUSE_MOTION: {
 			const MouseMotionEvent mouseMotionEvent = static_cast<const MouseMotionEvent&>(event);
-			return MouseMoveDispatch(mouseMotionEvent, target);
+			return target->HandleMouseMove(mouseMotionEvent);
 		}
 
 		case Event::MOUSE_WHEEL: {
 			const MouseWheelEvent mouseWheelEvent = static_cast<const MouseWheelEvent&>(event);
-			return MouseWheelDispatch(mouseWheelEvent, target);
+			return target->HandleMouseWheel(mouseWheelEvent);
 		}
 
 		default:
 			return false;
 	}
 
-	return false;
-}
-
-bool Event::KeyDownDispatch(const KeyboardEvent &event, Widget *target)
-{
-	return false;
-}
-
-bool Event::KeyUpDispatch(const KeyboardEvent &event, Widget *target)
-{
-	return false;
-}
-
-bool Event::MouseDownDispatch(const MouseButtonEvent &event, Widget *target)
-{
-	if (!target->Contains(event.pos))
-		return false;
-
-	bool handled = false;
-
-	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-target->GetPosition());
-
-	if (target->IsContainer()) {
-		Container *container = static_cast<Container*>(target);
-		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
-			if (MouseDownDispatch(translatedEvent, *i))
-                handled = true;
-		}
-	}
-
-	if (!handled)
-		handled = target->onMouseDown.emit(translatedEvent);
-
-	return handled;
-}
-
-bool Event::MouseUpDispatch(const MouseButtonEvent &event, Widget *target)
-{
-	if (!target->Contains(event.pos))
-		return false;
-
-	bool handled = false;
-
-	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-target->GetPosition());
-
-	if (target->IsContainer()) {
-		Container *container = static_cast<Container*>(target);
-		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
-			if (MouseUpDispatch(translatedEvent, *i))
-                handled = true;
-		}
-	}
-
-	if (!handled)
-		handled = target->onMouseUp.emit(translatedEvent);
-
-	return handled;
-}
-
-bool Event::MouseMoveDispatch(const MouseMotionEvent &event, Widget *target)
-{
-	if (!target->Contains(event.pos))
-		return false;
-
-	bool handled = false;
-
-	MouseMotionEvent translatedEvent = MouseMotionEvent(event.pos-target->GetPosition());
-
-	if (target->IsContainer()) {
-		Container *container = static_cast<Container*>(target);
-		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
-			if (MouseMoveDispatch(translatedEvent, *i))
-                handled = true;
-		}
-	}
-
-	if (!handled)
-		handled = target->onMouseMove.emit(translatedEvent);
-
-	return handled;
-}
-
-bool Event::MouseWheelDispatch(const MouseWheelEvent &event, Widget *target)
-{
 	return false;
 }
 

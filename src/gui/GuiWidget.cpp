@@ -1,5 +1,6 @@
 #include "GuiWidget.h"
 #include "GuiContainer.h"
+#include <typeinfo>
 
 namespace Gui {
 
@@ -40,6 +41,42 @@ void Widget::SetDimensions(const vector2f &position, const vector2f &size)
 {
 	m_position = position;
 	m_size = size;
+}
+
+bool Widget::HandleKeyDown(const KeyboardEvent &event)
+{
+	return onKeyDown.emit(event);
+}
+
+bool Widget::HandleKeyUp(const KeyboardEvent &event)
+{
+	return onKeyUp.emit(event);
+}
+
+bool Widget::HandleMouseDown(const MouseButtonEvent &event)
+{
+	if (!Contains(event.pos)) return false;
+	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-GetPosition());
+	return onMouseDown.emit(translatedEvent);
+}
+
+bool Widget::HandleMouseUp(const MouseButtonEvent &event)
+{
+	if (!Contains(event.pos)) return false;
+	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-GetPosition());
+	return onMouseUp.emit(translatedEvent);
+}
+
+bool Widget::HandleMouseMove(const MouseMotionEvent &event)
+{
+	if (!Contains(event.pos)) return false;
+	MouseMotionEvent translatedEvent = MouseMotionEvent(event.pos-GetPosition());
+	return onMouseMove.emit(translatedEvent);
+}
+
+bool Widget::HandleMouseWheel(const MouseWheelEvent &event)
+{
+	return onMouseWheel.emit(event);
 }
 
 }

@@ -173,6 +173,16 @@ protected:
 	void SetStyle(Style *style) { m_style.Reset(style); }
 
 
+	// gui event handlers. these fire the event handler signal for this widget
+	friend class Event;
+
+	virtual bool HandleKeyDown(const KeyboardEvent &event);
+	virtual bool HandleKeyUp(const KeyboardEvent &event);
+	virtual bool HandleMouseDown(const MouseButtonEvent &event);
+	virtual bool HandleMouseUp(const MouseButtonEvent &event);
+	virtual bool HandleMouseMove(const MouseMotionEvent &event);
+	virtual bool HandleMouseWheel(const MouseWheelEvent &event);
+
 private:
 
 	// let container set our attributes. none of them make any sense if
