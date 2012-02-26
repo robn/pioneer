@@ -11,6 +11,12 @@
 static const int WIDTH  = 1024;
 static const int HEIGHT = 768;
 
+static bool click_handler(const Gui::MouseButtonEvent &event)
+{
+	printf("click\n");
+	return true;
+}
+
 int main(int argc, char **argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -64,6 +70,7 @@ int main(int argc, char **argv)
 	Gui::Context *c = new Gui::Context;
 	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
 
+	Gui::Image *image;
 	screen->SetInnerWidget(
 		c->Background(Color(0.4f, 0.2f, 0.4f, 1.0f))->SetInnerWidget(
 			c->Margin(10.0f)->SetInnerWidget(
@@ -71,7 +78,7 @@ int main(int argc, char **argv)
 					c->VBox()->PackEnd(Gui::WidgetSet(
 						c->HBox()->PackEnd(Gui::WidgetSet(
 							c->Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
-							c->Image("data/icons/object_star_g.png"),
+							(image = c->Image("data/icons/object_star_g.png")),
 							c->Image("data/icons/object_star_m.png")
 						)),
 						c->Background(Color(1.0f, 0.0f, 0.0f, 1.0f)),
@@ -84,6 +91,8 @@ int main(int argc, char **argv)
 		)
 	);
 
+	image->onMouseDown.connect(sigc::ptr_fun(&click_handler));
+
 	while (1) {
 		bool done = false;
 
@@ -92,7 +101,7 @@ int main(int argc, char **argv)
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
 				done = true;
 			else
-				Gui::Event::Dispatch(Gui::Event::CreateFromSDLEvent(event), screen);
+				Gui::Event::DispatchSDLEvent(event, screen);
 		}
 
 		if (done)

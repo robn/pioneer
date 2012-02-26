@@ -30,16 +30,18 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	virtual bool IsContainer() { return true; }
+
+	typedef std::list<Widget*>::const_iterator WidgetIterator;
+	const WidgetIterator WidgetsBegin() const { return m_widgets.begin(); }
+	const WidgetIterator WidgetsEnd() const { return m_widgets.end(); }
+
 protected:
 	void LayoutChildren();
 
 	void AddWidget(Widget *);
 	void RemoveWidget(Widget *);
 	void SetWidgetDimensions(Widget *widget, const vector2f &position, const vector2f &size);
-
-	typedef std::list<Widget*>::const_iterator WidgetIterator;
-	const WidgetIterator WidgetsBegin() const { return m_widgets.begin(); }
-	const WidgetIterator WidgetsEnd() const { return m_widgets.end(); }
 
 private:
 	std::list<Widget*> m_widgets;

@@ -100,6 +100,9 @@ public:
 	// position relative to top container
 	vector2f GetAbsolutePosition() const;
 
+	// fast way to determine if the widget is a container
+	virtual bool IsContainer() { return false; }
+
 
 protected:
 	// this sigc accumulator calls all the handlers for an event. if any of

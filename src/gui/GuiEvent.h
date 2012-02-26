@@ -24,8 +24,8 @@ public:
 	};
 	const Type type;
 
-	static Event CreateFromSDLEvent(const SDL_Event &event);
 	static bool Dispatch(const Event &event, Widget *target);
+	static bool DispatchSDLEvent(const SDL_Event &event, Widget *target);
 
 protected:
 	Event(Type _type) : type(_type) {}
@@ -33,19 +33,10 @@ protected:
 private:
 	static bool KeyDownDispatch(const KeyboardEvent &event, Widget *target);
 	static bool KeyUpDispatch(const KeyboardEvent &event, Widget *target);
-	static bool KeyPressDispatch(const KeyboardEvent &event, Widget *target);
 	static bool MouseDownDispatch(const MouseButtonEvent &event, Widget *target);
 	static bool MouseUpDispatch(const MouseButtonEvent &event, Widget *target);
 	static bool MouseMoveDispatch(const MouseMotionEvent &event, Widget *target);
 	static bool MouseWheelDispatch(const MouseWheelEvent &event, Widget *target);
-	static bool MouseOverDispatch(Widget *target);
-	static bool MouseOutDispatch(Widget *target);
-	static bool MouseClickDispatch(Widget *target);
-};
-
-class NoEvent : public Event {
-public:
-	NoEvent() : Event(Event::NONE) {}
 };
 
 // data for various events
