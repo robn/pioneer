@@ -13,7 +13,7 @@ static const int HEIGHT = 768;
 
 static bool click_handler(const Gui::MouseButtonEvent &event)
 {
-	printf("click\n");
+	printf("click: %f,%f\n", event.pos.x, event.pos.y);
 	return true;
 }
 

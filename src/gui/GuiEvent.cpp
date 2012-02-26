@@ -88,35 +88,23 @@ bool Event::KeyUpDispatch(const KeyboardEvent &event, Widget *target)
 
 bool Event::MouseDownDispatch(const MouseButtonEvent &event, Widget *target)
 {
-	printf("MouseDownDispatch: %s\n", typeid(*target).name());
-
-	vector2f pos(target->GetAbsolutePosition());
-	vector2f size(target->GetSize());
-
-	if (!target->Contains(event.pos)) {
-		printf("    outside bounds, not handled\n");
+	if (!target->Contains(event.pos))
 		return false;
-	}
 
 	bool handled = false;
 
+	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-target->GetPosition());
+
 	if (target->IsContainer()) {
-		printf("    is a container, distributing to children\n");
 		Container *container = static_cast<Container*>(target);
 		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
-			// XXX position offset
-			if (MouseDownDispatch(event, (*i)))
+			if (MouseDownDispatch(translatedEvent, *i))
                 handled = true;
 		}
 	}
 
-	if (!handled) {
-		// XXX position offset
-		printf("    not handled, calling handler\n");
-		handled = target->onMouseDown.emit(event);
-	}
-
-	printf("    %s\n", handled ? "handled" : "not handled");
+	if (!handled)
+		handled = target->onMouseDown.emit(translatedEvent);
 
 	return handled;
 }
