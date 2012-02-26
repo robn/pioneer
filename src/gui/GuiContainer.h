@@ -30,7 +30,7 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
-	virtual bool IsContainer() { return true; }
+	virtual bool IsContainer() const { return true; }
 
 	typedef std::list<Widget*>::const_iterator WidgetIterator;
 	const WidgetIterator WidgetsBegin() const { return m_widgets.begin(); }

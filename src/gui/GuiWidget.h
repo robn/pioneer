@@ -101,7 +101,7 @@ public:
 	vector2f GetAbsolutePosition() const;
 
 	// fast way to determine if the widget is a container
-	virtual bool IsContainer() { return false; }
+	virtual bool IsContainer() const { return false; }
 
 
 protected:
