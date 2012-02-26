@@ -17,6 +17,12 @@ static bool click_handler(const Gui::MouseButtonEvent &event)
 	return true;
 }
 
+static bool move_handler(const Gui::MouseMotionEvent &event)
+{
+	printf("move: %f,%f\n", event.pos.x, event.pos.y);
+	return true;
+}
+
 int main(int argc, char **argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -91,7 +97,8 @@ int main(int argc, char **argv)
 		)
 	);
 
-	image->onMouseDown.connect(sigc::ptr_fun(&click_handler));
+	image->onMouseUp.connect(sigc::ptr_fun(&click_handler));
+	image->onMouseMove.connect(sigc::ptr_fun(&move_handler));
 
 	while (1) {
 		bool done = false;

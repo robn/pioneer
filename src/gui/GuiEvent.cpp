@@ -111,12 +111,48 @@ bool Event::MouseDownDispatch(const MouseButtonEvent &event, Widget *target)
 
 bool Event::MouseUpDispatch(const MouseButtonEvent &event, Widget *target)
 {
-	return false;
+	if (!target->Contains(event.pos))
+		return false;
+
+	bool handled = false;
+
+	MouseButtonEvent translatedEvent = MouseButtonEvent(event.action, event.button, event.pos-target->GetPosition());
+
+	if (target->IsContainer()) {
+		Container *container = static_cast<Container*>(target);
+		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
+			if (MouseUpDispatch(translatedEvent, *i))
+                handled = true;
+		}
+	}
+
+	if (!handled)
+		handled = target->onMouseUp.emit(translatedEvent);
+
+	return handled;
 }
 
 bool Event::MouseMoveDispatch(const MouseMotionEvent &event, Widget *target)
 {
-	return false;
+	if (!target->Contains(event.pos))
+		return false;
+
+	bool handled = false;
+
+	MouseMotionEvent translatedEvent = MouseMotionEvent(event.pos-target->GetPosition());
+
+	if (target->IsContainer()) {
+		Container *container = static_cast<Container*>(target);
+		for (Container::WidgetIterator i = container->WidgetsBegin(); i != container->WidgetsEnd(); ++i) {
+			if (MouseMoveDispatch(translatedEvent, *i))
+                handled = true;
+		}
+	}
+
+	if (!handled)
+		handled = target->onMouseMove.emit(translatedEvent);
+
+	return handled;
 }
 
 bool Event::MouseWheelDispatch(const MouseWheelEvent &event, Widget *target)
