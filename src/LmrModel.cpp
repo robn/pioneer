@@ -11,12 +11,13 @@
 #include "EquipType.h"
 #include "EquipSet.h"
 #include "ShipType.h"
-#include "TextureCache.h"
 #include "graphics/Graphics.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 #include "graphics/Shader.h"
 #include "graphics/VertexArray.h"
+#include "graphics/TextureBuilder.h"
+#include "graphics/TextureGL.h" // XXX temporary until LMR uses renderer drawing properly
 #include <set>
 #include <algorithm>
 
@@ -50,16 +51,20 @@ namespace ShipThruster {
 	//cool purple-ish
 	static Color color(0.7f, 0.6f, 1.f, 1.f);
 
-	static void Init(TextureCache *tcache) {
+	static const std::string thrusterTextureFilename(PIONEER_DATA_DIR"/textures/thruster.png");
+	static const std::string thrusterGlowTextureFilename(PIONEER_DATA_DIR"/textures/halo.png");
+
+	static void Init(Graphics::Renderer *renderer) {
 		tVerts = new Graphics::VertexArray(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0);
 		gVerts = new Graphics::VertexArray(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0);
 
 		//set up materials
-		tMat.texture0 = tcache->GetBillboardTexture(PIONEER_DATA_DIR"/textures/thruster.png");
+		tMat.texture0 = Graphics::TextureBuilder::Billboard(thrusterTextureFilename).GetOrCreateTexture(renderer, "billboard");
 		tMat.unlit = true;
 		tMat.twoSided = true;
 		tMat.diffuse = color;
-		glowMat.texture0 = tcache->GetBillboardTexture(PIONEER_DATA_DIR"/textures/halo.png");
+
+		glowMat.texture0 = Graphics::TextureBuilder::Billboard(thrusterGlowTextureFilename).GetOrCreateTexture(renderer, "billboard");
 		glowMat.unlit = true;
 		glowMat.twoSided = true;
 		glowMat.diffuse = color;
@@ -260,7 +265,6 @@ static lua_State *sLua;
 static int s_numTrisRendered;
 static std::string s_cacheDir;
 static bool s_recompileAllModels = true;
-static TextureCache *s_textureCache;
 static Graphics::Renderer *s_renderer;
 
 struct Vertex {
@@ -374,16 +378,19 @@ public:
 		for (unsigned int i=0; i<opEndIdx; i++) {
 			const Op &op = m_ops[i];
 			switch (op.type) {
-			case OP_DRAW_ELEMENTS:
-				if (op.elems.texture != 0 ) {
-					UseProgram(curShader, true, op.elems.glowmap != 0);
-					glActiveTexture(GL_TEXTURE0);
+			case OP_DRAW_ELEMENTS: {
+				Graphics::TextureGL *texture = 0, *glowmap = 0;
+				if (op.elems.texture) {
 					glEnable(GL_TEXTURE_2D);
-					op.elems.texture->Bind();
-					if (op.elems.glowmap != 0) {
+					texture = static_cast<Graphics::TextureGL*>(Graphics::TextureBuilder::Model(*op.elems.texture).GetOrCreateTexture(s_renderer, "model"));
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texture->GetTextureNum());
+					if (op.elems.glowmap) {
+						glowmap = static_cast<Graphics::TextureGL*>(Graphics::TextureBuilder::Model(*op.elems.glowmap).GetOrCreateTexture(s_renderer, "model"));
 						glActiveTexture(GL_TEXTURE1);
-						op.elems.glowmap->Bind();
+						glBindTexture(GL_TEXTURE_2D, glowmap->GetTextureNum());
 					}
+					UseProgram(curShader, true, op.elems.glowmap);
 				} else {
 					UseProgram(curShader, false);
 				}
@@ -401,11 +408,17 @@ public:
 					// otherwise regular index vertex array
 					glDrawElements(GL_TRIANGLES, op.elems.count, GL_UNSIGNED_SHORT, &m_indices[op.elems.start]);
 				}
-				if ( op.elems.texture != 0 ) {
+				if (texture) {
+					if (glowmap) {
+						glActiveTexture(GL_TEXTURE1);
+						glBindTexture(GL_TEXTURE_2D, 0);
+					}
 					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, 0);
 					glDisable(GL_TEXTURE_2D);
 				}
 				break;
+			}
 			case OP_DRAW_BILLBOARDS: {
 				Graphics::UnbindAllBuffers();
 				//XXX have to copy positions to a temporary array as
@@ -417,7 +430,7 @@ public:
 				}
 				Graphics::Material mat;
 				mat.unlit = true;
-				mat.texture0 = op.billboards.texture;
+				mat.texture0 = Graphics::TextureBuilder::Billboard(*op.billboards.texture).GetOrCreateTexture(s_renderer, "billboard");
 				mat.diffuse = Color(op.billboards.col[0], op.billboards.col[1], op.billboards.col[2], op.billboards.col[3]);
 				s_renderer->DrawPointSprites(op.billboards.count, &verts[0], &mat, op.billboards.size);
 				BindBuffers();
@@ -572,7 +585,7 @@ public:
 	}
 	void SetTexture(const char *tex) {
 		if (tex) {
-			curTexture = s_textureCache->GetModelTexture(tex);
+			curTexture = new std::string(tex);
 		} else {
 			curTexture = 0;
 			curGlowmap = 0; //won't have these without textures
@@ -580,7 +593,7 @@ public:
 	}
 	void SetGlowMap(const char *tex) {
 		if (tex) {
-			curGlowmap = s_textureCache->GetModelTexture(tex);
+			curGlowmap = new std::string(tex);
 		} else {
 			curGlowmap = 0;
 		}
@@ -660,7 +673,7 @@ public:
 		curOp.type = OP_DRAW_BILLBOARDS;
 		curOp.billboards.start = m_vertices.size();
 		curOp.billboards.count = numPoints;
-		curOp.billboards.texture = s_textureCache->GetBillboardTexture(buf);
+		curOp.billboards.texture = new std::string(buf);
 		curOp.billboards.size = size;
 		curOp.billboards.col[0] = color.x;
 		curOp.billboards.col[1] = color.y;
@@ -805,11 +818,11 @@ private:
 	struct Op {
 		enum OpType type;
 		union {
-			struct { ModelTexture *texture; ModelTexture *glowmap; int start, count, elemMin, elemMax; } elems;
+			struct { std::string *texture; std::string *glowmap; int start, count, elemMin, elemMax; } elems;
 			struct { int material_idx; } col;
 			struct { float amount; float pos[3]; float norm[3]; } zbias;
 			struct { LmrModel *model; float transform[16]; float scale; } callmodel;
-			struct { BillboardTexture *texture; int start, count; float size; float col[4]; } billboards;
+			struct { std::string *texture; int start, count; float size; float col[4]; } billboards;
 			struct { bool local; } lighting_type;
 			struct { int num; float quadratic_attenuation; float pos[4], col[4]; } light;
 		};
@@ -817,8 +830,8 @@ private:
 	/* this crap is only used at build time... could move this elsewhere */
 	Op curOp;
 	Uint16 curTriFlag;
-	ModelTexture *curTexture;
-	ModelTexture *curGlowmap;
+	std::string *curTexture;
+	std::string *curGlowmap;
 	matrix4x4f curTexMatrix;
 	// 
 	std::vector<Vertex> m_vertices;
@@ -855,12 +868,12 @@ public:
 					_fwrite_string(m_ops[i].callmodel.model->GetName(), f);
 				}
 				else if ((m_ops[i].type == OP_DRAW_ELEMENTS) && (m_ops[i].elems.texture)) {
-					_fwrite_string(m_ops[i].elems.texture->GetFilename(), f);
+					_fwrite_string(*m_ops[i].elems.texture, f);
 					if (m_ops[i].elems.glowmap)
-						_fwrite_string(m_ops[i].elems.glowmap->GetFilename(), f);
+						_fwrite_string(*m_ops[i].elems.glowmap, f);
 				}
 				else if ((m_ops[i].type == OP_DRAW_BILLBOARDS) && (m_ops[i].billboards.texture)) {
-					_fwrite_string(m_ops[i].billboards.texture->GetFilename(), f);
+					_fwrite_string(*m_ops[i].billboards.texture, f);
 				}
 			}
 		}
@@ -900,12 +913,13 @@ public:
 				m_ops[i].callmodel.model = s_models[_fread_string(f)];
 			}
 			else if ((m_ops[i].type == OP_DRAW_ELEMENTS) && (m_ops[i].elems.texture)) {
-				m_ops[i].elems.texture = s_textureCache->GetModelTexture(_fread_string(f));
+				m_ops[i].elems.texture = new std::string(_fread_string(f));
+
 				if (m_ops[i].elems.glowmap)
-					m_ops[i].elems.glowmap = s_textureCache->GetModelTexture(_fread_string(f));
+					m_ops[i].elems.glowmap = new std::string(_fread_string(f));
 			}
 			else if ((m_ops[i].type == OP_DRAW_BILLBOARDS) && (m_ops[i].billboards.texture)) {
-				m_ops[i].billboards.texture = s_textureCache->GetBillboardTexture(_fread_string(f));
+				m_ops[i].billboards.texture = new std::string(_fread_string(f));
 			}
 		}
 	}
@@ -4429,12 +4443,11 @@ static void _write_model_crc_file()
 	}
 }
 
-void LmrModelCompilerInit(Graphics::Renderer *renderer, TextureCache *textureCache)
+void LmrModelCompilerInit(Graphics::Renderer *renderer)
 {
 	s_renderer = renderer;
-	s_textureCache = textureCache;
 
-	ShipThruster::Init(s_textureCache);
+	ShipThruster::Init(renderer);
 
 	s_cacheDir = GetPiUserDir("model_cache");
 	_detect_model_changes();

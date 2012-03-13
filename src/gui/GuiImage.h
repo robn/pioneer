@@ -3,6 +3,7 @@
 
 #include "GuiWidget.h"
 #include "SmartPtr.h"
+#include "GuiTexturedQuad.h"
 
 class UITexture;
 
@@ -24,8 +25,9 @@ protected:
 	Image(Context *context, const std::string &filename, StretchMode stretchMode);
 
 private:
-	ScopedPtr<UITexture> m_texture;
+	ScopedPtr<TexturedQuad> m_quad;
 	StretchMode m_stretchMode;
+	vector2f m_initialSize;
 	vector2f m_scaledSize;
 };
 

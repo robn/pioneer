@@ -7,6 +7,8 @@
 #include "GuiImage.h"
 #include "GuiLabel.h"
 #include "GuiMargin.h"
+#include "graphics/Graphics.h"
+#include "graphics/Renderer.h"
 
 static const int WIDTH  = 1024;
 static const int HEIGHT = 768;
@@ -60,20 +62,8 @@ int main(int argc, char **argv)
 
 	SDL_WM_SetCaption("guitest", "guitest");
 
-	glShadeModel(GL_SMOOTH);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-	glEnable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0,0,0,1);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	Gui::Context *c = new Gui::Context;
+	Graphics::Renderer *r = Graphics::Init(WIDTH, HEIGHT, true);
+	Gui::Context *c = new Gui::Context(r);
 	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
 
 	Gui::Image *image;

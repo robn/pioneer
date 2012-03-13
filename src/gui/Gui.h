@@ -5,7 +5,6 @@
 #include "Color.h"
 
 namespace GuiExtra {
-
 	namespace Theme {
 		void DrawRoundEdgedRect(const float size[2], float rad);
 		void DrawIndent(const float size[2]);
@@ -61,5 +60,6 @@ namespace GuiExtra {
 #include "GuiScreen.h"
 #include "GuiStack.h"
 #include "GuiGradient.h"
+#include "GuiTexturedQuad.h"
 
 #endif /* _GUI_H */

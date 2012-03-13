@@ -1,17 +1,22 @@
 #include "GuiImage.h"
-#include "Texture.h"
+#include "GuiContext.h"
+#include "graphics/TextureBuilder.h"
 
 namespace Gui {
 
 Image::Image(Context *context, const std::string &filename, StretchMode stretchMode): Widget(context),
 	m_stretchMode(stretchMode)
 {
-	m_texture.Reset(new UITexture(filename));
+	Graphics::TextureBuilder b = Graphics::TextureBuilder::UI(filename);
+	m_quad.Reset(new TexturedQuad(b.GetOrCreateTexture(GetContext()->GetRenderer(), "ui")));
+
+	const Graphics::TextureDescriptor &descriptor = b.GetDescriptor();
+	m_initialSize = vector2f(descriptor.dataSize.x*descriptor.texSize.x,descriptor.dataSize.y*descriptor.texSize.y);
 }
 
 Metrics Image::GetMetrics(const vector2f &hint)
 {
-	return Metrics(vector2f(m_texture->GetWidth(),m_texture->GetHeight()));
+	return Metrics(m_initialSize);
 }
 
 void Image::Update()
@@ -25,7 +30,7 @@ void Image::Update()
 
 		case STRETCH_PRESERVE: {
 
-			float originalRatio = float(m_texture->GetWidth()) / float(m_texture->GetHeight());
+			float originalRatio = m_initialSize.x / m_initialSize.y;
 			float wantRatio = size.x / size.y;
 
 			// more room on X than Y, use full X, scale Y
@@ -50,12 +55,9 @@ void Image::Update()
 
 void Image::Draw()
 {
-	// XXX use renderer
-
-	glEnable(GL_BLEND);
-	glColor4f(1.0f,1.0f,1.0f,1.0f);
-	m_texture->DrawUIQuad(0, 0, m_scaledSize.x, m_scaledSize.y);
-	glDisable(GL_BLEND);
+	Graphics::Renderer *r = GetContext()->GetRenderer();
+	r->SetBlendMode(Graphics::BLEND_ALPHA);
+	m_quad->Draw(r, 0, m_scaledSize);
 }
 
 }

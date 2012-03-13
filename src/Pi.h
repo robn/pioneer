@@ -34,7 +34,6 @@ class LuaConsole;
 class LuaNameGen;
 namespace Graphics { class Renderer; }
 namespace Sound { class MusicPlayer; }
-class TextureCache;
 
 #if WITH_OBJECTVIEWER
 class ObjectViewerView;
@@ -134,8 +133,6 @@ public:
 	static LuaEventQueue<Ship,const char *> *luaOnShipFuelChanged;
 
 	static LuaNameGen *luaNameGen;
-
-	static TextureCache *textureCache;
 
 	static MTRand rng;
 	static int statSceneTris;

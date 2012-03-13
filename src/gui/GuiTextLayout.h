@@ -7,6 +7,7 @@
 #include <vector>
 
 class TextureFont;
+namespace Graphics { class Renderer; }
 
 namespace Gui {
 
@@ -16,7 +17,7 @@ public:
 
 	vector2f ComputeSize(const vector2f &hint);
 
-	void Draw(const vector2f &size);
+	void Draw(Graphics::Renderer *r, const vector2f &size);
 
 private:
 	struct Word {

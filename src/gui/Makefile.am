@@ -33,6 +33,7 @@ noinst_HEADERS = \
 	GuiTabbed.h \
 	GuiTextEntry.h \
 	GuiTextLayout.h \
+	GuiTexturedQuad.h \
 	GuiToggleButton.h \
 	GuiToolTip.h \
 	GuiVScrollBar.h \
@@ -62,6 +63,7 @@ libgui_a_SOURCES = \
 	GuiTabbed.cpp \
 	GuiTextEntry.cpp \
 	GuiTextLayout.cpp \
+	GuiTexturedQuad.cpp \
 	GuiToggleButton.cpp \
 	GuiToolTip.cpp \
 	GuiVScrollBar.cpp \
@@ -82,6 +84,8 @@ guitest_SOURCES = \
 	GuiLabel.cpp \
 	GuiTextLayout.cpp \
 	GuiMargin.cpp \
-	GuiEvent.cpp
-guitest_LDADD = ../Texture.o ../TextureFont.o ../Font.o ../IniConfig.o ../FontConfig.o ../StringF.o ../TextSupport.o \
+	GuiEvent.cpp \
+	GuiTexturedQuad.cpp
+guitest_LDADD = ../TextureFont.o ../Font.o ../IniConfig.o ../FontConfig.o ../StringF.o ../TextSupport.o ../Color.o \
+	../graphics/libgraphics.a \
     $(FREETYPE_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) $(SDL_LIBS) $(SIGC_LIBS)

@@ -19,7 +19,7 @@ Metrics Label::GetMetrics(const vector2f &hint)
 void Label::Draw()
 {
 	if (!m_layout) m_layout.Reset(new TextLayout(GetContext()->GetFont(), m_text));
-	m_layout->Draw(GetSize());
+	m_layout->Draw(GetContext()->GetRenderer(), GetSize());
 }
 
 }

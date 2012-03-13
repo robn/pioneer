@@ -1,6 +1,6 @@
 #include "libs.h"
 #include "Gui.h"
-#include "GuiContext.h"
+#include "vector2.h"
 
 #define MINIMUM_HEIGHT (100.0f)
 
@@ -85,7 +85,7 @@ float VScrollPortal::GetScrollPixels()
 	return m_scrollY*((m_childSizeY-size[1]) > 0 ? (m_childSizeY-size[1]) : 0);
 }
 
-bool VScrollPortal::OnMouseDown(GuiExtra::MouseButtonEvent *e)
+bool VScrollPortal::OnMouseDown(MouseButtonEvent *e)
 {
 	if (e->button == 4 || e->button == 5) {
 		float change = e->button == 4 ? -0.1 : 0.1;
@@ -97,12 +97,12 @@ bool VScrollPortal::OnMouseDown(GuiExtra::MouseButtonEvent *e)
 	e->y += GetScrollPixels();
 	return Container::OnMouseDown(e);
 }
-bool VScrollPortal::OnMouseUp(GuiExtra::MouseButtonEvent *e)
+bool VScrollPortal::OnMouseUp(MouseButtonEvent *e)
 {
 	e->y += GetScrollPixels();
 	return Container::OnMouseUp(e);
 }
-bool VScrollPortal::OnMouseMotion(GuiExtra::MouseMotionEvent *e)
+bool VScrollPortal::OnMouseMotion(MouseMotionEvent *e)
 {
 	e->y += GetScrollPixels();
 	return Container::OnMouseMotion(e);
@@ -110,9 +110,10 @@ bool VScrollPortal::OnMouseMotion(GuiExtra::MouseMotionEvent *e)
 
 void VScrollPortal::Draw()
 {
+	SetScissor(true);
+
 	float size[2];
 	GetSize(size);
-	SetClipping(size[0], size[1]);
 
 	m_scrollY = vscrollAdjust.GetValue();
 
@@ -120,14 +121,15 @@ void VScrollPortal::Draw()
 	if (toScroll < 0) toScroll = 0;
 	
 	float scale[2];
-	GetContext()->screen->GetCoords2Pixels(scale);
+	Screen::GetCoords2Pixels(scale);
 
 	glPushMatrix();
 	// scroll to whole pixel locations whatever the resolution
 	glTranslatef(0, floor((-m_scrollY*toScroll)/scale[1])*scale[1], 0);
 	Container::Draw();
 	glPopMatrix();
-	EndClipping();
+
+	SetScissor(false);
 }
 
 }

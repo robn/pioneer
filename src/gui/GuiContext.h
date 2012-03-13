@@ -10,6 +10,8 @@
 #include "GuiImage.h"
 #include "GuiLabel.h"
 
+namespace Graphics { class Renderer; }
+
 namespace Gui {
 
 // The GUI context holds resources that are shared by all widgets. Examples of
@@ -19,7 +21,7 @@ namespace Gui {
 
 class Context {
 public:
-	Context();
+	Context(Graphics::Renderer *renderer);
 
 	// general purpose containers
 	Gui::HBox *HBox() { return new Gui::HBox(this); }
@@ -33,9 +35,11 @@ public:
 	Gui::Image *Image(const std::string &filename, Image::StretchMode stretchMode = Image::STRETCH_PRESERVE) { return new Gui::Image(this, filename, stretchMode); }
 	Gui::Label *Label(const std::string &text) { return new Gui::Label(this, text); }
 
-	RefCountedPtr<TextureFont> GetFont() { return m_font; }
+	Graphics::Renderer *GetRenderer() const { return m_renderer; }
+	RefCountedPtr<TextureFont> GetFont() const { return m_font; }
 
 private:
+	Graphics::Renderer *m_renderer;
 	RefCountedPtr<TextureFont> m_font;
 };
 

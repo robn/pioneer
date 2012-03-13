@@ -7,6 +7,7 @@
 #include "Surface.h"
 #include "Texture.h"
 #include "VertexArray.h"
+#include "TextureGL.h"
 #include <stddef.h> //for offsetof
 #include "utils.h"
 
@@ -236,6 +237,17 @@ bool RendererLegacy::SetAmbientColor(const Color &c)
 {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, c);
 
+	return true;
+}
+
+bool RendererLegacy::SetScissor(bool enabled, const vector2f &pos, const vector2f &size)
+{
+	if (enabled) {
+		glScissor(pos.x,pos.y,size.x,size.y);
+		glEnable(GL_SCISSOR_TEST);
+	}
+	else
+		glDisable(GL_SCISSOR_TEST);
 	return true;
 }
 
@@ -480,19 +492,16 @@ void RendererLegacy::ApplyMaterial(const Material *mat)
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 		glDisable(GL_CULL_FACE);
 	}
-	if (mat->texture0) {
-		glEnable(GL_TEXTURE_2D);
-		mat->texture0->Bind();
-	}
+	if (mat->texture0)
+		static_cast<TextureGL*>(mat->texture0)->Bind();
 }
 
 void RendererLegacy::UnApplyMaterial(const Material *mat)
 {
 	glPopAttrib();
 	if (!mat) return;
-	if (mat->texture0) {
-		mat->texture0->Unbind();
-	}
+	if (mat->texture0)
+		static_cast<TextureGL*>(mat->texture0)->Unbind();
 }
 
 void RendererLegacy::EnableClientStates(const VertexArray *v)
@@ -604,6 +613,12 @@ bool RendererLegacy::BufferStaticMesh(StaticMesh *mesh)
 
 	return true;
 }
+
+Texture *RendererLegacy::CreateTexture(const TextureDescriptor &descriptor)
+{
+	return new TextureGL(descriptor);
+}
+
 
 // XXX very heavy. in the future when all GL calls are made through the
 // renderer, we can probably do better by trackingn current state and

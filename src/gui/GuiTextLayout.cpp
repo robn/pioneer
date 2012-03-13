@@ -70,7 +70,7 @@ vector2f TextLayout::ComputeSize(const vector2f &hint)
 	return bounds;
 }
 
-void TextLayout::Draw(const vector2f &size)
+void TextLayout::Draw(Graphics::Renderer *r, const vector2f &size)
 {
 	ComputeSize(size);
 
@@ -78,7 +78,7 @@ void TextLayout::Draw(const vector2f &size)
 	glColor3f(1.0f,1.0f,1.0f);
 
 	for (std::vector<Word>::iterator i = m_words.begin(); i != m_words.end(); ++i)
-		m_font->RenderString((*i).text.c_str(), (*i).pos.x, (*i).pos.y);
+		m_font->RenderString(r, (*i).text.c_str(), (*i).pos.x, (*i).pos.y);
 }
 
 }
