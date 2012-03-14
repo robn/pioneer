@@ -334,7 +334,6 @@ void Viewer::PickModel(const std::string &initial_name, const std::string &initi
 		PollEvents();
 		renderer->ClearScreen();
 		guiContext->Draw();
-		glError();
 		renderer->SwapBuffers();
 	}
 	guiContext->screen->RemoveBaseWidget(f);
@@ -555,7 +554,6 @@ void Viewer::MainLoop()
 		
 		guiContext->Draw();
 		
-		glError();
 		renderer->SwapBuffers();
 		numFrames++;
 		g_frameTime = (SDL_GetTicks() - lastTurd) * 0.001f;

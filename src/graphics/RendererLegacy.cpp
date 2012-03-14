@@ -9,7 +9,9 @@
 #include "VertexArray.h"
 #include "TextureGL.h"
 #include <stddef.h> //for offsetof
-#include "utils.h"
+#include <ostream>
+#include <sstream>
+#include <iterator>
 
 namespace Graphics {
 
@@ -83,7 +85,14 @@ bool RendererLegacy::EndFrame()
 
 bool RendererLegacy::SwapBuffers()
 {
-	glError();
+#ifdef DEBUG
+	GLenum err = glGetError();
+	while (err != GL_NO_ERROR) {
+		fprintf(stderr, "GL error: %s\n", reinterpret_cast<const char *>(gluErrorString(err)));
+		err = glGetError();
+	} 
+#endif
+
 	Graphics::SwapBuffers();
 	return true;
 }
@@ -639,6 +648,32 @@ void RendererLegacy::PopState()
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+}
+
+bool RendererLegacy::PrintDebugInfo(std::ostream &out)
+{
+	out << "OpenGL version " << glGetString(GL_VERSION);
+	out << ", running on " << glGetString(GL_VENDOR);
+	out << " " << glGetString(GL_RENDERER) << std::endl;
+
+	out << "Available extensions:" << std::endl;
+	GLint numext = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numext);
+	if (glewIsSupported("GL_VERSION_3_0")) {
+		for (int i = 0; i < numext; ++i) {
+			out << "  " << glGetStringi(GL_EXTENSIONS, i) << std::endl;
+		}
+	}
+	else {
+		out << "  ";
+		std::istringstream ext(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)));
+		std::copy(
+			std::istream_iterator<std::string>(ext),
+			std::istream_iterator<std::string>(),
+			std::ostream_iterator<std::string>(out, "\n  "));
+	}
+
+	return true;
 }
 
 }

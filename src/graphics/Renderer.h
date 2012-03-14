@@ -127,6 +127,9 @@ public:
 	virtual bool DrawStaticMesh(StaticMesh *thing) { return false; }
 
 	virtual Texture *CreateTexture(const TextureDescriptor &descriptor) = 0;
+ 
+	// output human-readable debug info to the given stream
+	virtual bool PrintDebugInfo(std::ostream &out) { return false; }
 
 	Texture *GetCachedTexture(const std::string &type, const std::string &name);
 	void AddCachedTexture(const std::string &type, const std::string &name, Texture *texture);
