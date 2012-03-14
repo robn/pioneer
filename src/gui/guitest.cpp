@@ -72,6 +72,9 @@ int main(int argc, char **argv)
 	// scissored version of Renderer::ClearScreen would be the most efficient,
 	// but I'm not quite ready to do it yet.
 	glDisable(GL_LIGHTING);
+	// XXX sorta ditto the depth test. should renderer start with these
+	// disabled?
+	glDisable(GL_DEPTH_TEST);
 
 	Gui::Context *c = new Gui::Context(r);
 	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
