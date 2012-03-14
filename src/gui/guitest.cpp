@@ -63,6 +63,16 @@ int main(int argc, char **argv)
 	SDL_WM_SetCaption("guitest", "guitest");
 
 	Graphics::Renderer *r = Graphics::Init(WIDTH, HEIGHT, true);
+	r->SetOrthographicProjection(0, WIDTH, HEIGHT, 0, -1, 1);
+	r->SetTransform(matrix4x4f::Identity());
+	r->SetClearColor(Color::BLACK);
+
+	// XXX GL renderer enables lighting by default. if all draws use materials
+	// that's ok, but for filled regions (ie Background) its not right. a
+	// scissored version of Renderer::ClearScreen would be the most efficient,
+	// but I'm not quite ready to do it yet.
+	glDisable(GL_LIGHTING);
+
 	Gui::Context *c = new Gui::Context(r);
 	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
 
@@ -107,13 +117,14 @@ int main(int argc, char **argv)
 		screen->Layout();
 		screen->Update();
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		r->ClearScreen();
 		screen->Draw();
-		SDL_GL_SwapBuffers();
+		r->SwapBuffers();
 	}
 
 	delete screen;
 	delete c;
+	delete r;
 
 	SDL_Quit();
 
