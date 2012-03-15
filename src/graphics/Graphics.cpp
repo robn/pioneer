@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "RendererLegacy.h"
 #include "RendererGL2.h"
+#include "FileSystem.h"
 
 static GLuint boundArrayBufferObject = 0;
 static GLuint boundElementArrayBufferObject = 0;
