@@ -3,6 +3,7 @@
 #include "Pi.h"
 #include "Sector.h"
 #include "Lang.h"
+#include "FileSystem.h"
 
 // lightyears
 const float Galaxy::GALAXY_RADIUS = 50000.0;
@@ -18,10 +19,19 @@ const Galaxy::FeatureLabel Galaxy::GALACTIC_FEATURES[] = {
 	{ 0, vector3d(0.0, 0.0, 0.0) }
 };
 
+static const std::string galaxyBitmapFilename("galaxy.bmp");
+
 Galaxy::Galaxy() {
-	m_densityMap.Reset(SDL_LoadBMP(PIONEER_DATA_DIR "/galaxy.bmp"));
+	RefCountedPtr<FileSystem::FileData> filedata = FileSystem::gameDataFiles.ReadFile("galaxy.bmp");
+	if (!filedata) {
+		Error("Galaxy: couldn't load '%s'\n", galaxyBitmapFilename.c_str());
+		Pi::Quit();
+	}
+
+	SDL_RWops *datastream = SDL_RWFromConstMem(filedata->GetData(), filedata->GetSize());
+	m_densityMap.Reset(SDL_LoadBMP_RW(datastream, 1));
 	if (!m_densityMap) {
-		Error("SDL_LoadBMP: %s\n", IMG_GetError());
+		Error("Galaxy: couldn't load: %s (%s)\n", galaxyBitmapFilename.c_str(), SDL_GetError());
 		Pi::Quit();
 	}
 }

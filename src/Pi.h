@@ -59,6 +59,7 @@ class Pi {
 public:
 	static void Init();
 	static void RedirectStdio();
+	static void LoadWindowIcon();
 	static void InitGame();
 	static void StarportStart(Uint32 starport);
 	static void StartGame();
@@ -93,6 +94,7 @@ public:
 	static void BoinkNoise();
 	static float CalcHyperspaceRange(int hyperclass, int total_mass_in_tonnes);
 	static void Message(const std::string &message, const std::string &from = "", enum MsgLevel level = MSG_NORMAL);
+	static std::string GetSaveDir();
 
 	static sigc::signal<void, SDL_keysym*> onKeyPress;
 	static sigc::signal<void, SDL_keysym*> onKeyRelease;
@@ -169,7 +171,7 @@ public:
 	static const char * const combatRating[];
 
 	static struct DetailLevel detail;
-	static GameConfig config;
+	static GameConfig *config;
 private:
 	static void HandleEvents();
 	static void InitJoysticks();
