@@ -79,7 +79,7 @@ guitest_SOURCES = \
 	GuiSingle.cpp \
 	GuiScreen.cpp \
 	GuiBackground.cpp \
-    GuiBox.cpp \
+	GuiBox.cpp \
 	GuiImage.cpp \
 	GuiLabel.cpp \
 	GuiTextLayout.cpp \
