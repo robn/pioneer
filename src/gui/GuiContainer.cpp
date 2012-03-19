@@ -1,4 +1,7 @@
 #include "GuiContainer.h"
+#include "GuiContext.h"
+#include "matrix4x4.h"
+#include "graphics/Renderer.h"
 
 namespace Gui {
 
@@ -20,12 +23,12 @@ void Container::Draw()
 {
 	// XXX set scissor region
 
+	Graphics::Renderer *r = GetContext()->GetRenderer();
+
 	for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); ++i) {
-		const vector2f &pos = (*i)->GetPosition();
-		glPushMatrix();
-		glTranslatef(pos.x, pos.y, 0);
+		const vector2f &pos = (*i)->GetAbsolutePosition();
+		r->SetTransform(matrix4x4f::Translation(pos.x,pos.y,0));
 		(*i)->Draw();
-		glPopMatrix();
 	}
 }
 
