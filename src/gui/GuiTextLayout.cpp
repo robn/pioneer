@@ -2,6 +2,7 @@
 #include "GuiWidget.h"
 #include "RefCounted.h"
 #include "TextureFont.h"
+#include "Color.h"
 
 namespace Gui {
 
@@ -75,10 +76,8 @@ void TextLayout::Draw(Graphics::Renderer *r, const vector2f &size)
 	ComputeSize(size);
 
 	// XXX STYLE
-	glColor3f(1.0f,1.0f,1.0f);
-
 	for (std::vector<Word>::iterator i = m_words.begin(); i != m_words.end(); ++i)
-		m_font->RenderString(r, (*i).text.c_str(), (*i).pos.x, (*i).pos.y);
+		m_font->RenderString(r, (*i).text.c_str(), (*i).pos.x, (*i).pos.y, Color::WHITE);
 }
 
 }
