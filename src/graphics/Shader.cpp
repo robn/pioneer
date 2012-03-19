@@ -91,7 +91,7 @@ bool Shader::Compile(const char *shader_name, const char *additional_defines)
 	RefCountedPtr<FileSystem::FileData> pscode = FileSystem::gameDataFiles.ReadFile(name + ".frag.glsl");
 	RefCountedPtr<FileSystem::FileData> allcode = FileSystem::gameDataFiles.ReadFile(name + ".all.glsl");
 
-	if (vscode == 0) {
+	if (!vscode) {
 		fprintf(stderr, "Could not find shader %s\n", (name + ".vert.glsl").c_str());
 		m_program = 0;
 		return false;
