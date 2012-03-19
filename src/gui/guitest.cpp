@@ -7,6 +7,7 @@
 #include "GuiImage.h"
 #include "GuiLabel.h"
 #include "GuiMargin.h"
+#include "FileSystem.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 
@@ -27,6 +28,8 @@ static bool move_handler(const Gui::MouseMotionEvent &event)
 
 int main(int argc, char **argv)
 {
+	FileSystem::Init();
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "sdl init failed: %s\n", SDL_GetError());
 		exit(-1);
@@ -87,13 +90,13 @@ int main(int argc, char **argv)
 					c->VBox()->PackEnd(Gui::WidgetSet(
 						c->HBox()->PackEnd(Gui::WidgetSet(
 							c->Label("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
-							(image = c->Image("data/icons/object_star_g.png")),
-							c->Image("data/icons/object_star_m.png")
+							(image = c->Image("icons/object_star_g.png")),
+							c->Image("icons/object_star_m.png")
 						)),
 						c->Background(Color(1.0f, 0.0f, 0.0f, 1.0f)),
 						c->Background(Color(0.0f, 1.0f, 0.0f, 1.0f)),
 						c->Background(Color(0.0f, 0.0f, 1.0f, 1.0f)),
-						c->Image("data/icons/cpanel.png")
+						c->Image("icons/cpanel.png")
 					))
 				)
 			)
