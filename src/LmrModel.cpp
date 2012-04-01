@@ -12,6 +12,7 @@
 #include "EquipSet.h"
 #include "ShipType.h"
 #include "FileSystem.h"
+#include "CRC32.h"
 #include "graphics/Graphics.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
@@ -21,6 +22,8 @@
 #include "graphics/TextureGL.h" // XXX temporary until LMR uses renderer drawing properly
 #include <set>
 #include <algorithm>
+
+static const Uint32 s_cacheVersion = 1;
 
 /*
  * Interface: LMR
@@ -931,12 +934,16 @@ public:
 			}
 			else if ((m_ops[i].type == OP_DRAW_ELEMENTS) && (m_ops[i].elems.textureFile)) {
 				m_ops[i].elems.textureFile = new std::string(_fread_string(f));
+				m_ops[i].elems.texture = 0;
 
-				if (m_ops[i].elems.glowmapFile)
+				if (m_ops[i].elems.glowmapFile) {
 					m_ops[i].elems.glowmapFile = new std::string(_fread_string(f));
+					m_ops[i].elems.glowmap = 0;
+				}
 			}
 			else if ((m_ops[i].type == OP_DRAW_BILLBOARDS) && (m_ops[i].billboards.textureFile)) {
 				m_ops[i].billboards.textureFile = new std::string(_fread_string(f));
+				m_ops[i].elems.texture = 0;
 			}
 		}
 	}
@@ -4400,18 +4407,16 @@ static Uint32 s_allModelFilesCRC;
 static Uint32 _calculate_all_models_checksum()
 {
 	// do we need to rebuild the model cache?
-	Uint32 checksum = 0;
+	CRC32 crc;
 	for (FileSystem::FileEnumerator files(FileSystem::gameDataFiles, "models", FileSystem::FileEnumerator::Recurse); !files.Finished(); files.Next())
 	{
 		const FileSystem::FileInfo &info = files.Current();
 		if (info.IsFile() && (info.GetPath().substr(info.GetPath().size() - 4) != ".png")) {
 			RefCountedPtr<FileSystem::FileData> data = files.Current().Read();
-			const char *buf = data->GetData();
-			size_t sz = data->GetSize();
-			for (size_t i = 0; i < sz; ++i) { checksum += buf[i]; }
+			crc.AddData(data->GetData(), data->GetSize());
 		}
 	}
-	return checksum;
+	return crc.GetChecksum();
 }
 
 static void _detect_model_changes()
@@ -4420,8 +4425,9 @@ static void _detect_model_changes()
 
 	FILE *cache_sum_file = fopen(FileSystem::JoinPath(s_cacheDir, "cache.sum").c_str(), "rb");
 	if (cache_sum_file) {
-		if ((_fread_string(cache_sum_file) == PIONEER_VERSION) &&
-		    (_fread_string(cache_sum_file) == PIONEER_EXTRAVERSION)) {
+		Uint32 version;
+		fread_or_die(&version, sizeof(version), 1, cache_sum_file);
+		if (version == s_cacheVersion) {
 			Uint32 checksum;
 			fread_or_die(&checksum, sizeof(checksum), 1, cache_sum_file);
 			if (checksum == s_allModelFilesCRC) {
@@ -4438,8 +4444,7 @@ static void _write_model_crc_file()
 	if (s_recompileAllModels) {
 		FILE *cache_sum_file = fopen(FileSystem::JoinPath(s_cacheDir, "cache.sum").c_str(), "wb");
 		if (cache_sum_file) {
-			_fwrite_string(PIONEER_VERSION, cache_sum_file);
-			_fwrite_string(PIONEER_EXTRAVERSION, cache_sum_file);
+			fwrite(&s_cacheVersion, sizeof(s_cacheVersion), 1, cache_sum_file);
 			fwrite(&s_allModelFilesCRC, sizeof(s_allModelFilesCRC), 1, cache_sum_file);
 			fclose(cache_sum_file);
 		}
