@@ -1,4 +1,8 @@
 #include "GuiBackground.h"
+#include "GuiContext.h"
+#include "graphics/Renderer.h"
+#include "graphics/VertexArray.h"
+#include "graphics/Material.h"
 
 namespace Gui {
 
@@ -6,21 +10,20 @@ void Background::Draw()
 {
 	const vector2f &size = GetSize();
 
-	// XXX use renderer
+	// XXX I'd prefer a "clear region" method on the renderer, but I need to
+	// look up what's possible at the GL/D3D level to support it
 
-	GLfloat array[4*2] = {
-		0,      size.y,
-		size.x, size.y,
-		size.x, 0,
-		0,      0
-	};
+	Graphics::VertexArray va(Graphics::ATTRIB_POSITION);
+	va.Add(vector3f(0,      0,      0));
+	va.Add(vector3f(0,      size.y, 0));
+	va.Add(vector3f(size.x, 0,      0));
+	va.Add(vector3f(size.x, size.y, 0));
 
-	glColor4fv(m_color);
+	Graphics::Material mat;
+	mat.diffuse = m_color;
+	mat.unlit = true;
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, sizeof(GLfloat)*2, &array[0]);
-	glDrawArrays(GL_QUADS, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
+	GetContext()->GetRenderer()->DrawTriangles(&va, &mat, Graphics::TRIANGLE_STRIP);
 
 	Container::Draw();
 }
