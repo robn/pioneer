@@ -82,6 +82,17 @@ int main(int argc, char **argv)
 	Gui::Context *c = new Gui::Context(r);
 	Gui::Screen *screen = new Gui::Screen(c, WIDTH, HEIGHT);
 
+	Gui::Button *button;
+	screen->SetInnerWidget(
+		c->Margin(10.0f)->SetInnerWidget(
+			(button = c->Button())
+		)
+	);
+
+	button->onMouseUp.connect(sigc::ptr_fun(&click_handler));
+	button->onMouseMove.connect(sigc::ptr_fun(&move_handler));
+
+#if 0
 	Gui::Image *image;
 	screen->SetInnerWidget(
 		c->Background(Color(0.4f, 0.2f, 0.4f, 1.0f))->SetInnerWidget(
@@ -105,6 +116,7 @@ int main(int argc, char **argv)
 
 	image->onMouseUp.connect(sigc::ptr_fun(&click_handler));
 	image->onMouseMove.connect(sigc::ptr_fun(&move_handler));
+#endif
 
 	while (1) {
 		bool done = false;

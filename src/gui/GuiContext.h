@@ -9,6 +9,7 @@
 #include "GuiBox.h"
 #include "GuiImage.h"
 #include "GuiLabel.h"
+#include "GuiButton.h"
 
 namespace Graphics { class Renderer; }
 
@@ -34,6 +35,8 @@ public:
 	// visual elements
 	Gui::Image *Image(const std::string &filename, Image::StretchMode stretchMode = Image::STRETCH_PRESERVE) { return new Gui::Image(this, filename, stretchMode); }
 	Gui::Label *Label(const std::string &text) { return new Gui::Label(this, text); }
+
+	Gui::Button *Button() { return new Gui::Button(this); }
 
 	Graphics::Renderer *GetRenderer() const { return m_renderer; }
 	RefCountedPtr<TextureFont> GetFont() const { return m_font; }

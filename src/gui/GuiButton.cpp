@@ -1,139 +1,43 @@
-#include "libs.h"
-#include "Gui.h"
-
-#define BUTTON_SIZE	16
+#include "GuiButton.h"
 
 namespace Gui {
-Button::Button() 
+
+// XXX STYLE
+static const float buttonSize = 32.0f;
+
+Metrics Button::GetMetrics(const vector2f &hint)
 {
-	m_isPressed = false;
-	m_eventMask = EVENT_MOUSEDOWN | EVENT_MOUSEUP | EVENT_MOUSEMOTION;
-	SetSize(BUTTON_SIZE, BUTTON_SIZE);
+	Metrics metrics = Single::GetMetrics(hint - vector2f(buttonSize));
+
+	metrics.minimum += vector2f(buttonSize);
+	metrics.ideal += vector2f(buttonSize);
+	metrics.maximum += vector2f(buttonSize);
+
+	return metrics;
 }
 
-Button::~Button()
+void Button::Draw()
 {
-	_m_release.disconnect();
-	_m_kbrelease.disconnect();
-}
+	// XXX STYLE
+	
+	vector2f drawSize(buttonSize);
+	if (GetInnerWidget()) drawSize += GetInnerWidget()->GetSize();
 
-bool Button::OnMouseDown(GuiExtra::MouseButtonEvent *e)
-{
-	if (e->button == 1) {
-		m_isPressed = true;
-		onPress.emit();
-		// wait for mouse release, regardless of where on screen
-		_m_release = GuiExtra::RawEvents::onMouseUp.connect(sigc::mem_fun(this, &Button::OnRawMouseUp));
-	}
-	return false;
-}
+	GLfloat array[4*2] = {
+		0,          drawSize.y,
+		drawSize.x, drawSize.y,
+		drawSize.x, 0,
+		0,          0
+	};
 
-bool Button::OnMouseUp(GuiExtra::MouseButtonEvent *e)
-{
-	if ((e->button == 1) && m_isPressed) {
-		m_isPressed = false;
-		_m_release.disconnect();
-		onRelease.emit();
-		onClick.emit();
-	}
-	return false;
-}
+	glColor4f(0.8f,0.8f,0.3f,1.0f);
 
-void Button::OnActivate()
-{
-	// activated by keyboard shortcut
-	m_isPressed = true;
-	_m_kbrelease = GuiExtra::RawEvents::onKeyUp.connect(sigc::mem_fun(this, &Button::OnRawKeyUp));
-	onPress.emit();
-}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, sizeof(GLfloat)*2, &array[0]);
+	glDrawArrays(GL_QUADS, 0, 4);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-void Button::OnRawKeyUp(SDL_KeyboardEvent *e)
-{
-	if (e->keysym.sym == m_shortcut.sym) {
-		m_isPressed = false;
-		_m_kbrelease.disconnect();
-		onRelease.emit();
-		onClick.emit();
-	}
-}
-
-void Button::OnRawMouseUp(GuiExtra::MouseButtonEvent *e)
-{
-	if (e->button == 1) {
-		m_isPressed = false;
-		_m_release.disconnect();
-		onRelease.emit();
-	}
-}
-
-void SolidButton::GetSizeRequested(float size[2])
-{
-	size[0] = size[1] = BUTTON_SIZE;
-}
-
-void TransparentButton::GetSizeRequested(float size[2])
-{
-	size[0] = size[1] = BUTTON_SIZE;
-}
-
-void SolidButton::Draw()
-{
-	float size[2];
-	GetSize(size);
-	if (IsPressed()) {
-		GuiExtra::Theme::DrawIndent(size);
-	} else {
-		GuiExtra::Theme::DrawOutdent(size);
-	}
-}
-void TransparentButton::Draw()
-{
-	float size[2];
-	GetSize(size);
-	glColor3f(1,1,1);
-	GuiExtra::Theme::DrawHollowRect(size);
-}
-
-LabelButton::LabelButton(Label *label): Button()
-{
-	m_label = label;
-	m_padding = 2.0;
-	onSetSize.connect(sigc::mem_fun(this, &LabelButton::OnSetSize));
-}
-
-LabelButton::~LabelButton() { delete m_label; }
-
-void LabelButton::GetSizeRequested(float size[2])
-{
-	m_label->GetSizeRequested(size);
-	size[0] += 2*m_padding;
-	//size[1] += 2*m_padding;
-}
-
-void LabelButton::Draw()
-{
-	float size[2];
-	GetSize(size);
-	//printf("%f,%f\n", size[0], size[1]);
-	glColor3f(1,1,1);
-	//GuiExtra::Theme::DrawHollowRect(size);
-	if (IsPressed()) {
-		GuiExtra::Theme::DrawIndent(size);
-	} else {
-		GuiExtra::Theme::DrawOutdent(size);
-	}
-	glPushMatrix();
-	glTranslatef(m_padding, m_padding*0.5, 0);
-	m_label->Draw();
-	glPopMatrix();
-}
-
-void LabelButton::OnSetSize()
-{
-	float size[2];
-	GetSize(size);
-
-	m_label->SetSize(size[0]-2*m_padding, size[1]);
+	Container::Draw();
 }
 
 }
