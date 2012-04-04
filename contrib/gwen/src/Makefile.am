@@ -64,6 +64,7 @@ libgwen_a_SOURCES = \
 	Controls/WindowControl.cpp \
 	Controls/Dialog/FileOpen.cpp \
 	Controls/Dialog/FileSave.cpp \
-	Controls/Dialog/Query.cpp
+	Controls/Dialog/Query.cpp \
+	Platforms/Null.cpp
 
 INCLUDES = -I../include
