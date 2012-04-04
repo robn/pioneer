@@ -71,6 +71,11 @@
 #include "SDLWrappers.h"
 #include <fstream>
 
+#include "Gwen/Gwen.h"
+#include "Gwen/Skins/Simple.h"
+#include "Gwen/Skins/TexturedBase.h"
+#include "ui/Renderer.h"
+
 float Pi::gameTickAlpha;
 int Pi::scrWidth;
 int Pi::scrHeight;
@@ -1136,8 +1141,17 @@ void Pi::HandleMenuKey(int n)
 
 void Pi::Start()
 {
+	UI::Renderer *uiRenderer = new UI::Renderer();
+	Gwen::Skin::TexturedBase skin(uiRenderer);
+	skin.Init("DefaultSkin.png");
+	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
+	canvas->SetSize(scrWidth, scrHeight);
+	canvas->SetDrawBackground(true);
+	canvas->SetBackgroundColor(Gwen::Color(33,110,180,255));
+
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
+#if 0
 	Gui::Fixed *menu = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()));
 	Gui::Screen::AddBaseWidget(menu, 0, 0);
 	menu->SetTransparency(true);
@@ -1191,6 +1205,7 @@ void Pi::Start()
 	Gui::Screen::PopFont();
 
 	menu->ShowAll();
+#endif
 	
 	Uint32 last_time = SDL_GetTicks();
 	float _time = 0;
@@ -1205,17 +1220,23 @@ void Pi::Start()
 		Pi::SetMouseGrab(false);
 		draw_intro(background, _time);
 		Pi::renderer->EndFrame();
+		canvas->RenderCanvas();
+#if 0
 		Gui::Draw();
+#endif
 		Pi::renderer->SwapBuffers();
 		
 		Pi::frameTime = 0.001f*(SDL_GetTicks() - last_time);
 		_time += Pi::frameTime;
 		last_time = SDL_GetTicks();
 	}
+
+#if 0
 	menu->HideAll();
 	
 	Gui::Screen::RemoveBaseWidget(menu);
 	delete menu;
+#endif
 	delete background;
 
 	// game is set by HandleMenuKey if any game-starting option (start or

@@ -337,7 +337,7 @@ TESTS = tests
  
 tests_LDADD = collider/libcollider.a gui/libgui.a graphics/libgraphics.a terrain/libterrain.a
 
-INCLUDES = -isystem @top_srcdir@/contrib
+INCLUDES = -isystem @top_srcdir@/contrib -isystem @top_srcdir@/contrib/gwen/include
 if !HAVE_LUA
 INCLUDES += -isystem @top_srcdir@/contrib/lua
 endif
