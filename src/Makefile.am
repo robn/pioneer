@@ -283,6 +283,7 @@ pioneer_SOURCES	= \
 	enum_table.cpp
 
 pioneer_LDADD = ../contrib/oolua/liboolua.a collider/libcollider.a gui/libgui.a graphics/libgraphics.a terrain/libterrain.a \
+		../contrib/gwen/src/libgwen.a \
 		$(FREETYPE_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) \
 		$(SDL_LIBS) $(SIGC_LIBS) $(LUA_LIBS) $(VORBIS_LIBS) \
 		$(PNG_LIBS)
@@ -315,6 +316,7 @@ modelviewer_SOURCES = \
 	utils.cpp \
 	enum_table.cpp
 modelviewer_LDADD = collider/libcollider.a gui/libgui.a graphics/libgraphics.a terrain/libterrain.a \
+		    ../contrib/gwen/src/libgwen.a \
 		    $(FREETYPE_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS) \
 		    $(SDL_LIBS) $(SIGC_LIBS) $(LUA_LIBS) $(PNG_LIBS)
 if !HAVE_LUA
