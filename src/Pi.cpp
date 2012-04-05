@@ -72,8 +72,8 @@
 #include <fstream>
 
 #include "Gwen/Gwen.h"
-#include "Gwen/Skins/Simple.h"
 #include "Gwen/Skins/TexturedBase.h"
+#include "Gwen/Controls/Button.h"
 #include "ui/Renderer.h"
 
 float Pi::gameTickAlpha;
@@ -1151,6 +1151,10 @@ void Pi::Start()
 	canvas->SetSize(scrWidth, scrHeight);
 	canvas->SetDrawBackground(true);
 	canvas->SetBackgroundColor(Gwen::Color(33,110,180,255));
+
+	Gwen::Controls::Button *button = new Gwen::Controls::Button(canvas);
+	button->SetText("Button");
+	button->Show();
 
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
