@@ -33,6 +33,10 @@ class LuaConsole;
 class LuaNameGen;
 namespace Graphics { class Renderer; }
 namespace Sound { class MusicPlayer; }
+namespace UI {
+	class Renderer;
+	class InputHandler;
+}
 
 #if WITH_OBJECTVIEWER
 class ObjectViewerView;
@@ -155,6 +159,9 @@ public:
 	static ShipCpanel *cpan;
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
 	static Graphics::Renderer* renderer; // blargh
+
+	static UI::Renderer *uiRenderer;
+	static UI::InputHandler *uiInputHandler;
 
 #if WITH_OBJECTVIEWER
 	static ObjectViewerView *objectViewerView;
