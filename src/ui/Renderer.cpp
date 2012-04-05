@@ -20,7 +20,7 @@ void Renderer::End()
 
 void Renderer::SetDrawColor(Gwen::Color color)
 {
-	printf("UI::Renderer: SetDrawColor\n");
+	m_drawColor = Color(float(color.r)/255.f, float(color.g)/255.f, float(color.b)/255.f, float(color.a)/255.f);
 }
 
 void Renderer::DrawLine(int x, int y, int a, int b)

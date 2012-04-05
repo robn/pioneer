@@ -2,6 +2,7 @@
 #define _UI_RENDERER_H
 
 #include "Gwen/BaseRender.h"
+#include "Color.h"
 
 namespace Graphics { class Renderer; }
 
@@ -31,6 +32,8 @@ public:
 private:
 	Graphics::Renderer *m_renderer;
 	float m_width, m_height;
+
+	Color m_drawColor;
 };
 
 }
