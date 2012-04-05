@@ -1,5 +1,7 @@
 #include "ui/Renderer.h"
 #include "graphics/Renderer.h"
+#include "graphics/VertexArray.h"
+#include "graphics/Material.h"
 
 #include <list>
 #include <cstdio>
@@ -30,7 +32,20 @@ void Renderer::DrawLine(int x, int y, int a, int b)
 
 void Renderer::DrawFilledRect(Gwen::Rect rect)
 {
-	printf("UI::Renderer: DrawFilledRect x %d y %d w %d h %d\n", rect.x, rect.y, rect.w, rect.h);
+	// XXX I'd prefer a "clear region" method on the renderer, but I need to
+	// look up what's possible at the GL/D3D level to support it
+
+	Graphics::VertexArray va(Graphics::ATTRIB_POSITION);
+	va.Add(vector3f(rect.x,        rect.y,        0));
+	va.Add(vector3f(rect.x,        rect.y+rect.h, 0));
+	va.Add(vector3f(rect.x+rect.w, rect.y,        0));
+	va.Add(vector3f(rect.x+rect.w, rect.y+rect.h, 0));
+
+	Graphics::Material mat;
+	mat.diffuse = m_drawColor;
+	mat.unlit = true;
+
+	m_renderer->DrawTriangles(&va, &mat, Graphics::TRIANGLE_STRIP);
 }
 
 void Renderer::LoadTexture(Gwen::Texture *texture)
