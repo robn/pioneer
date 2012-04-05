@@ -2,6 +2,8 @@
 #include "graphics/Renderer.h"
 #include "graphics/VertexArray.h"
 #include "graphics/Material.h"
+#include "graphics/Texture.h"
+#include "graphics/TextureBuilder.h"
 
 #include <list>
 #include <cstdio>
@@ -48,14 +50,19 @@ void Renderer::DrawFilledRect(Gwen::Rect rect)
 	m_renderer->DrawTriangles(&va, &mat, Graphics::TRIANGLE_STRIP);
 }
 
-void Renderer::LoadTexture(Gwen::Texture *texture)
+void Renderer::LoadTexture(Gwen::Texture *gwenTexture)
 {
-	printf("UI::Renderer: LoadTexture name %s w %d h %d\n", texture->name.c_str(), texture->width, texture->height);
+	Graphics::Texture *texture = Graphics::TextureBuilder::UI(gwenTexture->name.c_str()).GetOrCreateTexture(m_renderer, "ui");
+	gwenTexture->data = reinterpret_cast<void*>(new RefCountedPtr<Graphics::Texture>(texture));
+	gwenTexture->width = texture->GetDescriptor().dataSize.x;
+	gwenTexture->height = texture->GetDescriptor().dataSize.y;
+	gwenTexture->failed = false;
 }
 
-void Renderer::FreeTexture(Gwen::Texture *texture)
+void Renderer::FreeTexture(Gwen::Texture *gwenTexture)
 {
-	printf("UI::Renderer: FreeTexture name %s\n", texture->name.c_str());
+	RefCountedPtr<Graphics::Texture> *texture = reinterpret_cast<RefCountedPtr<Graphics::Texture>*>(gwenTexture->data);
+	delete texture;
 }
 
 void Renderer::LoadFont(Gwen::Font *font)

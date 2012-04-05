@@ -1144,7 +1144,7 @@ void Pi::Start()
 	UI::Renderer *uiRenderer = new UI::Renderer(Pi::renderer, scrWidth, scrHeight);
 
 	Gwen::Skin::TexturedBase skin(uiRenderer);
-	skin.Init("textures/DefaultSkin.png");
+	skin.Init("textures/ui_texture.png");
 	skin.SetDefaultFont(L"GuiFont");
 
 	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
