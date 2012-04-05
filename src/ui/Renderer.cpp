@@ -2,6 +2,14 @@
 
 namespace UI {
 
+void Renderer::Begin()
+{
+}
+
+void Renderer::End()
+{
+}
+
 void Renderer::SetDrawColor(Gwen::Color color)
 {
 }
