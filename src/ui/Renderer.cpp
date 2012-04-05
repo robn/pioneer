@@ -1,4 +1,5 @@
 #include "ui/Renderer.h"
+#include "graphics/Renderer.h"
 
 #include <list>
 #include <cstdio>
@@ -10,12 +11,11 @@ namespace UI {
 
 void Renderer::Begin()
 {
-	printf("UI::Renderer: Begin\n");
+	m_renderer->SetOrthographicProjection(0, m_width, m_height, 0, -1.f, 1.f);
 }
 
 void Renderer::End()
 {
-	printf("UI::Renderer: End\n");
 }
 
 void Renderer::SetDrawColor(Gwen::Color color)

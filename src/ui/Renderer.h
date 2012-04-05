@@ -9,7 +9,7 @@ namespace UI {
 
 class Renderer : public Gwen::Renderer::Base {
 public:
-	Renderer(Graphics::Renderer *renderer) : m_renderer(renderer) {}
+	Renderer(Graphics::Renderer *renderer, float width, float height) : m_renderer(renderer), m_width(width), m_height(height) {}
 	virtual ~Renderer() {}
 
 	virtual void Begin();
@@ -30,6 +30,7 @@ public:
 
 private:
 	Graphics::Renderer *m_renderer;
+	float m_width, m_height;
 };
 
 }
