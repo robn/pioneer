@@ -1142,8 +1142,11 @@ void Pi::HandleMenuKey(int n)
 void Pi::Start()
 {
 	UI::Renderer *uiRenderer = new UI::Renderer(Pi::renderer, scrWidth, scrHeight);
+
 	Gwen::Skin::TexturedBase skin(uiRenderer);
-	skin.Init("DefaultSkin.png");
+	skin.Init(FileSystem::JoinPath(FileSystem::GetDataDir(), "textures/DefaultSkin.png"));
+	skin.SetDefaultFont(L"GuiFont");
+
 	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
 	canvas->SetSize(scrWidth, scrHeight);
 	canvas->SetDrawBackground(true);
