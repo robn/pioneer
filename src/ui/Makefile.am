@@ -8,7 +8,9 @@ INCLUDES = -I$(srcdir)/.. -isystem @top_srcdir@/contrib/gwen/include
 
 noinst_LIBRARIES = libui.a
 noinst_HEADERS = \
+	InputHandler.h \
 	Renderer.h
 
 libui_a_SOURCES = \
+	InputHandler.cpp \
 	Renderer.cpp
