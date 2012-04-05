@@ -23,6 +23,7 @@ public:
 
 	virtual void LoadTexture(Gwen::Texture *texture);
 	virtual void FreeTexture(Gwen::Texture *texture);
+	virtual void DrawTexturedRect(Gwen::Texture* texture, Gwen::Rect targetRect, float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f);
 
 	virtual void LoadFont(Gwen::Font *font);
 	virtual void FreeFont(Gwen::Font *font);

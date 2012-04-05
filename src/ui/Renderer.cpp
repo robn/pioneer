@@ -69,6 +69,24 @@ void Renderer::FreeTexture(Gwen::Texture *gwenTexture)
 	delete texture;
 }
 
+void Renderer::DrawTexturedRect(Gwen::Texture* gwenTexture, Gwen::Rect rect, float u1, float v1, float u2, float v2)
+{
+	RefCountedPtr<Graphics::Texture> texture = *(reinterpret_cast<RefCountedPtr<Graphics::Texture>*>(gwenTexture->data));
+
+	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0);
+	va.Add(vector3f(rect.x,        rect.y,        0.0f), vector2f(u1, v1));
+	va.Add(vector3f(rect.x,        rect.y+rect.h, 0.0f), vector2f(u1, v2));
+	va.Add(vector3f(rect.x+rect.w, rect.y,        0.0f), vector2f(u2, v1));
+	va.Add(vector3f(rect.x+rect.w, rect.y+rect.h, 0.0f), vector2f(u2, v2));
+
+	Graphics::Material mat;
+	mat.unlit = true;
+	mat.texture0 = texture.Get();
+	mat.vertexColors = false;
+
+	m_renderer->DrawTriangles(&va, &mat, Graphics::TRIANGLE_STRIP);
+}
+
 // XXX horrible horrors to convert gwen's native widechar strings to something
 // more palatable.
 static inline std::string wstring_to_string(const std::wstring &src)
