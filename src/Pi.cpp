@@ -1149,8 +1149,6 @@ void Pi::Start()
 
 	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
 	canvas->SetSize(scrWidth, scrHeight);
-	canvas->SetDrawBackground(true);
-	canvas->SetBackgroundColor(Gwen::Color(33,110,180,255));
 
 	Gwen::Controls::Button *button = new Gwen::Controls::Button(canvas);
 	button->SetText("Button");

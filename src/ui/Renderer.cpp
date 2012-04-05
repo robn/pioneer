@@ -4,6 +4,9 @@
 #include "graphics/Material.h"
 #include "graphics/Texture.h"
 #include "graphics/TextureBuilder.h"
+#include "FontCache.h"
+#include "TextureFont.h"
+#include "TextSupport.h"
 
 #include <list>
 #include <cstdio>
@@ -65,20 +68,50 @@ void Renderer::FreeTexture(Gwen::Texture *gwenTexture)
 	delete texture;
 }
 
-void Renderer::LoadFont(Gwen::Font *font)
+// XXX horrible horrors to convert gwen's native widechar strings to something
+// more palatable.
+static inline std::string wstring_to_string(const std::wstring &src)
 {
-	printf("UI::Renderer: LoadFont facename %ls size %f bold %s\n", font->facename.c_str(), font->size, font->bold ? "YES" : "NO");
+	std::string dest;
+	char buf[4];
+	for (unsigned int i = 0; i < src.length(); i++) {
+		int len = conv_wc_to_mb(src[i], buf);
+		dest.append(buf, len);
+	}
+	return dest;
 }
 
-void Renderer::FreeFont(Gwen::Font *font)
+void Renderer::LoadFont(Gwen::Font *gwenFont)
 {
-	printf("UI::Renderer: FreeFont facename %ls\n", font->facename.c_str());
+	// XXX build a new fontconfig using requested size/weight and instantiate a font with it
+	FontCache cache;
+	RefCountedPtr<TextureFont> font = cache.GetTextureFont(wstring_to_string(gwenFont->facename).c_str());
+	gwenFont->data = reinterpret_cast<RefCountedPtr<TextureFont>*>(new RefCountedPtr<TextureFont>(font));
 }
 
-Gwen::Point Renderer::MeasureText(Gwen::Font *font, const Gwen::UnicodeString &text)
+void Renderer::FreeFont(Gwen::Font *gwenFont)
 {
-	printf("UI::Renderer: MeasureText facename %ls text %ls\n", font->facename.c_str(), text.c_str());
-	return Gwen::Point();
+	RefCountedPtr<TextureFont> *font = reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data);
+	delete font;
+}
+
+Gwen::Point Renderer::MeasureText(Gwen::Font *gwenFont, const Gwen::UnicodeString &text)
+{
+	if (!gwenFont->data) LoadFont(gwenFont);
+	RefCountedPtr<TextureFont> font = *(reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data));
+
+	float w, h;
+	font->MeasureString(wstring_to_string(text).c_str(), w, h);
+
+	return Gwen::Point(int(ceilf(w)), int(ceilf(h)));
+}
+
+void Renderer::RenderText(Gwen::Font* gwenFont, Gwen::Point pos, const Gwen::UnicodeString& text)
+{
+	if (!gwenFont->data) LoadFont(gwenFont);
+	RefCountedPtr<TextureFont> font = *(reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data));
+
+	font->RenderString(m_renderer, wstring_to_string(text).c_str(), pos.x, pos.y);
 }
 
 }

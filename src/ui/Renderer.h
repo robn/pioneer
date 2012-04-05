@@ -28,6 +28,7 @@ public:
 	virtual void FreeFont(Gwen::Font *font);
 
 	virtual Gwen::Point MeasureText(Gwen::Font *font, const Gwen::UnicodeString &text);
+	virtual void RenderText(Gwen::Font* font, Gwen::Point pos, const Gwen::UnicodeString& text);
 
 private:
 	Graphics::Renderer *m_renderer;
