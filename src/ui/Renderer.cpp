@@ -19,6 +19,7 @@ namespace UI {
 void Renderer::Begin()
 {
 	m_renderer->SetOrthographicProjection(0, m_width, m_height, 0, -1.f, 1.f);
+	m_renderer->SetDepthTest(false);
 }
 
 void Renderer::End()
