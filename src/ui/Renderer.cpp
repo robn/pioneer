@@ -38,6 +38,8 @@ void Renderer::DrawLine(int x, int y, int a, int b)
 
 void Renderer::DrawFilledRect(Gwen::Rect rect)
 {
+	Translate(rect);
+
 	// XXX I'd prefer a "clear region" method on the renderer, but I need to
 	// look up what's possible at the GL/D3D level to support it
 
@@ -71,6 +73,8 @@ void Renderer::FreeTexture(Gwen::Texture *gwenTexture)
 
 void Renderer::DrawTexturedRect(Gwen::Texture* gwenTexture, Gwen::Rect rect, float u1, float v1, float u2, float v2)
 {
+	Translate(rect);
+
 	RefCountedPtr<Graphics::Texture> texture = *(reinterpret_cast<RefCountedPtr<Graphics::Texture>*>(gwenTexture->data));
 
 	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0);
@@ -127,6 +131,8 @@ Gwen::Point Renderer::MeasureText(Gwen::Font *gwenFont, const Gwen::UnicodeStrin
 
 void Renderer::RenderText(Gwen::Font* gwenFont, Gwen::Point pos, const Gwen::UnicodeString& text)
 {
+	Translate(pos.x,pos.y);
+
 	if (!gwenFont->data) LoadFont(gwenFont);
 	RefCountedPtr<TextureFont> font = *(reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data));
 
