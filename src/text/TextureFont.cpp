@@ -1,9 +1,7 @@
 #include "TextureFont.h"
 #include "libs.h"
-#include "FileSystem.h"
 #include "graphics/Renderer.h"
 #include "graphics/VertexArray.h"
-#include "gui/GuiScreen.h"
 #include "TextSupport.h"
 #include "utils.h"
 #include <algorithm>
@@ -12,6 +10,8 @@
 #include FT_STROKER_H
 
 #define PARAGRAPH_SPACING 1.5f
+
+namespace Text {
 
 int TextureFont::s_glyphCount = 0;
 
@@ -177,9 +177,9 @@ int TextureFont::PickCharacter(const char *str, float mouseX, float mouseY) cons
 	return i2;
 }
 
-void TextureFont::RenderString(Graphics::Renderer *r, const char *str, float x, float y, const Color &color)
+void TextureFont::RenderString(const char *str, float x, float y, const Color &color)
 {
-	r->SetBlendMode(Graphics::BLEND_ALPHA);
+	m_renderer->SetBlendMode(Graphics::BLEND_ALPHA);
 	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE | Graphics::ATTRIB_UV0);
 
 	float px = x;
@@ -219,12 +219,12 @@ void TextureFont::RenderString(Graphics::Renderer *r, const char *str, float x, 
 		}
 	}
 
-	r->DrawTriangles(&va, &m_mat);
+	m_renderer->DrawTriangles(&va, &m_mat);
 }
 
-Color TextureFont::RenderMarkup(Graphics::Renderer *r, const char *str, float x, float y, const Color &color)
+Color TextureFont::RenderMarkup(const char *str, float x, float y, const Color &color)
 {
-	r->SetBlendMode(Graphics::BLEND_ALPHA);
+	m_renderer->SetBlendMode(Graphics::BLEND_ALPHA);
 	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE | Graphics::ATTRIB_UV0);
 
 	float px = x;
@@ -278,20 +278,17 @@ Color TextureFont::RenderMarkup(Graphics::Renderer *r, const char *str, float x,
 		}
 	}
 
-	r->DrawTriangles(&va, &m_mat);
+	m_renderer->DrawTriangles(&va, &m_mat);
 	return c;
 }
 
-TextureFont::TextureFont(const FontConfig &fc) : Font(fc)
+TextureFont::TextureFont(const FontDescriptor &descriptor, Graphics::Renderer *renderer) : Font(descriptor), m_renderer(renderer)
 {
 	int err; // used to store freetype error return codes
-	float scale[2];
-	Gui::Screen::GetCoords2Pixels(scale);
+	const int a_width = GetDescriptor().pixelWidth;
+	const int a_height = GetDescriptor().pixelHeight;
 
-	const int a_width = int(GetConfig().Int("PixelWidth") / scale[0]);
-	const int a_height = int(GetConfig().Int("PixelHeight") / scale[1]);
-
-	const float advx_adjust = GetConfig().Float("AdvanceXAdjustment");
+	const float advx_adjust = GetDescriptor().advanceXAdjustment;
 
 	m_pixSize = a_height;
 
@@ -309,13 +306,13 @@ TextureFont::TextureFont(const FontConfig &fc) : Font(fc)
 	std::vector<unsigned char> pixBuf(4*sz*sz);
 	std::fill(pixBuf.begin(), pixBuf.end(), 0);
 
-	Graphics::TextureDescriptor descriptor(Graphics::TEXTURE_RGBA, vector2f(sz,sz), Graphics::NEAREST_CLAMP);
-	m_texture.Reset(Gui::Screen::GetRenderer()->CreateTexture(descriptor));
+	Graphics::TextureDescriptor textureDescriptor(Graphics::TEXTURE_RGBA, vector2f(sz,sz), Graphics::NEAREST_CLAMP);
+	m_texture.Reset(m_renderer->CreateTexture(textureDescriptor));
 	m_mat.texture0 = m_texture.Get();
 	m_mat.unlit = true;
 	m_mat.vertexColors = true; //to allow per-character colors
 	
-	bool outline = GetConfig().Int("Outline");
+	bool outline = GetDescriptor().outline;
 
 	FT_Stroker stroker(0);
 	if (outline) {
@@ -477,4 +474,6 @@ TextureFont::TextureFont(const FontConfig &fc) : Font(fc)
 	m_height = float(a_height);
 	m_width = float(a_width);
 	m_descender = -float(m_face->descender) / 64.f;
+}
+
 }

@@ -250,6 +250,7 @@ AC_CONFIG_FILES([
 	src/gui/Makefile
 	src/graphics/Makefile
 	src/terrain/Makefile
+	src/text/Makefile
 	src/ui/Makefile
 	contrib/Makefile
 	contrib/lua/Makefile
