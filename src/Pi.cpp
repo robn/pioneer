@@ -1153,7 +1153,7 @@ void Pi::Start()
 
 	Gwen::Skin::TexturedBase skin(uiRenderer);
 	skin.Init("textures/ui_texture.png");
-	skin.SetDefaultFont(L"GuiFont");
+	skin.SetDefaultFont(L"TitilliumText22L004.otf");
 
 	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
 	canvas->SetSize(scrWidth, scrHeight);

@@ -4,9 +4,9 @@
 #include "graphics/Material.h"
 #include "graphics/Texture.h"
 #include "graphics/TextureBuilder.h"
-#include "FontCache.h"
-#include "TextureFont.h"
-#include "TextSupport.h"
+#include "text/TextureFont.h"
+#include "text/FontDescriptor.h"
+#include "text/TextSupport.h"
 
 #include <list>
 #include <cstdio>
@@ -99,7 +99,7 @@ static inline std::string wstring_to_string(const std::wstring &src)
 	std::string dest;
 	char buf[4];
 	for (unsigned int i = 0; i < src.length(); i++) {
-		int len = conv_wc_to_mb(src[i], buf);
+		int len = Text::conv_wc_to_mb(src[i], buf);
 		dest.append(buf, len);
 	}
 	return dest;
@@ -107,23 +107,23 @@ static inline std::string wstring_to_string(const std::wstring &src)
 
 void Renderer::LoadFont(Gwen::Font *gwenFont)
 {
-	// XXX build a new fontconfig using requested size/weight and instantiate a font with it
-	FontCache cache;
-	TextureFont *font = cache.GetTextureFont(wstring_to_string(gwenFont->facename).c_str()).Get();
+	// XXX handle points, bold
+	Text::FontDescriptor descriptor(wstring_to_string(gwenFont->facename), gwenFont->size, gwenFont->size);
+	Text::TextureFont *font = new Text::TextureFont(descriptor, m_renderer);
 	font->IncRefCount();
-	gwenFont->data = reinterpret_cast<TextureFont*>(font);
+	gwenFont->data = reinterpret_cast<Text::TextureFont*>(font);
 }
 
 void Renderer::FreeFont(Gwen::Font *gwenFont)
 {
-	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
+	Text::TextureFont *font = reinterpret_cast<Text::TextureFont*>(gwenFont->data);
 	font->DecRefCount();
 }
 
 Gwen::Point Renderer::MeasureText(Gwen::Font *gwenFont, const Gwen::UnicodeString &text)
 {
 	if (!gwenFont->data) LoadFont(gwenFont);
-	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
+	Text::TextureFont *font = reinterpret_cast<Text::TextureFont*>(gwenFont->data);
 
 	float w, h;
 	font->MeasureString(wstring_to_string(text).c_str(), w, h);
@@ -136,9 +136,9 @@ void Renderer::RenderText(Gwen::Font* gwenFont, Gwen::Point pos, const Gwen::Uni
 	Translate(pos.x,pos.y);
 
 	if (!gwenFont->data) LoadFont(gwenFont);
-	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
+	Text::TextureFont *font = reinterpret_cast<Text::TextureFont*>(gwenFont->data);
 
-	font->RenderString(m_renderer, wstring_to_string(text).c_str(), pos.x, pos.y);
+	font->RenderString(wstring_to_string(text).c_str(), pos.x, pos.y);
 }
 
 }
