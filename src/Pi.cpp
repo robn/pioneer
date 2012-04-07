@@ -1162,7 +1162,11 @@ void Pi::Start()
 
 	Gwen::Controls::Button *button = new Gwen::Controls::Button(canvas);
 	button->SetText("Button");
-	button->Show();
+	button->Dock(Gwen::Pos::Top);
+
+	button = new Gwen::Controls::Button(canvas);
+	button->SetText("Button 2");
+	button->Dock(Gwen::Pos::Top);
 
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
