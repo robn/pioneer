@@ -59,7 +59,8 @@ void Renderer::DrawFilledRect(Gwen::Rect rect)
 void Renderer::LoadTexture(Gwen::Texture *gwenTexture)
 {
 	Graphics::Texture *texture = Graphics::TextureBuilder::UI(gwenTexture->name.c_str()).GetOrCreateTexture(m_renderer, "ui");
-	gwenTexture->data = reinterpret_cast<void*>(new RefCountedPtr<Graphics::Texture>(texture));
+	texture->IncRefCount();
+	gwenTexture->data = reinterpret_cast<void*>(texture);
 	gwenTexture->width = texture->GetDescriptor().dataSize.x;
 	gwenTexture->height = texture->GetDescriptor().dataSize.y;
 	gwenTexture->failed = false;
@@ -67,15 +68,15 @@ void Renderer::LoadTexture(Gwen::Texture *gwenTexture)
 
 void Renderer::FreeTexture(Gwen::Texture *gwenTexture)
 {
-	RefCountedPtr<Graphics::Texture> *texture = reinterpret_cast<RefCountedPtr<Graphics::Texture>*>(gwenTexture->data);
-	delete texture;
+	Graphics::Texture *texture = reinterpret_cast<Graphics::Texture*>(gwenTexture->data);
+	texture->DecRefCount();
 }
 
 void Renderer::DrawTexturedRect(Gwen::Texture* gwenTexture, Gwen::Rect rect, float u1, float v1, float u2, float v2)
 {
 	Translate(rect);
 
-	RefCountedPtr<Graphics::Texture> texture = *(reinterpret_cast<RefCountedPtr<Graphics::Texture>*>(gwenTexture->data));
+	Graphics::Texture *texture = reinterpret_cast<Graphics::Texture*>(gwenTexture->data);
 
 	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0);
 	va.Add(vector3f(rect.x,        rect.y,        0.0f), vector2f(u1, v1));
@@ -85,7 +86,7 @@ void Renderer::DrawTexturedRect(Gwen::Texture* gwenTexture, Gwen::Rect rect, flo
 
 	Graphics::Material mat;
 	mat.unlit = true;
-	mat.texture0 = texture.Get();
+	mat.texture0 = texture;
 	mat.vertexColors = false;
 
 	m_renderer->DrawTriangles(&va, &mat, Graphics::TRIANGLE_STRIP);
@@ -108,20 +109,21 @@ void Renderer::LoadFont(Gwen::Font *gwenFont)
 {
 	// XXX build a new fontconfig using requested size/weight and instantiate a font with it
 	FontCache cache;
-	RefCountedPtr<TextureFont> font = cache.GetTextureFont(wstring_to_string(gwenFont->facename).c_str());
-	gwenFont->data = reinterpret_cast<RefCountedPtr<TextureFont>*>(new RefCountedPtr<TextureFont>(font));
+	TextureFont *font = cache.GetTextureFont(wstring_to_string(gwenFont->facename).c_str()).Get();
+	font->IncRefCount();
+	gwenFont->data = reinterpret_cast<TextureFont*>(font);
 }
 
 void Renderer::FreeFont(Gwen::Font *gwenFont)
 {
-	RefCountedPtr<TextureFont> *font = reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data);
-	delete font;
+	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
+	font->DecRefCount();
 }
 
 Gwen::Point Renderer::MeasureText(Gwen::Font *gwenFont, const Gwen::UnicodeString &text)
 {
 	if (!gwenFont->data) LoadFont(gwenFont);
-	RefCountedPtr<TextureFont> font = *(reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data));
+	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
 
 	float w, h;
 	font->MeasureString(wstring_to_string(text).c_str(), w, h);
@@ -134,7 +136,7 @@ void Renderer::RenderText(Gwen::Font* gwenFont, Gwen::Point pos, const Gwen::Uni
 	Translate(pos.x,pos.y);
 
 	if (!gwenFont->data) LoadFont(gwenFont);
-	RefCountedPtr<TextureFont> font = *(reinterpret_cast<RefCountedPtr<TextureFont>*>(gwenFont->data));
+	TextureFont *font = reinterpret_cast<TextureFont*>(gwenFont->data);
 
 	font->RenderString(m_renderer, wstring_to_string(text).c_str(), pos.x, pos.y);
 }
