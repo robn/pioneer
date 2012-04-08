@@ -71,11 +71,9 @@
 #include "SDLWrappers.h"
 #include <fstream>
 
+#include "ui/Context.h"
 #include "Gwen/Gwen.h"
-#include "Gwen/Skins/TexturedBase.h"
 #include "Gwen/Controls/Button.h"
-#include "ui/Renderer.h"
-#include "ui/InputHandler.h"
 
 float Pi::gameTickAlpha;
 int Pi::scrWidth;
@@ -164,8 +162,7 @@ ObjectViewerView *Pi::objectViewerView;
 
 Sound::MusicPlayer Pi::musicPlayer;
 
-UI::Renderer *Pi::uiRenderer;
-UI::InputHandler *Pi::uiInputHandler;
+UI::Context *Pi::uiContext;
 
 int Pi::CombatRating(int kills)
 {
@@ -709,7 +706,7 @@ void Pi::HandleEvents()
 	Pi::mouseMotion[0] = Pi::mouseMotion[1] = 0;
 	while (SDL_PollEvent(&event)) {
 		// XXX gwen consuming all regular input for now
-		uiInputHandler->ProcessEvent(event);
+		uiContext->ProcessEvent(event);
 		continue;
 
 		Gui::HandleSDLEvent(&event);
@@ -1149,22 +1146,13 @@ void Pi::HandleMenuKey(int n)
 
 void Pi::Start()
 {
-	uiRenderer = new UI::Renderer(Pi::renderer, scrWidth, scrHeight);
+	Pi::uiContext = new UI::Context(Pi::renderer, scrWidth, scrHeight);
 
-	Gwen::Skin::TexturedBase skin(uiRenderer);
-	skin.Init("textures/ui_texture.png");
-	skin.SetDefaultFont(L"TitilliumText22L004.otf");
-
-	Gwen::Controls::Canvas* canvas = new Gwen::Controls::Canvas(&skin);
-	canvas->SetSize(scrWidth, scrHeight);
-
-	uiInputHandler = new UI::InputHandler(canvas);
-
-	Gwen::Controls::Button *button = new Gwen::Controls::Button(canvas);
+	Gwen::Controls::Button *button = new Gwen::Controls::Button(Pi::uiContext->GetCanvas());
 	button->SetText("Button");
 	button->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::Button(canvas);
+	button = new Gwen::Controls::Button(Pi::uiContext->GetCanvas());
 	button->SetText("Button 2");
 	button->Dock(Gwen::Pos::Top);
 
@@ -1239,7 +1227,7 @@ void Pi::Start()
 		Pi::SetMouseGrab(false);
 		draw_intro(background, _time);
 		Pi::renderer->EndFrame();
-		canvas->RenderCanvas();
+		Pi::uiContext->GetCanvas()->RenderCanvas();
 #if 0
 		Gui::Draw();
 #endif

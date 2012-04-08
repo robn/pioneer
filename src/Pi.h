@@ -33,10 +33,7 @@ class LuaConsole;
 class LuaNameGen;
 namespace Graphics { class Renderer; }
 namespace Sound { class MusicPlayer; }
-namespace UI {
-	class Renderer;
-	class InputHandler;
-}
+namespace UI { class Context; }
 
 #if WITH_OBJECTVIEWER
 class ObjectViewerView;
@@ -160,8 +157,7 @@ public:
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
 	static Graphics::Renderer* renderer; // blargh
 
-	static UI::Renderer *uiRenderer;
-	static UI::InputHandler *uiInputHandler;
+	static UI::Context *uiContext;
 
 #if WITH_OBJECTVIEWER
 	static ObjectViewerView *objectViewerView;
