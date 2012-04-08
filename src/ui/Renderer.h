@@ -31,6 +31,8 @@ public:
 	virtual Gwen::Point MeasureText(Gwen::Font *font, const Gwen::UnicodeString &text);
 	virtual void RenderText(Gwen::Font* font, Gwen::Point pos, const Gwen::UnicodeString& text);
 
+	virtual Gwen::Color PixelColour(Gwen::Texture *texture, unsigned int x, unsigned int y, const Gwen::Color &defaultColor);
+
 private:
 	Graphics::Renderer *m_renderer;
 	float m_width, m_height;

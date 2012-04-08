@@ -125,6 +125,25 @@ void TextureGL::Update(const void *data, const vector2f &dataSize, ImageFormat f
 	glDisable(m_target);
 }
 
+Color TextureGL::PixelColor(const vector2f &pos) const
+{
+	// XXX query the texture with glGetTexLevelParameter first?
+	// XXX keep the data around?
+	ScopedMalloc<unsigned char> data(malloc(sizeof(unsigned char) * 4 * GetDescriptor().dataSize.x * GetDescriptor().dataSize.y));
+
+	glEnable(m_target);
+	glBindTexture(m_target, m_texture);
+
+	glGetTexImage(m_target, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.Get());
+
+	glBindTexture(m_target, 0);
+	glDisable(m_target);
+
+	unsigned int off = (pos.y * GetDescriptor().dataSize.x + pos.x) * (sizeof(unsigned char) * 4); // XXX stride
+
+	return Color(float(data[off])/255.f,float(data[off+1])/255.f,float(data[off+2])/255.f,float(data[off+3])/255.f);
+}
+
 void TextureGL::Bind()
 {
 	glEnable(m_target);

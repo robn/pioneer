@@ -138,7 +138,15 @@ void Renderer::RenderText(Gwen::Font* gwenFont, Gwen::Point pos, const Gwen::Uni
 	if (!gwenFont->data) LoadFont(gwenFont);
 	Text::TextureFont *font = reinterpret_cast<Text::TextureFont*>(gwenFont->data);
 
-	font->RenderString(wstring_to_string(text).c_str(), pos.x, pos.y);
+	font->RenderString(wstring_to_string(text).c_str(), pos.x, pos.y, m_drawColor);
+}
+
+Gwen::Color Renderer::PixelColour(Gwen::Texture *gwenTexture, unsigned int x, unsigned int y, const Gwen::Color &defaultColor)
+{
+	Graphics::Texture *texture = reinterpret_cast<Graphics::Texture*>(gwenTexture->data);
+
+	Color4ub c(texture->PixelColor(vector2f(x,y)));
+	return Gwen::Color(c.r,c.g,c.b,c.a);
 }
 
 }

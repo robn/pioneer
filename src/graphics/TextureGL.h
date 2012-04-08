@@ -10,6 +10,8 @@ class TextureGL : public Texture {
 public:
 	virtual void Update(const void *data, const vector2f &dataSize, ImageFormat format, ImageType type);
 
+	virtual Color PixelColor(const vector2f &pos) const;
+
 	virtual ~TextureGL();
 
 	void Bind();

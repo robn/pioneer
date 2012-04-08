@@ -3,6 +3,7 @@
 
 #include "vector2.h"
 #include "RefCounted.h"
+#include "Color.h"
 
 namespace Graphics {
 
@@ -62,6 +63,8 @@ public:
 
 	// XXX include position
 	virtual void Update(const void *data, const vector2f &dataSize, ImageFormat format, ImageType type) = 0;
+
+	virtual Color PixelColor(const vector2f &pos) const = 0;
 
 	virtual ~Texture() {}
 
