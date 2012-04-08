@@ -25,6 +25,8 @@ public:
 
 	Gwen::Controls::Canvas *GetCanvas() const { return m_canvas; }
 
+	void Draw();
+
 	bool ProcessEvent(const SDL_Event &event);
 
 private:

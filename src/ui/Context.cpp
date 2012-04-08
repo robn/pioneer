@@ -18,6 +18,11 @@ Context::Context(Graphics::Renderer *renderer, int width, int height) : m_render
 	m_canvas->SetSize(width, height);
 }
 
+void Context::Draw()
+{
+	m_canvas->RenderCanvas();
+}
+
 bool Context::ProcessEvent(const SDL_Event &event)
 {
 	switch(event.type) {

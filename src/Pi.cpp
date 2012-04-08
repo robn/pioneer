@@ -1227,7 +1227,7 @@ void Pi::Start()
 		Pi::SetMouseGrab(false);
 		draw_intro(background, _time);
 		Pi::renderer->EndFrame();
-		Pi::uiContext->GetCanvas()->RenderCanvas();
+		Pi::uiContext->Draw();
 #if 0
 		Gui::Draw();
 #endif
