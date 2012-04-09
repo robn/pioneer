@@ -72,6 +72,7 @@
 #include <fstream>
 
 #include "ui/Context.h"
+#include "ui/BulletLabel.h"
 #include "Gwen/Gwen.h"
 #include "Gwen/Controls/Label.h"
 #include "Gwen/Controls/LabelClickable.h"
@@ -1170,35 +1171,35 @@ void Pi::Start()
 	label->SizeToContents();
 	label->Dock(Gwen::Pos::Top);
 
-	Gwen::Controls::LabelClickable *button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_START_NEW_GAME_EARTH);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	UI::BulletLabel *option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_START_NEW_GAME_EARTH);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_START_NEW_GAME_E_ERIDANI);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_START_NEW_GAME_E_ERIDANI);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_START_NEW_GAME_LAVE);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_START_NEW_GAME_LAVE);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_START_NEW_GAME_DEBUG);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_START_NEW_GAME_DEBUG);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_LOAD_SAVED_GAME);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_LOAD_SAVED_GAME);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::LabelClickable(layout);
-	button->SetText(Lang::MM_QUIT);
-	button->SizeToContents();
-	button->Dock(Gwen::Pos::Top);
+	option = new UI::BulletLabel(layout);
+	option->SetText(Lang::MM_QUIT);
+	option->SizeToContents();
+	option->Dock(Gwen::Pos::Top);
 
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 

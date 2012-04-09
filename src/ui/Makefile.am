@@ -8,9 +8,11 @@ INCLUDES = -I$(srcdir)/.. -isystem @top_srcdir@/contrib/gwen/include
 
 noinst_LIBRARIES = libui.a
 noinst_HEADERS = \
+	BulletLabel.h \
 	Context.h \
 	Renderer.h
 
 libui_a_SOURCES = \
+	BulletLabel.cpp \
 	Context.cpp \
 	Renderer.cpp
