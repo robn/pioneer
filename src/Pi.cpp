@@ -1180,6 +1180,26 @@ void Pi::Start()
 	button->SizeToContents();
 	button->Dock(Gwen::Pos::Top);
 
+	button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_START_NEW_GAME_LAVE);
+	button->SizeToContents();
+	button->Dock(Gwen::Pos::Top);
+
+	button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_START_NEW_GAME_DEBUG);
+	button->SizeToContents();
+	button->Dock(Gwen::Pos::Top);
+
+	button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_LOAD_SAVED_GAME);
+	button->SizeToContents();
+	button->Dock(Gwen::Pos::Top);
+
+	button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_QUIT);
+	button->SizeToContents();
+	button->Dock(Gwen::Pos::Top);
+
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
 
 #if 0
