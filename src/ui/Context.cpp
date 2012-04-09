@@ -8,11 +8,23 @@ namespace UI {
 
 Context::Context(Graphics::Renderer *renderer, int width, int height) : m_renderer(renderer)
 {
+	static const int fontSizeBase = 20;
+	static const int fontSizeIncrement = 3;
+
+	for (int i = 0; i < FONT_MAX; i++) {
+		m_fonts[i].data = 0;
+		m_fonts[i].facename = L"TitilliumText22L004.otf";
+		m_fonts[i].bold = false;
+		m_fonts[i].realsize = 0;
+
+		m_fonts[i].size = fontSizeBase + (i * fontSizeIncrement);
+	}
+
 	m_uiRenderer = new UI::Renderer(m_renderer, width, height);
 
 	m_skin = new Gwen::Skin::TexturedBase(m_uiRenderer);
 	m_skin->Init("textures/ui_texture.png");
-	m_skin->SetDefaultFont(L"TitilliumText22L004.otf", 35.0f);
+	*(m_skin->GetDefaultFont()) = m_fonts[FONT_NORMAL];
 
 	m_canvas = new Gwen::Controls::Canvas(m_skin);
 	m_canvas->SetSize(width, height);

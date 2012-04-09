@@ -1,6 +1,8 @@
 #ifndef _UI_CONTEXT_H
 #define _UI_CONTEXT_H
 
+#include "Gwen/Font.h"
+
 namespace Graphics {
 	class Renderer;
 }
@@ -29,6 +31,17 @@ public:
 
 	bool ProcessEvent(const SDL_Event &event);
 
+	enum FontType {
+		FONT_SMALL,
+		FONT_TINY,
+		FONT_NORMAL,
+		FONT_LARGE,
+		FONT_HUGE,
+
+		FONT_MAX
+	};
+	Gwen::Font *GetFont(FontType type) { return &m_fonts[type]; }
+
 private:
 	Graphics::Renderer *m_renderer;
 
@@ -37,6 +50,8 @@ private:
 
 	Gwen::Skin::TexturedBase *m_skin;
 	Gwen::Controls::Canvas *m_canvas;
+
+	Gwen::Font m_fonts[FONT_MAX];
 };
 
 }

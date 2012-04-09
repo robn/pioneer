@@ -1156,12 +1156,17 @@ void Pi::Start()
 
 	Gwen::Controls::Label *label = new Gwen::Controls::Label(layout);
 	label->SetText("Pioneer");
+	label->SetFont(Pi::uiContext->GetFont(UI::Context::FONT_HUGE));
 	label->SizeToContents();
 	label->Dock(Gwen::Pos::Top);
 
 	label = new Gwen::Controls::Label(layout);
 	label->SetText(PIONEER_VERSION);
-	label->SetFont(label->GetFont()->facename, label->GetFont()->size-10, label->GetFont()->bold);
+	label->SizeToContents();
+	label->Dock(Gwen::Pos::Top);
+
+	label = new Gwen::Controls::Label(layout);
+	label->SetText(" ");
 	label->SizeToContents();
 	label->Dock(Gwen::Pos::Top);
 
