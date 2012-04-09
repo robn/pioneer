@@ -33,6 +33,9 @@ public:
 
 	virtual Gwen::Color PixelColour(Gwen::Texture *texture, unsigned int x, unsigned int y, const Gwen::Color &defaultColor);
 
+	virtual void StartClip();
+	virtual void EndClip();
+
 private:
 	Graphics::Renderer *m_renderer;
 	float m_width, m_height;

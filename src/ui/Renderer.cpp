@@ -149,4 +149,19 @@ Gwen::Color Renderer::PixelColour(Gwen::Texture *gwenTexture, unsigned int x, un
 	return Gwen::Color(c.r,c.g,c.b,c.a);
 }
 
+void Renderer::StartClip()
+{
+	Gwen::Rect rect = ClipRegion();
+
+	vector2f pos = vector2f(rect.x, m_height - (rect.y+rect.h)) * Scale();
+	vector2f size = vector2f(rect.w, rect.h) * Scale();
+
+	m_renderer->SetScissor(true, pos, size);
+}
+
+void Renderer::EndClip()
+{
+	m_renderer->SetScissor(false);
+}
+
 }
