@@ -12,7 +12,7 @@ Context::Context(Graphics::Renderer *renderer, int width, int height) : m_render
 
 	m_skin = new Gwen::Skin::TexturedBase(m_uiRenderer);
 	m_skin->Init("textures/ui_texture.png");
-	m_skin->SetDefaultFont(L"TitilliumText22L004.otf");
+	m_skin->SetDefaultFont(L"TitilliumText22L004.otf", 35.0f);
 
 	m_canvas = new Gwen::Controls::Canvas(m_skin);
 	m_canvas->SetSize(width, height);

@@ -73,7 +73,9 @@
 
 #include "ui/Context.h"
 #include "Gwen/Gwen.h"
-#include "Gwen/Controls/Button.h"
+#include "Gwen/Controls/Label.h"
+#include "Gwen/Controls/LabelClickable.h"
+#include "Gwen/Controls/Layout/Position.h"
 
 float Pi::gameTickAlpha;
 int Pi::scrWidth;
@@ -1148,12 +1150,29 @@ void Pi::Start()
 {
 	Pi::uiContext = new UI::Context(Pi::renderer, scrWidth, scrHeight);
 
-	Gwen::Controls::Button *button = new Gwen::Controls::Button(Pi::uiContext->GetCanvas());
-	button->SetText("Button");
+	Gwen::Controls::Layout::Position *layout = new Gwen::Controls::Layout::Position(Pi::uiContext->GetCanvas());
+	layout->SetSize(scrWidth/2,scrHeight/2);
+	layout->SetPos(scrWidth/4,scrHeight/4);
+
+	Gwen::Controls::Label *label = new Gwen::Controls::Label(layout);
+	label->SetText("Pioneer");
+	label->SizeToContents();
+	label->Dock(Gwen::Pos::Top);
+
+	label = new Gwen::Controls::Label(layout);
+	label->SetText(PIONEER_VERSION);
+	label->SetFont(label->GetFont()->facename, label->GetFont()->size-10, label->GetFont()->bold);
+	label->SizeToContents();
+	label->Dock(Gwen::Pos::Top);
+
+	Gwen::Controls::LabelClickable *button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_START_NEW_GAME_EARTH);
+	button->SizeToContents();
 	button->Dock(Gwen::Pos::Top);
 
-	button = new Gwen::Controls::Button(Pi::uiContext->GetCanvas());
-	button->SetText("Button 2");
+	button = new Gwen::Controls::LabelClickable(layout);
+	button->SetText(Lang::MM_START_NEW_GAME_E_ERIDANI);
+	button->SizeToContents();
 	button->Dock(Gwen::Pos::Top);
 
 	Background::Container *background = new Background::Container(UNIVERSE_SEED);
