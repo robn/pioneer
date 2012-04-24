@@ -326,6 +326,39 @@ static int l_starsystem_distance_to(lua_State *l)
 	return 1;
 }
 
+static int l_starsystem_set_descriptions(lua_State *l)
+{
+	LUA_DEBUG_START(l);
+
+	StarSystem *s = LuaStarSystem::GetFromLua(1);
+	const SystemPath path = s->GetPath();
+
+    if (!lua_istable(l, 2))
+		luaL_typerror(l, 2, lua_typename(l, LUA_TTABLE));
+	
+	std::string governmentDesc, economyDesc, allegianceDesc;
+	
+	lua_getfield(l, 2, "government");
+	if (!lua_isnil(l, -1))
+		governmentDesc = luaL_checkstring(l, -1);
+	lua_pop(l, 1);
+	
+	lua_getfield(l, 2, "economy");
+	if (!lua_isnil(l, -1))
+		economyDesc = luaL_checkstring(l, -1);
+	lua_pop(l, 1);
+	
+	lua_getfield(l, 2, "allegiance");
+	if (!lua_isnil(l, -1))
+		allegianceDesc = luaL_checkstring(l, -1);
+	lua_pop(l, 1);
+
+	Polit::PersistSysPolit(path, SysPolit(governmentDesc, economyDesc, allegianceDesc));
+
+	LUA_DEBUG_END(l, 0);
+	return 0;
+}
+
 /*
  * Attribute: name
  *
@@ -422,6 +455,8 @@ template <> void LuaObject<StarSystem>::RegisterClass()
 		{ "GetNearbySystems", l_starsystem_get_nearby_systems },
 
 		{ "DistanceTo", l_starsystem_distance_to },
+
+		{ "SetDescriptions", l_starsystem_set_descriptions },
 
 		{ 0, 0 }
 	};
