@@ -201,7 +201,8 @@ public:
 	const char *GetShortDescription() const { return m_shortDesc.c_str(); }
 	const char *GetLongDescription() const { return m_longDesc.c_str(); }
 	int GetNumStars() const { return m_numStars; }
-	const SysPolit &GetSysPolit() const { return m_polit; }
+
+	SysPolit GetSysPolit() const;
 
 	static float starColors[][3];
 	static float starRealColors[][3];
@@ -255,7 +256,6 @@ private:
 	int m_numStars;
 	std::string m_name;
 	std::string m_shortDesc, m_longDesc;
-	SysPolit m_polit;
 
 	bool m_isCustom;
 	bool m_hasCustomBodies;

@@ -1787,8 +1787,6 @@ void StarSystem::Populate(bool addSpaceStations)
 //		printf("%s: %d%%\n", type.name, m_tradeLevel[t]);
 //	}
 //	printf("System total population %.3f billion\n", m_totalPop.ToFloat());
-	Polit::GetSysPolitStarSystem(this, m_totalPop, m_polit);
-
 	if (addSpaceStations) {
 		rootBody->PopulateAddStations(this);
 	}
@@ -2073,4 +2071,11 @@ void StarSystem::ShrinkCache()
 		else
 			i++;
 	}
+}
+
+SysPolit StarSystem::GetSysPolit() const
+{
+	SysPolit sysPolit;
+	Polit::GetSysPolitStarSystem(this, m_totalPop, sysPolit);
+	return sysPolit;
 }
