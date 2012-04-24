@@ -17,6 +17,9 @@ namespace Polit {
 
 static PersistSystemData<Sint64> s_criminalRecord;
 static PersistSystemData<Sint64> s_outstandingFine;
+
+static std::map<SystemPath,SysPolit> s_persistentSysPolit;
+
 struct crime_t {
 	Sint64 record;
 	Sint64 fine;
@@ -80,6 +83,7 @@ void Init()
 {
 	s_criminalRecord.Clear();
 	s_outstandingFine.Clear();
+	s_persistentSysPolit.clear();
 	memset(s_playerPerBlocCrimeRecord, 0, sizeof(crime_t)*BLOC_MAX);
 }
 
@@ -204,8 +208,17 @@ void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, 
 		}
 	}
 
+	std::map<SystemPath,SysPolit>::iterator i = s_persistentSysPolit.find(path);
+	if (i != s_persistentSysPolit.end())
+		outSysPolit = (*i).second;
+
 	outSysPolit.govType = a;
 	outSysPolit.lawlessness = s_govDesc[a].baseLawlessness * rand.Fixed();
+}
+
+void PersistSysPolit(const SystemPath &path, const SysPolit &sysPolit)
+{
+	s_persistentSysPolit[path] = sysPolit;
 }
 
 #define POLIT_SALT 0x8732abdf
