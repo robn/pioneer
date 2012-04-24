@@ -254,16 +254,19 @@ bool IsCommodityLegal(const StarSystem *s, Equip::Type t)
 
 const char *SysPolit::GetGovernmentDesc() const
 {
+	if (m_governmentDesc.size()) return m_governmentDesc.c_str();
 	return Polit::s_govDesc[govType].description;
 }
 
 const char *SysPolit::GetEconomicDesc() const
 {
+	if (m_economicDesc.size()) return m_economicDesc.c_str();
 	return Polit::s_econDesc[ Polit::s_govDesc[govType].econ ];
 }
 
 const char *SysPolit::GetAllegianceDesc() const
 {
+	if (m_allegianceDesc.size()) return m_allegianceDesc.c_str();
 	return Polit::s_blocDesc[ Polit::s_govDesc[govType].bloc ];
 }
 

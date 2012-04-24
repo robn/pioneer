@@ -70,12 +70,19 @@ namespace Polit {
 
 class SysPolit {
 public:
+	SysPolit(const std::string &governmentDesc, const std::string &economicDesc, const std::string &allegianceDesc) :
+		m_governmentDesc(governmentDesc), m_economicDesc(economicDesc), m_allegianceDesc(allegianceDesc) {}
+	SysPolit() {}
+
 	const char *GetGovernmentDesc() const;
 	const char *GetEconomicDesc() const;
 	const char *GetAllegianceDesc() const;
 
 	Polit::GovType govType;
 	fixed lawlessness;
+
+private:
+	std::string m_governmentDesc, m_economicDesc, m_allegianceDesc;
 };
 
 #endif /* _POLIT_H */
