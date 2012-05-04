@@ -131,6 +131,7 @@ noinst_HEADERS = \
 	Star.h \
 	SystemInfoView.h \
 	SystemView.h \
+	Tagged.h \
 	TerrainBody.h \
 	VideoLink.h \
 	View.h \
@@ -260,6 +261,7 @@ pioneer_SOURCES	= \
 	Star.cpp \
 	SystemInfoView.cpp \
 	SystemView.cpp \
+	Tagged.cpp \
 	TerrainBody.cpp \
 	View.cpp \
 	WorldView.cpp \
@@ -306,6 +308,7 @@ modelviewer_SOURCES = \
 	LuaConstants.cpp \
 	ModManager.cpp \
 	EquipType.cpp \
+	Tagged.cpp \
 	ShipType.cpp \
 	SDLWrappers.cpp \
 	StringF.cpp \
