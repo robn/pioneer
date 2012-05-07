@@ -1,6 +1,7 @@
 define_ship {
 	name='Imperial Courier',
 	model='courier',
+	tags = { 'player_ship' },
 	forward_thrust = -50e6,
 	reverse_thrust = 15e6,
 	up_thrust = 15e6,

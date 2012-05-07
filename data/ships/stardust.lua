@@ -1,6 +1,7 @@
 define_ship {
 	name='Stardust',
 	model='stardust',
+	tags = { 'player_ship' },
 	forward_thrust = -200e5,
 	reverse_thrust = 80e5,
 	up_thrust = 40e5,

@@ -1,6 +1,7 @@
 define_ship {
 	name='Interplanetary Shuttle',
 	model='ip_shuttle',
+	tags = { 'player_ship' },
 	forward_thrust = -15e5,
 	reverse_thrust = 8e5,
 	up_thrust = 8e5,

@@ -1,6 +1,7 @@
 define_ship {
 	name='E.Y.E',
 	model='peye',
+	tags = { 'player_ship' },
 	forward_thrust = -20e6,
 	reverse_thrust = 10e6,
 	up_thrust = 5e6,

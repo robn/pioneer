@@ -1,6 +1,7 @@
 define_ship {
 	name='Talon Military Interceptor',
 	model='fi',
+	tags = { 'player_ship' },
 	forward_thrust = -20e5,
 	reverse_thrust = 5e5,
 	up_thrust = 4e5,

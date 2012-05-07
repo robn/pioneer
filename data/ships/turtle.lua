@@ -1,6 +1,7 @@
 define_ship {
 	name='Turtle',
 	model='turtle',
+	tags = { 'player_ship' },
 	forward_thrust = -10e6,
 	reverse_thrust = 10e6,
 	up_thrust = 10e6,

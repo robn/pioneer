@@ -1,6 +1,7 @@
 define_ship {
 	name='Flowerfairy Heavy Trader',
 	model='flowerfairy',
+	tags = { 'player_ship' },
 	forward_thrust = -60e6,
 	reverse_thrust = 20e6,
 	up_thrust = 20e6,

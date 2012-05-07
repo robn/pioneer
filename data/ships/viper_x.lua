@@ -1,6 +1,7 @@
 define_ship {
 	name='Viper X',
 	model='viper_x',
+	tags = { 'player_ship' },
 	forward_thrust = -9e6,
 	reverse_thrust = 3e6,
 	up_thrust = 3e6,

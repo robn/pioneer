@@ -1,6 +1,7 @@
 define_ship {
 	name='Sidewinder',
 	model='rattlesnake',
+	tags = { 'player_ship' },
 	forward_thrust = -4e6,
 	reverse_thrust = 3e6,
 	up_thrust = 2e6,

@@ -1,6 +1,7 @@
 define_ship {
 	name = 'Constrictor',
 	model='conny',
+	tags = { 'player_ship' },
 	forward_thrust = -259e5,
 	reverse_thrust = 118e5,
 	up_thrust = 6e6,

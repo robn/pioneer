@@ -1,6 +1,7 @@
 define_ship {
 	name='Caribou',
 	model='caribou',
+	tags = { 'player_ship' },
 	forward_thrust = -10e7,
 	reverse_thrust = 3e7,
 	up_thrust = 3e7,

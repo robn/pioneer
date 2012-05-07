@@ -1,6 +1,7 @@
 define_ship {
 	name='Asp Explorer',
 	model='asp_sparks',
+	tags = { 'player_ship' },
 	forward_thrust = -220e5,
 	reverse_thrust = 100e5,
 	up_thrust = 60e5,

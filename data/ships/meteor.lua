@@ -1,6 +1,7 @@
 define_ship {
 	name='Meteor',
 	model='meteor',
+	tags = { 'player_ship' },
 	forward_thrust = -28e5,
 	reverse_thrust = 2e5,
 	up_thrust = 5e5,

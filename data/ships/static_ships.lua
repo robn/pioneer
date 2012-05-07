@@ -1,7 +1,8 @@
 --Ships not available for purchase (ambient ships)
-define_static_ship {
+define_ship {
 	name='Long Range Cruiser',
 	model='lrc',
+    tags = { 'static_ship' },
 	forward_thrust = -2e8,
 	reverse_thrust = 5e7,
 	up_thrust = 5e7,
@@ -26,9 +27,10 @@ define_static_ship {
 	hyperdrive_class = 10,
 }
 
-define_static_ship {
+define_ship {
 	name='Lynx Bulk Carrier',
 	model='lynx',
+    tags = { 'static_ship' },
 	forward_thrust = -3e7,
 	reverse_thrust = 2e7,
 	up_thrust = 2e7,

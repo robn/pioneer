@@ -1,6 +1,7 @@
 define_ship {
 	name='Adder',
 	model='adder',
+	tags = { 'player_ship' },
 	forward_thrust = -100e5,
 	reverse_thrust = 51e5,
 	up_thrust = 3e6,

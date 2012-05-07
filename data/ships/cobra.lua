@@ -1,6 +1,7 @@
 define_ship {
 	name='Cobra Mk I',
 	model='cobra1',
+	tags = { 'player_ship' },
 	forward_thrust = -12e6,
 	reverse_thrust = 5e6,
 	up_thrust = 4e6,

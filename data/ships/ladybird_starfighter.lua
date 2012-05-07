@@ -1,6 +1,7 @@
 define_ship {
 	name='Ladybird Starfighter',
 	model='ladybird',
+	tags = { 'player_ship' },
 	forward_thrust = -10e6,
 	reverse_thrust = 4e6,
 	up_thrust = 3e6,
