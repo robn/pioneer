@@ -10,10 +10,6 @@ const char *ShipType::gunmountNames[GUNMOUNT_MAX] = {
 
 std::map<ShipType::Type, ShipType> ShipType::types;
 
-std::vector<ShipType::Type> ShipType::player_ships;
-std::vector<ShipType::Type> ShipType::static_ships;
-std::vector<ShipType::Type> ShipType::missile_ships;
-
 std::string ShipType::LADYBIRD				= "Ladybird Starfighter";
 std::string ShipType::SIRIUS_INTERDICTOR	= "Sirius Interdictor";
 std::string ShipType::EAGLE_LRF				= "Eagle Long Range Fighter";
@@ -83,10 +79,9 @@ static void _get_vec_attrib(lua_State *L, const char *key, vector3d &output,
 	LUA_DEBUG_END(L, 0);
 }
 
-int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Type> *list)
+int define_ship(lua_State *L)
 {
 	ShipType s;
-	s.tag = tag;
 
 	LUA_DEBUG_START(L);
 	_get_string_attrib(L, "name", s.name, "");
@@ -161,6 +156,13 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Type> *l
 		}
 	}
 	lua_pop(L, 1);
+
+	lua_pushstring(L, "tags");
+	lua_gettable(L, -2);
+	if (lua_istable(L, -1))
+		s.AddTagsFromLua(L, -1);
+	lua_pop(L, 1);
+		
 	LUA_DEBUG_END(L, 0);
 
 	//sanity check
@@ -179,23 +181,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Type> *l
 	}
 
 	ShipType::types[s.name] = s;
-	list->push_back(s.name);
 	return 0;
-}
-
-int define_ship(lua_State *L)
-{
-	return _define_ship(L, ShipType::TAG_SHIP, &ShipType::player_ships);
-}
-
-int define_static_ship(lua_State *L)
-{
-	return _define_ship(L, ShipType::TAG_STATIC_SHIP, &ShipType::static_ships);
-}
-
-int define_missile(lua_State *L)
-{
-	return _define_ship(L, ShipType::TAG_MISSILE, &ShipType::missile_ships);
 }
 
 void ShipType::Init()
@@ -227,8 +213,6 @@ void ShipType::Init()
 
 	// register ship definition functions
 	lua_register(l, "define_ship", define_ship);
-	lua_register(l, "define_static_ship", define_static_ship);
-	lua_register(l, "define_missile", define_missile);
 
 	LUA_DEBUG_CHECK(l, 0);
 
@@ -241,7 +225,18 @@ void ShipType::Init()
 
 	lua_close(l);
 
-	if (ShipType::player_ships.empty())
+	if (GetByTag("player_ship").size() == 0)
 		Warning("No playable ships have been defined! The game cannot run.");
 }
 
+std::vector<const ShipType *> ShipType::GetByTag(const std::string &tag)
+{
+	std::vector<const ShipType *> matches;
+
+	for (std::map<Type, ShipType>::const_iterator i = types.begin(); i != types.end(); ++i) {
+		if ((*i).second.HasTag(tag))
+			matches.push_back(&((*i).second));
+	}
+
+	return matches;
+}

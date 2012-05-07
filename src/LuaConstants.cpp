@@ -503,7 +503,8 @@ void LuaConstants::Register(lua_State *l)
 	 *
 	 *   stable
 	 */
-	_create_constant_table_nonconsecutive(l, "ShipTypeTag", ENUM_ShipTypeTag);
+#warning XXX fix tag hacks when you're done
+	//_create_constant_table_nonconsecutive(l, "ShipTypeTag", ENUM_ShipTypeTag);
 
 	/*
 	 * Constants: ShipTypeThruster

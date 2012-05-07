@@ -220,14 +220,6 @@ const struct EnumItem ENUM_ShipTypeThruster[] = {
 	{ 0, 0 },
 };
 
-const struct EnumItem ENUM_ShipTypeTag[] = {
-	{ "NONE", ShipType::TAG_NONE },
-	{ "SHIP", ShipType::TAG_SHIP },
-	{ "STATIC_SHIP", ShipType::TAG_STATIC_SHIP },
-	{ "MISSILE", ShipType::TAG_MISSILE },
-	{ 0, 0 },
-};
-
 const struct EnumItem ENUM_SpaceStationAnimation[] = {
 	{ "DOCKING_BAY_1", SpaceStation::ANIM_DOCKING_BAY_1 },
 	{ "DOCKING_BAY_2", SpaceStation::ANIM_DOCKING_BAY_2 },

@@ -278,14 +278,16 @@ static int l_shiptype_get_ship_type(lua_State *l)
  *
  *   stable
  */
+
+#warning XXX fix tag hacks when you're done
 static int l_shiptype_get_ship_types(lua_State *l)
 {
 	LUA_DEBUG_START(l);
 
-	ShipType::Tag tag = ShipType::TAG_NONE;
+//	ShipType::Tag tag = ShipType::TAG_NONE;
 
-	if (lua_gettop(l) >= 1)
-		tag = static_cast<ShipType::Tag>(LuaConstants::GetConstant(l, "ShipTypeTag", luaL_checkstring(l, 1)));
+//	if (lua_gettop(l) >= 1)
+//		tag = static_cast<ShipType::Tag>(LuaConstants::GetConstant(l, "ShipTypeTag", luaL_checkstring(l, 1)));
 
 	bool filter = false;
 	if (lua_gettop(l) >= 2) {
@@ -299,7 +301,7 @@ static int l_shiptype_get_ship_types(lua_State *l)
 	for (std::map<ShipType::Type,ShipType>::iterator i = ShipType::types.begin(); i != ShipType::types.end(); i++)
 	{
 		ShipType *st = &((*i).second);
-		if (tag == ShipType::TAG_NONE || tag == st->tag) {
+//		if (tag == ShipType::TAG_NONE || tag == st->tag) {
 			if (filter) {
 				lua_pushvalue(l, 2);
 				LuaShipType::PushToLua(st);
@@ -323,7 +325,7 @@ static int l_shiptype_get_ship_types(lua_State *l)
 			lua_pushinteger(l, lua_rawlen(l, -1)+1);
 			lua_pushstring(l, (*i).first.c_str());
 			lua_rawset(l, -3);
-		}
+//		}
 	}
 
 	LUA_DEBUG_END(l, 1);
