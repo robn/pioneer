@@ -2,7 +2,7 @@
 define_ship {
 	name='Long Range Cruiser',
 	model='lrc',
-    tags = { 'static_ship' },
+    tags = { 'static' },
 	forward_thrust = -2e8,
 	reverse_thrust = 5e7,
 	up_thrust = 5e7,
@@ -30,7 +30,7 @@ define_ship {
 define_ship {
 	name='Lynx Bulk Carrier',
 	model='lynx',
-    tags = { 'static_ship' },
+    tags = { 'static' },
 	forward_thrust = -3e7,
 	reverse_thrust = 2e7,
 	up_thrust = 2e7,

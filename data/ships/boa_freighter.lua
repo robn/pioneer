@@ -1,7 +1,7 @@
 define_ship {
 	name='Boa Freighter',
 	model='boa',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -12e7,
 	reverse_thrust = 4e7,
 	up_thrust = 4e7,

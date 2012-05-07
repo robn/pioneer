@@ -1,7 +1,7 @@
 define_ship {
 	name='Viper Defence Craft',
 	model='viper',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -10e6,
 	reverse_thrust = 4e6,
 	up_thrust = 4e6,
@@ -29,7 +29,7 @@ define_ship {
 define_ship {
 	name='Viper Police Craft',
 	model='viperpol',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -10e6,
 	reverse_thrust = 4e6,
 	up_thrust = 4e6,

@@ -61,7 +61,7 @@ ShipFlavour::ShipFlavour(ShipType::Type type_)
 
 void ShipFlavour::MakeTrulyRandom(ShipFlavour &v)
 {
-	const std::vector<const ShipType *> ships = ShipType::GetByTag("player_ship");
+	const std::vector<const ShipType *> ships = ShipType::GetByTag("playable");
 	v = ShipFlavour(ships[Pi::rng.Int32(ships.size())]->name);
 }
 

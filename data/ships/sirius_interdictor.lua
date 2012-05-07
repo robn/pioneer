@@ -1,7 +1,7 @@
 define_ship {
 	name='Sirius Interdictor',
 	model='interdictor',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -24e6,
 	reverse_thrust = 12e6,
 	up_thrust = 6e6,

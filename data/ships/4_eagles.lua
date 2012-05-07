@@ -1,7 +1,7 @@
 define_ship {
 	name='Eagle Long Range Fighter',
 	model = 'eagle_lrf',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -34e5,
 	reverse_thrust = 17e5,
 	up_thrust = 8e5,
@@ -30,7 +30,7 @@ define_ship {
 define_ship {
 	name='Eagle MK-II',
 	model = 'eagle_mk2',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -34e5,
 	reverse_thrust = 17e5,
 	up_thrust = 8e5,
@@ -59,7 +59,7 @@ define_ship {
 define_ship {
 	name='Eagle MK-III',
 	model = 'eagle_mk3',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -36e5,
 	reverse_thrust = 25e5,
 	up_thrust = 8e5,
@@ -88,7 +88,7 @@ define_ship {
 define_ship {
 	name='Eagle MK-IV "Bomber"',
 	model='eagle_mk4',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -50e5,
 	reverse_thrust = 25e5,
 	up_thrust = 14e5,

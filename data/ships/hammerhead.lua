@@ -1,7 +1,7 @@
 define_ship {
 	name='Hammerhead Heavy Freighter',
 	model='hh',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -14e7,
 	reverse_thrust = 5e7,
 	up_thrust = 5e7,

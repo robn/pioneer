@@ -225,7 +225,7 @@ void ShipType::Init()
 
 	lua_close(l);
 
-	if (GetByTag("player_ship").size() == 0)
+	if (GetByTag("playable").size() == 0)
 		Warning("No playable ships have been defined! The game cannot run.");
 }
 

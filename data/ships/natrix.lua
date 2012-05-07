@@ -1,7 +1,7 @@
 define_ship {
 	name='Natrix',
 	model='natrix',
-	tags = { 'player_ship' },
+	tags = { 'playable' },
 	forward_thrust = -6e6,
 	reverse_thrust = 1e6,
 	up_thrust = 1e6,
