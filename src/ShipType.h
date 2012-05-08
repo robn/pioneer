@@ -23,7 +23,13 @@ struct ShipType : public Tagged {
 		GUN_REAR,
 		GUNMOUNT_MAX = 2
 	};
-
+	enum Tag { // <enum scope='ShipType' name=ShipTypeTag prefix=TAG_>
+		TAG_NONE,
+		TAG_SHIP,
+		TAG_STATIC_SHIP,
+		TAG_MISSILE,
+		TAG_MAX // <enum skip>
+	};
 	typedef std::string Type;
 
 	////////

@@ -501,10 +501,9 @@ void LuaConstants::Register(lua_State *l)
 	 *
 	 * Status:
 	 *
-	 *   stable
+	 *   deprecated. will be removed in alpha 24
 	 */
-#warning XXX fix tag hacks when you're done
-	//_create_constant_table_nonconsecutive(l, "ShipTypeTag", ENUM_ShipTypeTag);
+	_create_constant_table_nonconsecutive(l, "ShipTypeTag", ENUM_ShipTypeTag);
 
 	/*
 	 * Constants: ShipTypeThruster
