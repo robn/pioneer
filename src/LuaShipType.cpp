@@ -244,12 +244,11 @@ static int l_shiptype_get_ship_type(lua_State *l)
  * Returns an array of ship description objects that match the specified
  * filter
  *
- * > shiptypes = ShipType.GetShipTypes(tag, filter)
+ * > shiptypes = ShipType.GetShipTypes(filter)
+ *
+ * > shiptypes = ShipType.GetShipTypes(tag, filter) -- deprecated
  *
  * Parameters:
- *
- *   tag - a <Constants.ShipTypeTag> to select the ship group to search. Using
- *         "NONE" will check all ships.
  *
  *   filter - an optional function. If specified the function will be called
  *            once for each ship type with the description object as the only
@@ -257,6 +256,10 @@ static int l_shiptype_get_ship_type(lua_State *l)
  *            ship name will be included in the array returned by
  *            <GetShipTypes>, otherwise it will be omitted. If no filter
  *            function is specified then all ships are returned.
+ *
+ *   tag - a <Constants.ShipTypeTag> to select the ship group to search. Using
+ *         "NONE" will check all ships. this version of GetShipTypes is
+ *         deprecated and will be removed in alpha 14
  *
  * Returns:
  *
@@ -279,31 +282,39 @@ static int l_shiptype_get_ship_type(lua_State *l)
  *   stable
  */
 
-#warning XXX fix tag hacks when you're done
 static int l_shiptype_get_ship_types(lua_State *l)
 {
 	LUA_DEBUG_START(l);
 
-//	ShipType::Tag tag = ShipType::TAG_NONE;
+	ShipType::Tag tagEnum = ShipType::TAG_NONE;
 
-//	if (lua_gettop(l) >= 1)
-//		tag = static_cast<ShipType::Tag>(LuaConstants::GetConstant(l, "ShipTypeTag", luaL_checkstring(l, 1)));
-
-	bool filter = false;
-	if (lua_gettop(l) >= 2) {
-		luaL_checktype(l, 2, LUA_TFUNCTION); // any type of function
-		filter = true;
+	int filterIndex = 0;
+	if (lua_gettop(l) >= 1) {
+		if (lua_isfunction(l, 1))
+			filterIndex = 1;
+		else
+			tagEnum = static_cast<ShipType::Tag>(LuaConstants::GetConstant(l, "ShipTypeTag", luaL_checkstring(l, 1)));
 	}
-	
+
+	std::string tag(
+		tagEnum == ShipType::TAG_SHIP        ? "playable" :
+		tagEnum == ShipType::TAG_STATIC_SHIP ? "static" : 
+		tagEnum == ShipType::TAG_MISSILE     ? "missile" :
+		                                       "");
+
+	if (!filterIndex && lua_gettop(l) >= 2) {
+		luaL_checktype(l, 2, LUA_TFUNCTION);
+		filterIndex = 2;
+	}
+
 	lua_newtable(l);
-	pi_lua_table_ro(l);
 	
 	for (std::map<ShipType::Type,ShipType>::iterator i = ShipType::types.begin(); i != ShipType::types.end(); i++)
 	{
 		ShipType *st = &((*i).second);
-//		if (tag == ShipType::TAG_NONE || tag == st->tag) {
-			if (filter) {
-				lua_pushvalue(l, 2);
+		if (tagEnum == ShipType::TAG_NONE || st->HasTag(tag)) {
+			if (filterIndex) {
+				lua_pushvalue(l, filterIndex);
 				LuaShipType::PushToLua(st);
 				if (int ret = lua_pcall(l, 1, 1, 0)) {
 					const char *errmsg( "Unknown error" );
@@ -325,7 +336,7 @@ static int l_shiptype_get_ship_types(lua_State *l)
 			lua_pushinteger(l, lua_rawlen(l, -1)+1);
 			lua_pushstring(l, (*i).first.c_str());
 			lua_rawset(l, -3);
-//		}
+		}
 	}
 
 	LUA_DEBUG_END(l, 1);
