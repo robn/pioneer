@@ -46,6 +46,6 @@ template <> void LuaObject<CargoBody>::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, l_parent, 0, l_attrs, 0);
+	LuaObjectBase::CreateClass(s_type, l_parent, 0, 0, l_attrs, 0);
 	LuaObjectBase::RegisterPromotion(l_parent, s_type, promotion_test);
 }

@@ -119,7 +119,7 @@ protected:
 	// listed methods to it and the listed metamethods to its metaclass. if
 	// attributes extra magic is added to the metaclass to make them work as
 	// expected
-	static void CreateClass(const char *type, const char *parent, const luaL_Reg *methods, const luaL_Reg *attrs, const luaL_Reg *meta);
+	static void CreateClass(const char *type, const char *parent, const char *mixins[], const luaL_Reg *methods, const luaL_Reg *attrs, const luaL_Reg *meta);
 
 	// push an already-registered object onto the lua stack. the object is
 	// looked up in the lua registry, if it exists a copy of its userdata is

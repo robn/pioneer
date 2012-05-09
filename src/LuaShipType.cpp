@@ -369,5 +369,7 @@ template <> void LuaObject<LuaUncopyable<ShipType> >::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, 0, l_methods, l_attrs, 0);
+	static const char *l_mixins[] = { "tagged", 0 };
+
+	LuaObjectBase::CreateClass(s_type, 0, l_mixins, l_methods, l_attrs, 0);
 }

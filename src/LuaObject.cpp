@@ -261,7 +261,7 @@ static const luaL_Reg no_methods[] = {
 	{ 0, 0 }
 };
 
-void LuaObjectBase::CreateClass(const char *type, const char *parent, const luaL_Reg *methods, const luaL_Reg *attrs, const luaL_Reg *meta)
+void LuaObjectBase::CreateClass(const char *type, const char *parent, const char *mixins[], const luaL_Reg *methods, const luaL_Reg *attrs, const luaL_Reg *meta)
 {
 	assert(type);
 
@@ -329,6 +329,24 @@ void LuaObjectBase::CreateClass(const char *type, const char *parent, const luaL
 	lua_pushstring(l, "type");
 	lua_pushstring(l, type);
 	lua_rawset(l, -3);
+
+	// mixin types. if present, walk through these types looking for methods
+	// or attributes if they're not found on the real type
+	if (mixins) {
+		lua_newtable(l);
+
+		lua_pushstring(l, "mixin");
+		lua_pushvalue(l, -2);
+		lua_rawset(l, -3);
+
+		for (int i = 0; mixins[i]; i++) {
+			lua_pushinteger(l, lua_rawlen(l, -1) +1);
+			lua_pushstring(l, mixins[i]);
+			lua_rawset(l, -3);
+		}
+
+		lua_pop(l, 1);
+	}
 
 	// if we're inheriting, record the name of the base type
 	if (parent) {

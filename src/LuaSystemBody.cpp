@@ -440,5 +440,5 @@ template <> void LuaObject<LuaUncopyable<SystemBody> >::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, 0, 0, l_attrs, 0);
+	LuaObjectBase::CreateClass(s_type, 0, 0, 0, l_attrs, 0);
 }
