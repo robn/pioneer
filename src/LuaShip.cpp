@@ -347,7 +347,7 @@ static void _prepare_colour(lua_State *l, LmrMaterial &m)
 		const char *hexstr = lua_tostring(l, 2);
 		if (strlen(hexstr) != 7 || *hexstr != '#')
 			luaL_error(l, "Colour string should be a hex triple (#rrggbb)");
-		int n = strtol(&hexstr[1], NULL, 16);
+		int n = strtol(&hexstr[1], 0, 16);
 		r = float((n & 0xff0000) >> 16);
 		g = float((n & 0xff00) >> 8);
 		b = float(n & 0xff);
@@ -1430,6 +1430,6 @@ template <> void LuaObject<Ship>::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, l_parent, l_methods, l_attrs, NULL);
+	LuaObjectBase::CreateClass(s_type, l_parent, l_methods, l_attrs, 0);
 	LuaObjectBase::RegisterPromotion(l_parent, s_type, promotion_test);
 }

@@ -702,7 +702,7 @@ int main(int argc, char **argv)
 	FileSystem::rawFileSystem.MakeDirectory(FileSystem::GetUserDir());
 	ModManager::Init();
 
-	const SDL_VideoInfo *info = NULL;
+	const SDL_VideoInfo *info = 0;
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Video initialization failed: %s\n", SDL_GetError());
 		exit(-1);

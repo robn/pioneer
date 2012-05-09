@@ -173,7 +173,7 @@ private:
 	// its only part of the class so that it can call Deregister()
 	static int l_gc(lua_State *l);
 
-	// pull an LuaObjectBase wrapper from the registry given an id. returns NULL
+	// pull an LuaObjectBase wrapper from the registry given an id. returns 0
 	// if the object is not in the registry
 	static LuaObjectBase *Lookup(lid id);
 

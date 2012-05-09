@@ -139,7 +139,7 @@ void LuaObjectBase::Deregister(LuaObjectBase *lo)
 LuaObjectBase *LuaObjectBase::Lookup(lid id)
 {
 	std::map<lid, LuaObjectBase*>::const_iterator i = registry->find(id);
-	if (i == registry->end()) return NULL;
+	if (i == registry->end()) return 0;
 	return (*i).second;
 }
 
@@ -462,20 +462,20 @@ DeleteEmitter *LuaObjectBase::CheckFromLua(int index, const char *type)
 	LUA_DEBUG_START(l);
 
 	if (lua_type(l, index) != LUA_TUSERDATA)
-		return NULL;
+		return 0;
 
 	lid *idp = static_cast<lid*>(lua_touserdata(l, index));
 	if (!idp)
-		return NULL;
+		return 0;
 
 	LuaObjectBase *lo = LuaObjectBase::Lookup(*idp);
 	if (!lo)
-		return NULL;
+		return 0;
 
 	LUA_DEBUG_END(l, 0);
 
 	if (!lo->Isa(type))
-		return NULL;
+		return 0;
 
 	// found it
 	return lo->m_object;

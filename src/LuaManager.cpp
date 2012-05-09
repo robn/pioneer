@@ -6,7 +6,7 @@ bool instantiated = false;
 
 const std::string luaDebugFilename("pidebug.lua");
 
-LuaManager::LuaManager() : m_lua(NULL) {
+LuaManager::LuaManager() : m_lua(0) {
 	if (instantiated) {
 		fprintf(stderr, "Can't instantiate more than one LuaManager");
 		abort();

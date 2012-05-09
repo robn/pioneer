@@ -235,5 +235,5 @@ template <> void LuaObject<LuaUncopyable<EquipType> >::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, NULL, l_methods, l_attrs, NULL);
+	LuaObjectBase::CreateClass(s_type, 0, l_methods, l_attrs, 0);
 }
