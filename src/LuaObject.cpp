@@ -177,87 +177,76 @@ int LuaObjectBase::l_gc(lua_State *l)
 // helper to lookup and return an individual method/attr handler
 // checks the methods for the type, then the attrs. if not found, walks up to
 // the parent metatable
-// entry stack: 1: object, 2: key, 3: globals, 4: initial metatable
+// entry: three indices for the object, key (name of method/attr) and the
+//        global table. initial metatable on top of the stack
 // return: true if found, method/result on stack
 //         false if not found, nothing new on stack
-static bool _resolve_dispatch(lua_State *l)
+static bool _resolve_dispatch(lua_State *l, int objectIdx, int keyIdx, int globalsIdx)
 {
-	// sanity
-	assert(lua_gettop(l) == 4);
-
 	// loop until we find what we're looking for or we run out of metatables
 	while (!lua_isnil(l, -1)) {
 
+		// top of stack: metatable
+
 		// first is method lookup. we get the object type from the metatable and
 		// use it to look up the method table and from there, the method itself
-		lua_pushstring(l, "type");
-		lua_rawget(l, -2);                  // object, key, globals, metatable, type
+		lua_pushstring(l, "type");          // metatable, "type"
+		lua_rawget(l, -2);                  // metatable, type
 
-		lua_rawget(l, -3);                  // object, key, globals, metatable, method table
+		lua_rawget(l, globalsIdx);          // metatable, method table
 
-		lua_pushvalue(l, 2);
-		lua_rawget(l, -2);                  // object, key, globals, metatable, method table, method/nil
+		lua_pushvalue(l, keyIdx);           // metatable, method table, key
+		lua_rawget(l, -2);                  // metatable, method table, method
 	
+		lua_remove(l, -2);                  // metatable, method
+
 		// found something, return it
-		if (!lua_isnil(l, -1)) {
-			lua_remove(l, -2);              // object, key, globals, metatable, method
-			assert(lua_gettop(l) == 5);
+		if (!lua_isnil(l, -1))
 			return true;
-		}
 
-		lua_pop(l, 2);                      // object, key, globals, metatable
-
-		assert(lua_gettop(l) == 4);
+		lua_pop(l, 1);                      // metatable
 
 		// didn't find a method, so now we go looking for an attribute handler in
 		// the attribute table
-		lua_pushstring(l, "attrs");
-		lua_rawget(l, -2);                  // object, key, globals, metatable, attr table
+		lua_pushstring(l, "attrs");         // metatable, "attrs"
+		lua_rawget(l, -2);                  // metatable, attr table
 
 		if (lua_istable(l, -1)) {
-			lua_pushvalue(l, 2);
-			lua_rawget(l, -2);              // object, key, globals, metatable, attr table, attr handler
+			lua_pushvalue(l, keyIdx);       // metatable, attr table, key
+			lua_rawget(l, -2);              // metatable, attr table, attr handler
 
 			// found something. since its likely a regular attribute lookup and not a
 			// method call we have to do the call ourselves
 			if (lua_isfunction(l, -1)) {
-				lua_pushvalue(l, 1);            // object, key, globals, metatable, attr table, attr handler, key
-				pi_lua_protected_call(l, 1, 1); // object, key, globals, metatable, attr table, result
+				lua_pushvalue(l, objectIdx);    // metatable, attr table, attr handler, object
+				pi_lua_protected_call(l, 1, 1); // metatable, attr table, result
 
-				lua_remove(l, -2);              // object, key, globals, metatable, result
-				assert(lua_gettop(l) == 5);     
+				lua_remove(l, -2);              // metatable, result
 				return true;
 			}
 
-			lua_pop(l, 2);                  // object, key, globals, metatable
+			lua_pop(l, 2);                  // metatable
 		}
 		else
-			lua_pop(l, 1);                  // object, key, globals, metatable
-
-		assert(lua_gettop(l) == 4);
+			lua_pop(l, 1);                  // metatable
 
 		// didn't find anything. if the object has a parent object then we look
 		// there instead
-		lua_pushstring(l, "parent");        // obejct, key, globals, metatable, "parent"
-		lua_rawget(l, -2);                  // object, key, globals, metatable, parent type
+		lua_pushstring(l, "parent");        // metatable, "parent"
+		lua_rawget(l, -2);                  // metatable, parent type
 
 		// not found means we have no parents and we can't search any further
 		if (lua_isnil(l, -1)) {
-			lua_pop(l, 1);                  // object, key, globals, metatable 
-			assert(lua_gettop(l) == 4);
+			lua_pop(l, 1);                  // metatable 
 			return false;
 		}
 
-		// clean up the stack
-		lua_remove(l, -2);                  // object, key, globals, parent type
+        // remove the old metatable
+		lua_remove(l, -2);                  // parent type
 
 		// get the parent metatable
-		lua_rawget(l, LUA_REGISTRYINDEX);   // object, key, globals, parent metatable
-
-		assert(lua_gettop(l) == 4);
+		lua_rawget(l, LUA_REGISTRYINDEX);   // metatable
 	}
-
-	assert(lua_gettop(l) == 4);
 
 	return false;
 }
@@ -285,7 +274,7 @@ static int dispatch_index(lua_State *l)
 	lua_getmetatable(l, 1);     // object, key, globals, metatable
 
 	// walk up the tree looking for the key. if we find it, return it
-	if (_resolve_dispatch(l))
+	if (_resolve_dispatch(l, 1, 2, 3))
 		return 1;
 
 	luaL_error(l, "unable to resolve method or attribute '%s'", lua_tostring(l, 2));
