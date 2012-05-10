@@ -174,6 +174,39 @@ int LuaObjectBase::l_gc(lua_State *l)
 	return 0;
 }
 
+// helper to lokup and return an individual method/attr handler
+// entry stack: 1: object, 2: key, 3: globals, 4:metatable
+// return: true if found, method/result on stack
+//         false if not found, nothing new on stack
+static bool _resolve_dispatch(lua_State *l)
+{
+	// sanity
+	assert(lua_gettop(l) == 4);
+
+	// first is method lookup. we get the object type from the metatable and
+	// use it to look up the method table and from there, the method itself
+	lua_pushstring(l, "type");
+	lua_rawget(l, -2);                  // object, key, globals, metatable, type
+
+	lua_rawget(l, -3);                  // object, key, globals, metatable, method table
+
+	lua_pushvalue(l, 2);
+	lua_rawget(l, -2);                  // object, key, globals, metatable, method table, method/nil
+   
+	// found something, return it
+	if (!lua_isnil(l, -1)) {
+		lua_remove(l, -2);              // object, key, globals, metatable, method
+		assert(lua_gettop(l) == 5);
+		return true;
+	}
+
+	lua_pop(l, 2);                      // object, key, globals, metatable
+
+	assert(lua_gettop(l) == 4);
+
+	return false;
+}
+
 static int dispatch_index(lua_State *l)
 {
 	// if its a table then they're peeking inside the method table directly
@@ -198,22 +231,8 @@ static int dispatch_index(lua_State *l)
 
 	// loop until we find what we're looking for or we run out of metatables
 	while (!lua_isnil(l, -1)) {
-
-		// first is method lookup. we get the object type from the metatable and
-		// use it to look up the method table and from there, the method itself
-		lua_pushstring(l, "type");
-		lua_rawget(l, -2);                  // object, key, globals, metatable, type
-
-		lua_rawget(l, -3);                  // object, key, globals, metatable, method table
-
-		lua_pushvalue(l, 2);
-		lua_rawget(l, -2);                  // object, key, globals, metatable, method table, method
-    
-		// found something, return it
-		if (!lua_isnil(l, -1))
+		if (_resolve_dispatch(l))
 			return 1;
-
-		lua_pop(l, 2);                      // object, key, globals, metatable
 
 		// didn't find a method, so now we go looking for an attribute handler in
 		// the attribute table
