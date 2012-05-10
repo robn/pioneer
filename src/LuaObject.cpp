@@ -202,6 +202,31 @@ static bool _resolve_dispatch(lua_State *l)
 
 	lua_pop(l, 2);                      // object, key, globals, metatable
 
+	// didn't find a method, so now we go looking for an attribute handler in
+	// the attribute table
+	lua_pushstring(l, "attrs");
+	lua_rawget(l, -2);                  // object, key, globals, metatable, attr table
+
+	if (lua_istable(l, -1)) {
+		lua_pushvalue(l, 2);
+		lua_rawget(l, -2);              // object, key, globals, metatable, attr table, attr handler
+
+		// found something. since its likely a regular attribute lookup and not a
+		// method call we have to do the call ourselves
+		if (lua_isfunction(l, -1)) {
+			lua_pushvalue(l, 1);            // object, key, globals, metatable, attr table, attr handler, key
+			pi_lua_protected_call(l, 1, 1); // object, key, globals, metatable, attr table, result
+
+			lua_remove(l, -2);              // object, key, globals, metatable, result
+			assert(lua_gettop(l) == 5);     
+			return 1;
+		}
+
+		lua_pop(l, 2);                  // object, key, globals, metatable
+	}
+	else
+		lua_pop(l, 1);                  // object, key, globals, metatable
+
 	assert(lua_gettop(l) == 4);
 
 	return false;
@@ -233,28 +258,6 @@ static int dispatch_index(lua_State *l)
 	while (!lua_isnil(l, -1)) {
 		if (_resolve_dispatch(l))
 			return 1;
-
-		// didn't find a method, so now we go looking for an attribute handler in
-		// the attribute table
-		lua_pushstring(l, "attrs");
-		lua_rawget(l, -2);                  // object, key, globals, metatable, attr table
-
-		if (lua_istable(l, -1)) {
-			lua_pushvalue(l, 2);
-			lua_rawget(l, -2);              // object, key, globals, metatable, attr table, attr handler
-
-			// found something. since its likely a regular attribute lookup and not a
-			// method call we have to do the call ourselves
-			if (lua_isfunction(l, -1)) {
-				lua_pushvalue(l, 1);
-				pi_lua_protected_call(l, 1, 1);
-				return 1;
-			}
-
-			lua_pop(l, 2);                  // object, key, globals, metatable
-		}
-		else
-			lua_pop(l, 1);                  // object, key, globals, metatable
 
 		// didn't find anything. if the object has a parent object then we look
 		// there instead
