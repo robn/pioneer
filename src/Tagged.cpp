@@ -20,9 +20,3 @@ unsigned int Tagged::AddTagsFromLua(lua_State *l, int stackIndex)
 	
 	return count;
 }
-
-int Tagged::l_attr_tags(lua_State *l)
-{
-	lua_newtable(l);
-	return 1;
-}

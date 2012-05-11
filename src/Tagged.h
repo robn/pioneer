@@ -20,9 +20,6 @@ public:
 	// returns number of tags added
 	unsigned int AddTagsFromLua(lua_State *L, int stackIndex);
 
-	// attribute methods for lua
-	static int l_attr_tags(lua_State *L);
-
 private:
 	std::set<std::string> m_set;
 };
