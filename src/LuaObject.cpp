@@ -581,25 +581,50 @@ bool LuaObjectBase::Isa(const char *base) const
 
 	LUA_DEBUG_START(l);
 
+	// start with our name
 	lua_pushstring(l, m_type);
-	while (strcmp(lua_tostring(l, -1), base) != 0) {
-		// get the metatable for the current type
+	while (!lua_isnil(l, -1)) {
+		// see if if it matches
+		if (strcmp(lua_tostring(l, -1), base) == 0) {
+			lua_pop(l, 1);
+			LUA_DEBUG_END(l, 0);
+			return true;
+		}
+
+		// not found, lets look for the parent. get our metatable
 		lua_rawget(l, LUA_REGISTRYINDEX);
 
 		// get the name of the parent type
 		lua_pushstring(l, "parent");
 		lua_rawget(l, -2);
 
-		// if it doesn't have a parent then we can go no further
-		if (lua_isnil(l, -1)) {
-			lua_pop(l, 2);
-			LUA_DEBUG_END(l, 0);
-			return false;
-		}
-
+		// remove the metatable
 		lua_remove(l, -2);
 	}
 	lua_pop(l, 1);
+
+	// lets also check the mixin types. get the metatable
+	lua_pushstring(l, m_type);
+	lua_rawget(l, LUA_REGISTRYINDEX);
+
+	// mixin table
+	lua_pushstring(l, "mixins");
+	lua_rawget(l, -2);
+
+	if (lua_istable(l, -1)) {
+		lua_pushnil(l);
+		while(lua_next(l, -2)) {
+			if (strcmp(lua_tostring(l, -1), base) == 0) {
+				lua_pop(l, 4);
+				LUA_DEBUG_END(l, 0);
+				return true;
+			}
+
+			lua_pop(l, 1);
+		}
+	}
+
+	lua_pop(l, 2);
 
 	LUA_DEBUG_END(l, 0);
 
