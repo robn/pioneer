@@ -5,7 +5,20 @@
 
 static int l_tagged_attr_tags(lua_State *l)
 {
+	LUA_DEBUG_START(l);
+
+	Tagged *t = LuaTagged::CheckFromLua(1);
+
 	lua_newtable(l);
+
+	for (Tagged::TagIterator i = t->TagsBegin(); i != t->TagsEnd(); ++i) {
+		lua_pushinteger(l, lua_rawlen(l, -1) +1);
+		lua_pushstring(l, (*i).c_str());
+		lua_rawset(l, -3);
+	}
+
+	LUA_DEBUG_END(l, 1);
+
 	return 1;
 }
 
