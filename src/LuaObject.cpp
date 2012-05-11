@@ -271,11 +271,30 @@ static int dispatch_index(lua_State *l)
 	lua_rawgeti(l, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
 
 	// everything we need is in the metatable, so lets start with that
-	lua_getmetatable(l, 1);     // object, key, globals, metatable
+	lua_getmetatable(l, 1);         // object, key, globals, metatable
 
 	// walk up the tree looking for the key. if we find it, return it
 	if (_resolve_dispatch(l, 1, 2, 3))
 		return 1;
+	
+	// didn't find it. lets try the mixins
+	lua_pushstring(l, "mixins");    // object, key, globals, metatable, "mixins"
+	lua_rawget(l, -2);              // object, key, globals, metatable, mixin list
+
+	if (lua_istable(l, -1)) {
+		lua_remove(l, -2);          // object, key, globals, mixin list
+
+		lua_pushnil(l);             // object, key, globals, mixin list, nil
+		while(lua_next(l, -2)) {    // object, key, globals, mixin list, index, name
+
+			lua_rawget(l, LUA_REGISTRYINDEX);   // object, key, globals, mixin list, index, metatable
+
+			if (_resolve_dispatch(l, 1, 2, 3))
+				return 1;
+
+			lua_pop(l, 1);                      // object, key, globals, mixin list, index
+		}
+	}
 
 	luaL_error(l, "unable to resolve method or attribute '%s'", lua_tostring(l, 2));
 	return 0;
@@ -359,9 +378,9 @@ void LuaObjectBase::CreateClass(const char *type, const char *parent, const char
 	if (mixins) {
 		lua_newtable(l);
 
-		lua_pushstring(l, "mixin");
+		lua_pushstring(l, "mixins");
 		lua_pushvalue(l, -2);
-		lua_rawset(l, -3);
+		lua_rawset(l, -4);
 
 		for (int i = 0; mixins[i]; i++) {
 			lua_pushinteger(l, lua_rawlen(l, -1) +1);

@@ -364,8 +364,6 @@ template <> void LuaObject<LuaUncopyable<ShipType> >::RegisterClass()
 		{ "hullMass",          l_shiptype_attr_hull_mass          },
 		{ "basePrice",         l_shiptype_attr_base_price         },
 		{ "defaultHyperdrive", l_shiptype_attr_default_hyperdrive },
-		
-		{ "tags",              Tagged::l_attr_tags },
 		{ 0, 0 }
 	};
 
