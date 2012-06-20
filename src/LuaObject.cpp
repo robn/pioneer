@@ -174,6 +174,16 @@ int LuaObjectBase::l_gc(lua_State *l)
 	return 0;
 }
 
+int LuaObjectBase::l_tostring(lua_State *l)
+{
+	luaL_checktype(l, 1, LUA_TUSERDATA);
+	lua_getmetatable(l, 1);
+	lua_pushstring(l, "type");
+	lua_rawget(l, -2);
+	lua_pushfstring(l, "userdata [%s]: %p", lua_tostring(l, -1), lua_topointer(l, 1));
+	return 1;
+}
+
 static int dispatch_index(lua_State *l)
 {
 	bool typeless = false;
@@ -410,6 +420,12 @@ void LuaObjectBase::CreateClass(const char *type, const char *parent, const luaL
 	}
 
 	// stack: new method table, new metatable
+	
+	// default tostring method. setting before setting up user-supplied
+	// metamethods because they might override it
+	lua_pushstring(l, "__tostring");
+	lua_pushcfunction(l, LuaObjectBase::l_tostring);
+	lua_rawset(l, -3);
 
 	// attach metamethods
 	if (meta) luaL_setfuncs(l, meta, 0);
