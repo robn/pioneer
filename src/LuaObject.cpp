@@ -184,6 +184,35 @@ int LuaObjectBase::l_tostring(lua_State *l)
 	return 1;
 }
 
+int LuaObjectBase::l_pairs(lua_State *l)
+{
+	lua_pushcfunction(l, l_next);
+	lua_pushvalue(l, 1);
+	lua_pushnil(l);
+	return 3;
+}
+
+int LuaObjectBase::l_next(lua_State *l)
+{
+	int methodtable = 1;
+	if (lua_isuserdata(l, 1)) {
+		lua_rawgeti(l, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+
+		lua_getmetatable(l, 1);
+		lua_pushstring(l, "type");
+		lua_rawget(l, -2);
+
+		lua_remove(l, -2);
+
+		lua_rawget(l, -2);
+
+		methodtable = lua_gettop(l);
+	}
+
+	lua_pushvalue(l, 2);
+	return lua_next(l, methodtable) ? 2 : 0;
+}
+
 static int dispatch_index(lua_State *l)
 {
 	// userdata are typed, tables are not
@@ -258,6 +287,13 @@ void LuaObjectBase::CreateObject(const luaL_Reg *methods, const luaL_Reg *attrs,
 
 	// create metatable for it
 	lua_newtable(l);
+
+	// default pairs method
+	lua_pushstring(l, "__pairs");
+	lua_pushcfunction(l, LuaObjectBase::l_pairs);
+	lua_rawset(l, -3);
+
+	// add passed-in meta
 	if (meta) luaL_setfuncs(l, meta, 0);
 
 	// index function
@@ -390,14 +426,23 @@ void LuaObjectBase::CreateClass(const char *type, const char *parent, const luaL
 
 	// stack: new method table, new metatable
 	
-	// default tostring method. setting before setting up user-supplied
-	// metamethods because they might override it
+	// setup metamethods. these are done before the passed-in meta is so they
+	// can be overridden by the caller if necessary
+	
+	// default tostring method
 	lua_pushstring(l, "__tostring");
 	lua_pushcfunction(l, LuaObjectBase::l_tostring);
 	lua_rawset(l, -3);
 
+	// default pairs method
+	lua_pushstring(l, "__pairs");
+	lua_pushcfunction(l, LuaObjectBase::l_pairs);
+	lua_rawset(l, -3);
+
 	// attach metamethods
 	if (meta) luaL_setfuncs(l, meta, 0);
+
+	// non-overridable metamethods
 
 	// add a generic garbage collector
 	lua_pushstring(l, "__gc");

@@ -179,9 +179,16 @@ private:
 	// its only part of the class so that it can call Deregister()
 	static int l_gc(lua_State *l);
 
-	// default tostring. shows a little more info about the object, like its
-	// type
+	// default tostring metamethod. shows a little more info about the object,s
+	// like its type
 	static int l_tostring(lua_State *l);
+
+	// default pairs metamethod. sets up iteration over the object's methods
+	// and attributes via l_next
+	static int l_pairs(lua_State *l);
+
+	// next method for iteration, returned by l_pairs
+	static int l_next(lua_State *l);
 
 	// pull an LuaObjectBase wrapper from the registry given an id. returns NULL
 	// if the object is not in the registry
