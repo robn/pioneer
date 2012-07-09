@@ -10,7 +10,6 @@
 #include "StringF.h"
 
 #define CELSIUS	273.15
-//#define DEBUG_DUMP
 
 // minimum moon mass a little under Europa's
 static const fixed MIN_MOON_MASS = fixed(1,30000); // earth masses
@@ -1322,69 +1321,7 @@ try_that_again_guvnah:
 	if (m_numStars == 4) MakePlanetsAround(centGrav2, rand);
 
 	Populate(true);
-
-#ifdef DEBUG_DUMP
-	Dump();
-#endif /* DEBUG_DUMP */
 }
-
-#ifdef DEBUG_DUMP
-struct thing_t {
-	SystemBody* obj;
-	vector3d pos;
-	vector3d vel;
-};
-void StarSystem::Dump()
-{
-	std::vector<SystemBody*> obj_stack;
-	std::vector<vector3d> pos_stack;
-	std::vector<thing_t> output;
-
-	SystemBody *obj = rootBody;
-	vector3d pos = vector3d(0.0);
-
-	while (obj) {
-		vector3d p2 = pos;
-		if (obj->parent) {
-			p2 = pos + obj->orbit.OrbitalPosAtTime(1.0);
-			pos = pos + obj->orbit.OrbitalPosAtTime(0.0);
-		}
-
-		if ((obj->type != SystemBody::TYPE_GRAVPOINT) &&
-		    (obj->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)) {
-			struct thing_t t;
-			t.obj = obj;
-			t.pos = pos;
-			t.vel = (p2-pos);
-			output.push_back(t);
-		}
-		for (std::vector<SystemBody*>::iterator i = obj->children.begin();
-				i != obj->children.end(); ++i) {
-			obj_stack.push_back(*i);
-			pos_stack.push_back(pos);
-		}
-		if (obj_stack.size() == 0) break;
-		pos = pos_stack.back();
-		obj = obj_stack.back();
-		pos_stack.pop_back();
-		obj_stack.pop_back();
-	}
-
-	FILE *f = fopen("starsystem.dump", "w");
-	fprintf(f, "%d bodies\n", output.size());
-	fprintf(f, "0 steps\n");
-	for (std::vector<thing_t>::iterator i = output.begin();
-			i != output.end(); ++i) {
-		fprintf(f, "B:%lf,%lf:%lf,%lf,%lf,%lf:%lf:%d:%lf,%lf,%lf\n",
-				(*i).pos.x, (*i).pos.y, (*i).pos.z,
-				(*i).vel.x, (*i).vel.y, (*i).vel.z,
-				(*i).obj->GetMass(), 0,
-				1.0, 1.0, 1.0);
-	}
-	fclose(f);
-	printf("Junk dumped to starsystem.dump\n");
-}
-#endif /* DEBUG_DUMP */
 
 /*
  * http://en.wikipedia.org/wiki/Hill_sphere
@@ -2073,4 +2010,61 @@ void StarSystem::ShrinkCache()
 		else
 			i++;
 	}
+}
+
+
+struct thing_t {
+	SystemBody* obj;
+	vector3d pos;
+	vector3d vel;
+};
+void StarSystem::Dump()
+{
+	std::vector<SystemBody*> obj_stack;
+	std::vector<vector3d> pos_stack;
+	std::vector<thing_t> output;
+
+	SystemBody *obj = rootBody;
+	vector3d pos = vector3d(0.0);
+
+	while (obj) {
+		vector3d p2 = pos;
+		if (obj->parent) {
+			p2 = pos + obj->orbit.OrbitalPosAtTime(1.0);
+			pos = pos + obj->orbit.OrbitalPosAtTime(0.0);
+		}
+
+		if ((obj->type != SystemBody::TYPE_GRAVPOINT) &&
+		    (obj->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)) {
+			struct thing_t t;
+			t.obj = obj;
+			t.pos = pos;
+			t.vel = (p2-pos);
+			output.push_back(t);
+		}
+		for (std::vector<SystemBody*>::iterator i = obj->children.begin();
+				i != obj->children.end(); ++i) {
+			obj_stack.push_back(*i);
+			pos_stack.push_back(pos);
+		}
+		if (obj_stack.size() == 0) break;
+		pos = pos_stack.back();
+		obj = obj_stack.back();
+		pos_stack.pop_back();
+		obj_stack.pop_back();
+	}
+
+	FILE *f = fopen("starsystem.dump", "w");
+	fprintf(f, "%lu bodies\n", output.size());
+	fprintf(f, "0 steps\n");
+	for (std::vector<thing_t>::iterator i = output.begin();
+			i != output.end(); ++i) {
+		fprintf(f, "B:%lf,%lf:%lf,%lf,%lf,%lf:%lf:%d:%lf,%lf,%lf\n",
+				(*i).pos.x, (*i).pos.y, (*i).pos.z,
+				(*i).vel.x, (*i).vel.y, (*i).vel.z,
+				(*i).obj->GetMass(), 0,
+				1.0, 1.0, 1.0);
+	}
+	fclose(f);
+	printf("Junk dumped to starsystem.dump\n");
 }
