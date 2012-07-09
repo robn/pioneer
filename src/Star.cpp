@@ -3,6 +3,7 @@
 #include "graphics/Renderer.h"
 #include "gui/Gui.h"
 #include "graphics/VertexArray.h"
+#include "galaxy/SystemConstants.h"
 
 using namespace Graphics;
 
@@ -53,7 +54,7 @@ void Star::Render(Graphics::Renderer *renderer, const vector3d &viewCoords, cons
 
 	renderer->SetTransform(trans * rot);
 
-	const float *col = StarSystem::starRealColors[GetSystemBody()->type];
+	const float *col = SystemConstants::starRealColors[GetSystemBody()->type];
 
 	MTRand(rand);
 

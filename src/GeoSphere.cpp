@@ -2,7 +2,7 @@
 #include "GeoSphere.h"
 #include "perlin.h"
 #include "Pi.h"
-#include "galaxy/StarSystem.h"
+#include "galaxy/SystemConstants.h"
 #include "RefCounted.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
@@ -1402,9 +1402,9 @@ void GeoSphere::Render(Renderer *renderer, vector3d campos, const float radius, 
 		// stars should emit light and terrain should be visible from distance
 		ambient.r = ambient.g = ambient.b = 0.2f;
 		ambient.a = 1.0f;
-		emission[0] = StarSystem::starRealColors[m_sbody->type][0] * 0.5f * b;
-		emission[1] = StarSystem::starRealColors[m_sbody->type][1] * 0.5f * b;
-		emission[2] = StarSystem::starRealColors[m_sbody->type][2] * 0.5f * b;
+		emission[0] = SystemConstants::starRealColors[m_sbody->type][0] * 0.5f * b;
+		emission[1] = SystemConstants::starRealColors[m_sbody->type][1] * 0.5f * b;
+		emission[2] = SystemConstants::starRealColors[m_sbody->type][2] * 0.5f * b;
 		emission[3] = 0.5f;
 	}
 

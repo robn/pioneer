@@ -15,6 +15,8 @@ noinst_HEADERS = \
 	Galaxy.h \
 	Sector.h \
 	StarSystem.h \
+	SystemBody.h \
+	SystemConstants.h \
 	SystemPath.h
 
 libgalaxy_a_SOURCES = \
@@ -22,4 +24,6 @@ libgalaxy_a_SOURCES = \
 	Galaxy.cpp \
 	Sector.cpp \
 	StarSystem.cpp \
+	SystemBody.cpp \
+	SystemConstants.cpp \
 	SystemPath.cpp

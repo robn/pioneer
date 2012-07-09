@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Serializer.h"
 #include "galaxy/StarSystem.h"
+#include "galaxy/SystemConstants.h"
 #include "GalacticView.h"
 #include "Lang.h"
 #include "StringF.h"
@@ -605,10 +606,10 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		// draw star blob itself
 		systrans.Rotate(DEG2RAD(-m_rotZ), 0, 0, 1);
 		systrans.Rotate(DEG2RAD(-m_rotX), 1, 0, 0);
-		systrans.Scale((StarSystem::starScale[(*i).starType[0]]));
+		systrans.Scale((SystemConstants::starScale[(*i).starType[0]]));
 		m_renderer->SetTransform(systrans);
 
-		float *col = StarSystem::starColors[(*i).starType[0]];
+		const float *col = SystemConstants::starColors[(*i).starType[0]];
 		mat.diffuse = Color(col[0], col[1], col[2]);
 		m_renderer->DrawTriangles(m_disk, &mat, TRIANGLE_FAN);
 

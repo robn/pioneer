@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Frame.h"
-#include "galaxy/StarSystem.h"
+#include "galaxy/SystemConstants.h"
 #include "Space.h"
 #include "Player.h"
 #include "Pi.h"
@@ -62,7 +62,7 @@ static void position_system_lights(Frame *camFrame, Frame *frame, std::vector<Li
 		double dist = lpos.Length() / AU;
 		lpos *= 1.0/dist; // normalize
 
-		const float *col = StarSystem::starRealColors[body->type];
+		const float *col = SystemConstants::starRealColors[body->type];
 
 		Color lightCol(col[0], col[1], col[2], 0.f);
 		Color ambCol(0.f);
