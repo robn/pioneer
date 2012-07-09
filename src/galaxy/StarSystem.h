@@ -146,6 +146,8 @@ public:
 
 	bool IsScoopable() const;
 
+	void Dump() const;
+
 	Uint32 id; // index into starsystem->m_bodies
 	SystemPath path;
 	int tmp;
@@ -196,7 +198,6 @@ public:
 	SystemBody *GetBodyByPath(const SystemPath &path) const;
 	static void Serialize(Serializer::Writer &wr, StarSystem *);
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
-	void Dump();
 	const SystemPath &GetPath() const { return m_path; }
 	const char *GetShortDescription() const { return m_shortDesc.c_str(); }
 	const char *GetLongDescription() const { return m_longDesc.c_str(); }
@@ -230,6 +231,9 @@ public:
 	int GetCommodityBasePriceModPercent(int t) {
 		return m_tradeLevel[t];
 	}
+
+	void Dump() const;
+
 private:
 	StarSystem(const SystemPath &path);
 	~StarSystem();

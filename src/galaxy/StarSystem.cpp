@@ -8,6 +8,8 @@
 #include "utils.h"
 #include "Lang.h"
 #include "StringF.h"
+#include <iostream>
+#include "enum_table.h"
 
 #define CELSIUS	273.15
 
@@ -2012,59 +2014,67 @@ void StarSystem::ShrinkCache()
 	}
 }
 
-
-struct thing_t {
-	SystemBody* obj;
-	vector3d pos;
-	vector3d vel;
-};
-void StarSystem::Dump()
+void StarSystem::Dump() const
 {
-	std::vector<SystemBody*> obj_stack;
-	std::vector<vector3d> pos_stack;
-	std::vector<thing_t> output;
+	using namespace std;
 
-	SystemBody *obj = rootBody;
-	vector3d pos = vector3d(0.0);
+	cout
+		<< "name: " << m_name << endl
+		<< stringf("path: %0{d},%1{d},%2{d},%3{u}", m_path.sectorX, m_path.sectorY, m_path.sectorZ, m_path.systemIndex) << endl
+		<< "numStars: " << m_numStars << endl
+		<< "shortDesc: " << m_shortDesc << endl
+		<< "numBodies: " << m_bodies.size() << endl
+		<< "numStations: " << m_spaceStations.size() << endl
+		<< "custom: " << (m_isCustom ? "yes" : "no") << endl
+		<< "customBodies: " << (m_hasCustomBodies ? "yes" : "no") << endl
+		<< "unexplored: " << (m_unexplored ? "yes" : "no") << endl
+		<< "seed: " << m_seed << endl
+		<< "metallicity: " << m_metallicity.ToDouble() << endl
+		<< "industrial: " << m_industrial.ToDouble() << endl
+		<< "agricultural: " << m_agricultural.ToDouble() << endl
+		<< "humanProx: " << m_humanProx.ToDouble() << endl
+		<< "totalPop: " << m_totalPop.ToDouble() << endl
+		<< "econType: " << (m_econType == ECON_MINING ? "mining" : m_econType == ECON_AGRICULTURE ? "agriculture" : m_econType == ECON_INDUSTRY ? "industry" : "???") << endl
+	;
+	
+	cout << "tradeLevel:";
+	for (int i = Equip::NONE; i < Equip::TYPE_MAX; i++) cout << stringf(" %0{d}", m_tradeLevel[i]);
+	cout << endl;
 
-	while (obj) {
-		vector3d p2 = pos;
-		if (obj->parent) {
-			p2 = pos + obj->orbit.OrbitalPosAtTime(1.0);
-			pos = pos + obj->orbit.OrbitalPosAtTime(0.0);
-		}
-
-		if ((obj->type != SystemBody::TYPE_GRAVPOINT) &&
-		    (obj->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)) {
-			struct thing_t t;
-			t.obj = obj;
-			t.pos = pos;
-			t.vel = (p2-pos);
-			output.push_back(t);
-		}
-		for (std::vector<SystemBody*>::iterator i = obj->children.begin();
-				i != obj->children.end(); ++i) {
-			obj_stack.push_back(*i);
-			pos_stack.push_back(pos);
-		}
-		if (obj_stack.size() == 0) break;
-		pos = pos_stack.back();
-		obj = obj_stack.back();
-		pos_stack.pop_back();
-		obj_stack.pop_back();
+	for (std::vector<SystemBody*>::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i) {
+		cout << endl;
+		(*i)->Dump();
 	}
+}
 
-	FILE *f = fopen("starsystem.dump", "w");
-	fprintf(f, "%lu bodies\n", output.size());
-	fprintf(f, "0 steps\n");
-	for (std::vector<thing_t>::iterator i = output.begin();
-			i != output.end(); ++i) {
-		fprintf(f, "B:%lf,%lf:%lf,%lf,%lf,%lf:%lf:%d:%lf,%lf,%lf\n",
-				(*i).pos.x, (*i).pos.y, (*i).pos.z,
-				(*i).vel.x, (*i).vel.y, (*i).vel.z,
-				(*i).obj->GetMass(), 0,
-				1.0, 1.0, 1.0);
-	}
-	fclose(f);
-	printf("Junk dumped to starsystem.dump\n");
+void SystemBody::Dump() const
+{
+	using namespace std;
+
+	cout
+		<< "name: " << name << endl
+		<< "bodyIndex: " << path.bodyIndex << endl
+		<< "description: " << GetAstroDescription() << endl
+		<< "superType: " << ENUM_BodySuperType[GetSuperType()].name << endl
+		<< "type: " << ENUM_BodyType[type].name << endl
+		<< "radius: " << radius.ToDouble() << endl
+		<< "mass: " << mass.ToDouble() << endl
+		<< "periapsis: " << orbMin.ToDouble() << endl
+		<< "apoapsis: " << orbMax.ToDouble() << endl
+		<< "rotationPeriod: " << rotationPeriod.ToDouble() << endl
+		<< "semiMajorAxis: " << semiMajorAxis.ToDouble() << endl
+		<< "eccentricity: " << eccentricity.ToDouble() << endl
+		<< "orbitalOffset: " << orbitalOffset.ToDouble() << endl
+		<< "axialTilt: " << axialTilt.ToDouble() << endl
+		<< "averageTemp: " << averageTemp << endl
+		<< "metallicity: " << m_metallicity.ToDouble() << endl
+		<< "volatileGas: " << m_volatileGas.ToDouble() << endl
+		<< "volatileLiquid: " << m_volatileLiquid.ToDouble() << endl
+		<< "volatileIces: " << m_volatileIces.ToDouble() << endl
+		<< "volcanicity: " << m_volcanicity.ToDouble() << endl
+		<< "atmosOxidizing: " << m_atmosOxidizing.ToDouble() << endl
+		<< "life: " << m_life.ToDouble() << endl
+		<< "population: " << m_population.ToDouble() << endl
+		<< "agricultural: " << m_agricultural.ToDouble() << endl
+	;
 }
