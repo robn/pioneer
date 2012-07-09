@@ -18,12 +18,12 @@ SystemPath SystemPath::Parse(const char * const str)
 {
 	assert(str);
 
-	// syspath = '('? [+-]? [0-9]+ [, +-] [0-9]+ [, +-] [0-9]+ ')'?
+	// syspath = '('? [+-]? [0-9]+ [, +-] [0-9]+ [, +-] [0-9]+ ([, +-] [0-9]+)? ')'?
 	// with whitespace allowed between tokens
 
 	const char *s = str;
 
-	int x, y, z;
+	int x, y, z, si = -1;
 
 	while (isspace(*s)) { ++s; }
 	if (*s == '(') { ++s; }
@@ -41,11 +41,21 @@ SystemPath SystemPath::Parse(const char * const str)
 	z = ParseInt(s);
 
 	while (isspace(*s)) { ++s; }
+
+	// system index
+	if (*s == ',' || *s == '.') {
+		++s;
+		si = ParseInt(s);
+		while (isspace(*s)) { ++s; }
+	}
+
 	if (*s == ')') { ++s; }
 	while (isspace(*s)) { ++s; }
 
 	if (*s) // extra unexpected text after the system path
 		throw SystemPath::ParseFailure();
+	else if (si >= 0)
+		return SystemPath(x, y, z, si);
 	else
 		return SystemPath(x, y, z);
 }
