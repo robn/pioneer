@@ -33,6 +33,20 @@ SystemBody::SystemBody(BodyType _type) :
 	assert(type >= TYPE_GRAVPOINT && type < TYPE_LAST);
 }
 
+SystemBody SystemBody::NewStar(BodyType type, MTRand &rand)
+{
+	SystemBody sbody(type);
+
+	sbody.seed = rand.Int32();
+	sbody.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
+	sbody.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
+	sbody.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
+
+	return sbody;
+}
+
+
+
 
 #define CELSIUS	273.15
 

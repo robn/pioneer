@@ -128,24 +128,15 @@ void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 
 }
 
-void StarSystem::MakeStarOfType(SystemBody *sbody, SystemBody::BodyType type, MTRand &rand)
+// XXX this is stupid
+SystemBody StarSystem::MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand)
 {
-	sbody->type = type;
-	sbody->seed = rand.Int32();
-	sbody->radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0],
-				SystemConstants::starTypeInfo[type].radius[1]), 100);
-	sbody->mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0],
-				SystemConstants::starTypeInfo[type].mass[1]), 100);
-	sbody->averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin,
-				SystemConstants::starTypeInfo[type].tempMax);
-}
-
-void StarSystem::MakeStarOfTypeLighterThan(SystemBody *sbody, SystemBody::BodyType type, fixed maxMass, MTRand &rand)
-{
+	SystemBody sbody;
 	int tries = 16;
 	do {
-		MakeStarOfType(sbody, type, rand);
-	} while ((sbody->mass > maxMass) && (--tries));
+		sbody = SystemBody::NewStar(type, rand);
+	} while ((sbody.mass > maxMass) && (--tries));
+	return sbody;
 }
 
 void StarSystem::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
@@ -239,10 +230,9 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	assert((numStars >= 1) && (numStars <= 4));
 
 	if (numStars == 1) {
-		star[0] = NewBody();
-		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
-		MakeStarOfType(star[0], type, rand);
+		star[0] = new SystemBody(SystemBody::NewStar(s.m_systems[m_path.systemIndex].starType[0], rand));
 		star[0]->name = s.m_systems[m_path.systemIndex].name;
+		AddBody(star[0]);
 		rootBody = star[0];
 		m_numStars = 1;
 	} else {
@@ -251,15 +241,15 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 		AddBody(centGrav1);
 		rootBody = centGrav1;
 
-		star[0] = NewBody();
-		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
-		MakeStarOfType(star[0], type, rand);
+		star[0] = new SystemBody(SystemBody::NewStar(s.m_systems[m_path.systemIndex].starType[0], rand));
 		star[0]->name = s.m_systems[m_path.systemIndex].name+" A";
+		star[0]->parent = centGrav1;
+		AddBody(star[0]);
 
-		star[1] = NewBody();
-		MakeStarOfTypeLighterThan(star[1], s.m_systems[m_path.systemIndex].starType[1], star[0]->mass, rand);
+		star[1] = new SystemBody(MakeStarOfTypeLighterThan(s.m_systems[m_path.systemIndex].starType[1], star[0]->mass, rand));
 		star[1]->name = s.m_systems[m_path.systemIndex].name+" B";
 		star[1]->parent = centGrav1;
+		AddBody(star[1]);
 
 		centGrav1->mass = star[0]->mass + star[1]->mass;
 		centGrav1->children.push_back(star[0]);
@@ -277,9 +267,9 @@ try_that_again_guvnah:
 			}
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
-				star[2] = NewBody();
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand);
+				star[2] = new SystemBody(MakeStarOfTypeLighterThan(s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand));
 				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
+				AddBody(star[2]);
 				centGrav2 = star[2];
 				m_numStars = 3;
 			} else {
@@ -287,14 +277,14 @@ try_that_again_guvnah:
 				centGrav2->name = s.m_systems[m_path.systemIndex].name+" C,D";
 				AddBody(centGrav2);
 
-				star[2] = NewBody();
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand);
+				star[2] = new SystemBody(MakeStarOfTypeLighterThan(s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand));
 				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
+				AddBody(star[2]);
 				star[2]->parent = centGrav2;
 
-				star[3] = NewBody();
-				MakeStarOfTypeLighterThan(star[3], s.m_systems[m_path.systemIndex].starType[3], star[2]->mass, rand);
+				star[3] = new SystemBody(MakeStarOfTypeLighterThan(s.m_systems[m_path.systemIndex].starType[3], star[2]->mass, rand));
 				star[3]->name = s.m_systems[m_path.systemIndex].name+" D";
+				AddBody(star[3]);
 				star[3]->parent = centGrav2;
 
 				const fixed minDist2 = (star[2]->radius + star[3]->radius) * AU_SOL_RADIUS;
