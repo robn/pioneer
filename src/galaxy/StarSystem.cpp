@@ -239,33 +239,27 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 	assert((numStars >= 1) && (numStars <= 4));
 
 	if (numStars == 1) {
-		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
 		star[0] = NewBody();
-		star[0]->parent = NULL;
-		star[0]->name = s.m_systems[m_path.systemIndex].name;
-		star[0]->orbMin = 0;
-		star[0]->orbMax = 0;
+		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
 		MakeStarOfType(star[0], type, rand);
+		star[0]->name = s.m_systems[m_path.systemIndex].name;
 		rootBody = star[0];
 		m_numStars = 1;
 	} else {
 		centGrav1 = NewBody();
 		centGrav1->type = SystemBody::TYPE_GRAVPOINT;
-		centGrav1->parent = NULL;
 		centGrav1->name = s.m_systems[m_path.systemIndex].name+" A,B";
 		rootBody = centGrav1;
 
-		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
 		star[0] = NewBody();
-		star[0]->name = s.m_systems[m_path.systemIndex].name+" A";
-		star[0]->parent = centGrav1;
+		SystemBody::BodyType type = s.m_systems[m_path.systemIndex].starType[0];
 		MakeStarOfType(star[0], type, rand);
+		star[0]->name = s.m_systems[m_path.systemIndex].name+" A";
 
 		star[1] = NewBody();
+		MakeStarOfTypeLighterThan(star[1], s.m_systems[m_path.systemIndex].starType[1], star[0]->mass, rand);
 		star[1]->name = s.m_systems[m_path.systemIndex].name+" B";
 		star[1]->parent = centGrav1;
-		MakeStarOfTypeLighterThan(star[1], s.m_systems[m_path.systemIndex].starType[1],
-				star[0]->mass, rand);
 
 		centGrav1->mass = star[0]->mass + star[1]->mass;
 		centGrav1->children.push_back(star[0]);
@@ -284,30 +278,24 @@ try_that_again_guvnah:
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
 				star[2] = NewBody();
+				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand);
 				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
-				star[2]->orbMin = 0;
-				star[2]->orbMax = 0;
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2],
-					star[0]->mass, rand);
 				centGrav2 = star[2];
 				m_numStars = 3;
 			} else {
 				centGrav2 = NewBody();
 				centGrav2->type = SystemBody::TYPE_GRAVPOINT;
 				centGrav2->name = s.m_systems[m_path.systemIndex].name+" C,D";
-				centGrav2->orbMax = 0;
 
 				star[2] = NewBody();
+				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand);
 				star[2]->name = s.m_systems[m_path.systemIndex].name+" C";
 				star[2]->parent = centGrav2;
-				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2],
-					star[0]->mass, rand);
 
 				star[3] = NewBody();
+				MakeStarOfTypeLighterThan(star[3], s.m_systems[m_path.systemIndex].starType[3], star[2]->mass, rand);
 				star[3]->name = s.m_systems[m_path.systemIndex].name+" D";
 				star[3]->parent = centGrav2;
-				MakeStarOfTypeLighterThan(star[3], s.m_systems[m_path.systemIndex].starType[3],
-					star[2]->mass, rand);
 
 				const fixed minDist2 = (star[2]->radius + star[3]->radius) * AU_SOL_RADIUS;
 				MakeBinaryPair(star[2], star[3], minDist2, rand);
@@ -318,7 +306,6 @@ try_that_again_guvnah:
 			}
 			SystemBody *superCentGrav = NewBody();
 			superCentGrav->type = SystemBody::TYPE_GRAVPOINT;
-			superCentGrav->parent = NULL;
 			superCentGrav->name = s.m_systems[m_path.systemIndex].name;
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
@@ -451,11 +438,11 @@ void StarSystem::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		}
 
 		SystemBody *planet = NewBody();
+		planet->type = SystemBody::TYPE_PLANET_TERRESTRIAL;
+		planet->seed = rand.Int32();
 		planet->eccentricity = ecc;
 		planet->axialTilt = fixed(100,157)*rand.NFixed(2);
 		planet->semiMajorAxis = semiMajorAxis;
-		planet->type = SystemBody::TYPE_PLANET_TERRESTRIAL;
-		planet->seed = rand.Int32();
 		planet->tmp = 0;
 		planet->parent = primary;
 		planet->mass = mass;
