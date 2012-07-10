@@ -24,12 +24,6 @@ struct Orbit {
 
 class SystemBody {
 public:
-	SystemBody();
-	~SystemBody();
-	void PickPlanetType(MTRand &rand);
-	const SystemBody *FindStarAndTrueOrbitalRange(fixed &orbMin, fixed &orbMax);
-	SystemBody *parent;
-	std::vector<SystemBody*> children;
 
 	enum BodyType { // <enum scope='SystemBody' prefix=TYPE_>
 		TYPE_GRAVPOINT = 0,
@@ -89,6 +83,14 @@ public:
 		SUPERTYPE_GAS_GIANT = 3,
 		SUPERTYPE_STARPORT = 4,
 	};
+
+	// XXX old interface to check
+	SystemBody();
+	~SystemBody();
+	void PickPlanetType(MTRand &rand);
+	const SystemBody *FindStarAndTrueOrbitalRange(fixed &orbMin, fixed &orbMax);
+	SystemBody *parent;
+	std::vector<SystemBody*> children;
 
 	std::string GetAstroDescription() const;
 	const char *GetIcon() const;

@@ -7,6 +7,19 @@
 #include "enum_table.h"
 #include <iostream>
 
+SystemBody::SystemBody() :
+	parent(0),
+	id(Uint32(-1)),
+	seed(0),
+	averageTemp(0),
+	type(TYPE_GRAVPOINT),
+	heightMapFilename(0),
+	heightMapFractal(0),
+	m_atmosDensity(0.0)
+{
+}
+
+
 #define CELSIUS	273.15
 
 static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
@@ -381,12 +394,6 @@ vector3d Orbit::EvenSpacedPosAtTime(double t) const
 	vector3d pos = vector3d(-cos(v)*r, sin(v)*r, 0);
 	pos = rotMatrix * pos;
 	return pos;
-}
-
-SystemBody::SystemBody()
-{
-	heightMapFilename = 0;
-	heightMapFractal = 0;
 }
 
 bool SystemBody::HasAtmosphere() const
