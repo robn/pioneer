@@ -140,12 +140,6 @@ void StarSystem::MakeStarOfType(SystemBody *sbody, SystemBody::BodyType type, MT
 				SystemConstants::starTypeInfo[type].tempMax);
 }
 
-void StarSystem::MakeRandomStar(SystemBody *sbody, MTRand &rand)
-{
-	SystemBody::BodyType type = SystemBody::BodyType(rand.Int32(SystemBody::TYPE_STAR_MIN, SystemBody::TYPE_STAR_MAX));
-	MakeStarOfType(sbody, type, rand);
-}
-
 void StarSystem::MakeStarOfTypeLighterThan(SystemBody *sbody, SystemBody::BodyType type, fixed maxMass, MTRand &rand)
 {
 	int tries = 16;
