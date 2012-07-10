@@ -75,6 +75,13 @@ private:
 		m_bodies.push_back(body);
 		return body;
 	}
+
+	void AddBody(SystemBody *body) {
+		body->path = m_path;
+		body->path.bodyIndex = m_bodies.size();
+		m_bodies.push_back(body);
+	}
+
 	void MakeShortDescription(MTRand &rand);
 	void MakePlanetsAround(SystemBody *primary, MTRand &rand);
 	void MakeStarOfType(SystemBody *sbody, SystemBody::BodyType type, MTRand &rand);

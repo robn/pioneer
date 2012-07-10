@@ -6,6 +6,7 @@
 #include "LuaNameGen.h"
 #include "enum_table.h"
 #include <iostream>
+#include <cassert>
 
 SystemBody::SystemBody() :
 	parent(0),
@@ -17,6 +18,19 @@ SystemBody::SystemBody() :
 	heightMapFractal(0),
 	m_atmosDensity(0.0)
 {
+}
+
+SystemBody::SystemBody(BodyType _type) :
+	parent(0),
+	id(Uint32(-1)),
+	seed(0),
+	averageTemp(0),
+	type(_type),
+	heightMapFilename(0),
+	heightMapFractal(0),
+	m_atmosDensity(0.0)
+{
+	assert(type >= TYPE_GRAVPOINT && type < TYPE_LAST);
 }
 
 

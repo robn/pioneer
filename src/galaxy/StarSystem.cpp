@@ -49,8 +49,7 @@ void StarSystem::CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSys
 	for (std::vector<CustomSystemBody*>::const_iterator i = children.begin(); i != children.end(); i++) {
 		const CustomSystemBody *csbody = *i;
 
-		SystemBody *kid = NewBody();
-		kid->type = csbody->type;
+		SystemBody *kid = new SystemBody(csbody->type);
 		kid->parent = parent;
 		kid->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
 		kid->radius = csbody->radius;
@@ -91,17 +90,20 @@ void StarSystem::CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSys
 			double offset = csbody->want_rand_offset ? rand.Double(2*M_PI) : (csbody->orbitalOffset.ToDouble()*M_PI);
 			kid->orbit.rotMatrix = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		}
-		if (kid->GetSuperType() == SystemBody::SUPERTYPE_STARPORT) {
-			(*outHumanInfestedness)++;
-            m_spaceStations.push_back(kid);
-		}
-		parent->children.push_back(kid);
 
 		// perihelion and aphelion (in AUs)
 		kid->orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
 		kid->orbMax = 2*csbody->semiMajorAxis - kid->orbMin;
 
 		kid->PickAtmosphere();
+
+		AddBody(kid);
+
+		if (kid->GetSuperType() == SystemBody::SUPERTYPE_STARPORT) {
+			(*outHumanInfestedness)++;
+			m_spaceStations.push_back(kid);
+		}
+		parent->children.push_back(kid);
 
 		CustomGetKidsOf(kid, csbody->children, outHumanInfestedness, rand);
 	}
@@ -112,15 +114,13 @@ void StarSystem::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 {
 	const CustomSystemBody *csbody = customSys->sBody;
 
-	rootBody = NewBody();
-	rootBody->type = csbody->type;
-	rootBody->parent = NULL;
+	rootBody = new SystemBody(csbody->type);
 	rootBody->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
-	rootBody->seed = rand.Int32();
 	rootBody->radius = csbody->radius;
 	rootBody->mass = csbody->mass;
 	rootBody->averageTemp = csbody->averageTemp;
 	rootBody->name = csbody->name;
+	AddBody(rootBody);
 
 	int humanInfestedness = 0;
 	CustomGetKidsOf(rootBody, csbody->children, &humanInfestedness, rand);
@@ -246,9 +246,9 @@ StarSystem::StarSystem(const SystemPath &path) : m_path(path)
 		rootBody = star[0];
 		m_numStars = 1;
 	} else {
-		centGrav1 = NewBody();
-		centGrav1->type = SystemBody::TYPE_GRAVPOINT;
+		centGrav1 = new SystemBody(SystemBody::TYPE_GRAVPOINT);
 		centGrav1->name = s.m_systems[m_path.systemIndex].name+" A,B";
+		AddBody(centGrav1);
 		rootBody = centGrav1;
 
 		star[0] = NewBody();
@@ -283,9 +283,9 @@ try_that_again_guvnah:
 				centGrav2 = star[2];
 				m_numStars = 3;
 			} else {
-				centGrav2 = NewBody();
-				centGrav2->type = SystemBody::TYPE_GRAVPOINT;
+				centGrav2 = new SystemBody(SystemBody::TYPE_GRAVPOINT);
 				centGrav2->name = s.m_systems[m_path.systemIndex].name+" C,D";
+				AddBody(centGrav2);
 
 				star[2] = NewBody();
 				MakeStarOfTypeLighterThan(star[2], s.m_systems[m_path.systemIndex].starType[2], star[0]->mass, rand);
@@ -304,14 +304,16 @@ try_that_again_guvnah:
 				centGrav2->children.push_back(star[3]);
 				m_numStars = 4;
 			}
-			SystemBody *superCentGrav = NewBody();
-			superCentGrav->type = SystemBody::TYPE_GRAVPOINT;
+			SystemBody *superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT);
 			superCentGrav->name = s.m_systems[m_path.systemIndex].name;
+			AddBody(superCentGrav);
+			rootBody = superCentGrav;
+
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
-			rootBody = superCentGrav;
 			const fixed minDistSuper = star[0]->orbMax + star[2]->orbMax;
 			MakeBinaryPair(centGrav1, centGrav2, 4*minDistSuper, rand);
+
 			superCentGrav->children.push_back(centGrav1);
 			superCentGrav->children.push_back(centGrav2);
 
@@ -437,8 +439,7 @@ void StarSystem::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 			mass *= rand.Fixed() * discDensity;
 		}
 
-		SystemBody *planet = NewBody();
-		planet->type = SystemBody::TYPE_PLANET_TERRESTRIAL;
+		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL);
 		planet->seed = rand.Int32();
 		planet->eccentricity = ecc;
 		planet->axialTilt = fixed(100,157)*rand.NFixed(2);
@@ -454,11 +455,13 @@ void StarSystem::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
-		planet->orbit.rotMatrix = matrix4x4d::RotateYMatrix(r1) *
-			matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
+		planet->orbit.rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
 
 		planet->orbMin = periapsis;
 		planet->orbMax = apoapsis;
+
+		AddBody(planet);
+
 		primary->children.push_back(planet);
 
 		/* minimum separation between planets of 1.35 */

@@ -84,8 +84,10 @@ public:
 		SUPERTYPE_STARPORT = 4,
 	};
 
-	// XXX old interface to check
 	SystemBody();
+	SystemBody(BodyType type);
+
+	// XXX old interface to be checked
 	~SystemBody();
 	void PickPlanetType(MTRand &rand);
 	const SystemBody *FindStarAndTrueOrbitalRange(fixed &orbMin, fixed &orbMax);
