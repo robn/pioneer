@@ -9,17 +9,13 @@ class StarSystem;
 
 class SystemCache {
 public:
-	static RefCountedPtr<StarSystem> GetCached(const SystemPath &path);
-	static void ShrinkCache();
+	RefCountedPtr<StarSystem> GetSystem(const SystemPath &path);
+	void Shrink();
+	void Empty();
 
 private:
-	SystemCache() {}
-	~SystemCache();
-
 	typedef std::map< SystemPath,RefCountedPtr<StarSystem> > SystemCacheMap;
 	SystemCacheMap m_cache;
-
-	static SystemCache s_cache;
 };
 
 #endif

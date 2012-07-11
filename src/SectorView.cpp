@@ -8,6 +8,7 @@
 #include "Serializer.h"
 #include "galaxy/StarSystem.h"
 #include "galaxy/SystemConstants.h"
+#include "galaxy/SystemCache.h"
 #include "GalacticView.h"
 #include "Lang.h"
 #include "StringF.h"
@@ -493,7 +494,7 @@ void SectorView::UpdateSystemLabels(SystemLabels &labels, const SystemPath &path
 	else
 		labels.distance->SetText("");
 
-	RefCountedPtr<StarSystem> sys = StarSystem::GetCached(path);
+	RefCountedPtr<StarSystem> sys = Pi::systemCache->GetSystem(path);
 
 	std::string desc;
 	if (sys->GetNumStars() == 4) {
@@ -553,7 +554,7 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 					fabs(m_posMovingTo.z - m_pos.z));
 			// Ideally, since this takes so f'ing long, it wants to be done as a threaded job but haven't written that yet.
 			if( !(*i).IsSetInhabited() && diff.x < 0.001f && diff.y < 0.001f && diff.z < 0.001f ) {
-				RefCountedPtr<StarSystem> pSS = StarSystem::GetCached(current);
+				RefCountedPtr<StarSystem> pSS = Pi::systemCache->GetSystem(current);
 				if( (!pSS->m_unexplored) && (pSS->m_spaceStations.size()>0) )
 				{
 					(*i).SetInhabited(true);

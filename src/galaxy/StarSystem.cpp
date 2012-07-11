@@ -11,6 +11,7 @@
 #include <iostream>
 #include "enum_table.h"
 #include "SystemConstants.h"
+#include "SystemCache.h"
 
 // minimum moon mass a little under Europa's
 static const fixed MIN_MOON_MASS = fixed(1,30000); // earth masses
@@ -601,44 +602,9 @@ RefCountedPtr<StarSystem> StarSystem::Unserialize(Serializer::Reader &rd)
 		int sec_y = rd.Int32();
 		int sec_z = rd.Int32();
 		int sys_idx = rd.Int32();
-		return StarSystem::GetCached(SystemPath(sec_x, sec_y, sec_z, sys_idx));
+		return Pi::systemCache->GetSystem(SystemPath(sec_x, sec_y, sec_z, sys_idx));
 	} else {
 		return RefCountedPtr<StarSystem>(0);
 	}
 }
 
-typedef std::map<SystemPath,StarSystem*> SystemCacheMap;
-static SystemCacheMap s_cachedSystems;
-
-RefCountedPtr<StarSystem> StarSystem::GetCached(const SystemPath &path)
-{
-	SystemPath sysPath(path.SystemOnly());
-
-	StarSystem *s = 0;
-	std::pair<SystemCacheMap::iterator, bool>
-		ret = s_cachedSystems.insert(SystemCacheMap::value_type(sysPath, static_cast<StarSystem*>(0)));
-	if (ret.second) {
-		s = new StarSystem(sysPath);
-		ret.first->second = s;
-		s->IncRefCount(); // the cache owns one reference
-	} else {
-		s = ret.first->second;
-	}
-	return RefCountedPtr<StarSystem>(s);
-}
-
-void StarSystem::ShrinkCache()
-{
-	std::map<SystemPath,StarSystem*>::iterator i = s_cachedSystems.begin();
-	while (i != s_cachedSystems.end()) {
-		StarSystem *s = (*i).second;
-		assert(s->GetRefCount() >= 1); // sanity check
-		// if the cache is the only owner, then delete it
-		if (s->GetRefCount() == 1) {
-			delete s;
-			s_cachedSystems.erase(i++);
-		}
-		else
-			i++;
-	}
-}

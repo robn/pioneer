@@ -14,6 +14,7 @@
 #include "WorldView.h"
 #include "ObjectViewerView.h"
 #include "galaxy/StarSystem.h"
+#include "galaxy/SystemCache.h"
 #include "SpaceStation.h"
 #include "SpaceStationView.h"
 #include "CargoBody.h"
@@ -152,6 +153,7 @@ const char * const Pi::combatRating[] = {
 	Lang::ELITE
 };
 Graphics::Renderer *Pi::renderer;
+SystemCache *Pi::systemCache;
 
 #if WITH_OBJECTVIEWER
 ObjectViewerView *Pi::objectViewerView;
@@ -534,6 +536,8 @@ void Pi::Init()
 		Error("OpenGL extension ARB_vertex_buffer_object not supported. Pioneer can not run on your graphics card.");
 	}
 
+	systemCache = new SystemCache;
+
 	LuaInit();
 
 	draw_progress(0.1f);
@@ -664,9 +668,9 @@ void Pi::Quit()
 	Galaxy::Uninit();
 	Graphics::Uninit();
 	LuaUninit();
+	delete systemCache;
 	Gui::Uninit();
 	delete Pi::renderer;
-	StarSystem::ShrinkCache();
 	SDL_Quit();
 	FileSystem::Uninit();
 	exit(0);
@@ -1247,7 +1251,7 @@ void Pi::EndGame()
 	game = 0;
 	player = 0;
 
-	StarSystem::ShrinkCache();
+	systemCache->Empty();
 }
 
 
@@ -1366,7 +1370,7 @@ void Pi::MainLoop()
 		} else {
 			// this is something we need not do every turn...
 			if (!config->Int("DisableSound")) AmbientSounds::Update();
-			StarSystem::ShrinkCache();
+			systemCache->Shrink();
 		}
 		cpan->Update();
 		musicPlayer.Update();

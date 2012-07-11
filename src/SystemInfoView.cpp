@@ -1,5 +1,6 @@
 #include "Pi.h"
 #include "galaxy/Sector.h"
+#include "galaxy/SystemCache.h"
 #include "SectorView.h"
 #include "SystemInfoView.h"
 #include "ShipCpanel.h"
@@ -245,7 +246,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 	if (!path.IsSystemPath())
 		return;
 
-	m_system = StarSystem::GetCached(path);
+	m_system = Pi::systemCache->GetSystem(path);
 
 	m_sbodyInfoTab = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-100));
 

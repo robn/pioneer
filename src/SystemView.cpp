@@ -2,6 +2,7 @@
 #include "Pi.h"
 #include "SectorView.h"
 #include "galaxy/StarSystem.h"
+#include "galaxy/SystemCache.h"
 #include "Lang.h"
 #include "StringF.h"
 #include "Space.h"
@@ -285,7 +286,7 @@ void SystemView::Draw3D()
 	std::string t = Lang::TIME_POINT+format_date(m_time);
 	m_timePoint->SetText(t);
 
-	if (!m_system) m_system = StarSystem::GetCached(path);
+	if (!m_system) m_system = Pi::systemCache->GetSystem(path);
 
 	// XXX fog is not going to be supported in renderer likely -
 	// fade the circles some other way

@@ -17,6 +17,7 @@ noinst_HEADERS = \
 	RandomSystemGenerator.h \
 	StarSystem.h \
 	SystemBody.h \
+	SystemCache.h \
 	SystemConstants.h \
 	SystemGenerator.h \
 	SystemPath.h
@@ -27,6 +28,7 @@ libgalaxy_a_SOURCES = \
 	Sector.cpp \
 	RandomSystemGenerator.cpp \
 	StarSystem.cpp \
+	SystemCache.cpp \
 	SystemBody.cpp \
 	SystemConstants.cpp \
 	SystemPath.cpp

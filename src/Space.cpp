@@ -9,6 +9,7 @@
 #include "Pi.h"
 #include "Player.h"
 #include "galaxy/StarSystem.h"
+#include "galaxy/SystemCache.h"
 #include "SpaceStation.h"
 #include "Serializer.h"
 #include "collider/collider.h"
@@ -44,7 +45,7 @@ Space::Space(Game *game, const SystemPath &path)
 	, m_processingFinalizationQueue(false)
 #endif
 {
-	m_starSystem = StarSystem::GetCached(path);
+	m_starSystem = Pi::systemCache->GetSystem(path);
 	m_background.Refresh(m_starSystem->m_seed);
 
 	// XXX set radius in constructor

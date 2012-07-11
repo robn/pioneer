@@ -29,8 +29,8 @@ class StarSystem : public DeleteEmitter, public RefCounted {
 public:
 	friend class SystemBody;
 
-	static RefCountedPtr<StarSystem> GetCached(const SystemPath &path);
-	static void ShrinkCache();
+	StarSystem(const SystemPath &path);
+	~StarSystem();
 
 	const std::string &GetName() const { return m_name; }
 	SystemPath GetPathOf(const SystemBody *sbody) const;
@@ -64,10 +64,8 @@ public:
 	int GetCommodityBasePriceModPercent(int t) {
 		return m_tradeLevel[t];
 	}
-private:
-	StarSystem(const SystemPath &path);
-	~StarSystem();
 
+private:
 	SystemBody *NewBody() {
 		SystemBody *body = new SystemBody;
 		body->path = m_path;
