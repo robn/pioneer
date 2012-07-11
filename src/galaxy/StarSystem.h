@@ -28,6 +28,7 @@ enum EconType { // <enum name=EconType prefix=ECON_>
 class StarSystem : public DeleteEmitter, public RefCounted {
 public:
 	friend class SystemBody;
+	friend class RandomSystemGenerator;
 
 	StarSystem(const SystemPath &path);
 	~StarSystem();
