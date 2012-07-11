@@ -1,5 +1,6 @@
 #include "SystemCache.h"
 #include "StarSystem.h"
+#include "RandomSystemGenerator.h"
 
 RefCountedPtr<StarSystem> SystemCache::GetSystem(const SystemPath &path)
 {
@@ -9,7 +10,8 @@ RefCountedPtr<StarSystem> SystemCache::GetSystem(const SystemPath &path)
 	if (i != m_cache.end())
 		return (*i).second;
 	
-	RefCountedPtr<StarSystem> s(new StarSystem(sysPath));
+	// XXX choose appropriate generator here
+	RefCountedPtr<StarSystem> s(RandomSystemGenerator(sysPath).GenerateSystem());
 	m_cache.insert(std::make_pair(sysPath, s));
 
 	return s;

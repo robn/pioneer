@@ -7,9 +7,8 @@
 class RandomSystemGenerator : public SystemGenerator {
 public:
 	RandomSystemGenerator(const SystemPath &path);
-	virtual ~RandomSystemGenerator();
 
-	virtual StarSystem *GenerateSystem() const;
+	virtual RefCountedPtr<StarSystem> GenerateSystem() const;
 
 private:
 	const SystemPath m_path;

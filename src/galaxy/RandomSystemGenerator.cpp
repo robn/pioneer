@@ -1,11 +1,14 @@
 #include "RandomSystemGenerator.h"
+#include "StarSystem.h"
+#include <cassert>
 
 RandomSystemGenerator::RandomSystemGenerator(const SystemPath &path) : SystemGenerator(),
 	m_path(path)
 {
+	assert(path.IsSystemPath());
 }
 
-StarSystem *RandomSystemGenerator::GenerateSystem() const
+RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 {
-	return 0;
+	return RefCountedPtr<StarSystem>(new StarSystem(m_path));
 }
