@@ -55,7 +55,7 @@ public:
 	std::string            name;
     CustomSystemBody*      sBody;
 	SystemBody::BodyType   primaryType[4];
-	int                    numStars;
+	unsigned int           numStars;
 	int                    sectorX, sectorY, sectorZ;
 	vector3f               pos;
 	Uint32                 seed;

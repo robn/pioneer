@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "galaxy/StarSystem.h"
 #include "galaxy/SystemCache.h"
+#include "galaxy/SystemDescriptor.h"
 #include "SpaceStation.h"
 #include "Serializer.h"
 #include "collider/collider.h"
@@ -257,11 +258,11 @@ vector3d Space::GetHyperspaceExitPoint(const SystemPath &source) const
 	Sector source_sec(source.sectorX, source.sectorY, source.sectorZ);
 	Sector dest_sec(dest.sectorX, dest.sectorY, dest.sectorZ);
 
-	Sector::System source_sys = source_sec.m_systems[source.systemIndex];
-	Sector::System dest_sys = dest_sec.m_systems[dest.systemIndex];
+	SystemDescriptor source_sys = source_sec.m_systems[source.systemIndex];
+	SystemDescriptor dest_sys = dest_sec.m_systems[dest.systemIndex];
 
-	const vector3d sourcePos = vector3d(source_sys.p) + vector3d(source.sectorX, source.sectorY, source.sectorZ);
-	const vector3d destPos = vector3d(dest_sys.p) + vector3d(dest.sectorX, dest.sectorY, dest.sectorZ);
+	const vector3d sourcePos = vector3d(source_sys.pos) + vector3d(source.sectorX, source.sectorY, source.sectorZ);
+	const vector3d destPos = vector3d(dest_sys.pos) + vector3d(dest.sectorX, dest.sectorY, dest.sectorZ);
 
 	// find the first non-gravpoint. should be the primary star
 	Body *primary = 0;

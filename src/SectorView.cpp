@@ -256,7 +256,7 @@ void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 	for (std::map<SystemPath,Sector*>::iterator i = m_sectorCache.begin(); i != m_sectorCache.end(); i++)
 
 		for (unsigned int systemIndex = 0; systemIndex < (*i).second->m_systems.size(); systemIndex++) {
-			const Sector::System *ss = &((*i).second->m_systems[systemIndex]);
+			const SystemDescriptor *ss = &((*i).second->m_systems[systemIndex]);
 
 			// compare with the start of the current system
 			if (strncasecmp(search.c_str(), ss->name.c_str(), search.size()) == 0) {
@@ -347,7 +347,7 @@ void SectorView::Draw3D()
 	m_renderer->SetBlendMode(BLEND_ALPHA);
 
 	Sector *playerSec = GetCached(m_current.sectorX, m_current.sectorY, m_current.sectorZ);
-	vector3f playerPos = Sector::SIZE * vector3f(float(m_current.sectorX), float(m_current.sectorY), float(m_current.sectorZ)) + playerSec->m_systems[m_current.systemIndex].p;
+	vector3f playerPos = Sector::SIZE * vector3f(float(m_current.sectorX), float(m_current.sectorY), float(m_current.sectorZ)) + playerSec->m_systems[m_current.systemIndex].pos;
 
 	for (int sx = -DRAW_RAD; sx <= DRAW_RAD; sx++) {
 		for (int sy = -DRAW_RAD; sy <= DRAW_RAD; sy++) {
@@ -403,7 +403,7 @@ void SectorView::GotoSector(const SystemPath &path)
 void SectorView::GotoSystem(const SystemPath &path)
 {
 	Sector* ps = GetCached(path.sectorX, path.sectorY, path.sectorZ);
-	const vector3f &p = ps->m_systems[path.systemIndex].p;
+	const vector3f &p = ps->m_systems[path.systemIndex].pos;
 	m_posMovingTo.x = path.sectorX + p.x/Sector::SIZE;
 	m_posMovingTo.y = path.sectorY + p.y/Sector::SIZE;
 	m_posMovingTo.z = path.sectorZ + p.z/Sector::SIZE;
@@ -535,18 +535,20 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 	}
 
 	Uint32 num=0;
-	for (std::vector<Sector::System>::iterator i = ps->m_systems.begin(); i != ps->m_systems.end(); ++i, ++num) {
+	for (std::vector<SystemDescriptor>::iterator i = ps->m_systems.begin(); i != ps->m_systems.end(); ++i, ++num) {
 		SystemPath current = SystemPath(sx, sy, sz, num);
 
-		const vector3f sysAbsPos = Sector::SIZE*vector3f(float(sx), float(sy), float(sz)) + (*i).p;
+		const vector3f sysAbsPos = Sector::SIZE*vector3f(float(sx), float(sy), float(sz)) + (*i).pos;
 		const vector3f toCentreOfView = m_pos*Sector::SIZE - sysAbsPos;
 
 		if (toCentreOfView.Length() > OUTER_RADIUS) continue;
 
+#if 0
+// XXX SYSGEN move inhabited stuff out of SystemDescriptor
+
 		// don't worry about looking for inhabited systems if they're
 		// unexplored (same calculation as in StarSystem.cpp)
 		if (isqrt(1 + sx*sx + sy*sy + sz*sz) <= 90) {
-
 			// only do this once we've pretty much stopped moving.
 			vector3f diff = vector3f(
 					fabs(m_posMovingTo.x - m_pos.x),
@@ -565,8 +567,9 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 				}
 			}
 		}
+#endif
 
-		matrix4x4f systrans = trans * matrix4x4f::Translation((*i).p.x, (*i).p.y, (*i).p.z);
+		matrix4x4f systrans = trans * matrix4x4f::Translation((*i).pos.x, (*i).pos.y, (*i).pos.z);
 		m_renderer->SetTransform(systrans);
 
 		glDisable(GL_LIGHTING);
@@ -574,7 +577,7 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		// draw system "leg"
 		glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
 		glBegin(GL_LINE_STRIP);
-			float z = -(*i).p.z;
+			float z = -(*i).pos.z;
 			if (sz <= cz)
 				z = z+abs(cz-sz)*Sector::SIZE;
 			else
@@ -639,10 +642,13 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 		glDepthRange(0,1);
 
 		Color labelColor(0.8f,0.8f,0.8f,0.5f);
+#if 0
+// XXX SYSGEN
 		if ((*i).IsSetInhabited() && (*i).IsInhabited()) {
 			labelColor.r = 0.5;
 			labelColor.b = labelColor.g = 1.0f;
 		}
+#endif
 
 		if (m_inSystem) {
 			float dist = Sector::DistanceBetween( ps, num, GetCached(m_current.sectorX, m_current.sectorY, m_current.sectorZ), m_current.systemIndex);
@@ -846,10 +852,10 @@ void SectorView::Update()
 
 			float min_dist = FLT_MAX;
 			for (unsigned int i=0; i<ps->m_systems.size(); i++) {
-				Sector::System *ss = &ps->m_systems[i];
-				float dx = px - ss->p.x;
-				float dy = py - ss->p.y;
-				float dz = pz - ss->p.z;
+				SystemDescriptor *ss = &ps->m_systems[i];
+				float dx = px - ss->pos.x;
+				float dy = py - ss->pos.y;
+				float dz = pz - ss->pos.z;
 				float dist = sqrtf(dx*dx + dy*dy + dz*dz);
 				if (dist < min_dist) {
 					min_dist = dist;

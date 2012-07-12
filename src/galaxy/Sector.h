@@ -6,6 +6,7 @@
 #include <vector>
 #include "galaxy/StarSystem.h"
 #include "galaxy/CustomSystem.h"
+#include "SystemDescriptor.h"
 
 class Sector {
 public:
@@ -17,32 +18,10 @@ public:
 	// Sector is within a bounding rectangle - used for SectorView m_sectorCache pruning.
 	bool WithinBox(const int Xmin, const int Xmax, const int Ymin, const int Ymax, const int Zmin, const int Zmax) const;
 
-	class System {
-	public:
-		System() : customSys(0), m_queriedStarSystem(false), m_isInhabited(false) {};
-		~System() {};
-
-		// Check that we've had our habitation status set
-		bool IsSetInhabited() const { return m_queriedStarSystem; }
-		void SetInhabited(bool inhabited) { m_isInhabited = inhabited; m_queriedStarSystem = true; }
-		bool IsInhabited() const { return m_isInhabited; }
-
-		// public members
-		std::string name;
-		vector3f p;
-		int numStars;
-		SystemBody::BodyType starType[4];
-		Uint32 seed;
-		const CustomSystem *customSys;
-
-	private:
-		bool m_queriedStarSystem;
-		bool m_isInhabited;
-	};
-	std::vector<System> m_systems;
+	std::vector<SystemDescriptor> m_systems;
 private:
 	void GetCustomSystems();
-	std::string GenName(System &sys, MTRand &rand);
+	std::string GenName(SystemDescriptor &sys, MTRand &rand);
 	int sx, sy, sz;
 };
 

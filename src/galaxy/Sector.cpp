@@ -19,8 +19,8 @@ void Sector::GetCustomSystems()
 
 	for (std::vector<CustomSystem*>::const_iterator it = systems.begin(); it != systems.end(); it++) {
 		const CustomSystem *cs = *it;
-		System s;
-		s.p = SIZE*cs->pos;
+		SystemDescriptor s;
+		s.pos = SIZE*cs->pos;
 		s.name = cs->name;
 		for (s.numStars=0; s.numStars<cs->numStars; s.numStars++) {
 			if (cs->primaryType[s.numStars] == 0) break;
@@ -51,7 +51,7 @@ Sector::Sector(int x, int y, int z)
 		int numSystems = (rng.Int32(4,20) * Galaxy::GetSectorDensity(x, y, z)) >> 8;
 
 		for (int i=0; i<numSystems; i++) {
-			System s;
+			SystemDescriptor s;
 			switch (rng.Int32(15)) {
 				case 0:
 					s.numStars = 4; break;
@@ -63,9 +63,9 @@ Sector::Sector(int x, int y, int z)
 					s.numStars = 1; break;
 			}
 
-			s.p.x = rng.Double(SIZE);
-			s.p.y = rng.Double(SIZE);
-			s.p.z = rng.Double(SIZE);
+			s.pos.x = rng.Double(SIZE);
+			s.pos.y = rng.Double(SIZE);
+			s.pos.z = rng.Double(SIZE);
 			s.seed = 0;
 			s.customSys = 0;
 
@@ -244,12 +244,12 @@ Sector::Sector(int x, int y, int z)
 
 float Sector::DistanceBetween(const Sector *a, int sysIdxA, const Sector *b, int sysIdxB)
 {
-	vector3f dv = a->m_systems[sysIdxA].p - b->m_systems[sysIdxB].p;
+	vector3f dv = a->m_systems[sysIdxA].pos - b->m_systems[sysIdxB].pos;
 	dv += Sector::SIZE*vector3f(float(a->sx - b->sx), float(a->sy - b->sy), float(a->sz - b->sz));
 	return dv.Length();
 }
 
-std::string Sector::GenName(System &sys, MTRand &rng)
+std::string Sector::GenName(SystemDescriptor &sys, MTRand &rng)
 {
 	std::string name;
 	const int dist = std::max(std::max(abs(sx),abs(sy)),abs(sz));

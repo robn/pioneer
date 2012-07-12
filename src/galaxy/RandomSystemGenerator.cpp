@@ -1,6 +1,7 @@
 #include "RandomSystemGenerator.h"
 #include "StarSystem.h"
 #include "SystemConstants.h"
+#include "SystemDescriptor.h"
 #include "Sector.h"
 #include <cassert>
 
@@ -19,12 +20,12 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 	Sector sec = Sector(m_path.sectorX, m_path.sectorY, m_path.sectorZ);
 	assert(m_path.systemIndex >= 0 && m_path.systemIndex < sec.m_systems.size());
 
-	const Sector::System &secSys = sec.m_systems[m_path.systemIndex];
+	const SystemDescriptor &sysDesc = sec.m_systems[m_path.systemIndex];
 
 	RefCountedPtr<StarSystem> s(new StarSystem(m_path));
 
-	s->m_seed = secSys.seed;
-	s->m_name = secSys.name;
+	s->m_seed = sysDesc.seed;
+	s->m_name = sysDesc.name;
 
 	unsigned long _init[6] = { m_path.systemIndex, Uint32(m_path.sectorX), Uint32(m_path.sectorY), Uint32(m_path.sectorZ), UNIVERSE_SEED, Uint32(s->m_seed) };
 	MTRand rand(_init, 6);
@@ -38,16 +39,16 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 	s->m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
 	s->m_isCustom = s->m_hasCustomBodies = false;
-	if (secSys.customSys) {
+	if (sysDesc.customSys) {
 		s->m_isCustom = true;
-		const CustomSystem *custom = secSys.customSys;
+		const CustomSystem *custom = sysDesc.customSys;
 		s->m_numStars = custom->numStars;
 		if (custom->shortDesc.length() > 0) s->m_shortDesc = custom->shortDesc;
 		if (custom->longDesc.length() > 0) s->m_longDesc = custom->longDesc;
 		if (!custom->want_rand_explored) s->m_unexplored = !custom->explored;
 		if (!custom->IsRandom()) {
 			s->m_hasCustomBodies = true;
-			s->GenerateFromCustom(secSys.customSys, rand);
+			s->GenerateFromCustom(sysDesc.customSys, rand);
 			return s;
 		}
 	}
@@ -55,11 +56,11 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 	SystemBody *star[4];
 	SystemBody *centGrav1(NULL), *centGrav2(NULL);
 
-	const int numStars = secSys.numStars;
+	const int numStars = sysDesc.numStars;
 	assert((numStars >= 1) && (numStars <= 4));
 
 	if (numStars == 1) {
-		star[0] = new SystemBody(SystemBody::NewStar(secSys.starType[0], rand));
+		star[0] = new SystemBody(SystemBody::NewStar(sysDesc.starType[0], rand));
 		star[0]->name = s->m_name;
 		s->AddBody(star[0]);
 		s->rootBody = star[0];
@@ -70,12 +71,12 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 		s->AddBody(centGrav1);
 		s->rootBody = centGrav1;
 
-		star[0] = new SystemBody(SystemBody::NewStar(secSys.starType[0], rand));
+		star[0] = new SystemBody(SystemBody::NewStar(sysDesc.starType[0], rand));
 		star[0]->name = s->m_name + " A";
 		star[0]->parent = centGrav1;
 		s->AddBody(star[0]);
 
-		star[1] = new SystemBody(s->MakeStarOfTypeLighterThan(secSys.starType[1], star[0]->mass, rand));
+		star[1] = new SystemBody(s->MakeStarOfTypeLighterThan(sysDesc.starType[1], star[0]->mass, rand));
 		star[1]->name = s->m_name + " B";
 		star[1]->parent = centGrav1;
 		s->AddBody(star[1]);
@@ -96,7 +97,7 @@ try_that_again_guvnah:
 			}
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
-				star[2] = new SystemBody(s->MakeStarOfTypeLighterThan(secSys.starType[2], star[0]->mass, rand));
+				star[2] = new SystemBody(s->MakeStarOfTypeLighterThan(sysDesc.starType[2], star[0]->mass, rand));
 				star[2]->name = s->m_name + " C";
 				s->AddBody(star[2]);
 				centGrav2 = star[2];
@@ -106,12 +107,12 @@ try_that_again_guvnah:
 				centGrav2->name = s->m_name + " C,D";
 				s->AddBody(centGrav2);
 
-				star[2] = new SystemBody(s->MakeStarOfTypeLighterThan(secSys.starType[2], star[0]->mass, rand));
+				star[2] = new SystemBody(s->MakeStarOfTypeLighterThan(sysDesc.starType[2], star[0]->mass, rand));
 				star[2]->name = s->m_name + " C";
 				s->AddBody(star[2]);
 				star[2]->parent = centGrav2;
 
-				star[3] = new SystemBody(s->MakeStarOfTypeLighterThan(secSys.starType[3], star[2]->mass, rand));
+				star[3] = new SystemBody(s->MakeStarOfTypeLighterThan(sysDesc.starType[3], star[2]->mass, rand));
 				star[3]->name = s->m_name + " D";
 				s->AddBody(star[3]);
 				star[3]->parent = centGrav2;
