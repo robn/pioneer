@@ -28,7 +28,7 @@ static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
 
 SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
-	assert(m_path.IsSameSystem(path));
+	assert(desc.path.IsSameSystem(path));
 	assert(path.IsBodyPath());
 	assert(path.bodyIndex < m_bodies.size());
 
@@ -180,16 +180,6 @@ void StarSystem::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTR
 	b->orbMax = orbMax;
 }
 
-/*
- * As my excellent comrades have pointed out, choices that depend on floating
- * point crap will result in different universes on different platforms.
- *
- * We must be sneaky and avoid floating point in these places.
- */
-StarSystem::StarSystem(const SystemPath &path) : m_path(path)
-{
-}
-
 static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
 {
 	// so, density of the disk with distance from star goes like so: 1 - x/discMax
@@ -260,7 +250,7 @@ void StarSystem::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		}
 
 		/* in trinary and quaternary systems don't bump into other pair... */
-		if (m_numStars >= 3) {
+		if (desc.numStars >= 3) {
 			discMax = std::min(discMax, fixed(5,100)*rootBody->children[0]->orbMin);
 		}
 	} else {
@@ -398,14 +388,14 @@ void StarSystem::MakeShortDescription(MTRand &rand)
 
 void StarSystem::Populate(bool addSpaceStations)
 {
-	unsigned long _init[5] = { m_path.systemIndex, Uint32(m_path.sectorX), Uint32(m_path.sectorY), Uint32(m_path.sectorZ), UNIVERSE_SEED };
+	unsigned long _init[5] = { desc.path.systemIndex, Uint32(desc.path.sectorX), Uint32(desc.path.sectorY), Uint32(desc.path.sectorZ), UNIVERSE_SEED };
 	MTRand rand;
 	rand.seed(_init, 5);
 
 	/* Various system-wide characteristics */
 	// This is 1 in sector (0,0,0) and approaches 0 farther out
 	// (1,0,0) ~ .688, (1,1,0) ~ .557, (1,1,1) ~ .48
-	m_humanProx = fixed(3,1) / isqrt(9 + 10*(m_path.sectorX*m_path.sectorX + m_path.sectorY*m_path.sectorY + m_path.sectorZ*m_path.sectorZ));
+	m_humanProx = fixed(3,1) / isqrt(9 + 10*(desc.path.sectorX*desc.path.sectorX + desc.path.sectorY*desc.path.sectorY + desc.path.sectorZ*desc.path.sectorZ));
 	m_econType = ECON_INDUSTRY;
 	m_industrial = rand.Fixed();
 	m_agricultural = 0;
@@ -453,10 +443,10 @@ void StarSystem::Serialize(Serializer::Writer &wr, StarSystem *s)
 {
 	if (s) {
 		wr.Byte(1);
-		wr.Int32(s->m_path.sectorX);
-		wr.Int32(s->m_path.sectorY);
-		wr.Int32(s->m_path.sectorZ);
-		wr.Int32(s->m_path.systemIndex);
+		wr.Int32(s->desc.path.sectorX);
+		wr.Int32(s->desc.path.sectorY);
+		wr.Int32(s->desc.path.sectorZ);
+		wr.Int32(s->desc.path.systemIndex);
 	} else {
 		wr.Byte(0);
 	}

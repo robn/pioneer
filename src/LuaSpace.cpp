@@ -415,7 +415,7 @@ static int l_space_get_body(lua_State *l)
 
 	int id = luaL_checkinteger(l, 1);
 
-	SystemPath path = Pi::game->GetSpace()->GetStarSystem()->GetPath();
+	SystemPath path = Pi::game->GetSpace()->GetStarSystem()->desc.path;
 	path.bodyIndex = id;
 
 	Body *b = Pi::game->GetSpace()->FindBodyForPath(&path);

@@ -764,8 +764,8 @@ void SystemBody::PopulateAddStations(StarSystem *system)
 		children[i]->PopulateAddStations(system);
 	}
 
-	unsigned long _init[6] = { system->m_path.systemIndex, Uint32(system->m_path.sectorX),
-			Uint32(system->m_path.sectorY), Uint32(system->m_path.sectorZ), this->seed, UNIVERSE_SEED };
+	unsigned long _init[6] = { system->desc.path.systemIndex, Uint32(system->desc.path.sectorX),
+			Uint32(system->desc.path.sectorY), Uint32(system->desc.path.sectorZ), this->seed, UNIVERSE_SEED };
 
 	MTRand rand, namerand;
 	rand.seed(_init, 6);
@@ -855,8 +855,8 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		return;
 	}
 
-	unsigned long _init[6] = { system->m_path.systemIndex, Uint32(system->m_path.sectorX),
-			Uint32(system->m_path.sectorY), Uint32(system->m_path.sectorZ), UNIVERSE_SEED, Uint32(this->seed) };
+	unsigned long _init[6] = { system->desc.path.systemIndex, Uint32(system->desc.path.sectorX),
+			Uint32(system->desc.path.sectorY), Uint32(system->desc.path.sectorZ), UNIVERSE_SEED, Uint32(this->seed) };
 
 	MTRand rand, namerand;
 	rand.seed(_init, 6);

@@ -82,7 +82,7 @@ static int l_sbodypath_new(lua_State *l)
 			RefCountedPtr<StarSystem> sys = Pi::systemCache->GetSystem(path);
 			if (size_t(path.bodyIndex) >= sys->m_bodies.size()) {
 				luaL_error(l, "Body %d in system <%d,%d,%d : %d ('%s')> does not exist",
-					path.bodyIndex, sector_x, sector_y, sector_z, path.systemIndex, sys->GetName().c_str());
+					path.bodyIndex, sector_x, sector_y, sector_z, path.systemIndex, sys->desc.name.c_str());
 			}
 		}
 	}
@@ -238,7 +238,7 @@ static int l_sbodypath_distance_to(lua_State *l)
 	const SystemPath *loc2 = LuaSystemPath::CheckFromLua(2);
 	if (!loc2) {
 		StarSystem *s2 = LuaStarSystem::GetFromLua(2);
-		loc2 = &(s2->GetPath());
+		loc2 = &(s2->desc.path);
 	}
 
 	Sector sec1(loc1->sectorX, loc1->sectorY, loc1->sectorZ);
@@ -311,7 +311,7 @@ static int l_sbodypath_get_system_body(lua_State *l)
 
 	RefCountedPtr<StarSystem> sys = Pi::systemCache->GetSystem(path);
 	if (path->IsSystemPath()) {
-		luaL_error(l, "Path <%d,%d,%d : %d ('%s')> does not name a body", path->sectorX, path->sectorY, path->sectorZ, path->systemIndex, sys->GetName().c_str());
+		luaL_error(l, "Path <%d,%d,%d : %d ('%s')> does not name a body", path->sectorX, path->sectorY, path->sectorZ, path->systemIndex, sys->desc.name.c_str());
 		return 0;
 	}
 

@@ -9,7 +9,8 @@
 #include <string>
 #include "DeleteEmitter.h"
 #include "RefCounted.h"
-#include "galaxy/SystemPath.h"
+#include "SystemDescriptor.h"
+#include "SystemPath.h"
 #include "SystemBody.h"
 
 class CustomSystemBody;
@@ -30,18 +31,17 @@ public:
 	friend class SystemBody;
 	friend class RandomSystemGenerator;
 
-	StarSystem(const SystemPath &path);
+	StarSystem(const SystemDescriptor &_desc) : desc(_desc) {}
 	~StarSystem();
 
-	const std::string &GetName() const { return m_name; }
+	const SystemDescriptor desc;
+
 	SystemPath GetPathOf(const SystemBody *sbody) const;
 	SystemBody *GetBodyByPath(const SystemPath &path) const;
 	static void Serialize(Serializer::Writer &wr, StarSystem *);
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
-	const SystemPath &GetPath() const { return m_path; }
 	const char *GetShortDescription() const { return m_shortDesc.c_str(); }
 	const char *GetLongDescription() const { return m_longDesc.c_str(); }
-	int GetNumStars() const { return m_numStars; }
 	const SysPolit &GetSysPolit() const { return m_polit; }
 
 	SystemBody *rootBody;
@@ -58,7 +58,6 @@ public:
 	// percent price alteration
 	int m_tradeLevel[Equip::TYPE_MAX];
 	int m_econType;
-	int m_seed;
 
 	bool m_unexplored;
 
@@ -69,14 +68,14 @@ public:
 private:
 	SystemBody *NewBody() {
 		SystemBody *body = new SystemBody;
-		body->path = m_path;
+		body->path = desc.path;
 		body->path.bodyIndex = m_bodies.size();
 		m_bodies.push_back(body);
 		return body;
 	}
 
 	void AddBody(SystemBody *body) {
-		body->path = m_path;
+		body->path = desc.path;
 		body->path.bodyIndex = m_bodies.size();
 		m_bodies.push_back(body);
 	}
@@ -89,9 +88,6 @@ private:
 	void GenerateFromCustom(const CustomSystem *, MTRand &rand);
 	void Populate(bool addSpaceStations);
 
-	SystemPath m_path;
-	int m_numStars;
-	std::string m_name;
 	std::string m_shortDesc, m_longDesc;
 	SysPolit m_polit;
 

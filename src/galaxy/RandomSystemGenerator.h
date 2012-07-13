@@ -6,12 +6,12 @@
 
 class RandomSystemGenerator : public SystemGenerator {
 public:
-	RandomSystemGenerator(const SystemDescriptor &sysDesc) : SystemGenerator(), m_sysDesc(sysDesc) {}
+	RandomSystemGenerator(const SystemDescriptor &desc) : SystemGenerator(), m_desc(desc) {}
 
 	virtual RefCountedPtr<StarSystem> GenerateSystem() const;
 
 private:
-	const SystemDescriptor m_sysDesc;
+	const SystemDescriptor m_desc;
 };
 
 #endif

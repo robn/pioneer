@@ -147,7 +147,7 @@ void AddCrime(Sint64 crimeBitset, Sint64 addFine)
 		s_playerPerBlocCrimeRecord[b].record |= crimeBitset;
 		s_playerPerBlocCrimeRecord[b].fine += addFine;
 	} else {
-		SystemPath path = Pi::game->GetSpace()->GetStarSystem()->GetPath();
+		SystemPath path = Pi::game->GetSpace()->GetStarSystem()->desc.path;
 		Sint64 record = s_criminalRecord.Get(path, 0);
 		record |= crimeBitset;
 		s_criminalRecord.Set(path, crimeBitset);
@@ -171,7 +171,7 @@ void GetCrime(Sint64 *crimeBitset, Sint64 *fine)
 		*crimeBitset = s_playerPerBlocCrimeRecord[b].record;
 		*fine = s_playerPerBlocCrimeRecord[b].fine;
 	} else {
-		SystemPath path = Pi::game->GetSpace()->GetStarSystem()->GetPath();
+		SystemPath path = Pi::game->GetSpace()->GetStarSystem()->desc.path;
 		*crimeBitset = s_criminalRecord.Get(path, 0);
 		*fine = s_outstandingFine.Get(path, 0);
 	}
@@ -181,7 +181,7 @@ void GetCrime(Sint64 *crimeBitset, Sint64 *fine)
 
 void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, SysPolit &outSysPolit)
 {
-	SystemPath path = s->GetPath();
+	SystemPath path = s->desc.path;
 	const unsigned long _init[5] = { Uint32(path.sectorX), Uint32(path.sectorY), Uint32(path.sectorZ), path.systemIndex, POLIT_SEED };
 	MTRand rand(_init, 5);
 
@@ -212,7 +212,7 @@ void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, 
 
 bool IsCommodityLegal(const StarSystem *s, Equip::Type t)
 {
-	SystemPath path = s->GetPath();
+	SystemPath path = s->desc.path;
 	const unsigned long _init[5] = { Uint32(path.sectorX), Uint32(path.sectorY), Uint32(path.sectorZ), path.systemIndex, POLIT_SALT };
 	MTRand rand(_init, 5);
 

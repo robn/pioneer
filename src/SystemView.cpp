@@ -145,7 +145,7 @@ void SystemView::OnClickObject(SystemBody *b)
 
 	if (Pi::KeyState(SDLK_LSHIFT) || Pi::KeyState(SDLK_RSHIFT)) {
 		SystemPath path = m_system->GetPathOf(b);
-		if (Pi::game->GetSpace()->GetStarSystem()->GetPath() == m_system->GetPath()) {
+		if (Pi::game->GetSpace()->GetStarSystem()->desc.path == m_system->desc.path) {
 			Body* body = Pi::game->GetSpace()->FindBodyForPath(&path);
 			if (body != 0)
 				Pi::player->SetNavTarget(body);
@@ -277,7 +277,7 @@ void SystemView::Draw3D()
 
 	SystemPath path = Pi::sectorView->GetSelectedSystem();
 	if (m_system) {
-		if (!m_system->GetPath().IsSameSystem(path)) {
+		if (!m_system->desc.path.IsSameSystem(path)) {
 			m_system.Reset();
 			ResetViewpoint();
 		}

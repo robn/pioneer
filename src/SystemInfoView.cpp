@@ -29,7 +29,7 @@ void SystemInfoView::OnBodySelected(SystemBody *b)
 
 	SystemPath path = m_system->GetPathOf(b);
 	RefCountedPtr<StarSystem> currentSys = Pi::game->GetSpace()->GetStarSystem();
-	if (currentSys && currentSys->GetPath() == m_system->GetPath()) {
+	if (currentSys && currentSys->desc.path == m_system->desc.path) {
 		Body* body = Pi::game->GetSpace()->FindBodyForPath(&path);
 		if(body != 0)
 			Pi::player->SetNavTarget(body);
@@ -414,7 +414,7 @@ void SystemInfoView::Update()
 
 void SystemInfoView::OnSwitchTo()
 {
-	if (!m_system || !Pi::sectorView->GetSelectedSystem().IsSameSystem(m_system->GetPath()))
+	if (!m_system || !Pi::sectorView->GetSelectedSystem().IsSameSystem(m_system->desc.path))
 		m_refresh = true;
 }
 
@@ -432,7 +432,7 @@ void SystemInfoView::UpdateIconSelections()
 			 (*it).second->SetSelected(false);
 
 		RefCountedPtr<StarSystem> currentSys = Pi::game->GetSpace()->GetStarSystem();
-		if (currentSys && currentSys->GetPath() == m_system->GetPath() &&
+		if (currentSys && currentSys->desc.path == m_system->desc.path &&
 			Pi::player->GetNavTarget() &&
 			(*it).first == Pi::player->GetNavTarget()->GetLabel()) {
 

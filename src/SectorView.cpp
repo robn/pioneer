@@ -34,7 +34,7 @@ SectorView::SectorView()
 
 	m_inSystem = true;
 
-	m_current = Pi::game->GetSpace()->GetStarSystem()->GetPath();
+	m_current = Pi::game->GetSpace()->GetStarSystem()->desc.path;
 	assert(!m_current.IsSectorPath());
 	m_current = m_current.SystemOnly();
 
@@ -497,18 +497,23 @@ void SectorView::UpdateSystemLabels(SystemLabels &labels, const SystemPath &path
 	RefCountedPtr<StarSystem> sys = Pi::systemCache->GetSystem(path);
 
 	std::string desc;
-	if (sys->GetNumStars() == 4) {
-		desc = Lang::QUADRUPLE_SYSTEM;
-	} else if (sys->GetNumStars() == 3) {
-		desc = Lang::TRIPLE_SYSTEM;
-	} else if (sys->GetNumStars() == 2) {
-		desc = Lang::BINARY_SYSTEM;
-	} else {
-		desc = sys->rootBody->GetAstroDescription();
+	switch (sys->desc.numStars) {
+		case 4:
+			desc = Lang::QUADRUPLE_SYSTEM;
+			break;
+		case 3:
+			desc = Lang::TRIPLE_SYSTEM;
+			break;
+		case 2:
+			desc = Lang::BINARY_SYSTEM;
+			break;
+		default:
+			desc = sys->rootBody->GetAstroDescription();
+			break;
 	}
 	labels.starType->SetText(desc);
 
-	labels.systemName->SetText(sys->GetName());
+	labels.systemName->SetText(sys->desc.name);
 	labels.shortDesc->SetText(sys->GetShortDescription());
 
 	if (m_infoBoxVisible)
@@ -763,7 +768,7 @@ void SectorView::Update()
 
 	if (Pi::game->IsNormalSpace()) {
 		m_inSystem = true;
-		m_current = Pi::game->GetSpace()->GetStarSystem()->GetPath();
+		m_current = Pi::game->GetSpace()->GetStarSystem()->desc.path;
 	}
 	else {
 		m_inSystem = false;
