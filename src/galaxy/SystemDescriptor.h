@@ -7,6 +7,7 @@
 #include "libs.h"
 #include "SystemPath.h"
 #include "SystemBody.h"
+#include "Array.h"
 
 class CustomSystem;
 
@@ -14,17 +15,25 @@ class SystemDescriptor {
 public:
 	enum { MAX_STARS = 4 };
 
-	SystemDescriptor() : numStars(0), seed(0), customSys(0) {}
+	SystemDescriptor(const SystemPath &_path, const vector3f &_pos, const std::string &_name, unsigned int _numStars, const Array<SystemBody::BodyType,MAX_STARS> &_starType) :
+		path(_path),
+		pos(_pos),
+		name(_name),
+		numStars(_numStars),
+		starType(_starType),
+		seed(0),
+		customSys(0)
+	{}
 
-	SystemPath path;                          // sector and system index
-	vector3f pos;                             // position within sector
-	std::string name;                         // name
-	unsigned int numStars;                    // number of stars
-	SystemBody::BodyType starType[MAX_STARS]; // star types
+	SystemPath path;                                // sector and system index
+	vector3f pos;                                   // position within sector
+	std::string name;                               // name
+	std::size_t numStars;                           // number of stars
+	Array<SystemBody::BodyType,MAX_STARS> starType; // star type
 
 	// XXX sysgen-specific, move these elsewhere
-	Uint32 seed;                              // rng seed for sysgen
-	const CustomSystem *customSys;            // pointer to custom system definition
+	Uint32 seed;                                    // rng seed for sysgen
+	const CustomSystem *customSys;                  // pointer to custom system definition
 };
 
 #endif

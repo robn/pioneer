@@ -258,8 +258,8 @@ vector3d Space::GetHyperspaceExitPoint(const SystemPath &source) const
 	Sector source_sec(source.sectorX, source.sectorY, source.sectorZ);
 	Sector dest_sec(dest.sectorX, dest.sectorY, dest.sectorZ);
 
-	SystemDescriptor source_sys = source_sec.m_systems[source.systemIndex];
-	SystemDescriptor dest_sys = dest_sec.m_systems[dest.systemIndex];
+	const SystemDescriptor source_sys = source_sec.m_systems[source.systemIndex];
+	const SystemDescriptor dest_sys = dest_sec.m_systems[dest.systemIndex];
 
 	const vector3d sourcePos = vector3d(source_sys.pos) + vector3d(source.sectorX, source.sectorY, source.sectorZ);
 	const vector3d destPos = vector3d(dest_sys.pos) + vector3d(dest.sectorX, dest.sectorY, dest.sectorZ);

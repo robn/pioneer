@@ -21,7 +21,7 @@ public:
 	std::vector<SystemDescriptor> m_systems;
 private:
 	void GetCustomSystems();
-	std::string GenName(SystemDescriptor &sys, MTRand &rand);
+	std::string GenName(SystemBody::BodyType primaryType, MTRand &rand);
 	int sx, sy, sz;
 };
 

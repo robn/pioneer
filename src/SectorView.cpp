@@ -535,7 +535,7 @@ void SectorView::DrawSector(int sx, int sy, int sz, const vector3f &playerAbsPos
 	}
 
 	Uint32 num=0;
-	for (std::vector<SystemDescriptor>::iterator i = ps->m_systems.begin(); i != ps->m_systems.end(); ++i, ++num) {
+	for (std::vector<SystemDescriptor>::const_iterator i = ps->m_systems.begin(); i != ps->m_systems.end(); ++i, ++num) {
 		SystemPath current = SystemPath(sx, sy, sz, num);
 
 		const vector3f sysAbsPos = Sector::SIZE*vector3f(float(sx), float(sy), float(sz)) + (*i).pos;
@@ -852,7 +852,7 @@ void SectorView::Update()
 
 			float min_dist = FLT_MAX;
 			for (unsigned int i=0; i<ps->m_systems.size(); i++) {
-				SystemDescriptor *ss = &ps->m_systems[i];
+				const SystemDescriptor *ss = &ps->m_systems[i];
 				float dx = px - ss->pos.x;
 				float dy = py - ss->pos.y;
 				float dz = pz - ss->pos.z;
