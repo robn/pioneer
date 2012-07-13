@@ -2,16 +2,16 @@
 #define _RANDOMSYSTEMGENERATOR_H
 
 #include "SystemGenerator.h"
-#include "SystemPath.h"
+#include "SystemDescriptor.h"
 
 class RandomSystemGenerator : public SystemGenerator {
 public:
-	RandomSystemGenerator(const SystemPath &path);
+	RandomSystemGenerator(const SystemDescriptor &sysDesc) : SystemGenerator(), m_sysDesc(sysDesc) {}
 
 	virtual RefCountedPtr<StarSystem> GenerateSystem() const;
 
 private:
-	const SystemPath m_path;
+	const SystemDescriptor m_sysDesc;
 };
 
 #endif

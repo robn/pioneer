@@ -1,4 +1,5 @@
 #include "SystemCache.h"
+#include "Sector.h"
 #include "StarSystem.h"
 #include "RandomSystemGenerator.h"
 
@@ -9,9 +10,14 @@ RefCountedPtr<StarSystem> SystemCache::GetSystem(const SystemPath &path)
 	SystemCacheMap::iterator i = m_cache.find(sysPath);
 	if (i != m_cache.end())
 		return (*i).second;
+
+	Sector sec(sysPath.sectorX, sysPath.sectorY, sysPath.sectorZ);
+	assert(sysPath.systemIndex < sec.m_systems.size());
+
+	const SystemDescriptor &sysDesc = sec.m_systems[sysPath.systemIndex];
 	
 	// XXX choose appropriate generator here
-	RefCountedPtr<StarSystem> s(RandomSystemGenerator(sysPath).GenerateSystem());
+	RefCountedPtr<StarSystem> s(RandomSystemGenerator(sysDesc).GenerateSystem());
 	m_cache.insert(std::make_pair(sysPath, s));
 
 	return s;
