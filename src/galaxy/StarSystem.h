@@ -81,7 +81,6 @@ private:
 	}
 
 	void MakeShortDescription(MTRand &rand);
-	void MakePlanetsAround(SystemBody *primary, MTRand &rand);
 	SystemBody MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand);
 	void CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand);
 	void GenerateFromCustom(const CustomSystem *, MTRand &rand);
