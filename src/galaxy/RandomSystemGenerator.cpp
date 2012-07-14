@@ -71,7 +71,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 		centGrav1->children.push_back(star[1]);
 		const fixed minDist1 = (star[0]->radius + star[1]->radius) * AU_SOL_RADIUS;
 try_that_again_guvnah:
-		s->MakeBinaryPair(star[0], star[1], minDist1, rand);
+		MakeBinaryPair(star[0], star[1], minDist1, rand);
 
 		if (numStars > 2) {
 			if (star[0]->orbMax > fixed(100,1)) {
@@ -100,7 +100,7 @@ try_that_again_guvnah:
 				star[3]->parent = centGrav2;
 
 				const fixed minDist2 = (star[2]->radius + star[3]->radius) * AU_SOL_RADIUS;
-				s->MakeBinaryPair(star[2], star[3], minDist2, rand);
+				MakeBinaryPair(star[2], star[3], minDist2, rand);
 				centGrav2->mass = star[2]->mass + star[3]->mass;
 				centGrav2->children.push_back(star[2]);
 				centGrav2->children.push_back(star[3]);
@@ -114,7 +114,7 @@ try_that_again_guvnah:
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
 			const fixed minDistSuper = star[0]->orbMax + star[2]->orbMax;
-			s->MakeBinaryPair(centGrav1, centGrav2, 4*minDistSuper, rand);
+			MakeBinaryPair(centGrav1, centGrav2, 4*minDistSuper, rand);
 
 			superCentGrav->children.push_back(centGrav1);
 			superCentGrav->children.push_back(centGrav2);
@@ -135,3 +135,44 @@ try_that_again_guvnah:
 
 	return s;
 }
+
+void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
+{
+	fixed m = a->mass + b->mass;
+	fixed a0 = b->mass / m;
+	fixed a1 = a->mass / m;
+	a->eccentricity = rand.NFixed(3);
+	int mul = 1;
+
+	do {
+		switch (rand.Int32(3)) {
+			case 2: a->semiMajorAxis = fixed(rand.Int32(100,10000), 100); break;
+			case 1: a->semiMajorAxis = fixed(rand.Int32(10,1000), 100); break;
+			default:
+			case 0: a->semiMajorAxis = fixed(rand.Int32(1,100), 100); break;
+		}
+		a->semiMajorAxis *= mul;
+		mul *= 2;
+	} while (a->semiMajorAxis < minDist);
+
+	a->orbit.eccentricity = a->eccentricity.ToDouble();
+	a->orbit.semiMajorAxis = AU * (a->semiMajorAxis * a0).ToDouble();
+	a->orbit.period = 60*60*24*365* a->semiMajorAxis.ToDouble() * sqrt(a->semiMajorAxis.ToDouble() / m.ToDouble());
+
+	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
+	const float rotY = static_cast<float>(rand.Double(M_PI));
+	a->orbit.rotMatrix = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
+	b->orbit.rotMatrix = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
+
+	b->orbit.eccentricity = a->eccentricity.ToDouble();
+	b->orbit.semiMajorAxis = AU * (a->semiMajorAxis * a1).ToDouble();
+	b->orbit.period = a->orbit.period;
+
+	fixed orbMin = a->semiMajorAxis - a->eccentricity*a->semiMajorAxis;
+	fixed orbMax = 2*a->semiMajorAxis - orbMin;
+	a->orbMin = orbMin;
+	b->orbMin = orbMin;
+	a->orbMax = orbMax;
+	b->orbMax = orbMax;
+}
+

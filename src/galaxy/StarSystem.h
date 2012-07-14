@@ -83,7 +83,6 @@ private:
 	void MakeShortDescription(MTRand &rand);
 	void MakePlanetsAround(SystemBody *primary, MTRand &rand);
 	SystemBody MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand);
-	void MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand);
 	void CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand);
 	void GenerateFromCustom(const CustomSystem *, MTRand &rand);
 	void Populate(bool addSpaceStations);

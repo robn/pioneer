@@ -11,6 +11,8 @@ public:
 	virtual RefCountedPtr<StarSystem> GenerateSystem() const;
 
 private:
+	static void MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand);
+
 	const SystemDescriptor m_desc;
 };
 
