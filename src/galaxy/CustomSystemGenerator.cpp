@@ -11,13 +11,9 @@ RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
 	
 	RefCountedPtr<StarSystem> s;
 
-	if (custom->IsRandom()) {
+	if (custom->IsRandom())
 		s = RandomSystemGenerator(m_desc).GenerateSystem();
 
-		if (custom->shortDesc.length() > 0) s->m_shortDesc = custom->shortDesc;
-		if (custom->longDesc.length() > 0) s->m_longDesc = custom->longDesc;
-		if (!custom->want_rand_explored) s->m_unexplored = !custom->explored;
-	}
 	else {
 		s.Reset(new StarSystem(m_desc));
 		s->m_hasCustomBodies = true;
@@ -27,6 +23,10 @@ RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
 
 		GenerateFromCustom(s.Get(), m_desc.customSys, rand);
 	}
+
+	if (custom->shortDesc.length() > 0) s->m_shortDesc = custom->shortDesc;
+	if (custom->longDesc.length() > 0) s->m_longDesc = custom->longDesc;
+	if (!custom->want_rand_explored) s->m_unexplored = !custom->explored;
 
 	s->m_isCustom = true;
 
