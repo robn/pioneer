@@ -30,6 +30,7 @@ class StarSystem : public DeleteEmitter, public RefCounted {
 public:
 	friend class SystemBody;
 	friend class RandomSystemGenerator;
+	friend class CustomSystemGenerator;
 
 	StarSystem(const SystemDescriptor &_desc) : desc(_desc) {}
 	~StarSystem();

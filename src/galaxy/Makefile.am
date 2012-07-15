@@ -12,6 +12,7 @@ endif
 noinst_LIBRARIES = libgalaxy.a
 noinst_HEADERS = \
 	CustomSystem.h \
+	CustomSystemGenerator.h \
 	Galaxy.h \
 	Sector.h \
 	RandomSystemGenerator.h \
@@ -24,6 +25,7 @@ noinst_HEADERS = \
 
 libgalaxy_a_SOURCES = \
 	CustomSystem.cpp \
+	CustomSystemGenerator.cpp \
 	Galaxy.cpp \
 	Sector.cpp \
 	RandomSystemGenerator.cpp \
