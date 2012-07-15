@@ -1,7 +1,6 @@
 #include "RandomSystemGenerator.h"
 #include "StarSystem.h"
 #include "SystemConstants.h"
-#include "CustomSystem.h"
 #include <cassert>
 
 // very crudely
@@ -28,20 +27,6 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 	 */
 	int dist = isqrt(1 + path.sectorX*path.sectorX + path.sectorY*path.sectorY + path.sectorZ*path.sectorZ);
 	s->m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
-
-	s->m_isCustom = s->m_hasCustomBodies = false;
-	if (m_desc.customSys) {
-		s->m_isCustom = true;
-		const CustomSystem *custom = m_desc.customSys;
-		if (custom->shortDesc.length() > 0) s->m_shortDesc = custom->shortDesc;
-		if (custom->longDesc.length() > 0) s->m_longDesc = custom->longDesc;
-		if (!custom->want_rand_explored) s->m_unexplored = !custom->explored;
-		if (!custom->IsRandom()) {
-			s->m_hasCustomBodies = true;
-			s->GenerateFromCustom(m_desc.customSys, rand);
-			return s;
-		}
-	}
 
 	SystemBody *star[4];
 	SystemBody *centGrav1(NULL), *centGrav2(NULL);

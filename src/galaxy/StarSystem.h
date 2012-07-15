@@ -13,8 +13,6 @@
 #include "SystemPath.h"
 #include "SystemBody.h"
 
-class CustomSystemBody;
-class CustomSystem;
 class SystemBody;
 
 // doubles - all masses in Kg, all lengths in meters
@@ -83,8 +81,6 @@ private:
 
 	void MakeShortDescription(MTRand &rand);
 	SystemBody MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand);
-	void CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand);
-	void GenerateFromCustom(const CustomSystem *, MTRand &rand);
 	void Populate(bool addSpaceStations);
 
 	std::string m_shortDesc, m_longDesc;
