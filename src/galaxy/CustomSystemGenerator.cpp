@@ -21,6 +21,10 @@ RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
 		unsigned long _init[6] = { m_desc.path.systemIndex, Uint32(m_desc.path.sectorX), Uint32(m_desc.path.sectorY), Uint32(m_desc.path.sectorZ), UNIVERSE_SEED, Uint32(m_desc.seed) };
 		MTRand rand(_init, 6);
 
+		// XXX explored calc, duplicated
+		int dist = isqrt(1 + m_desc.path.sectorX*m_desc.path.sectorX + m_desc.path.sectorY*m_desc.path.sectorY + m_desc.path.sectorZ*m_desc.path.sectorZ);
+		s->m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
+
 		GenerateFromCustom(s.Get(), m_desc.customSys, rand);
 	}
 
