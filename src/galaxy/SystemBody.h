@@ -126,7 +126,6 @@ public:
 
 	double GetMaxChildOrbitalDistance() const;
 	void PopulateStage1(StarSystem *system, fixed &outTotalPop);
-	void PopulateAddStations(StarSystem *system);
 
 	bool HasAtmosphere() const;
 	void PickAtmosphere();

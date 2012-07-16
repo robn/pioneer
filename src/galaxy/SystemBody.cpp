@@ -528,30 +528,6 @@ void SystemBody::PickAtmosphere()
 }
 
 /*
- * http://en.wikipedia.org/wiki/Hill_sphere
- */
-fixed SystemBody::CalcHillRadius() const
-{
-	if (GetSuperType() <= SUPERTYPE_STAR) {
-		return fixed(0);
-	} else {
-		// playing with precision since these numbers get small
-		// masses in earth masses
-		fixedf<32> mprimary = parent->GetMassInEarths();
-
-		fixedf<48> a = semiMajorAxis;
-		fixedf<48> e = eccentricity;
-
-		return fixed(a * (fixedf<48>(1,1)-e) *
-				fixedf<48>::CubeRootOf(fixedf<48>(
-						mass / (fixedf<32>(3,1)*mprimary))));
-
-		//fixed hr = semiMajorAxis*(fixed(1,1) - eccentricity) *
-		//  fixedcuberoot(mass / (3*mprimary));
-	}
-}
-
-/*
  * For moons distance from star is not orbMin, orbMax.
  */
 const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed &orbMax_)
@@ -737,107 +713,6 @@ void SystemBody::PickPlanetType(MTRand &rand)
 	}
 
     PickAtmosphere();
-}
-
-static double calc_orbital_period(double semiMajorAxis, double centralMass)
-{
-	return 2.0*M_PI*sqrt((semiMajorAxis*semiMajorAxis*semiMajorAxis)/(G*centralMass));
-}
-
-/*
- * Position a surface starport anywhere. Space.cpp::MakeFrameFor() ensures it
- * is on dry land (discarding this position if necessary)
- */
-static void position_settlement_on_planet(SystemBody *b)
-{
-	MTRand r(b->seed);
-	// used for orientation on planet surface
-	double r2 = r.Double(); 	// function parameter evaluation order is implementation-dependent
-	double r1 = r.Double();		// can't put two rands in the same expression
-	b->orbit.rotMatrix = matrix4x4d::RotateZMatrix(2*M_PI*r1) *
-			matrix4x4d::RotateYMatrix(2*M_PI*r2);
-}
-
-void SystemBody::PopulateAddStations(StarSystem *system)
-{
-	for (unsigned int i=0; i<children.size(); i++) {
-		children[i]->PopulateAddStations(system);
-	}
-
-	unsigned long _init[6] = { system->desc.path.systemIndex, Uint32(system->desc.path.sectorX),
-			Uint32(system->desc.path.sectorY), Uint32(system->desc.path.sectorZ), this->seed, UNIVERSE_SEED };
-
-	MTRand rand, namerand;
-	rand.seed(_init, 6);
-	namerand.seed(_init, 6);
-
-	if (m_population < fixed(1,1000)) return;
-
-	fixed pop = m_population + rand.Fixed();
-
-	fixed orbMaxS = fixed(1,4)*this->CalcHillRadius();
-	fixed orbMinS = 4 * this->radius * AU_EARTH_RADIUS;
-	if (children.size()) orbMaxS = std::min(orbMaxS, fixed(1,2) * children[0]->orbMin);
-
-	// starports - orbital
-	pop -= rand.Fixed();
-	if ((orbMinS < orbMaxS) && (pop >= 0)) {
-
-		SystemBody *sp = system->NewBody();
-		sp->type = SystemBody::TYPE_STARPORT_ORBITAL;
-		sp->seed = rand.Int32();
-		sp->tmp = 0;
-		sp->parent = this;
-		sp->rotationPeriod = fixed(1,3600);
-		sp->averageTemp = this->averageTemp;
-		sp->mass = 0;
-		/* just always plonk starports in near orbit */
-		sp->semiMajorAxis = orbMinS;
-		sp->eccentricity = fixed(0);
-		sp->axialTilt = fixed(0);
-		sp->orbit.eccentricity = 0;
-		sp->orbit.semiMajorAxis = sp->semiMajorAxis.ToDouble()*AU;
-		sp->orbit.period = calc_orbital_period(sp->orbit.semiMajorAxis, this->mass.ToDouble() * EARTH_MASS);
-		sp->orbit.rotMatrix = matrix4x4d::Identity();
-		children.insert(children.begin(), sp);
-		system->m_spaceStations.push_back(sp);
-		sp->orbMin = sp->semiMajorAxis;
-		sp->orbMax = sp->semiMajorAxis;
-
-		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
-
-		pop -= rand.Fixed();
-		if (pop > 0) {
-			SystemBody *sp2 = system->NewBody();
-			SystemPath path2 = sp2->path;
-			*sp2 = *sp;
-			sp2->path = path2;
-			sp2->orbit.rotMatrix = matrix4x4d::RotateZMatrix(M_PI);
-			sp2->name = Pi::luaNameGen->BodyName(sp2, namerand);
-			children.insert(children.begin(), sp2);
-			system->m_spaceStations.push_back(sp2);
-		}
-	}
-	// starports - surface
-	pop = m_population + rand.Fixed();
-	int max = 6;
-	while (max-- > 0) {
-		pop -= rand.Fixed();
-		if (pop < 0) break;
-
-		SystemBody *sp = system->NewBody();
-		sp->type = SystemBody::TYPE_STARPORT_SURFACE;
-		sp->seed = rand.Int32();
-		sp->tmp = 0;
-		sp->parent = this;
-		sp->averageTemp = this->averageTemp;
-		sp->mass = 0;
-		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
-		memset(&sp->orbit, 0, sizeof(Orbit));
-		position_settlement_on_planet(sp);
-		children.insert(children.begin(), sp);
-		system->m_spaceStations.push_back(sp);
-	}
 }
 
 /*

@@ -81,7 +81,7 @@ private:
 
 	void MakeShortDescription(MTRand &rand);
 	SystemBody MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand);
-	void Populate(bool addSpaceStations);
+	void Populate();
 
 	std::string m_shortDesc, m_longDesc;
 	SysPolit m_polit;

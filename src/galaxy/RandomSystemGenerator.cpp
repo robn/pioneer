@@ -1,6 +1,8 @@
 #include "RandomSystemGenerator.h"
 #include "StarSystem.h"
 #include "SystemConstants.h"
+#include "Pi.h"
+#include "LuaNameGen.h"
 #include <cassert>
 
 // very crudely
@@ -120,7 +122,8 @@ try_that_again_guvnah:
 	if (m_desc.numStars > 1) MakePlanetsAround(s.Get(), centGrav1, rand);
 	if (m_desc.numStars == 4) MakePlanetsAround(s.Get(), centGrav2, rand);
 
-	s->Populate(true);
+	s->Populate();
+	PopulateAddStations(s.Get(), s->rootBody);
 
 	return s;
 }
@@ -202,6 +205,28 @@ static double calc_orbital_period(double semiMajorAxis, double centralMass)
 	return 2.0*M_PI*sqrt((semiMajorAxis*semiMajorAxis*semiMajorAxis)/(G*centralMass));
 }
 
+// http://en.wikipedia.org/wiki/Hill_sphere
+static fixed calc_hill_radius(const SystemBody *body)
+{
+	if (body->GetSuperType() <= SystemBody::SUPERTYPE_STAR) {
+		return fixed(0);
+	} else {
+		// playing with precision since these numbers get small
+		// masses in earth masses
+		fixedf<32> mprimary = body->parent->GetMassInEarths();
+
+		fixedf<48> a = body->semiMajorAxis;
+		fixedf<48> e = body->eccentricity;
+
+		return fixed(a * (fixedf<48>(1,1)-e) *
+				fixedf<48>::CubeRootOf(fixedf<48>(
+						body->mass / (fixedf<32>(3,1)*mprimary))));
+
+		//fixed hr = semiMajorAxis*(fixed(1,1) - eccentricity) *
+		//  fixedcuberoot(mass / (3*mprimary));
+	}
+}
+
 void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary, MTRand &rand)
 {
 	fixed discMin = fixed(0);
@@ -249,7 +274,7 @@ void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary
 		/* use hill radius to find max size of moon system. for stars botch it.
 		   And use planets orbit around its primary as a scaler to a moon's orbit*/
 		discMax = std::min(discMax, fixed(1,20)*
-			primary->CalcHillRadius()*primary->orbMin*fixed(1,10));
+			calc_hill_radius(primary)*primary->orbMin*fixed(1,10));
 
 		discDensity = rand.Fixed() * get_disc_density(primary, discMin, discMax, fixed(1,500));
 	}
@@ -328,3 +353,101 @@ void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary
 	}
 }
 
+// Position a surface starport anywhere. Space.cpp::MakeFrameFor() ensures it
+// is on dry land (discarding this position if necessary)
+static void position_settlement_on_planet(SystemBody *b)
+{
+	MTRand r(b->seed);
+	// used for orientation on planet surface
+	double r2 = r.Double(); 	// function parameter evaluation order is implementation-dependent
+	double r1 = r.Double();		// can't put two rands in the same expression
+	b->orbit.rotMatrix = matrix4x4d::RotateZMatrix(2*M_PI*r1) *
+			matrix4x4d::RotateYMatrix(2*M_PI*r2);
+}
+
+void RandomSystemGenerator::PopulateAddStations(StarSystem *system, SystemBody *body)
+{
+	for (unsigned int i=0; i<body->children.size(); i++) {
+		PopulateAddStations(system, body->children[i]);
+	}
+
+	unsigned long _init[6] = { system->desc.path.systemIndex, Uint32(system->desc.path.sectorX),
+			Uint32(system->desc.path.sectorY), Uint32(system->desc.path.sectorZ), body->seed, UNIVERSE_SEED };
+
+	MTRand rand, namerand;
+	rand.seed(_init, 6);
+	namerand.seed(_init, 6);
+
+	if (body->m_population < fixed(1,1000)) return;
+
+	fixed pop = body->m_population + rand.Fixed();
+
+	fixed orbMaxS = fixed(1,4)*calc_hill_radius(body);
+	fixed orbMinS = 4 * body->radius * AU_EARTH_RADIUS;
+	if (body->children.size()) orbMaxS = std::min(orbMaxS, fixed(1,2) * body->children[0]->orbMin);
+
+	// starports - orbital
+	pop -= rand.Fixed();
+	if ((orbMinS < orbMaxS) && (pop >= 0)) {
+
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL);
+		sp->seed = rand.Int32();
+		sp->tmp = 0;
+		sp->parent = body;
+		sp->rotationPeriod = fixed(1,3600);
+		sp->averageTemp = body->averageTemp;
+		sp->mass = 0;
+		/* just always plonk starports in near orbit */
+		sp->semiMajorAxis = orbMinS;
+		sp->eccentricity = fixed(0);
+		sp->axialTilt = fixed(0);
+		sp->orbit.eccentricity = 0;
+		sp->orbit.semiMajorAxis = sp->semiMajorAxis.ToDouble()*AU;
+		sp->orbit.period = calc_orbital_period(sp->orbit.semiMajorAxis, body->mass.ToDouble() * EARTH_MASS);
+		sp->orbit.rotMatrix = matrix4x4d::Identity();
+		sp->orbMin = sp->semiMajorAxis;
+		sp->orbMax = sp->semiMajorAxis;
+
+		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
+
+		system->AddBody(sp);
+		body->children.insert(body->children.begin(), sp);
+		system->m_spaceStations.push_back(sp);
+
+		pop -= rand.Fixed();
+		if (pop > 0) {
+			// XXX horrid
+			SystemBody *sp2 = new SystemBody(sp->type);
+			SystemPath path2 = sp2->path;
+			*sp2 = *sp;
+			sp2->path = path2;
+			sp2->orbit.rotMatrix = matrix4x4d::RotateZMatrix(M_PI);
+			sp2->name = Pi::luaNameGen->BodyName(sp2, namerand);
+
+			system->AddBody(sp2);
+			body->children.insert(body->children.begin(), sp2);
+			system->m_spaceStations.push_back(sp2);
+		}
+	}
+	// starports - surface
+	pop = body->m_population + rand.Fixed();
+	int max = 6;
+	while (max-- > 0) {
+		pop -= rand.Fixed();
+		if (pop < 0) break;
+
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE);
+		sp->seed = rand.Int32();
+		sp->tmp = 0;
+		sp->parent = body;
+		sp->averageTemp = body->averageTemp;
+		sp->mass = 0;
+		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
+		memset(&sp->orbit, 0, sizeof(Orbit));
+		position_settlement_on_planet(sp);
+
+		system->AddBody(sp);
+		body->children.insert(body->children.begin(), sp);
+		system->m_spaceStations.push_back(sp);
+	}
+}

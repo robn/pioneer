@@ -13,6 +13,7 @@ public:
 private:
 	static void MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand);
 	static void MakePlanetsAround(StarSystem *s, SystemBody *primary, MTRand &rand);
+	static void PopulateAddStations(StarSystem *system, SystemBody *body);
 
 	const SystemDescriptor m_desc;
 };

@@ -96,7 +96,7 @@ void StarSystem::MakeShortDescription(MTRand &rand)
 /* percent */
 #define MAX_COMMODITY_BASE_PRICE_ADJUSTMENT 25
 
-void StarSystem::Populate(bool addSpaceStations)
+void StarSystem::Populate()
 {
 	unsigned long _init[5] = { desc.path.systemIndex, Uint32(desc.path.sectorX), Uint32(desc.path.sectorY), Uint32(desc.path.sectorZ), UNIVERSE_SEED };
 	MTRand rand;
@@ -135,10 +135,6 @@ void StarSystem::Populate(bool addSpaceStations)
 //	}
 //	printf("System total population %.3f billion\n", m_totalPop.ToFloat());
 	Polit::GetSysPolitStarSystem(this, m_totalPop, m_polit);
-
-	if (addSpaceStations) {
-		rootBody->PopulateAddStations(this);
-	}
 
 	if (!m_shortDesc.size())
 		MakeShortDescription(rand);

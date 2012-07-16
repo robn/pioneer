@@ -52,8 +52,8 @@ void CustomSystemGenerator::GenerateFromCustom(StarSystem *s, const CustomSystem
 
 	int humanInfestedness = 0;
 	CustomGetKidsOf(s, sbody, csbody->children, &humanInfestedness, rand);
-	s->Populate(false);
 
+	s->Populate();
 }
 
 static double calc_orbital_period(double semiMajorAxis, double centralMass)
