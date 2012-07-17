@@ -52,265 +52,280 @@ SystemBody::BodySuperType SystemBody::GetSuperType() const
 	return SUPERTYPE_NONE;
 }
 
+static const char *body_descriptions[SystemBody::TYPE_LAST] = {
+	0, // GRAVPOINT
+	Lang::BROWN_DWARF,
+	Lang::WHITE_DWARF,
+	Lang::STAR_M,
+	Lang::STAR_K,
+	Lang::STAR_G,
+	Lang::STAR_F,
+	Lang::STAR_A,
+	Lang::STAR_B,
+	Lang::STAR_O,
+	Lang::STAR_M_GIANT,
+	Lang::STAR_K_GIANT,
+	Lang::STAR_G_GIANT,
+	Lang::STAR_AF_GIANT,
+	Lang::STAR_AF_GIANT,
+	Lang::STAR_B_GIANT,
+	Lang::STAR_O_GIANT,
+	Lang::STAR_M_SUPER_GIANT,
+	Lang::STAR_K_SUPER_GIANT,
+	Lang::STAR_G_SUPER_GIANT,
+	Lang::STAR_AF_SUPER_GIANT,
+	Lang::STAR_AF_SUPER_GIANT,
+	Lang::STAR_B_SUPER_GIANT,
+	Lang::STAR_O_SUPER_GIANT,
+	Lang::STAR_M_HYPER_GIANT,
+	Lang::STAR_K_HYPER_GIANT,
+	Lang::STAR_G_HYPER_GIANT,
+	Lang::STAR_AF_HYPER_GIANT,
+	Lang::STAR_AF_HYPER_GIANT,
+	Lang::STAR_B_HYPER_GIANT,
+	Lang::STAR_O_HYPER_GIANT,
+	Lang::STAR_M_WF,
+	Lang::STAR_B_WF,
+	Lang::STAR_O_WF,
+	Lang::STAR_S_BH,
+	Lang::STAR_IM_BH,
+	Lang::STAR_SM_BH,
+	0, // PLANET_GAS_GIANT
+	Lang::ASTEROID,
+	0, // PLANET_TERRESTRIAL
+	Lang::ORBITAL_STARPORT,
+	Lang::STARPORT
+};
+
 std::string SystemBody::GetAstroDescription() const
 {
+	if (body_descriptions[type])
+		return body_descriptions[type];
+
 	switch (type) {
-	case TYPE_BROWN_DWARF: return Lang::BROWN_DWARF;
-	case TYPE_WHITE_DWARF: return Lang::WHITE_DWARF;
-	case TYPE_STAR_M: return Lang::STAR_M;
-	case TYPE_STAR_K: return Lang::STAR_K;
-	case TYPE_STAR_G: return Lang::STAR_G;
-	case TYPE_STAR_F: return Lang::STAR_F;
-	case TYPE_STAR_A: return Lang::STAR_A;
-	case TYPE_STAR_B: return Lang::STAR_B;
-	case TYPE_STAR_O: return Lang::STAR_O;
-	case TYPE_STAR_M_GIANT: return Lang::STAR_M_GIANT;
-	case TYPE_STAR_K_GIANT: return Lang::STAR_K_GIANT;
-	case TYPE_STAR_G_GIANT: return Lang::STAR_G_GIANT;
-	case TYPE_STAR_F_GIANT: return Lang::STAR_AF_GIANT;
-	case TYPE_STAR_A_GIANT: return Lang::STAR_AF_GIANT;
-	case TYPE_STAR_B_GIANT: return Lang::STAR_B_GIANT;
-	case TYPE_STAR_O_GIANT: return Lang::STAR_O_GIANT;
-	case TYPE_STAR_M_SUPER_GIANT: return Lang::STAR_M_SUPER_GIANT;
-	case TYPE_STAR_K_SUPER_GIANT: return Lang::STAR_K_SUPER_GIANT;
-	case TYPE_STAR_G_SUPER_GIANT: return Lang::STAR_G_SUPER_GIANT;
-	case TYPE_STAR_F_SUPER_GIANT: return Lang::STAR_AF_SUPER_GIANT;
-	case TYPE_STAR_A_SUPER_GIANT: return Lang::STAR_AF_SUPER_GIANT;
-	case TYPE_STAR_B_SUPER_GIANT: return Lang::STAR_B_SUPER_GIANT;
-	case TYPE_STAR_O_SUPER_GIANT: return Lang::STAR_O_SUPER_GIANT;
-	case TYPE_STAR_M_HYPER_GIANT: return Lang::STAR_M_HYPER_GIANT;
-	case TYPE_STAR_K_HYPER_GIANT: return Lang::STAR_K_HYPER_GIANT;
-	case TYPE_STAR_G_HYPER_GIANT: return Lang::STAR_G_HYPER_GIANT;
-	case TYPE_STAR_F_HYPER_GIANT: return Lang::STAR_AF_HYPER_GIANT;
-	case TYPE_STAR_A_HYPER_GIANT: return Lang::STAR_AF_HYPER_GIANT;
-	case TYPE_STAR_B_HYPER_GIANT: return Lang::STAR_B_HYPER_GIANT;
-	case TYPE_STAR_O_HYPER_GIANT: return Lang::STAR_O_HYPER_GIANT;
-	case TYPE_STAR_M_WF: return Lang::STAR_M_WF;
-	case TYPE_STAR_B_WF: return Lang::STAR_B_WF;
-	case TYPE_STAR_O_WF: return Lang::STAR_O_WF;
-	case TYPE_STAR_S_BH: return Lang::STAR_S_BH;
-	case TYPE_STAR_IM_BH: return Lang::STAR_IM_BH;
-	case TYPE_STAR_SM_BH: return Lang::STAR_SM_BH;
-	case TYPE_PLANET_GAS_GIANT:
-		if (mass > 800) return Lang::VERY_LARGE_GAS_GIANT;
-		if (mass > 300) return Lang::LARGE_GAS_GIANT;
-		if (mass > 80) return Lang::MEDIUM_GAS_GIANT;
-		else return Lang::SMALL_GAS_GIANT;
-	case TYPE_PLANET_ASTEROID: return Lang::ASTEROID;
-	case TYPE_PLANET_TERRESTRIAL: {
-		std::string s;
-		if (mass > fixed(2,1)) s = Lang::MASSIVE;
-		else if (mass > fixed(3,2)) s = Lang::LARGE;
-		else if (mass < fixed(1,10)) s = Lang::TINY;
-		else if (mass < fixed(1,5)) s = Lang::SMALL;
 
-		if (m_volcanicity > fixed(7,10)) {
-			if (s.size()) s += Lang::COMMA_HIGHLY_VOLCANIC;
-			else s = Lang::HIGHLY_VOLCANIC;
-		}
+		case TYPE_PLANET_GAS_GIANT:
+			if (mass > 800) return Lang::VERY_LARGE_GAS_GIANT;
+			if (mass > 300) return Lang::LARGE_GAS_GIANT;
+			if (mass > 80) return Lang::MEDIUM_GAS_GIANT;
+			else return Lang::SMALL_GAS_GIANT;
 
-		if (m_volatileIces + m_volatileLiquid > fixed(4,5)) {
-			if (m_volatileIces > m_volatileLiquid) {
-				if (averageTemp < fixed(250)) {
-					s += Lang::ICE_WORLD;
-				} else s += Lang::ROCKY_PLANET;
-			} else {
-				if (averageTemp < fixed(250)) {
-					s += Lang::ICE_WORLD;
+		case TYPE_PLANET_TERRESTRIAL: {
+			std::string s;
+			if (mass > fixed(2,1)) s = Lang::MASSIVE;
+			else if (mass > fixed(3,2)) s = Lang::LARGE;
+			else if (mass < fixed(1,10)) s = Lang::TINY;
+			else if (mass < fixed(1,5)) s = Lang::SMALL;
+
+			if (m_volcanicity > fixed(7,10)) {
+				if (s.size()) s += Lang::COMMA_HIGHLY_VOLCANIC;
+				else s = Lang::HIGHLY_VOLCANIC;
+			}
+
+			if (m_volatileIces + m_volatileLiquid > fixed(4,5)) {
+				if (m_volatileIces > m_volatileLiquid) {
+					if (averageTemp < fixed(250)) {
+						s += Lang::ICE_WORLD;
+					} else s += Lang::ROCKY_PLANET;
 				} else {
-					s += Lang::OCEANICWORLD;
+					if (averageTemp < fixed(250)) {
+						s += Lang::ICE_WORLD;
+					} else {
+						s += Lang::OCEANICWORLD;
+					}
+				}
+			} else if (m_volatileLiquid > fixed(2,5)){
+				if (averageTemp > fixed(250)) {
+					s += Lang::PLANET_CONTAINING_LIQUID_WATER;
+				} else {
+					s += Lang::PLANET_WITH_SOME_ICE;
+				}
+			} else if (m_volatileLiquid > fixed(1,5)){
+				s += Lang::ROCKY_PLANET_CONTAINING_COME_LIQUIDS;
+			} else {
+				s += Lang::ROCKY_PLANET;
+			}
+
+			if (m_volatileGas < fixed(1,100)) {
+				s += Lang::WITH_NO_SIGNIFICANT_ATMOSPHERE;
+			} else {
+				std::string thickness;
+				if (m_volatileGas < fixed(1,10)) thickness = Lang::TENUOUS;
+				else if (m_volatileGas < fixed(1,5)) thickness = Lang::THIN;
+				else if (m_volatileGas < fixed(2,1)) {}
+				else if (m_volatileGas < fixed(4,1)) thickness = Lang::THICK;
+				else thickness = Lang::VERY_DENSE;
+
+				if (m_atmosOxidizing > fixed(95,100)) {
+					s += Lang::WITH_A+thickness+Lang::O2_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(7,10)) {
+					s += Lang::WITH_A+thickness+Lang::CO2_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(65,100)) {
+					s += Lang::WITH_A+thickness+Lang::CO_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(55,100)) {
+					s += Lang::WITH_A+thickness+Lang::CH4_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(3,10)) {
+					s += Lang::WITH_A+thickness+Lang::H_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(2,10)) {
+					s += Lang::WITH_A+thickness+Lang::HE_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(15,100)) {
+					s += Lang::WITH_A+thickness+Lang::AR_ATMOSPHERE;
+				} else if (m_atmosOxidizing > fixed(1,10)) {
+					s += Lang::WITH_A+thickness+Lang::S_ATMOSPHERE;
+				} else {
+					s += Lang::WITH_A+thickness+Lang::N_ATMOSPHERE;
 				}
 			}
-		} else if (m_volatileLiquid > fixed(2,5)){
-			if (averageTemp > fixed(250)) {
-				s += Lang::PLANET_CONTAINING_LIQUID_WATER;
+
+			if (m_life > fixed(1,2)) {
+				s += Lang::AND_HIGHLY_COMPLEX_ECOSYSTEM;
+			} else if (m_life > fixed(1,10)) {
+				s += Lang::AND_INDIGENOUS_PLANT_LIFE;
+			} else if (m_life > fixed(0)) {
+				s += Lang::AND_INDIGENOUS_MICROBIAL_LIFE;
 			} else {
-				s += Lang::PLANET_WITH_SOME_ICE;
+				s += ".";
 			}
-		} else if (m_volatileLiquid > fixed(1,5)){
-			s += Lang::ROCKY_PLANET_CONTAINING_COME_LIQUIDS;
-		} else {
-			s += Lang::ROCKY_PLANET;
+
+			return s;
 		}
 
-		if (m_volatileGas < fixed(1,100)) {
-			s += Lang::WITH_NO_SIGNIFICANT_ATMOSPHERE;
-		} else {
-			std::string thickness;
-			if (m_volatileGas < fixed(1,10)) thickness = Lang::TENUOUS;
-			else if (m_volatileGas < fixed(1,5)) thickness = Lang::THIN;
-			else if (m_volatileGas < fixed(2,1)) {}
-			else if (m_volatileGas < fixed(4,1)) thickness = Lang::THICK;
-			else thickness = Lang::VERY_DENSE;
-
-			if (m_atmosOxidizing > fixed(95,100)) {
-				s += Lang::WITH_A+thickness+Lang::O2_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(7,10)) {
-				s += Lang::WITH_A+thickness+Lang::CO2_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(65,100)) {
-				s += Lang::WITH_A+thickness+Lang::CO_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(55,100)) {
-				s += Lang::WITH_A+thickness+Lang::CH4_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(3,10)) {
-				s += Lang::WITH_A+thickness+Lang::H_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(2,10)) {
-				s += Lang::WITH_A+thickness+Lang::HE_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(15,100)) {
-				s += Lang::WITH_A+thickness+Lang::AR_ATMOSPHERE;
-			} else if (m_atmosOxidizing > fixed(1,10)) {
-				s += Lang::WITH_A+thickness+Lang::S_ATMOSPHERE;
-			} else {
-				s += Lang::WITH_A+thickness+Lang::N_ATMOSPHERE;
-			}
-		}
-
-		if (m_life > fixed(1,2)) {
-			s += Lang::AND_HIGHLY_COMPLEX_ECOSYSTEM;
-		} else if (m_life > fixed(1,10)) {
-			s += Lang::AND_INDIGENOUS_PLANT_LIFE;
-		} else if (m_life > fixed(0)) {
-			s += Lang::AND_INDIGENOUS_MICROBIAL_LIFE;
-		} else {
-			s += ".";
-		}
-
-		return s;
-	}
-	case TYPE_STARPORT_ORBITAL:
-		return Lang::ORBITAL_STARPORT;
-	case TYPE_STARPORT_SURFACE:
-		return Lang::STARPORT;
-	case TYPE_GRAVPOINT:
-    default:
-        fprintf( stderr, "Warning: Invalid Astro Body Description found.\n");
-        return Lang::UNKNOWN;
+		default:
+			return Lang::UNKNOWN;
 	}
 }
 
+static const char *body_icons[SystemBody::TYPE_LAST] = {
+	0, // GRAVPOINT
+	"icons/object_brown_dwarf.png",
+	"icons/object_white_dwarf.png",
+	"icons/object_star_m.png",
+	"icons/object_star_k.png",
+	"icons/object_star_g.png",
+	"icons/object_star_f.png",
+	"icons/object_star_a.png",
+	"icons/object_star_b.png",
+	"icons/object_star_b.png", //shares B graphic for now
+	"icons/object_star_m_giant.png",
+	"icons/object_star_k_giant.png",
+	"icons/object_star_g_giant.png",
+	"icons/object_star_f_giant.png",
+	"icons/object_star_a_giant.png",
+	"icons/object_star_b_giant.png",
+	"icons/object_star_o.png", // uses old O type graphic
+	"icons/object_star_m_super_giant.png",
+	"icons/object_star_k_super_giant.png",
+	"icons/object_star_g_super_giant.png",
+	"icons/object_star_g_super_giant.png", //shares G graphic for now
+	"icons/object_star_a_super_giant.png",
+	"icons/object_star_b_super_giant.png",
+	"icons/object_star_b_super_giant.png",// uses B type graphic for now
+	"icons/object_star_m_hyper_giant.png",
+	"icons/object_star_k_hyper_giant.png",
+	"icons/object_star_g_hyper_giant.png",
+	"icons/object_star_f_hyper_giant.png",
+	"icons/object_star_a_hyper_giant.png",
+	"icons/object_star_b_hyper_giant.png",
+	"icons/object_star_b_hyper_giant.png",// uses B type graphic for now
+	"icons/object_star_m_wf.png",
+	"icons/object_star_b_wf.png",
+	"icons/object_star_o_wf.png",
+	"icons/object_star_bh.png",
+	"icons/object_star_smbh.png",
+	"icons/object_star_smbh.png",
+	0, // PLANET_GAS_GIANT
+	"icons/object_planet_asteroid.png",
+	0, // PLANET_TERRESTRIAL
+	"icons/object_orbital_starport.png",
+	0
+};
+
 const char *SystemBody::GetIcon() const
 {
+	if (body_icons[type])
+		return body_icons[type];
+
 	switch (type) {
-	case TYPE_BROWN_DWARF: return "icons/object_brown_dwarf.png";
-	case TYPE_WHITE_DWARF: return "icons/object_white_dwarf.png";
-	case TYPE_STAR_M: return "icons/object_star_m.png";
-	case TYPE_STAR_K: return "icons/object_star_k.png";
-	case TYPE_STAR_G: return "icons/object_star_g.png";
-	case TYPE_STAR_F: return "icons/object_star_f.png";
-	case TYPE_STAR_A: return "icons/object_star_a.png";
-	case TYPE_STAR_B: return "icons/object_star_b.png";
-	case TYPE_STAR_O: return "icons/object_star_b.png"; //shares B graphic for now
-	case TYPE_STAR_M_GIANT: return "icons/object_star_m_giant.png";
-	case TYPE_STAR_K_GIANT: return "icons/object_star_k_giant.png";
-	case TYPE_STAR_G_GIANT: return "icons/object_star_g_giant.png";
-	case TYPE_STAR_F_GIANT: return "icons/object_star_f_giant.png";
-	case TYPE_STAR_A_GIANT: return "icons/object_star_a_giant.png";
-	case TYPE_STAR_B_GIANT: return "icons/object_star_b_giant.png";
-	case TYPE_STAR_O_GIANT: return "icons/object_star_o.png"; // uses old O type graphic
-	case TYPE_STAR_M_SUPER_GIANT: return "icons/object_star_m_super_giant.png";
-	case TYPE_STAR_K_SUPER_GIANT: return "icons/object_star_k_super_giant.png";
-	case TYPE_STAR_G_SUPER_GIANT: return "icons/object_star_g_super_giant.png";
-	case TYPE_STAR_F_SUPER_GIANT: return "icons/object_star_g_super_giant.png"; //shares G graphic for now
-	case TYPE_STAR_A_SUPER_GIANT: return "icons/object_star_a_super_giant.png";
-	case TYPE_STAR_B_SUPER_GIANT: return "icons/object_star_b_super_giant.png";
-	case TYPE_STAR_O_SUPER_GIANT: return "icons/object_star_b_super_giant.png";// uses B type graphic for now
-	case TYPE_STAR_M_HYPER_GIANT: return "icons/object_star_m_hyper_giant.png";
-	case TYPE_STAR_K_HYPER_GIANT: return "icons/object_star_k_hyper_giant.png";
-	case TYPE_STAR_G_HYPER_GIANT: return "icons/object_star_g_hyper_giant.png";
-	case TYPE_STAR_F_HYPER_GIANT: return "icons/object_star_f_hyper_giant.png";
-	case TYPE_STAR_A_HYPER_GIANT: return "icons/object_star_a_hyper_giant.png";
-	case TYPE_STAR_B_HYPER_GIANT: return "icons/object_star_b_hyper_giant.png";
-	case TYPE_STAR_O_HYPER_GIANT: return "icons/object_star_b_hyper_giant.png";// uses B type graphic for now
-	case TYPE_STAR_M_WF: return "icons/object_star_m_wf.png";
-	case TYPE_STAR_B_WF: return "icons/object_star_b_wf.png";
-	case TYPE_STAR_O_WF: return "icons/object_star_o_wf.png";
-	case TYPE_STAR_S_BH: return "icons/object_star_bh.png";
-	case TYPE_STAR_IM_BH: return "icons/object_star_smbh.png";
-	case TYPE_STAR_SM_BH: return "icons/object_star_smbh.png";
-	case TYPE_PLANET_GAS_GIANT:
-		if (mass > 800) {
-			if (averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
-			else return "icons/object_planet_large_gas_giant.png";
-		}
-		if (mass > 300) {
-			if (averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
-			else return "icons/object_planet_large_gas_giant.png";
-		}
-		if (mass > 80) {
-			if (averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
-			else return "icons/object_planet_medium_gas_giant.png";
-		}
-		else {
-			if (averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
-			else return "icons/object_planet_small_gas_giant.png";
-		}
-	case TYPE_PLANET_ASTEROID:
-		return "icons/object_planet_asteroid.png";
-	case TYPE_PLANET_TERRESTRIAL:
-		if (m_volatileLiquid > fixed(7,10)) {
-			if (averageTemp > 250) return "icons/object_planet_water.png";
-			else return "icons/object_planet_ice.png";
-		}
-		if ((m_life > fixed(9,10)) &&
-			(m_volatileGas > fixed(6,10))) return "icons/object_planet_life.png";
-		if ((m_life > fixed(8,10)) &&
-			(m_volatileGas > fixed(5,10))) return "icons/object_planet_life6.png";
-		if ((m_life > fixed(7,10)) &&
-			(m_volatileGas > fixed(45,100))) return "icons/object_planet_life7.png";
-		if ((m_life > fixed(6,10)) &&
-			(m_volatileGas > fixed(4,10))) return "icons/object_planet_life8.png";
-		if ((m_life > fixed(5,10)) &&
-			(m_volatileGas > fixed(3,10))) return "icons/object_planet_life4.png";
-		if ((m_life > fixed(4,10)) &&
-			(m_volatileGas > fixed(2,10))) return "icons/object_planet_life5.png";
-		if ((m_life > fixed(1,10)) &&
-			(m_volatileGas > fixed(2,10))) return "icons/object_planet_life2.png";
-		if (m_life > fixed(1,10)) return "icons/object_planet_life3.png";
-		if (mass < fixed(1,100)) return "icons/object_planet_dwarf.png";
-		if (mass < fixed(1,10)) return "icons/object_planet_small.png";
-		if ((m_volatileLiquid < fixed(1,10)) &&
-			(m_volatileGas > fixed(1,5))) return "icons/object_planet_desert.png";
-
-		if (m_volatileIces + m_volatileLiquid > fixed(3,5)) {
-			if (m_volatileIces > m_volatileLiquid) {
-				if (averageTemp < 250)	return "icons/object_planet_ice.png";
-			} else {
-				if (averageTemp > 250) {
-					return "icons/object_planet_water.png";
-				} else return "icons/object_planet_ice.png";
+		case TYPE_PLANET_GAS_GIANT:
+			if (mass > 800) {
+				if (averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
+				else return "icons/object_planet_large_gas_giant.png";
 			}
-		}
-
-		if (m_volatileGas > fixed(1,2)) {
-			if (m_atmosOxidizing < fixed(1,2)) {
-				if (averageTemp > 300) return "icons/object_planet_methane3.png";
-				else if (averageTemp > 250) return "icons/object_planet_methane2.png";
-				else return "icons/object_planet_methane.png";
-			} else {
-				if (averageTemp > 300) return "icons/object_planet_co2_2.png";
-				else if (averageTemp > 250) {
-					if ((m_volatileLiquid > fixed(3,10)) && (m_volatileGas > fixed(2,10)))
-						return "icons/object_planet_co2_4.png";
-					else return "icons/object_planet_co2_3.png";
-				} else return "icons/object_planet_co2.png";
+			if (mass > 300) {
+				if (averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
+				else return "icons/object_planet_large_gas_giant.png";
 			}
-		}
+			if (mass > 80) {
+				if (averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
+				else return "icons/object_planet_medium_gas_giant.png";
+			}
+			else {
+				if (averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
+				else return "icons/object_planet_small_gas_giant.png";
+			}
 
-		if ((m_volatileLiquid > fixed(1,10)) &&
-		   (m_volatileGas < fixed(1,10))) return "icons/object_planet_ice.png";
-		if (m_volcanicity > fixed(7,10)) return "icons/object_planet_volcanic.png";
-		return "icons/object_planet_small.png";
-		/*
-		"icons/object_planet_water_n1.png"
-		"icons/object_planet_life3.png"
-		"icons/object_planet_life2.png"
-		*/
-	case TYPE_STARPORT_ORBITAL:
-		return "icons/object_orbital_starport.png";
-	case TYPE_GRAVPOINT:
-	case TYPE_STARPORT_SURFACE:
-    default:
-        fprintf( stderr, "Warning: Invalid body icon.\n");
-		return 0;
+		case TYPE_PLANET_TERRESTRIAL:
+			if (m_volatileLiquid > fixed(7,10)) {
+				if (averageTemp > 250) return "icons/object_planet_water.png";
+				else return "icons/object_planet_ice.png";
+			}
+			if ((m_life > fixed(9,10)) &&
+				(m_volatileGas > fixed(6,10))) return "icons/object_planet_life.png";
+			if ((m_life > fixed(8,10)) &&
+				(m_volatileGas > fixed(5,10))) return "icons/object_planet_life6.png";
+			if ((m_life > fixed(7,10)) &&
+				(m_volatileGas > fixed(45,100))) return "icons/object_planet_life7.png";
+			if ((m_life > fixed(6,10)) &&
+				(m_volatileGas > fixed(4,10))) return "icons/object_planet_life8.png";
+			if ((m_life > fixed(5,10)) &&
+				(m_volatileGas > fixed(3,10))) return "icons/object_planet_life4.png";
+			if ((m_life > fixed(4,10)) &&
+				(m_volatileGas > fixed(2,10))) return "icons/object_planet_life5.png";
+			if ((m_life > fixed(1,10)) &&
+				(m_volatileGas > fixed(2,10))) return "icons/object_planet_life2.png";
+			if (m_life > fixed(1,10)) return "icons/object_planet_life3.png";
+			if (mass < fixed(1,100)) return "icons/object_planet_dwarf.png";
+			if (mass < fixed(1,10)) return "icons/object_planet_small.png";
+			if ((m_volatileLiquid < fixed(1,10)) &&
+				(m_volatileGas > fixed(1,5))) return "icons/object_planet_desert.png";
+
+			if (m_volatileIces + m_volatileLiquid > fixed(3,5)) {
+				if (m_volatileIces > m_volatileLiquid) {
+					if (averageTemp < 250)	return "icons/object_planet_ice.png";
+				} else {
+					if (averageTemp > 250) {
+						return "icons/object_planet_water.png";
+					} else return "icons/object_planet_ice.png";
+				}
+			}
+
+			if (m_volatileGas > fixed(1,2)) {
+				if (m_atmosOxidizing < fixed(1,2)) {
+					if (averageTemp > 300) return "icons/object_planet_methane3.png";
+					else if (averageTemp > 250) return "icons/object_planet_methane2.png";
+					else return "icons/object_planet_methane.png";
+				} else {
+					if (averageTemp > 300) return "icons/object_planet_co2_2.png";
+					else if (averageTemp > 250) {
+						if ((m_volatileLiquid > fixed(3,10)) && (m_volatileGas > fixed(2,10)))
+							return "icons/object_planet_co2_4.png";
+						else return "icons/object_planet_co2_3.png";
+					} else return "icons/object_planet_co2.png";
+				}
+			}
+
+			if ((m_volatileLiquid > fixed(1,10)) &&
+			(m_volatileGas < fixed(1,10))) return "icons/object_planet_ice.png";
+			if (m_volcanicity > fixed(7,10)) return "icons/object_planet_volcanic.png";
+			return "icons/object_planet_small.png";
+			/*
+			"icons/object_planet_water_n1.png"
+			"icons/object_planet_life3.png"
+			"icons/object_planet_life2.png"
+			*/
+
+		default:
+			return 0;
 	}
 }
 
