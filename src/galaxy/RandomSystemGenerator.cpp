@@ -13,15 +13,21 @@ static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
 // orbits at (0.5 * s * SAFE_DIST_FROM_BINARY)
 static const fixed SAFE_DIST_FROM_BINARY = fixed(5,1);
 
-// XXX this is stupid
-static SystemBody new_star_lighter_than(SystemBody::BodyType type, fixed maxMass, MTRand &rand)
+static SystemBody new_star_lighter_than(SystemBody::BodyType type, const SystemBody &orig, MTRand &rand)
 {
-	SystemBody sbody;
+	// try for a while until we get one
 	int tries = 16;
-	do {
-		sbody = SystemBody::NewStar(type, rand);
-	} while ((sbody.mass > maxMass) && (--tries));
-	return sbody;
+	while (tries--) {
+		SystemBody body(SystemBody::NewStar(type, rand));
+		if (body.mass <= orig.mass)
+			return body;
+	}
+
+	// just make one the same size as the current one, sigh
+	SystemBody body(type);
+	body.mass = orig.mass;
+
+	return body;
 }
 
 RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
@@ -61,7 +67,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 		star[0]->parent = centGrav1;
 		s->AddBody(star[0]);
 
-		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], star[0]->mass, rand));
+		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], *star[0], rand));
 		star[1]->name = m_desc.name + " B";
 		star[1]->parent = centGrav1;
 		s->AddBody(star[1]);
@@ -80,7 +86,7 @@ try_that_again_guvnah:
 			}
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
-				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], star[0]->mass, rand));
+				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
 				star[2]->name = m_desc.name + " C";
 				s->AddBody(star[2]);
 				centGrav2 = star[2];
@@ -89,12 +95,12 @@ try_that_again_guvnah:
 				centGrav2->name = m_desc.name + " C,D";
 				s->AddBody(centGrav2);
 
-				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], star[0]->mass, rand));
+				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
 				star[2]->name = m_desc.name + " C";
 				s->AddBody(star[2]);
 				star[2]->parent = centGrav2;
 
-				star[3] = new SystemBody(new_star_lighter_than(m_desc.starType[3], star[2]->mass, rand));
+				star[3] = new SystemBody(new_star_lighter_than(m_desc.starType[3], *star[2], rand));
 				star[3]->name = m_desc.name + " D";
 				s->AddBody(star[3]);
 				star[3]->parent = centGrav2;
