@@ -9,7 +9,7 @@
 #include "SpaceStation.h"
 #include "Game.h"
 
-static int astroNoiseSeed;
+static Uint32 astroNoiseSeed;
 static Sound::Event stationNoise;
 static Sound::Event starNoise;
 static Sound::Event atmosphereNoise;
