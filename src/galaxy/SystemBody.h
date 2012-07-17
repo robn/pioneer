@@ -68,11 +68,25 @@ public:
 		TYPE_PLANET_TERRESTRIAL = 39,
 		TYPE_STARPORT_ORBITAL = 40,
 		TYPE_STARPORT_SURFACE = 41,
+
         TYPE_LAST, // <enum skip>
+
 		TYPE_MIN = TYPE_BROWN_DWARF, // <enum skip>
 		TYPE_MAX = TYPE_STARPORT_SURFACE, // <enum skip>
+
+		// supertype ranges
 		TYPE_STAR_MIN = TYPE_BROWN_DWARF, // <enum skip>
 		TYPE_STAR_MAX = TYPE_STAR_SM_BH, // <enum skip>
+
+		TYPE_ROCKY_PLANET_MIN = TYPE_PLANET_ASTEROID, // <enum skip>
+		TYPE_ROCKY_PLANET_MAX = TYPE_PLANET_TERRESTRIAL, // <enum skip>
+
+		TYPE_GAS_GIANT_MIN = TYPE_PLANET_GAS_GIANT, // <enum skip>
+		TYPE_GAS_GIANT_MAX = TYPE_PLANET_GAS_GIANT, // <enum skip>
+
+		TYPE_STARPORT_MIN = TYPE_STARPORT_ORBITAL, // <enum skip>
+		TYPE_STARPORT_MAX = TYPE_STARPORT_SURFACE // <enum skip>
+
 		// XXX need larger atmosphereless thing
 	};
 

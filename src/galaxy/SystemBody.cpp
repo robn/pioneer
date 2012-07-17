@@ -37,58 +37,19 @@ static const int CELSIUS = 273;
 
 SystemBody::BodySuperType SystemBody::GetSuperType() const
 {
-	switch (type) {
-		case TYPE_BROWN_DWARF:
-		case TYPE_WHITE_DWARF:
-		case TYPE_STAR_M:
-		case TYPE_STAR_K:
-		case TYPE_STAR_G:
-		case TYPE_STAR_F:
-		case TYPE_STAR_A:
-		case TYPE_STAR_B:
-		case TYPE_STAR_O:
-		case TYPE_STAR_M_GIANT:
-		case TYPE_STAR_K_GIANT:
-		case TYPE_STAR_G_GIANT:
-		case TYPE_STAR_F_GIANT:
-		case TYPE_STAR_A_GIANT:
-		case TYPE_STAR_B_GIANT:
-		case TYPE_STAR_O_GIANT:
-		case TYPE_STAR_M_SUPER_GIANT:
-		case TYPE_STAR_K_SUPER_GIANT:
-		case TYPE_STAR_G_SUPER_GIANT:
-		case TYPE_STAR_F_SUPER_GIANT:
-		case TYPE_STAR_A_SUPER_GIANT:
-		case TYPE_STAR_B_SUPER_GIANT:
-		case TYPE_STAR_O_SUPER_GIANT:
-		case TYPE_STAR_M_HYPER_GIANT:
-		case TYPE_STAR_K_HYPER_GIANT:
-		case TYPE_STAR_G_HYPER_GIANT:
-		case TYPE_STAR_F_HYPER_GIANT:
-		case TYPE_STAR_A_HYPER_GIANT:
-		case TYPE_STAR_B_HYPER_GIANT:
-		case TYPE_STAR_O_HYPER_GIANT:
-		case TYPE_STAR_M_WF:
-		case TYPE_STAR_B_WF:
-		case TYPE_STAR_O_WF:
-		case TYPE_STAR_S_BH:
-		case TYPE_STAR_IM_BH:
-		case TYPE_STAR_SM_BH:
-		     return SUPERTYPE_STAR;
-		case TYPE_PLANET_GAS_GIANT:
-		     return SUPERTYPE_GAS_GIANT;
-		case TYPE_PLANET_ASTEROID:
-		case TYPE_PLANET_TERRESTRIAL:
-		     return SUPERTYPE_ROCKY_PLANET;
-		case TYPE_STARPORT_ORBITAL:
-		case TYPE_STARPORT_SURFACE:
-		     return SUPERTYPE_STARPORT;
-		case TYPE_GRAVPOINT:
-             return SUPERTYPE_NONE;
-        default:
-             fprintf( stderr, "Warning: Invalid SuperBody Type found.\n");
-             return SUPERTYPE_NONE;
-	}
+	if (type >= TYPE_STAR_MIN && type <= TYPE_STAR_MAX)
+		return SUPERTYPE_STAR;
+
+	if (type >= TYPE_ROCKY_PLANET_MIN && type <= TYPE_ROCKY_PLANET_MAX)
+		return SUPERTYPE_ROCKY_PLANET;
+
+	if (type >= TYPE_GAS_GIANT_MIN && type <= TYPE_GAS_GIANT_MAX)
+		return SUPERTYPE_GAS_GIANT;
+
+	if (type >= TYPE_STARPORT_MIN && type <= TYPE_STARPORT_MAX)
+		return SUPERTYPE_STARPORT;
+
+	return SUPERTYPE_NONE;
 }
 
 std::string SystemBody::GetAstroDescription() const
