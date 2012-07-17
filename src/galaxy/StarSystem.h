@@ -30,7 +30,7 @@ public:
 	friend class RandomSystemGenerator;
 	friend class CustomSystemGenerator;
 
-	StarSystem(const SystemDescriptor &_desc) : desc(_desc) {}
+	StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies);
 	~StarSystem();
 
 	const SystemDescriptor desc;

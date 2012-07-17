@@ -3,7 +3,7 @@
 #include "StarSystem.h"
 #include "RandomSystemGenerator.h"
 
-RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
+RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem()
 {
 	assert(m_desc.customSys);
 
@@ -15,17 +15,21 @@ RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
 		s = RandomSystemGenerator(m_desc).GenerateSystem();
 
 	else {
-		s.Reset(new StarSystem(m_desc));
-		s->m_hasCustomBodies = true;
-
 		unsigned long _init[6] = { m_desc.path.systemIndex, Uint32(m_desc.path.sectorX), Uint32(m_desc.path.sectorY), Uint32(m_desc.path.sectorZ), UNIVERSE_SEED, Uint32(m_desc.seed) };
 		MTRand rand(_init, 6);
 
 		// XXX explored calc, duplicated
 		int dist = isqrt(1 + m_desc.path.sectorX*m_desc.path.sectorX + m_desc.path.sectorY*m_desc.path.sectorY + m_desc.path.sectorZ*m_desc.path.sectorZ);
-		s->m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
+		bool unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
-		GenerateFromCustom(s.Get(), m_desc.customSys, rand);
+		GenerateFromCustom(m_desc.customSys, rand);
+
+		s.Reset(new StarSystem(m_desc, m_bodies));
+		s->m_hasCustomBodies = true;
+
+		s->m_unexplored = unexplored;
+
+		s->Populate();
 	}
 
 	if (custom->shortDesc.length() > 0) s->m_shortDesc = custom->shortDesc;
@@ -37,8 +41,10 @@ RefCountedPtr<StarSystem> CustomSystemGenerator::GenerateSystem() const
 	return s;
 }
 
-void CustomSystemGenerator::GenerateFromCustom(StarSystem *s, const CustomSystem *customSys, MTRand &rand)
+void CustomSystemGenerator::GenerateFromCustom(const CustomSystem *customSys, MTRand &rand)
 {
+	m_bodies.empty();
+
 	const CustomSystemBody *csbody = customSys->sBody;
 
 	SystemBody *sbody = new SystemBody(csbody->type);
@@ -47,13 +53,10 @@ void CustomSystemGenerator::GenerateFromCustom(StarSystem *s, const CustomSystem
 	sbody->mass = csbody->mass;
 	sbody->averageTemp = csbody->averageTemp;
 	sbody->name = csbody->name;
-	s->AddBody(sbody);
-	s->rootBody = sbody;
+	m_bodies.push_back(sbody);
 
 	int humanInfestedness = 0;
-	CustomGetKidsOf(s, sbody, csbody->children, &humanInfestedness, rand);
-
-	s->Populate();
+	CustomGetKidsOf(sbody, csbody->children, &humanInfestedness, rand);
 }
 
 static double calc_orbital_period(double semiMajorAxis, double centralMass)
@@ -61,7 +64,7 @@ static double calc_orbital_period(double semiMajorAxis, double centralMass)
 	return 2.0*M_PI*sqrt((semiMajorAxis*semiMajorAxis*semiMajorAxis)/(G*centralMass));
 }
 
-void CustomSystemGenerator::CustomGetKidsOf(StarSystem *s, SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand)
+void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand)
 {
 	for (std::vector<CustomSystemBody*>::const_iterator i = children.begin(); i != children.end(); i++) {
 		const CustomSystemBody *csbody = *i;
@@ -114,14 +117,13 @@ void CustomSystemGenerator::CustomGetKidsOf(StarSystem *s, SystemBody *parent, c
 
 		kid->PickAtmosphere();
 
-		s->AddBody(kid);
+		m_bodies.push_back(kid);
 
-		if (kid->GetSuperType() == SystemBody::SUPERTYPE_STARPORT) {
+		if (kid->GetSuperType() == SystemBody::SUPERTYPE_STARPORT)
 			(*outHumanInfestedness)++;
-			s->m_spaceStations.push_back(kid);
-		}
+
 		parent->children.push_back(kid);
 
-		CustomGetKidsOf(s, kid, csbody->children, outHumanInfestedness, rand);
+		CustomGetKidsOf(kid, csbody->children, outHumanInfestedness, rand);
 	}
 }

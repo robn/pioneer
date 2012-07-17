@@ -9,7 +9,7 @@ class SystemGenerator {
 public:
 	virtual ~SystemGenerator() {}
 
-	virtual RefCountedPtr<StarSystem> GenerateSystem() const = 0;
+	virtual RefCountedPtr<StarSystem> GenerateSystem() = 0;
 
 protected:
 	SystemGenerator() {}

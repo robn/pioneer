@@ -13,6 +13,17 @@
 #include "SystemConstants.h"
 #include "SystemCache.h"
 
+StarSystem::StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies) :
+	desc(_desc)
+{
+	for (std::vector<SystemBody*>::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
+		AddBody(*i);
+		if ((*i)->GetSuperType() == SystemBody::SUPERTYPE_STARPORT)
+			m_spaceStations.push_back(*i);
+	}
+	rootBody = m_bodies[0];
+}
+
 SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
 	assert(desc.path.IsSameSystem(path));
