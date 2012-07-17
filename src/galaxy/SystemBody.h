@@ -121,7 +121,6 @@ public:
 	double GetRotationPeriod() const {
 		return rotationPeriod.ToDouble()*60*60*24;
 	}
-	fixed CalcHillRadius() const;
 	double CalcSurfaceGravity() const;
 
 	double GetMaxChildOrbitalDistance() const;

@@ -13,16 +13,6 @@
 #include "SystemConstants.h"
 #include "SystemCache.h"
 
-// minimum moon mass a little under Europa's
-static const fixed MIN_MOON_MASS = fixed(1,30000); // earth masses
-static const fixed MIN_MOON_DIST = fixed(15,10000); // AUs
-static const fixed MAX_MOON_DIST = fixed(2, 100); // AUs
-static const fixed PLANET_MIN_SEPARATION = fixed(135,100);
-
-// very crudely
-static const fixed AU_SOL_RADIUS = fixed(305,65536);
-static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
-
 SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
 	assert(desc.path.IsSameSystem(path));
@@ -77,8 +67,8 @@ void StarSystem::MakeShortDescription(MTRand &rand)
 	}
 }
 
-/* percent */
-#define MAX_COMMODITY_BASE_PRICE_ADJUSTMENT 25
+// percent
+static const int MAX_COMMODITY_BASE_PRICE_ADJUSTMENT = 25;
 
 void StarSystem::Populate()
 {
@@ -86,7 +76,7 @@ void StarSystem::Populate()
 	MTRand rand;
 	rand.seed(_init, 5);
 
-	/* Various system-wide characteristics */
+	// Various system-wide characteristics
 	// This is 1 in sector (0,0,0) and approaches 0 farther out
 	// (1,0,0) ~ .688, (1,1,0) ~ .557, (1,1,1) ~ .48
 	m_humanProx = fixed(3,1) / isqrt(9 + 10*(desc.path.sectorX*desc.path.sectorX + desc.path.sectorY*desc.path.sectorY + desc.path.sectorZ*desc.path.sectorZ));
@@ -94,11 +84,10 @@ void StarSystem::Populate()
 	m_industrial = rand.Fixed();
 	m_agricultural = 0;
 
-	/* system attributes */
+	// system attributes
 	m_totalPop = fixed(0);
 	rootBody->PopulateStage1(this, m_totalPop);
 
-//	printf("Trading rates:\n");
 	// So now we have balances of trade of various commodities.
 	// Lets use black magic to turn these into percentage base price
 	// alterations
@@ -111,13 +100,6 @@ void StarSystem::Populate()
 		m_tradeLevel[i] += rand.Int32(-5, 5);
 	}
 
-// Unused?
-//	for (int i=(int)Equip::FIRST_COMMODITY; i<=(int)Equip::LAST_COMMODITY; i++) {
-//		Equip::Type t = (Equip::Type)i;
-//		const EquipType &type = Equip::types[t];
-//		printf("%s: %d%%\n", type.name, m_tradeLevel[t]);
-//	}
-//	printf("System total population %.3f billion\n", m_totalPop.ToFloat());
 	Polit::GetSysPolitStarSystem(this, m_totalPop, m_polit);
 
 	if (!m_shortDesc.size())

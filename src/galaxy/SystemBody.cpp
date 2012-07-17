@@ -45,12 +45,7 @@ SystemBody SystemBody::NewStar(BodyType type, MTRand &rand)
 	return sbody;
 }
 
-
-
-
-#define CELSIUS	273.15
-
-static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
+static const int CELSIUS = 273;
 
 SystemBody::BodySuperType SystemBody::GetSuperType() const
 {
@@ -436,13 +431,12 @@ bool SystemBody::IsScoopable() const
 
 void SystemBody::PickAtmosphere()
 {
-	/* Alpha value isn't real alpha. in the shader fog depth is determined
-	 * by density*alpha, so that we can have very dense atmospheres
-	 * without having them a big stinking solid color obscuring everything
-
-	  These are our atmosphere colours, for terrestrial planets we use m_atmosOxidizing
-	  for some variation to atmosphere colours
-	 */
+	// Alpha value isn't real alpha. in the shader fog depth is determined
+	// by density*alpha, so that we can have very dense atmospheres
+	// without having them a big stinking solid color obscuring everything
+	//
+	// These are our atmosphere colours, for terrestrial planets we use m_atmosOxidizing
+	// for some variation to atmosphere colours
 	switch (type) {
 		case SystemBody::TYPE_PLANET_GAS_GIANT:
 			m_atmosColor = Color(1.0f, 1.0f, 1.0f, 0.0005f);
@@ -517,9 +511,8 @@ void SystemBody::PickAtmosphere()
 				m_atmosColor = Color(0.0, 0.0, 0.0, 0.0f);
 			}
 			m_atmosDensity = m_volatileGas.ToDouble();
-			//printf("| Atmosphere :\n|      red   : [%f] \n|      green : [%f] \n|      blue  : [%f] \n", r, g, b);
-			//printf("-------------------------------\n");
 			break;
+
 		/*default:
 			m_atmosColor = Color(0.6f, 0.6f, 0.6f, 1.0f);
 			m_atmosDensity = m_body->m_volatileGas.ToDouble();
@@ -527,9 +520,7 @@ void SystemBody::PickAtmosphere()
 	}
 }
 
-/*
- * For moons distance from star is not orbMin, orbMax.
- */
+// For moons distance from star is not orbMin, orbMax.
 const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed &orbMax_)
 {
 	const SystemBody *planet = this;
@@ -537,7 +528,7 @@ const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed 
 
 	assert(star);
 
-	/* while not found star yet.. */
+	// while not found star yet..
 	while (star->GetSuperType() > SystemBody::SUPERTYPE_STAR) {
 		planet = star;
 		star = star->parent;
@@ -548,36 +539,10 @@ const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed 
 	return star;
 }
 
-/*
- * These are the nice floating point surface temp calculating turds.
- *
-static const double boltzman_const = 5.6704e-8;
-static double calcEnergyPerUnitAreaAtDist(double star_radius, double star_temp, double object_dist)
-{
-	const double total_solar_emission = boltzman_const *
-		star_temp*star_temp*star_temp*star_temp*
-		4*M_PI*star_radius*star_radius;
-
-	return total_solar_emission / (4*M_PI*object_dist*object_dist);
-}
-
-// bond albedo, not geometric
-static double CalcSurfaceTemp(double star_radius, double star_temp, double object_dist, double albedo, double greenhouse)
-{
-	const double energy_per_meter2 = calcEnergyPerUnitAreaAtDist(star_radius, star_temp, object_dist);
-	const double surface_temp = pow(energy_per_meter2*(1-albedo)/(4*(1-greenhouse)*boltzman_const), 0.25);
-	return surface_temp;
-}
-*/
-/*
- * Instead we use these butt-ugly overflow-prone spat of ejaculate:
- */
-/*
- * star_radius in sol radii
- * star_temp in kelvin,
- * object_dist in AU
- * return Watts/m^2
- */
+// star_radius in sol radii
+// star_temp in kelvin,
+// object_dist in AU
+// return Watts/m^2
 static fixed calcEnergyPerUnitAreaAtDist(fixed star_radius, int star_temp, fixed object_dist)
 {
 	fixed temp = star_temp * fixed(1,10000);
@@ -666,7 +631,6 @@ void SystemBody::PickPlanetType(MTRand &rand)
 		// total atmosphere loss
 		if (rand.Fixed() > mass) amount_volatiles = fixed(0);
 
-		//printf("Amount volatiles: %f\n", amount_volatiles.ToFloat());
 		// fudge how much of the volatiles are in which state
 		greenhouse = fixed(0);
 		albedo = fixed(0);
@@ -690,9 +654,6 @@ void SystemBody::PickPlanetType(MTRand &rand)
 		const fixed proportion_ices = fixed(1,1) - (proportion_gas + proportion_liquid);
 		m_volatileIces = proportion_ices * amount_volatiles;
 
-		//printf("temp %dK, gas:liquid:ices %f:%f:%f\n", averageTemp, proportion_gas.ToFloat(),
-		//		proportion_liquid.ToFloat(), proportion_ices.ToFloat());
-
 		if ((m_volatileLiquid > fixed(0)) &&
 		    (averageTemp > CELSIUS-60) &&
 		    (averageTemp < CELSIUS+200)) {
@@ -715,9 +676,7 @@ void SystemBody::PickPlanetType(MTRand &rand)
     PickAtmosphere();
 }
 
-/*
- * Set natural resources, tech level, industry strengths and population levels
- */
+// Set natural resources, tech level, industry strengths and population levels
 void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 {
 	for (unsigned int i=0; i<children.size(); i++) {
@@ -739,15 +698,15 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 	m_population = fixed(0);
 
-	/* Bad type of planet for settlement */
+	// Bad type of planet for settlement
 	if ((averageTemp > CELSIUS+100) || (averageTemp < 100) ||
 	    (type != SystemBody::TYPE_PLANET_TERRESTRIAL && type != SystemBody::TYPE_PLANET_ASTEROID)) {
 
-        // orbital starports should carry a small amount of population
-        if (type == SystemBody::TYPE_STARPORT_ORBITAL) {
+		// orbital starports should carry a small amount of population
+		if (type == SystemBody::TYPE_STARPORT_ORBITAL) {
 			m_population = fixed(1,100000);
 			outTotalPop += m_population;
-        }
+		}
 
 		return;
 	}
@@ -780,7 +739,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		Equip::LIQUID_OXYGEN
 	};
 
-	/* Commodities we produce (mining and agriculture) */
+	// Commodities we produce (mining and agriculture)
 	for (int i=Equip::FIRST_COMMODITY; i<Equip::LAST_COMMODITY; i++) {
 		Equip::Type t = Equip::Type(i);
 		const EquipType &itype = Equip::types[t];
@@ -800,7 +759,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 			if (i == consumables[j]) affinity *= 2; break;
 		}
 		assert(affinity >= 0);
-		/* workforce... */
+		// workforce...
 		m_population += affinity * system->m_humanProx;
 
 		int howmuch = (affinity * 256).ToInt32();
@@ -832,8 +791,6 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	}
 	// well, outdoor worlds should have way more people
 	m_population = fixed(1,10)*m_population + m_population*m_agricultural;
-
-//	printf("%s: pop %.3f billion\n", name.c_str(), m_population.ToFloat());
 
 	outTotalPop += m_population;
 }

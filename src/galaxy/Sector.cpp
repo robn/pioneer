@@ -4,7 +4,7 @@
 #include "Galaxy.h"
 #include "utils.h"
 
-#define SYS_NAME_FRAGS	32
+static const int SYS_NAME_FRAGS = 32;
 static const char *sys_names[SYS_NAME_FRAGS] =
 { "en", "la", "can", "be", "and", "phi", "eth", "ol", "ve", "ho", "a",
   "lia", "an", "ar", "ur", "mi", "in", "ti", "qu", "so", "ed", "ess",
@@ -26,7 +26,7 @@ void Sector::GetCustomSystems()
 	}
 }
 
-#define CUSTOM_ONLY_RADIUS	4
+static const int CUSTOM_ONLY_RADIUS = 4;
 
 //////////////////////// Sector
 Sector::Sector(int x, int y, int z)

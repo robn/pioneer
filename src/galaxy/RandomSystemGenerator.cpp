@@ -33,11 +33,9 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem() const
 	unsigned long _init[6] = { path.systemIndex, Uint32(path.sectorX), Uint32(path.sectorY), Uint32(path.sectorZ), UNIVERSE_SEED, Uint32(m_desc.seed) };
 	MTRand rand(_init, 6);
 
-	/*
-	 * 0 - ~500ly from sol: explored
-	 * ~500ly - ~700ly (65-90 sectors): gradual
-	 * ~700ly+: unexplored
-	 */
+	// 0 - ~500ly from sol: explored
+	// ~500ly - ~700ly (65-90 sectors): gradual
+	// ~700ly+: unexplored
 	int dist = isqrt(1 + path.sectorX*path.sectorX + path.sectorY*path.sectorY + path.sectorZ*path.sectorZ);
 	s->m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
@@ -248,11 +246,11 @@ void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary
 
 	if (superType <= SystemBody::SUPERTYPE_STAR) {
 		if (primary->type == SystemBody::TYPE_GRAVPOINT) {
-			/* around a binary */
+			// around a binary
 			discMin = primary->children[0]->orbMax * SAFE_DIST_FROM_BINARY;
 		} else {
-			/* correct thing is roche limit, but lets ignore that because
-			 * it depends on body densities and gives some strange results */
+			// correct thing is roche limit, but lets ignore that because
+			// it depends on body densities and gives some strange results
 			discMin = 4 * primary->radius * AU_SOL_RADIUS;
 		}
 		if (primary->type == SystemBody::TYPE_WHITE_DWARF) {
@@ -275,24 +273,20 @@ void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary
 			discMax = std::min(discMax, primary->orbMin * fixed(1,10));
 		}
 
-		/* in trinary and quaternary systems don't bump into other pair... */
+		// in trinary and quaternary systems don't bump into other pair...
 		if (s->desc.numStars >= 3) {
 			discMax = std::min(discMax, fixed(5,100)*s->rootBody->children[0]->orbMin);
 		}
 	} else {
 		fixed primary_rad = primary->radius * AU_EARTH_RADIUS;
 		discMin = 4 * primary_rad;
-		/* use hill radius to find max size of moon system. for stars botch it.
-		   And use planets orbit around its primary as a scaler to a moon's orbit*/
+		// use hill radius to find max size of moon system. for stars botch it.
+		// And use planets orbit around its primary as a scaler to a moon's orbit
 		discMax = std::min(discMax, fixed(1,20)*
 			calc_hill_radius(primary)*primary->orbMin*fixed(1,10));
 
 		discDensity = rand.Fixed() * get_disc_density(primary, discMin, discMax, fixed(1,500));
 	}
-
-	//fixed discDensity = 20*rand.NFixed(4);
-
-	//printf("Around %s: Range %f -> %f AU\n", primary->name.c_str(), discMin.ToDouble(), discMax.ToDouble());
 
 	fixed initialJump = rand.NFixed(5);
 	fixed pos = (fixed(1,1) - initialJump)*discMin + (initialJump*discMax);
@@ -338,7 +332,7 @@ void RandomSystemGenerator::MakePlanetsAround(StarSystem *s, SystemBody *primary
 
 		primary->children.push_back(planet);
 
-		/* minimum separation between planets of 1.35 */
+		// minimum separation between planets of 1.35
 		pos = apoapsis * fixed(135,100);
 	}
 
@@ -408,7 +402,7 @@ void RandomSystemGenerator::PopulateAddStations(StarSystem *system, SystemBody *
 		sp->rotationPeriod = fixed(1,3600);
 		sp->averageTemp = body->averageTemp;
 		sp->mass = 0;
-		/* just always plonk starports in near orbit */
+		// just always plonk starports in near orbit
 		sp->semiMajorAxis = orbMinS;
 		sp->eccentricity = fixed(0);
 		sp->axialTilt = fixed(0);
@@ -440,6 +434,7 @@ void RandomSystemGenerator::PopulateAddStations(StarSystem *system, SystemBody *
 			system->m_spaceStations.push_back(sp2);
 		}
 	}
+
 	// starports - surface
 	pop = body->m_population + rand.Fixed();
 	int max = 6;
