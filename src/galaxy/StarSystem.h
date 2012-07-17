@@ -80,7 +80,6 @@ private:
 	}
 
 	void MakeShortDescription(MTRand &rand);
-	SystemBody MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand);
 	void Populate();
 
 	std::string m_shortDesc, m_longDesc;

@@ -37,17 +37,6 @@ SystemPath StarSystem::GetPathOf(const SystemBody *sbody) const
 	return sbody->path;
 }
 
-// XXX this is stupid
-SystemBody StarSystem::MakeStarOfTypeLighterThan(SystemBody::BodyType type, fixed maxMass, MTRand &rand)
-{
-	SystemBody sbody;
-	int tries = 16;
-	do {
-		sbody = SystemBody::NewStar(type, rand);
-	} while ((sbody.mass > maxMass) && (--tries));
-	return sbody;
-}
-
 void StarSystem::MakeShortDescription(MTRand &rand)
 {
 	m_econType = 0;
