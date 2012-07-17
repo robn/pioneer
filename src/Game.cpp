@@ -496,8 +496,7 @@ void Game::SwitchToNormalSpace()
 					else {
 						if (sbody->type == SystemBody::TYPE_STARPORT_SURFACE) {
 							sbody = sbody->parent;
-							SystemPath path = m_space->GetStarSystem()->GetPathOf(sbody);
-							target_body = m_space->FindBodyForPath(&path);
+							target_body = m_space->FindBodyForPath(&(sbody->path));
 						}
 
 						double sdist = sbody->GetRadius()*2.0;

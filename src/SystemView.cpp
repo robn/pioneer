@@ -144,9 +144,8 @@ void SystemView::OnClickObject(SystemBody *b)
 	m_infoText->SetText(data);
 
 	if (Pi::KeyState(SDLK_LSHIFT) || Pi::KeyState(SDLK_RSHIFT)) {
-		SystemPath path = m_system->GetPathOf(b);
 		if (Pi::game->GetSpace()->GetStarSystem()->desc.path == m_system->desc.path) {
-			Body* body = Pi::game->GetSpace()->FindBodyForPath(&path);
+			Body* body = Pi::game->GetSpace()->FindBodyForPath(&(b->path));
 			if (body != 0)
 				Pi::player->SetNavTarget(body);
 		}

@@ -27,10 +27,9 @@ void SystemInfoView::OnBodySelected(SystemBody *b)
 		printf("Gas, liquid, ice: %f, %f, %f\n", b->m_volatileGas.ToFloat(), b->m_volatileLiquid.ToFloat(), b->m_volatileIces.ToFloat());
 	}
 
-	SystemPath path = m_system->GetPathOf(b);
 	RefCountedPtr<StarSystem> currentSys = Pi::game->GetSpace()->GetStarSystem();
 	if (currentSys && currentSys->desc.path == m_system->desc.path) {
-		Body* body = Pi::game->GetSpace()->FindBodyForPath(&path);
+		Body* body = Pi::game->GetSpace()->FindBodyForPath(&(b->path));
 		if(body != 0)
 			Pi::player->SetNavTarget(body);
 	}

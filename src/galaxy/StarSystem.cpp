@@ -32,11 +32,6 @@ SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 	return m_bodies[path.bodyIndex];
 }
 
-SystemPath StarSystem::GetPathOf(const SystemBody *sbody) const
-{
-	return sbody->path;
-}
-
 void StarSystem::MakeShortDescription(MTRand &rand)
 {
 	m_econType = 0;

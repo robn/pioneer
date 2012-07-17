@@ -846,8 +846,7 @@ void WorldView::BuildCommsNavOptions()
 		m_commsNavOptions->PackEnd(new Gui::Label("#f0f" + Pi::game->GetSpace()->GetStarSystem()->m_bodies[(*i).first]->name));
 
 		for ( std::vector<SystemBody*>::const_iterator j = (*i).second.begin(); j != (*i).second.end(); ++j) {
-			SystemPath path = Pi::game->GetSpace()->GetStarSystem()->GetPathOf(*j);
-			Body *body = Pi::game->GetSpace()->FindBodyForPath(&path);
+			Body *body = Pi::game->GetSpace()->FindBodyForPath(&((*j)->path));
 			AddCommsNavOption((*j)->name, body);
 		}
 	}
