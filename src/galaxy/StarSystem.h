@@ -64,14 +64,6 @@ public:
 	}
 
 private:
-	SystemBody *NewBody() {
-		SystemBody *body = new SystemBody;
-		body->path = desc.path;
-		body->path.bodyIndex = m_bodies.size();
-		m_bodies.push_back(body);
-		return body;
-	}
-
 	void AddBody(SystemBody *body) {
 		body->path = desc.path;
 		body->path.bodyIndex = m_bodies.size();

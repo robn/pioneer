@@ -8,18 +8,6 @@
 #include <iostream>
 #include <cassert>
 
-SystemBody::SystemBody() :
-	parent(0),
-	id(Uint32(-1)),
-	seed(0),
-	averageTemp(0),
-	type(TYPE_GRAVPOINT),
-	heightMapFilename(0),
-	heightMapFractal(0),
-	m_atmosDensity(0.0)
-{
-}
-
 SystemBody::SystemBody(BodyType _type) :
 	parent(0),
 	id(Uint32(-1)),
