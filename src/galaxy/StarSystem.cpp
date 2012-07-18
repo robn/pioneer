@@ -22,6 +22,9 @@ StarSystem::StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBo
 			m_spaceStations.push_back(*i);
 	}
 	rootBody = m_bodies[0];
+
+	for (int i = 0; i < Equip::TYPE_MAX; i++)
+		m_tradeLevel[i] = 0;
 }
 
 SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
