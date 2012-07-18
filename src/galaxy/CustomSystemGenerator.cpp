@@ -79,13 +79,13 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 		kid->mass = csbody->mass;
 		if (kid->type == SystemBody::TYPE_PLANET_ASTEROID) kid->mass /= 100000;
 
-		kid->m_metallicity    = csbody->metallicity;
-		kid->m_volatileGas    = csbody->volatileGas;
-		kid->m_volatileLiquid = csbody->volatileLiquid;
-		kid->m_volatileIces   = csbody->volatileIces;
-		kid->m_volcanicity    = csbody->volcanicity;
-		kid->m_atmosOxidizing = csbody->atmosOxidizing;
-		kid->m_life           = csbody->life;
+		kid->composition.metallicity    = csbody->metallicity;
+		kid->composition.volatileGas    = csbody->volatileGas;
+		kid->composition.volatileLiquid = csbody->volatileLiquid;
+		kid->composition.volatileIces   = csbody->volatileIces;
+		kid->composition.volcanicity    = csbody->volcanicity;
+		kid->composition.atmosOxidizing = csbody->atmosOxidizing;
+		kid->composition.life           = csbody->life;
 
 		kid->rotationPeriod = csbody->rotationPeriod;
 		kid->eccentricity = csbody->eccentricity;

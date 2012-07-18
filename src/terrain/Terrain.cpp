@@ -94,7 +94,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 		case SystemBody::TYPE_PLANET_TERRESTRIAL: {
 
 			// Earth-like world
-			if ((body->m_life > fixed(7,10)) && (body->m_volatileGas > fixed(2,10))) {
+			if ((body->composition.life > fixed(7,10)) && (body->composition.volatileGas > fixed(2,10))) {
 				// There would be no life on the surface without atmosphere
 
 				if (body->averageTemp > 240) {
@@ -127,7 +127,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Harsh, habitable world
-			if ((body->m_volatileGas > fixed(2,10)) && (body->m_life > fixed(4,10)) ) {
+			if ((body->composition.volatileGas > fixed(2,10)) && (body->composition.life > fixed(4,10)) ) {
 
 				if (body->averageTemp > 240) {
 					const GeneratorInstancer choices[] = {
@@ -163,7 +163,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Marginally habitable world/ verging on mars like :)
-			else if ((body->m_volatileGas > fixed(1,10)) && (body->m_life > fixed(1,10)) ) {
+			else if ((body->composition.volatileGas > fixed(1,10)) && (body->composition.life > fixed(1,10)) ) {
 
 				if (body->averageTemp > 240) {
 					const GeneratorInstancer choices[] = {
@@ -199,7 +199,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Desert-like world, Mars -like.
-			if ((body->m_volatileLiquid < fixed(1,10)) && (body->m_volatileGas > fixed(1,5))) {
+			if ((body->composition.volatileLiquid < fixed(1,10)) && (body->composition.volatileGas > fixed(1,5))) {
 				const GeneratorInstancer choices[] = {
 					InstanceGenerator<TerrainHeightHillsDunes,TerrainColorDesert>,
 					InstanceGenerator<TerrainHeightWaterSolid,TerrainColorDesert>,
@@ -213,7 +213,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Frozen world
-			if ((body->m_volatileIces > fixed(8,10)) &&  (body->averageTemp < 250)) {
+			if ((body->composition.volatileIces > fixed(8,10)) &&  (body->averageTemp < 250)) {
 				const GeneratorInstancer choices[] = {
 					InstanceGenerator<TerrainHeightHillsDunes,TerrainColorIce>,
 					InstanceGenerator<TerrainHeightHillsCraters,TerrainColorIce>,
@@ -227,11 +227,11 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Volcanic world
-			if (body->m_volcanicity > fixed(7,10)) {
+			if (body->composition.volcanicity > fixed(7,10)) {
 
-				if (body->m_life > fixed(5,10))	// life on a volcanic world ;)
+				if (body->composition.life > fixed(5,10))	// life on a volcanic world ;)
 					gi = InstanceGenerator<TerrainHeightRuggedLava,TerrainColorTFGood>;
-				else if (body->m_life > fixed(2,10))
+				else if (body->composition.life > fixed(2,10))
 					gi = InstanceGenerator<TerrainHeightRuggedLava,TerrainColorTFPoor>;
 				else
 					gi = InstanceGenerator<TerrainHeightRuggedLava,TerrainColorVolcanic>;
@@ -240,7 +240,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 
 			//Below might not be needed.
 			//Alien life world:
-			if (body->m_life > fixed(1,10))  {
+			if (body->composition.life > fixed(1,10))  {
 				const GeneratorInstancer choices[] = {
 					InstanceGenerator<TerrainHeightHillsDunes,TerrainColorTFPoor>,
 					InstanceGenerator<TerrainHeightHillsRidged,TerrainColorTFPoor>,
@@ -258,7 +258,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 				break;
 			};
 
-			if (body->m_volatileGas > fixed(1,10)) {
+			if (body->composition.volatileGas > fixed(1,10)) {
 				const GeneratorInstancer choices[] = {
 					InstanceGenerator<TerrainHeightHillsNormal,TerrainColorRock>,
 					InstanceGenerator<TerrainHeightMountainsNormal,TerrainColorRock>,
@@ -360,9 +360,9 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		case 4: m_fracmult = 0.1;break;
 	}
 
-	m_sealevel = Clamp(m_body->m_volatileLiquid.ToDouble(), 0.0, 1.0);
-	m_icyness = Clamp(m_body->m_volatileIces.ToDouble(), 0.0, 1.0);
-	m_volcanic = Clamp(m_body->m_volcanicity.ToDouble(), 0.0, 1.0); // height scales with volcanicity as well
+	m_sealevel = Clamp(m_body->composition.volatileLiquid.ToDouble(), 0.0, 1.0);
+	m_icyness = Clamp(m_body->composition.volatileIces.ToDouble(), 0.0, 1.0);
+	m_volcanic = Clamp(m_body->composition.volcanicity.ToDouble(), 0.0, 1.0); // height scales with volcanicity as well
 
 	const double rad = m_body->GetRadius();
 	m_maxHeightInMeters = std::max(100.0, (9000.0*rad*rad*(m_volcanic+0.5)) / (m_body->GetMass() * 6.64e-12));
@@ -382,8 +382,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		r = m_rand.Double(0.3, 1.0);
 		g = m_rand.Double(0.3, r);
 		b = m_rand.Double(0.3, g);
-		r = std::max(b, r * m_body->m_metallicity.ToFloat());
-		g = std::max(b, g * m_body->m_metallicity.ToFloat());
+		r = std::max(b, r * m_body->composition.metallicity.ToFloat());
+		g = std::max(b, g * m_body->composition.metallicity.ToFloat());
 		m_rockColor[i] = vector3d(r, g, b);
 	}
 
@@ -394,8 +394,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		r = m_rand.Double(0.05, 0.3);
 		g = m_rand.Double(0.05, r);
 		b = m_rand.Double(0.05, g);
-		r = std::max(b, r * m_body->m_metallicity.ToFloat());
-		g = std::max(b, g * m_body->m_metallicity.ToFloat());
+		r = std::max(b, r * m_body->composition.metallicity.ToFloat());
+		g = std::max(b, g * m_body->composition.metallicity.ToFloat());
 		m_darkrockColor[i] = vector3d(r, g, b);
 	}
 
@@ -415,8 +415,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		g = m_rand.Double(0.3, 1.0);
 		r = m_rand.Double(0.3, g);
 		b = m_rand.Double(0.2, r);
-		g = std::max(r, g * m_body->m_life.ToFloat());
-		b *= (1.0-m_body->m_life.ToFloat());
+		g = std::max(r, g * m_body->composition.life.ToFloat());
+		b *= (1.0-m_body->composition.life.ToFloat());
 		m_plantColor[i] = vector3d(r, g, b);
 	}
 
@@ -428,8 +428,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		g = m_rand.Double(0.05, 0.3);
 		r = m_rand.Double(0.00, g);
 		b = m_rand.Double(0.00, r);
-		g = std::max(r, g * m_body->m_life.ToFloat());
-		b *= (1.0-m_body->m_life.ToFloat());
+		g = std::max(r, g * m_body->composition.life.ToFloat());
+		b *= (1.0-m_body->composition.life.ToFloat());
 		m_darkplantColor[i] = vector3d(r, g, b);
 	}
 

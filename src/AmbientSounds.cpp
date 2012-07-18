@@ -88,7 +88,7 @@ void AmbientSounds::Update()
 			assert(sbody);
 			const char *sample = NULL;
 
-			if (sbody->m_life > fixed(1,5)) {
+			if (sbody->composition.life > fixed(1,5)) {
 				const char *s[] = {
 					"Wind", "Thunder_1", "Thunder_2", "Thunder_3",
 					"Thunder_4", "Storm", "Rain_Light", "River",
@@ -97,14 +97,14 @@ void AmbientSounds::Update()
 				};
 				sample = s[sbody->seed % 11];
 			}
-			else if (sbody->m_volatileGas > fixed(1,2)) {
+			else if (sbody->composition.volatileGas > fixed(1,2)) {
 				const char *s[] = {
 					"Wind", "Thunder_1", "Thunder_2", "Thunder_3",
 					"Thunder_4", "Storm"
 				};
 				sample = s[sbody->seed % 6];
 			}
-			else if (sbody->m_volatileGas > fixed(1,10)) {
+			else if (sbody->composition.volatileGas > fixed(1,10)) {
 				sample = "Wind";
 			}
 

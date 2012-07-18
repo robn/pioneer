@@ -166,14 +166,16 @@ public:
 	int averageTemp;
 	BodyType type;
 
-	/* composition */
-	fixed m_metallicity; // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
-	fixed m_volatileGas; // 1.0 = earth atmosphere density
-	fixed m_volatileLiquid; // 1.0 = 100% ocean cover (earth = 70%)
-	fixed m_volatileIces; // 1.0 = 100% ice cover (earth = 3%)
-	fixed m_volcanicity; // 0 = none, 1.0 = fucking volcanic
-	fixed m_atmosOxidizing; // 0.0 = reducing (H2, NH3, etc), 1.0 = oxidising (CO2, O2, etc)
-	fixed m_life; // 0.0 = dead, 1.0 = teeming
+	struct Composition {
+		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
+		fixed volatileGas;    // 1.0 = earth atmosphere density
+		fixed volatileLiquid; // 1.0 = 100% ocean cover (earth = 70%)
+		fixed volatileIces;   // 1.0 = 100% ice cover (earth = 3%)
+		fixed volcanicity;    // 0 = none, 1.0 = fucking volcanic
+		fixed atmosOxidizing; // 0.0 = reducing (H2, NH3, etc), 1.0 = oxidising (CO2, O2, etc)
+		fixed life;           // 0.0 = dead, 1.0 = teeming
+	};
+	Composition composition;
 
 	/* economy type stuff */
 	fixed m_population;

@@ -117,13 +117,13 @@ std::string SystemBody::GetAstroDescription() const
 			else if (mass < fixed(1,10)) s = Lang::TINY;
 			else if (mass < fixed(1,5)) s = Lang::SMALL;
 
-			if (m_volcanicity > fixed(7,10)) {
+			if (composition.volcanicity > fixed(7,10)) {
 				if (s.size()) s += Lang::COMMA_HIGHLY_VOLCANIC;
 				else s = Lang::HIGHLY_VOLCANIC;
 			}
 
-			if (m_volatileIces + m_volatileLiquid > fixed(4,5)) {
-				if (m_volatileIces > m_volatileLiquid) {
+			if (composition.volatileIces + composition.volatileLiquid > fixed(4,5)) {
+				if (composition.volatileIces > composition.volatileLiquid) {
 					if (averageTemp < fixed(250)) {
 						s += Lang::ICE_WORLD;
 					} else s += Lang::ROCKY_PLANET;
@@ -134,54 +134,54 @@ std::string SystemBody::GetAstroDescription() const
 						s += Lang::OCEANICWORLD;
 					}
 				}
-			} else if (m_volatileLiquid > fixed(2,5)){
+			} else if (composition.volatileLiquid > fixed(2,5)){
 				if (averageTemp > fixed(250)) {
 					s += Lang::PLANET_CONTAINING_LIQUID_WATER;
 				} else {
 					s += Lang::PLANET_WITH_SOME_ICE;
 				}
-			} else if (m_volatileLiquid > fixed(1,5)){
+			} else if (composition.volatileLiquid > fixed(1,5)){
 				s += Lang::ROCKY_PLANET_CONTAINING_COME_LIQUIDS;
 			} else {
 				s += Lang::ROCKY_PLANET;
 			}
 
-			if (m_volatileGas < fixed(1,100)) {
+			if (composition.volatileGas < fixed(1,100)) {
 				s += Lang::WITH_NO_SIGNIFICANT_ATMOSPHERE;
 			} else {
 				std::string thickness;
-				if (m_volatileGas < fixed(1,10)) thickness = Lang::TENUOUS;
-				else if (m_volatileGas < fixed(1,5)) thickness = Lang::THIN;
-				else if (m_volatileGas < fixed(2,1)) {}
-				else if (m_volatileGas < fixed(4,1)) thickness = Lang::THICK;
+				if (composition.volatileGas < fixed(1,10)) thickness = Lang::TENUOUS;
+				else if (composition.volatileGas < fixed(1,5)) thickness = Lang::THIN;
+				else if (composition.volatileGas < fixed(2,1)) {}
+				else if (composition.volatileGas < fixed(4,1)) thickness = Lang::THICK;
 				else thickness = Lang::VERY_DENSE;
 
-				if (m_atmosOxidizing > fixed(95,100)) {
+				if (composition.atmosOxidizing > fixed(95,100)) {
 					s += Lang::WITH_A+thickness+Lang::O2_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(7,10)) {
+				} else if (composition.atmosOxidizing > fixed(7,10)) {
 					s += Lang::WITH_A+thickness+Lang::CO2_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(65,100)) {
+				} else if (composition.atmosOxidizing > fixed(65,100)) {
 					s += Lang::WITH_A+thickness+Lang::CO_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(55,100)) {
+				} else if (composition.atmosOxidizing > fixed(55,100)) {
 					s += Lang::WITH_A+thickness+Lang::CH4_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(3,10)) {
+				} else if (composition.atmosOxidizing > fixed(3,10)) {
 					s += Lang::WITH_A+thickness+Lang::H_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(2,10)) {
+				} else if (composition.atmosOxidizing > fixed(2,10)) {
 					s += Lang::WITH_A+thickness+Lang::HE_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(15,100)) {
+				} else if (composition.atmosOxidizing > fixed(15,100)) {
 					s += Lang::WITH_A+thickness+Lang::AR_ATMOSPHERE;
-				} else if (m_atmosOxidizing > fixed(1,10)) {
+				} else if (composition.atmosOxidizing > fixed(1,10)) {
 					s += Lang::WITH_A+thickness+Lang::S_ATMOSPHERE;
 				} else {
 					s += Lang::WITH_A+thickness+Lang::N_ATMOSPHERE;
 				}
 			}
 
-			if (m_life > fixed(1,2)) {
+			if (composition.life > fixed(1,2)) {
 				s += Lang::AND_HIGHLY_COMPLEX_ECOSYSTEM;
-			} else if (m_life > fixed(1,10)) {
+			} else if (composition.life > fixed(1,10)) {
 				s += Lang::AND_INDIGENOUS_PLANT_LIFE;
-			} else if (m_life > fixed(0)) {
+			} else if (composition.life > fixed(0)) {
 				s += Lang::AND_INDIGENOUS_MICROBIAL_LIFE;
 			} else {
 				s += ".";
@@ -256,8 +256,8 @@ const char *SystemBody::GetIcon() const
 				else return "icons/object_planet_large_gas_giant.png";
 			}
 			if (mass > 80) {
-				if (averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
-				else return "icons/object_planet_medium_gas_giant.png";
+				if (averageTemp > 1000) return "icons/object_planet_mediucomposition.gas_giant_hot.png";
+				else return "icons/object_planet_mediucomposition.gas_giant.png";
 			}
 			else {
 				if (averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
@@ -265,32 +265,32 @@ const char *SystemBody::GetIcon() const
 			}
 
 		case TYPE_PLANET_TERRESTRIAL:
-			if (m_volatileLiquid > fixed(7,10)) {
+			if (composition.volatileLiquid > fixed(7,10)) {
 				if (averageTemp > 250) return "icons/object_planet_water.png";
 				else return "icons/object_planet_ice.png";
 			}
-			if ((m_life > fixed(9,10)) &&
-				(m_volatileGas > fixed(6,10))) return "icons/object_planet_life.png";
-			if ((m_life > fixed(8,10)) &&
-				(m_volatileGas > fixed(5,10))) return "icons/object_planet_life6.png";
-			if ((m_life > fixed(7,10)) &&
-				(m_volatileGas > fixed(45,100))) return "icons/object_planet_life7.png";
-			if ((m_life > fixed(6,10)) &&
-				(m_volatileGas > fixed(4,10))) return "icons/object_planet_life8.png";
-			if ((m_life > fixed(5,10)) &&
-				(m_volatileGas > fixed(3,10))) return "icons/object_planet_life4.png";
-			if ((m_life > fixed(4,10)) &&
-				(m_volatileGas > fixed(2,10))) return "icons/object_planet_life5.png";
-			if ((m_life > fixed(1,10)) &&
-				(m_volatileGas > fixed(2,10))) return "icons/object_planet_life2.png";
-			if (m_life > fixed(1,10)) return "icons/object_planet_life3.png";
+			if ((composition.life > fixed(9,10)) &&
+				(composition.volatileGas > fixed(6,10))) return "icons/object_planet_life.png";
+			if ((composition.life > fixed(8,10)) &&
+				(composition.volatileGas > fixed(5,10))) return "icons/object_planet_life6.png";
+			if ((composition.life > fixed(7,10)) &&
+				(composition.volatileGas > fixed(45,100))) return "icons/object_planet_life7.png";
+			if ((composition.life > fixed(6,10)) &&
+				(composition.volatileGas > fixed(4,10))) return "icons/object_planet_life8.png";
+			if ((composition.life > fixed(5,10)) &&
+				(composition.volatileGas > fixed(3,10))) return "icons/object_planet_life4.png";
+			if ((composition.life > fixed(4,10)) &&
+				(composition.volatileGas > fixed(2,10))) return "icons/object_planet_life5.png";
+			if ((composition.life > fixed(1,10)) &&
+				(composition.volatileGas > fixed(2,10))) return "icons/object_planet_life2.png";
+			if (composition.life > fixed(1,10)) return "icons/object_planet_life3.png";
 			if (mass < fixed(1,100)) return "icons/object_planet_dwarf.png";
 			if (mass < fixed(1,10)) return "icons/object_planet_small.png";
-			if ((m_volatileLiquid < fixed(1,10)) &&
-				(m_volatileGas > fixed(1,5))) return "icons/object_planet_desert.png";
+			if ((composition.volatileLiquid < fixed(1,10)) &&
+				(composition.volatileGas > fixed(1,5))) return "icons/object_planet_desert.png";
 
-			if (m_volatileIces + m_volatileLiquid > fixed(3,5)) {
-				if (m_volatileIces > m_volatileLiquid) {
+			if (composition.volatileIces + composition.volatileLiquid > fixed(3,5)) {
+				if (composition.volatileIces > composition.volatileLiquid) {
 					if (averageTemp < 250)	return "icons/object_planet_ice.png";
 				} else {
 					if (averageTemp > 250) {
@@ -299,24 +299,24 @@ const char *SystemBody::GetIcon() const
 				}
 			}
 
-			if (m_volatileGas > fixed(1,2)) {
-				if (m_atmosOxidizing < fixed(1,2)) {
+			if (composition.volatileGas > fixed(1,2)) {
+				if (composition.atmosOxidizing < fixed(1,2)) {
 					if (averageTemp > 300) return "icons/object_planet_methane3.png";
 					else if (averageTemp > 250) return "icons/object_planet_methane2.png";
 					else return "icons/object_planet_methane.png";
 				} else {
 					if (averageTemp > 300) return "icons/object_planet_co2_2.png";
 					else if (averageTemp > 250) {
-						if ((m_volatileLiquid > fixed(3,10)) && (m_volatileGas > fixed(2,10)))
+						if ((composition.volatileLiquid > fixed(3,10)) && (composition.volatileGas > fixed(2,10)))
 							return "icons/object_planet_co2_4.png";
 						else return "icons/object_planet_co2_3.png";
 					} else return "icons/object_planet_co2.png";
 				}
 			}
 
-			if ((m_volatileLiquid > fixed(1,10)) &&
-			(m_volatileGas < fixed(1,10))) return "icons/object_planet_ice.png";
-			if (m_volcanicity > fixed(7,10)) return "icons/object_planet_volcanic.png";
+			if ((composition.volatileLiquid > fixed(1,10)) &&
+			(composition.volatileGas < fixed(1,10))) return "icons/object_planet_ice.png";
+			if (composition.volcanicity > fixed(7,10)) return "icons/object_planet_volcanic.png";
 			return "icons/object_planet_small.png";
 			/*
 			"icons/object_planet_water_n1.png"
@@ -385,7 +385,7 @@ vector3d Orbit::EvenSpacedPosAtTime(double t) const
 
 bool SystemBody::HasAtmosphere() const
 {
-	return (m_volatileGas > fixed(1,100));
+	return (composition.volatileGas > fixed(1,100));
 }
 
 bool SystemBody::IsScoopable() const
@@ -414,8 +414,8 @@ void SystemBody::PickAtmosphere()
 		default:
 		case SystemBody::TYPE_PLANET_TERRESTRIAL:
 			double r = 0, g = 0, b = 0;
-			double atmo = m_atmosOxidizing.ToDouble();
-			if (m_volatileGas.ToDouble() > 0.001) {
+			double atmo = composition.atmosOxidizing.ToDouble();
+			if (composition.volatileGas.ToDouble() > 0.001) {
 				if (atmo > 0.95) {
 					// o2
 					r = 1.0f + ((0.95f-atmo)*15.0f);
@@ -474,12 +474,12 @@ void SystemBody::PickAtmosphere()
 			} else {
 				m_atmosColor = Color(0.0, 0.0, 0.0, 0.0f);
 			}
-			m_atmosDensity = m_volatileGas.ToDouble();
+			m_atmosDensity = composition.volatileGas.ToDouble();
 			break;
 
 		/*default:
 			m_atmosColor = Color(0.6f, 0.6f, 0.6f, 1.0f);
-			m_atmosDensity = m_body->m_volatileGas.ToDouble();
+			m_atmosDensity = composition.body->composition.volatileGas.ToDouble();
 			break;*/
 	}
 }
@@ -559,17 +559,17 @@ void SystemBody::PickPlanetType(MTRand &rand)
 	if (parent->type <= TYPE_STAR_MAX)
 		// get it from the table now rather than setting it on stars/gravpoints as
 		// currently nothing else needs them to have metallicity
-		m_metallicity = SystemConstants::starMetallicities[parent->type] * rand.Fixed();
+		composition.metallicity = SystemConstants::starMetallicities[parent->type] * rand.Fixed();
 	else
 		// this assumes the parent's parent is a star/gravpoint, which is currently always true
-		m_metallicity = SystemConstants::starMetallicities[parent->parent->type] * rand.Fixed();
+		composition.metallicity = SystemConstants::starMetallicities[parent->parent->type] * rand.Fixed();
 	// harder to be volcanic when you are tiny (you cool down)
-	m_volcanicity = std::min(fixed(1,1), mass) * rand.Fixed();
-	m_atmosOxidizing = rand.Fixed();
-	m_life = fixed(0);
-	m_volatileGas = fixed(0);
-	m_volatileLiquid = fixed(0);
-	m_volatileIces = fixed(0);
+	composition.volcanicity = std::min(fixed(1,1), mass) * rand.Fixed();
+	composition.atmosOxidizing = rand.Fixed();
+	composition.life = fixed(0);
+	composition.volatileGas = fixed(0);
+	composition.volatileLiquid = fixed(0);
+	composition.volatileIces = fixed(0);
 
 	// pick body type
 	if (mass > 317*13) {
@@ -610,15 +610,15 @@ void SystemBody::PickPlanetType(MTRand &rand)
 		averageTemp = CalcSurfaceTemp(star, averageDistToStar, albedo, greenhouse);
 
 		const fixed proportion_gas = averageTemp / (fixed(100,1) + averageTemp);
-		m_volatileGas = proportion_gas * amount_volatiles;
+		composition.volatileGas = proportion_gas * amount_volatiles;
 
 		const fixed proportion_liquid = (fixed(1,1)-proportion_gas) * (averageTemp / (fixed(50,1) + averageTemp));
-		m_volatileLiquid = proportion_liquid * amount_volatiles;
+		composition.volatileLiquid = proportion_liquid * amount_volatiles;
 
 		const fixed proportion_ices = fixed(1,1) - (proportion_gas + proportion_liquid);
-		m_volatileIces = proportion_ices * amount_volatiles;
+		composition.volatileIces = proportion_ices * amount_volatiles;
 
-		if ((m_volatileLiquid > fixed(0)) &&
+		if ((composition.volatileLiquid > fixed(0)) &&
 		    (averageTemp > CELSIUS-60) &&
 		    (averageTemp < CELSIUS+200)) {
 			// try for life
@@ -630,7 +630,7 @@ void SystemBody::PickPlanetType(MTRand &rand)
 			    (star->type != TYPE_STAR_O) &&
 			    (minTemp > CELSIUS-10) && (minTemp < CELSIUS+90) &&
 			    (maxTemp > CELSIUS-10) && (maxTemp < CELSIUS+90)) {
-				m_life = rand.Fixed();
+				composition.life = rand.Fixed();
 			}
 		}
 	} else {
@@ -677,16 +677,16 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 	m_agricultural = fixed(0);
 
-	if (m_life > fixed(9,10)) {
+	if (composition.life > fixed(9,10)) {
 		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-averageTemp, 40), fixed(0), fixed(1,1));
 		system->m_agricultural += 2*m_agricultural;
-	} else if (m_life > fixed(1,2)) {
+	} else if (composition.life > fixed(1,2)) {
 		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-averageTemp, 50), fixed(0), fixed(1,1));
 		system->m_agricultural += 1*m_agricultural;
 	} else {
 		// don't bother populating crap planets
-		if (m_metallicity < fixed(5,10) &&
-			m_metallicity < (fixed(1,1) - system->m_humanProx)) return;
+		if (composition.metallicity < fixed(5,10) &&
+			composition.metallicity < (fixed(1,1) - system->m_humanProx)) return;
 	}
 
 	const int NUM_CONSUMABLES = 10;
@@ -715,7 +715,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		if (itype.econType & ECON_INDUSTRY) affinity *= system->m_industrial;
 		// make industry after we see if agriculture and mining are viable
 		if (itype.econType & ECON_MINING) {
-			affinity *= m_metallicity;
+			affinity *= composition.metallicity;
 		}
 		affinity *= rand.Fixed();
 		// producing consumables is wise
@@ -741,7 +741,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	// Add a bunch of things people consume
 	for (int i=0; i<NUM_CONSUMABLES; i++) {
 		Equip::Type t = consumables[i];
-		if (m_life > fixed(1,2)) {
+		if (composition.life > fixed(1,2)) {
 			// life planets can make this jizz probably
 			if ((t == Equip::AIR_PROCESSORS) ||
 			    (t == Equip::LIQUID_OXYGEN) ||

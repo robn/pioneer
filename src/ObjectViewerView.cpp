@@ -133,12 +133,12 @@ void ObjectViewerView::Update()
 		if (body->IsType(Object::TERRAINBODY)) {
 			TerrainBody *tbody = static_cast<TerrainBody*>(body);
 			const SystemBody *sbody = tbody->GetSystemBody();
-			m_sbodyVolatileGas->SetText(stringf("%0{f.3}", sbody->m_volatileGas.ToFloat()));
-			m_sbodyVolatileLiquid->SetText(stringf("%0{f.3}", sbody->m_volatileLiquid.ToFloat()));
-			m_sbodyVolatileIces->SetText(stringf("%0{f.3}", sbody->m_volatileIces.ToFloat()));
-			m_sbodyLife->SetText(stringf("%0{f.3}", sbody->m_life.ToFloat()));
-			m_sbodyVolcanicity->SetText(stringf("%0{f.3}", sbody->m_volcanicity.ToFloat()));
-			m_sbodyMetallicity->SetText(stringf("%0{f.3}", sbody->m_metallicity.ToFloat()));
+			m_sbodyVolatileGas->SetText(stringf("%0{f.3}", sbody->composition.volatileGas.ToFloat()));
+			m_sbodyVolatileLiquid->SetText(stringf("%0{f.3}", sbody->composition.volatileLiquid.ToFloat()));
+			m_sbodyVolatileIces->SetText(stringf("%0{f.3}", sbody->composition.volatileIces.ToFloat()));
+			m_sbodyLife->SetText(stringf("%0{f.3}", sbody->composition.life.ToFloat()));
+			m_sbodyVolcanicity->SetText(stringf("%0{f.3}", sbody->composition.volcanicity.ToFloat()));
+			m_sbodyMetallicity->SetText(stringf("%0{f.3}", sbody->composition.metallicity.ToFloat()));
 			m_sbodySeed->SetText(stringf("%0{i}", int(sbody->seed)));
 			m_sbodyMass->SetText(stringf("%0{f}", sbody->mass.ToFloat()));
 			m_sbodyRadius->SetText(stringf("%0{f}", sbody->radius.ToFloat()));
@@ -172,12 +172,12 @@ void ObjectViewerView::OnChangeTerrain()
 	sbody->seed = atoi(m_sbodySeed->GetText().c_str());
 	sbody->radius = radius;
 	sbody->mass = mass;
-	sbody->m_metallicity = metallicity;
-	sbody->m_volatileGas = volatileGas;
-	sbody->m_volatileLiquid = volatileLiquid;
-	sbody->m_volatileIces = volatileIces;
-	sbody->m_volcanicity = volcanicity;
-	sbody->m_life = life;
+	sbody->composition.metallicity = metallicity;
+	sbody->composition.volatileGas = volatileGas;
+	sbody->composition.volatileLiquid = volatileLiquid;
+	sbody->composition.volatileIces = volatileIces;
+	sbody->composition.volcanicity = volcanicity;
+	sbody->composition.life = life;
 
 	// force reload
 	static_cast<TerrainBody*>(body)->GetGeoSphere()->OnChangeDetailLevel();
