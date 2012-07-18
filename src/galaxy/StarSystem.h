@@ -64,12 +64,6 @@ public:
 	}
 
 private:
-	void AddBody(SystemBody *body) {
-		body->path = desc.path;
-		body->path.bodyIndex = m_bodies.size();
-		m_bodies.push_back(body);
-	}
-
 	void MakeShortDescription(MTRand &rand);
 	void Populate();
 

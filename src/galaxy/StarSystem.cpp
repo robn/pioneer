@@ -17,7 +17,10 @@ StarSystem::StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBo
 	desc(_desc)
 {
 	for (std::vector<SystemBody*>::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
-		AddBody(*i);
+		(*i)->path = desc.path;
+		(*i)->path.bodyIndex = m_bodies.size();
+		m_bodies.push_back(*i);
+
 		if ((*i)->GetSuperType() == SystemBody::SUPERTYPE_STARPORT)
 			m_spaceStations.push_back(*i);
 	}
