@@ -19,13 +19,13 @@ static SystemBody new_star_lighter_than(SystemBody::BodyType type, const SystemB
 	int tries = 16;
 	while (tries--) {
 		SystemBody body(SystemBody::NewStar(type, rand));
-		if (body.mass <= orig.mass)
+		if (body.physical.mass <= orig.physical.mass)
 			return body;
 	}
 
 	// just make one the same size as the current one, sigh
 	SystemBody body(type);
-	body.mass = orig.mass;
+	body.physical.mass = orig.physical.mass;
 
 	return body;
 }
@@ -70,10 +70,10 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 		star[1]->parent = centGrav1;
 		m_bodies.push_back(star[1]);
 
-		centGrav1->mass = star[0]->mass + star[1]->mass;
+		centGrav1->physical.mass = star[0]->physical.mass + star[1]->physical.mass;
 		centGrav1->children.push_back(star[0]);
 		centGrav1->children.push_back(star[1]);
-		const fixed minDist1 = (star[0]->radius + star[1]->radius) * AU_SOL_RADIUS;
+		const fixed minDist1 = (star[0]->physical.radius + star[1]->physical.radius) * AU_SOL_RADIUS;
 try_that_again_guvnah:
 		MakeBinaryPair(star[0], star[1], minDist1, rand);
 
@@ -103,9 +103,9 @@ try_that_again_guvnah:
 				star[3]->parent = centGrav2;
 				m_bodies.push_back(star[3]);
 
-				const fixed minDist2 = (star[2]->radius + star[3]->radius) * AU_SOL_RADIUS;
+				const fixed minDist2 = (star[2]->physical.radius + star[3]->physical.radius) * AU_SOL_RADIUS;
 				MakeBinaryPair(star[2], star[3], minDist2, rand);
-				centGrav2->mass = star[2]->mass + star[3]->mass;
+				centGrav2->physical.mass = star[2]->physical.mass + star[3]->physical.mass;
 				centGrav2->children.push_back(star[2]);
 				centGrav2->children.push_back(star[3]);
 			}
@@ -146,9 +146,9 @@ try_that_again_guvnah:
 
 void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
 {
-	fixed m = a->mass + b->mass;
-	fixed a0 = b->mass / m;
-	fixed a1 = a->mass / m;
+	fixed m = a->physical.mass + b->physical.mass;
+	fixed a0 = b->physical.mass / m;
+	fixed a1 = a->physical.mass / m;
 	a->orbit.eccentricity = rand.NFixed(3);
 	int mul = 1;
 
@@ -233,7 +233,7 @@ static fixed calc_hill_radius(const SystemBody *body)
 
 		return fixed(a * (fixedf<48>(1,1)-e) *
 				fixedf<48>::CubeRootOf(fixedf<48>(
-						body->mass / (fixedf<32>(3,1)*mprimary))));
+						body->physical.mass / (fixedf<32>(3,1)*mprimary))));
 
 		//fixed hr = semiMajorAxis*(fixed(1,1) - eccentricity) *
 		//  fixedcuberoot(mass / (3*mprimary));
@@ -255,17 +255,17 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		} else {
 			// correct thing is roche limit, but lets ignore that because
 			// it depends on body densities and gives some strange results
-			discMin = 4 * primary->radius * AU_SOL_RADIUS;
+			discMin = 4 * primary->physical.radius * AU_SOL_RADIUS;
 		}
 		if (primary->type == SystemBody::TYPE_WHITE_DWARF) {
 			// white dwarfs will have started as stars < 8 solar
 			// masses or so, so pick discMax according to that
 			// We give it a larger discMin because it used to be a much larger star
-			discMin = 1000 * primary->radius * AU_SOL_RADIUS;
+			discMin = 1000 * primary->physical.radius * AU_SOL_RADIUS;
 			discMax = 100 * rand.NFixed(2);		// rand-splitting again
 			discMax *= fixed::SqrtOf(fixed(1,2) + fixed(8,1)*rand.Fixed());
 		} else {
-			discMax = 100 * rand.NFixed(2)*fixed::SqrtOf(primary->mass);
+			discMax = 100 * rand.NFixed(2)*fixed::SqrtOf(primary->physical.mass);
 		}
 		// having limited discMin by bin-separation/fake roche, and
 		// discMax by some relation to star mass, we can now compute
@@ -282,7 +282,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 			discMax = std::min(discMax, fixed(5,100)*m_bodies[0]->children[0]->orbit.orbMin);
 		}
 	} else {
-		fixed primary_rad = primary->radius * AU_EARTH_RADIUS;
+		fixed primary_rad = primary->physical.radius * AU_EARTH_RADIUS;
 		discMin = 4 * primary_rad;
 		// use hill radius to find max size of moon system. for stars botch it.
 		// And use planets orbit around its primary as a scaler to a moon's orbit
@@ -314,12 +314,12 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL);
 		planet->seed = rand.Int32();
 		planet->orbit.eccentricity = ecc;
-		planet->axialTilt = fixed(100,157)*rand.NFixed(2);
+		planet->physical.axialTilt = fixed(100,157)*rand.NFixed(2);
 		planet->orbit.semiMajorAxis = semiMajorAxis;
 		planet->tmp = 0;
 		planet->parent = primary;
-		planet->mass = mass;
-		planet->rotationPeriod = fixed(rand.Int32(1,200), 24);
+		planet->physical.mass = mass;
+		planet->physical.rotationPeriod = fixed(rand.Int32(1,200), 24);
 
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
@@ -390,7 +390,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 	fixed pop = body->m_population + rand.Fixed();
 
 	fixed orbMaxS = fixed(1,4)*calc_hill_radius(body);
-	fixed orbMinS = 4 * body->radius * AU_EARTH_RADIUS;
+	fixed orbMinS = 4 * body->physical.radius * AU_EARTH_RADIUS;
 	if (body->children.size()) orbMaxS = std::min(orbMaxS, fixed(1,2) * body->children[0]->orbit.orbMin);
 
 	// starports - orbital
@@ -401,17 +401,17 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->seed = rand.Int32();
 		sp->tmp = 0;
 		sp->parent = body;
-		sp->rotationPeriod = fixed(1,3600);
-		sp->averageTemp = body->averageTemp;
-		sp->mass = 0;
+		sp->physical.rotationPeriod = fixed(1,3600);
+		sp->physical.averageTemp = body->physical.averageTemp;
+		sp->physical.mass = 0;
 		// just always plonk starports in near orbit
 		sp->orbit.semiMajorAxis = orbMinS;
 		sp->orbit.eccentricity = fixed(0);
-		sp->axialTilt = fixed(0);
+		sp->physical.axialTilt = fixed(0);
 
 		const double eccentricity = 0.0;
 		const double semiMajorAxis = sp->orbit.semiMajorAxis.ToDouble()*AU;
-		const double period = calc_orbital_period(semiMajorAxis, body->mass.ToDouble() * EARTH_MASS);
+		const double period = calc_orbital_period(semiMajorAxis, body->physical.mass.ToDouble() * EARTH_MASS);
 
 		sp->m_orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::Identity());
 
@@ -449,8 +449,8 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->seed = rand.Int32();
 		sp->tmp = 0;
 		sp->parent = body;
-		sp->averageTemp = body->averageTemp;
-		sp->mass = 0;
+		sp->physical.averageTemp = body->physical.averageTemp;
+		sp->physical.mass = 0;
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
 
 		// XXX horror reuse of Orbit

@@ -56,7 +56,7 @@ void Planet::GetAtmosphericState(double dist, double *outPressure, double *outDe
 	const double GAS_CONSTANT = 8.314;
 	const double KPA_2_ATMOS = 1.0 / 101.325;
 	// atmospheres
-	*outPressure = KPA_2_ATMOS*(*outDensity/GAS_MOLAR_MASS)*GAS_CONSTANT*double(GetSystemBody()->averageTemp);
+	*outPressure = KPA_2_ATMOS*(*outDensity/GAS_MOLAR_MASS)*GAS_CONSTANT*double(GetSystemBody()->physical.averageTemp);
 }
 
 struct GasGiantDef_t {

@@ -103,25 +103,25 @@ public:
 	BodySuperType GetSuperType() const;
 	double GetRadius() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return radius.ToDouble() * SOL_RADIUS;
+			return physical.radius.ToDouble() * SOL_RADIUS;
 		else
-			return radius.ToDouble() * EARTH_RADIUS;
+			return physical.radius.ToDouble() * EARTH_RADIUS;
 	}
 	double GetMass() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return mass.ToDouble() * SOL_MASS;
+			return physical.mass.ToDouble() * SOL_MASS;
 		else
-			return mass.ToDouble() * EARTH_MASS;
+			return physical.mass.ToDouble() * EARTH_MASS;
 	}
 	fixed GetMassInEarths() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return mass * 332998;
+			return physical.mass * 332998;
 		else
-			return mass;
+			return physical.mass;
 	}
 	// returned in seconds
 	double GetRotationPeriod() const {
-		return rotationPeriod.ToDouble()*60*60*24;
+		return physical.rotationPeriod.ToDouble()*60*60*24;
 	}
 	double CalcSurfaceGravity() const;
 
@@ -137,15 +137,21 @@ public:
 
 	bool IsScoopable() const;
 
+	BodyType type;
 	Uint32 id; // index into starsystem->m_bodies
 	SystemPath path;
 	int tmp;
 	Uint32 seed; // Planet.cpp can use to generate terrain
 	std::string name;
-	fixed radius;
-	fixed mass; // earth masses if planet, solar masses if star
-	fixed rotationPeriod; // in days
-	fixed humanActivity; // 0 - 1
+
+	struct PhysicalData {
+		fixed radius;
+		fixed mass;           // earth masses if planet, solar masses if star
+		fixed rotationPeriod; // in days
+		fixed axialTilt;      // in radians
+		int averageTemp;      // celcius
+	};
+	PhysicalData physical;
 
 	struct OrbitData {
 		fixed orbMin, orbMax; // periapsis, apoapsis in AUs
@@ -154,10 +160,6 @@ public:
 		fixed orbitalOffset;  // radians
 	};
 	OrbitData orbit;
-
-	fixed axialTilt; // in radians
-	int averageTemp;
-	BodyType type;
 
 	struct Composition {
 		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
@@ -169,6 +171,8 @@ public:
 		fixed life;           // 0.0 = dead, 1.0 = teeming
 	};
 	Composition composition;
+
+	fixed humanActivity; // 0 - 1
 
 	/* economy type stuff */
 	fixed m_population;

@@ -125,7 +125,7 @@ void SystemView::OnClickObject(SystemBody *b)
 	desc += std::string(Lang::DAY_LENGTH);
 	desc += std::string(Lang::ROTATIONAL_PERIOD);
 	desc += ":\n";
-	data += stringf(Lang::N_DAYS, formatarg("days", b->rotationPeriod.ToFloat())) + "\n";
+	data += stringf(Lang::N_DAYS, formatarg("days", b->physical.rotationPeriod.ToFloat())) + "\n";
 
 	desc += std::string(Lang::RADIUS);
 	desc += ":\n";
