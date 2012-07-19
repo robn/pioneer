@@ -256,8 +256,8 @@ const char *SystemBody::GetIcon() const
 				else return "icons/object_planet_large_gas_giant.png";
 			}
 			if (mass > 80) {
-				if (averageTemp > 1000) return "icons/object_planet_mediucomposition.gas_giant_hot.png";
-				else return "icons/object_planet_mediucomposition.gas_giant.png";
+				if (averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
+				else return "icons/object_planet_medium_gas_giant.png";
 			}
 			else {
 				if (averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
