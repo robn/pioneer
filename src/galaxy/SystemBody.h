@@ -144,12 +144,17 @@ public:
 	std::string name;
 	fixed radius;
 	fixed mass; // earth masses if planet, solar masses if star
-	fixed orbMin, orbMax; // periapsism, apoapsis in AUs
 	fixed rotationPeriod; // in days
 	fixed humanActivity; // 0 - 1
-	fixed semiMajorAxis; // in AUs
-	fixed eccentricity;
-	fixed orbitalOffset;
+
+	struct OrbitData {
+		fixed orbMin, orbMax; // periapsis, apoapsis in AUs
+		fixed semiMajorAxis;  // in AUs
+		fixed eccentricity;   // 0.0 - 1.0
+		fixed orbitalOffset;  // radians
+	};
+	OrbitData orbit;
+
 	fixed axialTilt; // in radians
 	int averageTemp;
 	BodyType type;

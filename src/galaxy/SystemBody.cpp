@@ -333,8 +333,8 @@ double SystemBody::GetMaxChildOrbitalDistance() const
 {
 	double max = 0;
 	for (unsigned int i=0; i<children.size(); i++) {
-		if (children[i]->orbMax.ToDouble() > max) {
-			max = children[i]->orbMax.ToDouble();
+		if (children[i]->orbit.orbMax.ToDouble() > max) {
+			max = children[i]->orbit.orbMax.ToDouble();
 		}
 	}
 	return AU * max;
@@ -465,8 +465,8 @@ const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed 
 		star = star->parent;
 	}
 
-	orbMin_ = planet->orbMin;
-	orbMax_ = planet->orbMax;
+	orbMin_ = planet->orbit.orbMin;
+	orbMax_ = planet->orbit.orbMax;
 	return star;
 }
 

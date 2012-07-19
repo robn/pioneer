@@ -78,7 +78,7 @@ try_that_again_guvnah:
 		MakeBinaryPair(star[0], star[1], minDist1, rand);
 
 		if (numStars > 2) {
-			if (star[0]->orbMax > fixed(100,1)) {
+			if (star[0]->orbit.orbMax > fixed(100,1)) {
 				// reduce to < 100 AU...
 				goto try_that_again_guvnah;
 			}
@@ -116,7 +116,7 @@ try_that_again_guvnah:
 
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
-			const fixed minDistSuper = star[0]->orbMax + star[2]->orbMax;
+			const fixed minDistSuper = star[0]->orbit.orbMax + star[2]->orbit.orbMax;
 			MakeBinaryPair(centGrav1, centGrav2, 4*minDistSuper, rand);
 
 			superCentGrav->children.push_back(centGrav1);
@@ -149,36 +149,36 @@ void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed m
 	fixed m = a->mass + b->mass;
 	fixed a0 = b->mass / m;
 	fixed a1 = a->mass / m;
-	a->eccentricity = rand.NFixed(3);
+	a->orbit.eccentricity = rand.NFixed(3);
 	int mul = 1;
 
 	do {
 		switch (rand.Int32(3)) {
-			case 2: a->semiMajorAxis = fixed(rand.Int32(100,10000), 100); break;
-			case 1: a->semiMajorAxis = fixed(rand.Int32(10,1000), 100); break;
+			case 2: a->orbit.semiMajorAxis = fixed(rand.Int32(100,10000), 100); break;
+			case 1: a->orbit.semiMajorAxis = fixed(rand.Int32(10,1000), 100); break;
 			default:
-			case 0: a->semiMajorAxis = fixed(rand.Int32(1,100), 100); break;
+			case 0: a->orbit.semiMajorAxis = fixed(rand.Int32(1,100), 100); break;
 		}
-		a->semiMajorAxis *= mul;
+		a->orbit.semiMajorAxis *= mul;
 		mul *= 2;
-	} while (a->semiMajorAxis < minDist);
+	} while (a->orbit.semiMajorAxis < minDist);
 
-	double period = 60*60*24*365* a->semiMajorAxis.ToDouble() * sqrt(a->semiMajorAxis.ToDouble() / m.ToDouble());
+	double period = 60*60*24*365* a->orbit.semiMajorAxis.ToDouble() * sqrt(a->orbit.semiMajorAxis.ToDouble() / m.ToDouble());
 
 	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
 	const float rotY = static_cast<float>(rand.Double(M_PI));
 	const matrix4x4d rotA = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
 	const matrix4x4d rotB = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
 
-	a->m_orbit = Orbit(a->eccentricity.ToDouble(), (a->semiMajorAxis * a0).ToDouble()*AU, period, rotA);
-	b->m_orbit = Orbit(a->eccentricity.ToDouble(), (a->semiMajorAxis * a1).ToDouble()*AU, period, rotB);
+	a->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), (a->orbit.semiMajorAxis * a0).ToDouble()*AU, period, rotA);
+	b->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), (a->orbit.semiMajorAxis * a1).ToDouble()*AU, period, rotB);
 
-	fixed orbMin = a->semiMajorAxis - a->eccentricity*a->semiMajorAxis;
-	fixed orbMax = 2*a->semiMajorAxis - orbMin;
-	a->orbMin = orbMin;
-	b->orbMin = orbMin;
-	a->orbMax = orbMax;
-	b->orbMax = orbMax;
+	fixed orbMin = a->orbit.semiMajorAxis - a->orbit.eccentricity*a->orbit.semiMajorAxis;
+	fixed orbMax = 2*a->orbit.semiMajorAxis - orbMin;
+	a->orbit.orbMin = orbMin;
+	b->orbit.orbMin = orbMin;
+	a->orbit.orbMax = orbMax;
+	b->orbit.orbMax = orbMax;
 }
 
 static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
@@ -228,8 +228,8 @@ static fixed calc_hill_radius(const SystemBody *body)
 		// masses in earth masses
 		fixedf<32> mprimary = body->parent->GetMassInEarths();
 
-		fixedf<48> a = body->semiMajorAxis;
-		fixedf<48> e = body->eccentricity;
+		fixedf<48> a = body->orbit.semiMajorAxis;
+		fixedf<48> e = body->orbit.eccentricity;
 
 		return fixed(a * (fixedf<48>(1,1)-e) *
 				fixedf<48>::CubeRootOf(fixedf<48>(
@@ -251,7 +251,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 	if (superType <= SystemBody::SUPERTYPE_STAR) {
 		if (primary->type == SystemBody::TYPE_GRAVPOINT) {
 			// around a binary
-			discMin = primary->children[0]->orbMax * SAFE_DIST_FROM_BINARY;
+			discMin = primary->children[0]->orbit.orbMax * SAFE_DIST_FROM_BINARY;
 		} else {
 			// correct thing is roche limit, but lets ignore that because
 			// it depends on body densities and gives some strange results
@@ -274,12 +274,12 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 
 		if ((superType == SystemBody::SUPERTYPE_STAR) && (primary->parent)) {
 			// limit planets out to 10% distance to star's binary companion
-			discMax = std::min(discMax, primary->orbMin * fixed(1,10));
+			discMax = std::min(discMax, primary->orbit.orbMin * fixed(1,10));
 		}
 
 		// in trinary and quaternary systems don't bump into other pair...
 		if (m_desc.numStars >= 3) {
-			discMax = std::min(discMax, fixed(5,100)*m_bodies[0]->children[0]->orbMin);
+			discMax = std::min(discMax, fixed(5,100)*m_bodies[0]->children[0]->orbit.orbMin);
 		}
 	} else {
 		fixed primary_rad = primary->radius * AU_EARTH_RADIUS;
@@ -287,7 +287,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		// use hill radius to find max size of moon system. for stars botch it.
 		// And use planets orbit around its primary as a scaler to a moon's orbit
 		discMax = std::min(discMax, fixed(1,20)*
-			calc_hill_radius(primary)*primary->orbMin*fixed(1,10));
+			calc_hill_radius(primary)*primary->orbit.orbMin*fixed(1,10));
 
 		discDensity = rand.Fixed() * get_disc_density(primary, discMin, discMax, fixed(1,500));
 	}
@@ -313,9 +313,9 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 
 		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL);
 		planet->seed = rand.Int32();
-		planet->eccentricity = ecc;
+		planet->orbit.eccentricity = ecc;
 		planet->axialTilt = fixed(100,157)*rand.NFixed(2);
-		planet->semiMajorAxis = semiMajorAxis;
+		planet->orbit.semiMajorAxis = semiMajorAxis;
 		planet->tmp = 0;
 		planet->parent = primary;
 		planet->mass = mass;
@@ -326,8 +326,8 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		const matrix4x4d rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
 		planet->m_orbit = Orbit(ecc.ToDouble(), semiMajorAxis.ToDouble()*AU, calc_orbital_period(semiMajorAxis.ToDouble()*AU, primary->GetMass()), rotMatrix);
 
-		planet->orbMin = periapsis;
-		planet->orbMax = apoapsis;
+		planet->orbit.orbMin = periapsis;
+		planet->orbit.orbMax = apoapsis;
 
 		m_bodies.push_back(planet);
 
@@ -391,7 +391,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 
 	fixed orbMaxS = fixed(1,4)*calc_hill_radius(body);
 	fixed orbMinS = 4 * body->radius * AU_EARTH_RADIUS;
-	if (body->children.size()) orbMaxS = std::min(orbMaxS, fixed(1,2) * body->children[0]->orbMin);
+	if (body->children.size()) orbMaxS = std::min(orbMaxS, fixed(1,2) * body->children[0]->orbit.orbMin);
 
 	// starports - orbital
 	pop -= rand.Fixed();
@@ -405,18 +405,18 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->averageTemp = body->averageTemp;
 		sp->mass = 0;
 		// just always plonk starports in near orbit
-		sp->semiMajorAxis = orbMinS;
-		sp->eccentricity = fixed(0);
+		sp->orbit.semiMajorAxis = orbMinS;
+		sp->orbit.eccentricity = fixed(0);
 		sp->axialTilt = fixed(0);
 
 		const double eccentricity = 0.0;
-		const double semiMajorAxis = sp->semiMajorAxis.ToDouble()*AU;
+		const double semiMajorAxis = sp->orbit.semiMajorAxis.ToDouble()*AU;
 		const double period = calc_orbital_period(semiMajorAxis, body->mass.ToDouble() * EARTH_MASS);
 
 		sp->m_orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::Identity());
 
-		sp->orbMin = sp->semiMajorAxis;
-		sp->orbMax = sp->semiMajorAxis;
+		sp->orbit.orbMin = sp->orbit.semiMajorAxis;
+		sp->orbit.orbMax = sp->orbit.semiMajorAxis;
 
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
 

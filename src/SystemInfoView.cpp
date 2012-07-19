@@ -74,8 +74,8 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 			data = stringf(Lang::N_DAYS, formatarg("days", b->GetOrbit().GetPeriod() / (60*60*24)));
 		}
 		_add_label_and_value(Lang::ORBITAL_PERIOD, data);
-		_add_label_and_value(Lang::PERIAPSIS_DISTANCE, format_distance(b->orbMin.ToDouble()*AU, 3));
-		_add_label_and_value(Lang::APOAPSIS_DISTANCE, format_distance(b->orbMax.ToDouble()*AU, 3));
+		_add_label_and_value(Lang::PERIAPSIS_DISTANCE, format_distance(b->orbit.orbMin.ToDouble()*AU, 3));
+		_add_label_and_value(Lang::APOAPSIS_DISTANCE, format_distance(b->orbit.orbMax.ToDouble()*AU, 3));
 		_add_label_and_value(Lang::ECCENTRICITY, stringf("%0{f.2}", b->GetOrbit().GetEccentricity()));
 		if (b->type != SystemBody::TYPE_STARPORT_ORBITAL) {
 			_add_label_and_value(Lang::AXIAL_TILT, stringf(Lang::N_DEGREES, formatarg("angle", b->axialTilt.ToDouble() * (180.0/M_PI))));

@@ -87,11 +87,12 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 		kid->composition.atmosOxidizing = csbody->atmosOxidizing;
 		kid->composition.life           = csbody->life;
 
+		kid->orbit.eccentricity = csbody->eccentricity;
+		kid->orbit.orbitalOffset = csbody->orbitalOffset;
+		kid->orbit.semiMajorAxis = csbody->semiMajorAxis;
+
 		kid->rotationPeriod = csbody->rotationPeriod;
-		kid->eccentricity = csbody->eccentricity;
-		kid->orbitalOffset = csbody->orbitalOffset;
 		kid->axialTilt = csbody->axialTilt;
-		kid->semiMajorAxis = csbody->semiMajorAxis;
 		if (csbody->heightMapFilename.length() > 0) {
 			kid->heightMapFilename = csbody->heightMapFilename.c_str();
 			kid->heightMapFractal = csbody->heightMapFractal;
@@ -102,18 +103,18 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 			rotMatrix = matrix4x4d::RotateYMatrix(csbody->longitude) *
 				matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		} else {
-			if (kid->semiMajorAxis.ToDouble()*AU < 1.2 * parent->GetRadius()) {
+			if (kid->orbit.semiMajorAxis.ToDouble()*AU < 1.2 * parent->GetRadius()) {
 				Error("%s's orbit is too close to its parent", csbody->name.c_str());
 			}
 			double offset = csbody->want_rand_offset ? rand.Double(2*M_PI) : (csbody->orbitalOffset.ToDouble()*M_PI);
 			rotMatrix = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		}
 
-		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, calc_orbital_period(kid->semiMajorAxis.ToDouble()*AU, parent->GetMass()), rotMatrix);
+		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, calc_orbital_period(kid->orbit.semiMajorAxis.ToDouble()*AU, parent->GetMass()), rotMatrix);
 
 		// perihelion and aphelion (in AUs)
-		kid->orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
-		kid->orbMax = 2*csbody->semiMajorAxis - kid->orbMin;
+		kid->orbit.orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
+		kid->orbit.orbMax = 2*csbody->semiMajorAxis - kid->orbit.orbMin;
 
 		kid->PickAtmosphere();
 
