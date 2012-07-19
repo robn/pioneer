@@ -163,18 +163,15 @@ void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed m
 		mul *= 2;
 	} while (a->semiMajorAxis < minDist);
 
-	a->orbit.eccentricity = a->eccentricity.ToDouble();
-	a->orbit.semiMajorAxis = AU * (a->semiMajorAxis * a0).ToDouble();
-	a->orbit.period = 60*60*24*365* a->semiMajorAxis.ToDouble() * sqrt(a->semiMajorAxis.ToDouble() / m.ToDouble());
+	double period = 60*60*24*365* a->semiMajorAxis.ToDouble() * sqrt(a->semiMajorAxis.ToDouble() / m.ToDouble());
 
 	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
 	const float rotY = static_cast<float>(rand.Double(M_PI));
-	a->orbit.rotMatrix = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
-	b->orbit.rotMatrix = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
+	const matrix4x4d rotA = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
+	const matrix4x4d rotB = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
 
-	b->orbit.eccentricity = a->eccentricity.ToDouble();
-	b->orbit.semiMajorAxis = AU * (a->semiMajorAxis * a1).ToDouble();
-	b->orbit.period = a->orbit.period;
+	a->orbit = Orbit(a->eccentricity.ToDouble(), (a->semiMajorAxis * a0).ToDouble()*AU, period, rotA);
+	b->orbit = Orbit(a->eccentricity.ToDouble(), (a->semiMajorAxis * a1).ToDouble()*AU, period, rotB);
 
 	fixed orbMin = a->semiMajorAxis - a->eccentricity*a->semiMajorAxis;
 	fixed orbMax = 2*a->semiMajorAxis - orbMin;
@@ -324,13 +321,10 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		planet->mass = mass;
 		planet->rotationPeriod = fixed(rand.Int32(1,200), 24);
 
-		planet->orbit.eccentricity = ecc.ToDouble();
-		planet->orbit.semiMajorAxis = semiMajorAxis.ToDouble() * AU;
-		planet->orbit.period = calc_orbital_period(planet->orbit.semiMajorAxis, primary->GetMass());
-
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
-		planet->orbit.rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
+		const matrix4x4d rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
+		planet->orbit = Orbit(ecc.ToDouble(), semiMajorAxis.ToDouble()*AU, calc_orbital_period(semiMajorAxis.ToDouble()*AU, primary->GetMass()), rotMatrix);
 
 		planet->orbMin = periapsis;
 		planet->orbMax = apoapsis;
@@ -367,14 +361,15 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 
 // Position a surface starport anywhere. Space.cpp::MakeFrameFor() ensures it
 // is on dry land (discarding this position if necessary)
-static void position_settlement_on_planet(SystemBody *b)
+// XXX horror reuse of Orbit
+static Orbit position_settlement_on_planet(SystemBody *b)
 {
 	MTRand r(b->seed);
 	// used for orientation on planet surface
 	double r2 = r.Double(); 	// function parameter evaluation order is implementation-dependent
 	double r1 = r.Double();		// can't put two rands in the same expression
-	b->orbit.rotMatrix = matrix4x4d::RotateZMatrix(2*M_PI*r1) *
-			matrix4x4d::RotateYMatrix(2*M_PI*r2);
+
+	return Orbit(0.0, 0.0, 0.0, matrix4x4d::RotateZMatrix(2*M_PI*r1) * matrix4x4d::RotateYMatrix(2*M_PI*r2));
 }
 
 void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
@@ -413,10 +408,13 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->semiMajorAxis = orbMinS;
 		sp->eccentricity = fixed(0);
 		sp->axialTilt = fixed(0);
-		sp->orbit.eccentricity = 0;
-		sp->orbit.semiMajorAxis = sp->semiMajorAxis.ToDouble()*AU;
-		sp->orbit.period = calc_orbital_period(sp->orbit.semiMajorAxis, body->mass.ToDouble() * EARTH_MASS);
-		sp->orbit.rotMatrix = matrix4x4d::Identity();
+
+		const double eccentricity = 0.0;
+		const double semiMajorAxis = sp->semiMajorAxis.ToDouble()*AU;
+		const double period = calc_orbital_period(semiMajorAxis, body->mass.ToDouble() * EARTH_MASS);
+
+		sp->orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::Identity());
+
 		sp->orbMin = sp->semiMajorAxis;
 		sp->orbMax = sp->semiMajorAxis;
 
@@ -432,7 +430,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 			SystemPath path2 = sp2->path;
 			*sp2 = *sp;
 			sp2->path = path2;
-			sp2->orbit.rotMatrix = matrix4x4d::RotateZMatrix(M_PI);
+			sp2->orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::RotateZMatrix(M_PI));
 			sp2->name = Pi::luaNameGen->BodyName(sp2, namerand);
 
 			m_bodies.push_back(sp2);
@@ -454,8 +452,9 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->averageTemp = body->averageTemp;
 		sp->mass = 0;
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
-		memset(&sp->orbit, 0, sizeof(Orbit));
-		position_settlement_on_planet(sp);
+
+		// XXX horror reuse of Orbit
+		sp->orbit = position_settlement_on_planet(sp);
 
 		m_bodies.push_back(sp);
 		body->children.insert(body->children.begin(), sp);

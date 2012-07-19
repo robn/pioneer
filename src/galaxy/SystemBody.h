@@ -2,6 +2,7 @@
 #define _SYSTEMBODY_H
 
 #include "SystemPath.h"
+#include "Orbit.h"
 #include "vector3.h"
 #include "matrix4x4.h"
 #include "mtrand.h"
@@ -9,18 +10,6 @@
 #include <string>
 
 class StarSystem;
-
-struct Orbit {
-	vector3d OrbitalPosAtTime(double t) const;
-	// 0.0 <= t <= 1.0. Not for finding orbital pos
-	vector3d EvenSpacedPosAtTime(double t) const;
-	/* duplicated from SystemBody... should remove probably */
-	double eccentricity;
-	double semiMajorAxis;
-	/* dup " " --------------------------------------- */
-	double period; // seconds
-	matrix4x4d rotMatrix;
-};
 
 class SystemBody {
 public:

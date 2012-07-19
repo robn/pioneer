@@ -134,11 +134,11 @@ void SystemView::OnClickObject(SystemBody *b)
 	if (b->parent) {
 		desc += std::string(Lang::SEMI_MAJOR_AXIS);
 	desc += ":\n";
-		data += format_distance(b->orbit.semiMajorAxis)+"\n";
+		data += format_distance(b->orbit.GetSemiMajorAxis())+"\n";
 
 		desc += std::string(Lang::ORBITAL_PERIOD);
 	desc += ":\n";
-		data += stringf(Lang::N_DAYS, formatarg("days", b->orbit.period / (24*60*60))) + "\n";
+		data += stringf(Lang::N_DAYS, formatarg("days", b->orbit.GetPeriod() / (24*60*60))) + "\n";
 	}
 	m_infoLabel->SetText(desc);
 	m_infoText->SetText(data);
@@ -197,8 +197,8 @@ void SystemView::PutBody(SystemBody *b, vector3d offset)
 
 	if (b->children.size()) for(std::vector<SystemBody*>::iterator kid = b->children.begin(); kid != b->children.end(); ++kid) {
 
-		if (is_zero_general((*kid)->orbit.semiMajorAxis)) continue;
-		if ((*kid)->orbit.semiMajorAxis * m_zoom < ROUGH_SIZE_OF_TURD) {
+		if (is_zero_general((*kid)->orbit.GetSemiMajorAxis())) continue;
+		if ((*kid)->orbit.GetSemiMajorAxis() * m_zoom < ROUGH_SIZE_OF_TURD) {
 			PutOrbit(*kid, offset);
 		}
 
