@@ -104,7 +104,7 @@ void SystemView::PutOrbit(SystemBody *b, vector3d offset)
 	Color green(0.f, 1.f, 0.f, 1.f);
 	int vcount = 0;
 	for (double t=0.0; t<1.0; t += 0.01) {
-		vector3d pos = b->orbit.EvenSpacedPosAtTime(t);
+		vector3d pos = b->GetOrbit().EvenSpacedPosAtTime(t);
 		pos = offset + pos * double(m_zoom);
 		vts.push_back(vector3f(pos));
 		vcount++;
@@ -134,11 +134,11 @@ void SystemView::OnClickObject(SystemBody *b)
 	if (b->parent) {
 		desc += std::string(Lang::SEMI_MAJOR_AXIS);
 	desc += ":\n";
-		data += format_distance(b->orbit.GetSemiMajorAxis())+"\n";
+		data += format_distance(b->GetOrbit().GetSemiMajorAxis())+"\n";
 
 		desc += std::string(Lang::ORBITAL_PERIOD);
 	desc += ":\n";
-		data += stringf(Lang::N_DAYS, formatarg("days", b->orbit.GetPeriod() / (24*60*60))) + "\n";
+		data += stringf(Lang::N_DAYS, formatarg("days", b->GetOrbit().GetPeriod() / (24*60*60))) + "\n";
 	}
 	m_infoLabel->SetText(desc);
 	m_infoText->SetText(data);
@@ -197,13 +197,13 @@ void SystemView::PutBody(SystemBody *b, vector3d offset)
 
 	if (b->children.size()) for(std::vector<SystemBody*>::iterator kid = b->children.begin(); kid != b->children.end(); ++kid) {
 
-		if (is_zero_general((*kid)->orbit.GetSemiMajorAxis())) continue;
-		if ((*kid)->orbit.GetSemiMajorAxis() * m_zoom < ROUGH_SIZE_OF_TURD) {
+		if (is_zero_general((*kid)->GetOrbit().GetSemiMajorAxis())) continue;
+		if ((*kid)->GetOrbit().GetSemiMajorAxis() * m_zoom < ROUGH_SIZE_OF_TURD) {
 			PutOrbit(*kid, offset);
 		}
 
 		// not using current time yet
-		vector3d pos = (*kid)->orbit.OrbitalPosAtTime(m_time);
+		vector3d pos = (*kid)->GetOrbit().OrbitalPosAtTime(m_time);
 		pos *= double(m_zoom);
 		//glTranslatef(pos.x, pos.y, pos.z);
 
@@ -222,7 +222,7 @@ void SystemView::PutSelectionBox(const SystemBody *b, const vector3d &rootPos, c
 	vector3d pos = rootPos;
 	// while (b->parent), not while (b) because the root SystemBody is defined to be at (0,0,0)
 	while (b->parent) {
-		pos += b->orbit.OrbitalPosAtTime(m_time) * double(m_zoom);
+		pos += b->GetOrbit().OrbitalPosAtTime(m_time) * double(m_zoom);
 		b = b->parent;
 	}
 
@@ -265,7 +265,7 @@ void SystemView::GetTransformTo(SystemBody *b, vector3d &pos)
 {
 	if (b->parent) {
 		GetTransformTo(b->parent, pos);
-		pos -= double(m_zoom) * b->orbit.OrbitalPosAtTime(m_time);
+		pos -= double(m_zoom) * b->GetOrbit().OrbitalPosAtTime(m_time);
 	}
 }
 

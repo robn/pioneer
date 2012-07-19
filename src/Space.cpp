@@ -422,7 +422,7 @@ static Frame *MakeFrameFor(SystemBody *sbody, Body *b, Frame *f)
 		matrix4x4d rot;
 		vector3d pos;
 		// first try suggested position
-		rot = sbody->orbit.GetInitialPosition();
+		rot = sbody->GetOrbit().GetInitialPosition();
 		pos = rot * vector3d(0,1,0);
 		if (planet->GetTerrainHeight(pos) - planet->GetSystemBody()->GetRadius() <= 0.0) {
 			MTRand r(sbody->seed);

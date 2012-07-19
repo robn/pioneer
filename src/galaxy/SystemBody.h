@@ -140,7 +140,6 @@ public:
 	Uint32 id; // index into starsystem->m_bodies
 	SystemPath path;
 	int tmp;
-	Orbit orbit;
 	Uint32 seed; // Planet.cpp can use to generate terrain
 	std::string name;
 	fixed radius;
@@ -172,6 +171,10 @@ public:
 
 	const char *heightMapFilename;
 	unsigned int heightMapFractal;
+
+	const Orbit &GetOrbit() const { return m_orbit; }
+	Orbit m_orbit; // XXX public temporarily until I can do the math to generate on the fly in GetOrbit()
+
 private:
 	Color m_atmosColor;
 	double m_atmosDensity;

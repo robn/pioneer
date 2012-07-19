@@ -109,7 +109,7 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 			rotMatrix = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		}
 
-		kid->orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, calc_orbital_period(kid->semiMajorAxis.ToDouble()*AU, parent->GetMass()), rotMatrix);
+		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, calc_orbital_period(kid->semiMajorAxis.ToDouble()*AU, parent->GetMass()), rotMatrix);
 
 		// perihelion and aphelion (in AUs)
 		kid->orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
