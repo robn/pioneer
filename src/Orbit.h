@@ -7,7 +7,7 @@
 class Orbit {
 public:
 	// eccentricity:  0.0 (circular) - 1.0 (parabolic)
-	// semiMajorAxis: distance in AU
+	// semiMajorAxis: distance in metres
 	// mass:          total mass of system (both objects) in Kg
 	// position:      initial position as a rotation about the origin
 	Orbit(double eccentricity, double semiMajorAxis, double mass, const matrix4x4d &position);
@@ -26,7 +26,7 @@ public:
 
 private:
 	double m_eccentricity;  // 0.0-1.0
-	double m_semiMajorAxis; // AU
+	double m_semiMajorAxis; // metres
 	double m_period;        // seconds
 
 	matrix4x4d m_position;
