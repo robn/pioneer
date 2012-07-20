@@ -172,8 +172,6 @@ public:
 	};
 	Composition composition;
 
-	fixed humanActivity; // 0 - 1
-
 	/* economy type stuff */
 	fixed m_population;
 	fixed m_agricultural;
