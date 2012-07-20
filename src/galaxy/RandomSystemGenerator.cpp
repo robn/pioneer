@@ -309,7 +309,6 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		planet->orbit.eccentricity = ecc;
 		planet->physical.axialTilt = fixed(100,157)*rand.NFixed(2);
 		planet->orbit.semiMajorAxis = semiMajorAxis;
-		planet->tmp = 0;
 		planet->parent = primary;
 		planet->physical.mass = mass;
 		planet->physical.rotationPeriod = fixed(rand.Int32(1,200), 24);
@@ -390,7 +389,6 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 
 		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL);
 		sp->seed = rand.Int32();
-		sp->tmp = 0;
 		sp->parent = body;
 		sp->physical.rotationPeriod = fixed(1,3600);
 		sp->physical.averageTemp = body->physical.averageTemp;
@@ -432,7 +430,6 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 
 		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE);
 		sp->seed = rand.Int32();
-		sp->tmp = 0;
 		sp->parent = body;
 		sp->physical.averageTemp = body->physical.averageTemp;
 		sp->physical.mass = 0;

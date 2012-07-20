@@ -140,7 +140,6 @@ public:
 	BodyType type;
 	Uint32 id; // index into starsystem->m_bodies
 	SystemPath path;
-	int tmp;
 	Uint32 seed; // Planet.cpp can use to generate terrain
 	std::string name;
 
