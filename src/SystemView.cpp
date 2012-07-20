@@ -98,13 +98,13 @@ void SystemView::ResetViewpoint()
 	m_time = Pi::game->GetTime();
 }
 
-void SystemView::PutOrbit(SystemBody *b, vector3d offset)
+void SystemView::PutOrbit(const Orbit &orbit, vector3d offset)
 {
 	std::vector<vector3f> vts;
 	Color green(0.f, 1.f, 0.f, 1.f);
 	int vcount = 0;
 	for (double t=0.0; t<1.0; t += 0.01) {
-		vector3d pos = b->GetOrbit().EvenSpacedPosAtTime(t);
+		vector3d pos = orbit.EvenSpacedPosAtTime(t);
 		pos = offset + pos * double(m_zoom);
 		vts.push_back(vector3f(pos));
 		vcount++;
@@ -132,13 +132,15 @@ void SystemView::OnClickObject(SystemBody *b)
 	data += format_distance(b->GetRadius())+"\n";
 
 	if (b->parent) {
+		const Orbit orbit = b->GetOrbit();
+
 		desc += std::string(Lang::SEMI_MAJOR_AXIS);
 	desc += ":\n";
-		data += format_distance(b->GetOrbit().GetSemiMajorAxis())+"\n";
+		data += format_distance(orbit.GetSemiMajorAxis())+"\n";
 
 		desc += std::string(Lang::ORBITAL_PERIOD);
 	desc += ":\n";
-		data += stringf(Lang::N_DAYS, formatarg("days", b->GetOrbit().GetPeriod() / (24*60*60))) + "\n";
+		data += stringf(Lang::N_DAYS, formatarg("days", orbit.GetPeriod() / (24*60*60))) + "\n";
 	}
 	m_infoLabel->SetText(desc);
 	m_infoText->SetText(data);
@@ -197,13 +199,14 @@ void SystemView::PutBody(SystemBody *b, vector3d offset)
 
 	if (b->children.size()) for(std::vector<SystemBody*>::iterator kid = b->children.begin(); kid != b->children.end(); ++kid) {
 
-		if (is_zero_general((*kid)->GetOrbit().GetSemiMajorAxis())) continue;
-		if ((*kid)->GetOrbit().GetSemiMajorAxis() * m_zoom < ROUGH_SIZE_OF_TURD) {
-			PutOrbit(*kid, offset);
+		const Orbit orbit = (*kid)->GetOrbit();
+		if (is_zero_general(orbit.GetSemiMajorAxis())) continue;
+		if (orbit.GetSemiMajorAxis() * m_zoom < ROUGH_SIZE_OF_TURD) {
+			PutOrbit(orbit, offset);
 		}
 
 		// not using current time yet
-		vector3d pos = (*kid)->GetOrbit().OrbitalPosAtTime(m_time);
+		vector3d pos = orbit.OrbitalPosAtTime(m_time);
 		pos *= double(m_zoom);
 		//glTranslatef(pos.x, pos.y, pos.z);
 

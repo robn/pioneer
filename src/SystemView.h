@@ -4,6 +4,7 @@
 #include "libs.h"
 #include "gui/Gui.h"
 #include "View.h"
+#include "Orbit.h"
 
 class StarSystem;
 class SystemBody;
@@ -17,7 +18,7 @@ public:
 	virtual void OnSwitchTo() {}
 private:
 	static const double PICK_OBJECT_RECT_SIZE;
-	void PutOrbit(SystemBody *b, vector3d offset);
+	void PutOrbit(const Orbit &orbit, vector3d offset);
 	void PutBody(SystemBody *b, vector3d offset);
 	void PutLabel(SystemBody *b, vector3d offset);
 	void PutSelectionBox(const SystemBody *b, const vector3d &rootPos, const Color &col);

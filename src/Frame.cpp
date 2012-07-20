@@ -271,8 +271,9 @@ void Frame::UpdateOrbitRails(double time, double timestep)
 		m_orient = matrix4x4d::Identity();
 	} else if (m_sbody) {
 		// this isn't very smegging efficient
-		vector3d pos = m_sbody->GetOrbit().OrbitalPosAtTime(time);
-		vector3d pos2 = m_sbody->GetOrbit().OrbitalPosAtTime(time+1.0);
+		const Orbit orbit = m_sbody->GetOrbit();
+		vector3d pos = orbit.OrbitalPosAtTime(time);
+		vector3d pos2 = orbit.OrbitalPosAtTime(time+1.0);
 		vector3d vel = pos2 - pos;
 		SetPosition(pos);
 		SetVelocity(vel);
