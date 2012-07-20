@@ -51,6 +51,13 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	const int numStars = m_desc.numStars;
 	assert((numStars >= 1) && (numStars <= 4));
 
+	SystemBody *superCentGrav = 0;
+	if (numStars > 2) {
+		superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT);
+		superCentGrav->name = m_desc.name;
+		m_bodies.push_back(superCentGrav);
+	}
+
 	if (numStars == 1) {
 		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
 		star[0]->name = m_desc.name;
@@ -110,10 +117,6 @@ try_that_again_guvnah:
 				centGrav2->children.push_back(star[3]);
 			}
 
-			SystemBody *superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT);
-			superCentGrav->name = m_desc.name;
-			m_bodies.push_back(superCentGrav);
-
 			centGrav1->parent = superCentGrav;
 			centGrav2->parent = superCentGrav;
 			const fixed minDistSuper = star[0]->orbit.orbMax + star[2]->orbit.orbMax;
@@ -122,6 +125,7 @@ try_that_again_guvnah:
 			superCentGrav->children.push_back(centGrav1);
 			superCentGrav->children.push_back(centGrav2);
 
+			superCentGrav = 0;
 		}
 	}
 
