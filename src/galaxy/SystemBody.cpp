@@ -11,7 +11,6 @@
 SystemBody::SystemBody(BodyType _type) :
 	parent(0),
 	type(_type),
-	id(Uint32(-1)),
 	seed(0),
 	heightMapFilename(0),
 	heightMapFractal(0),
