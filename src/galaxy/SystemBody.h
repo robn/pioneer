@@ -95,8 +95,6 @@ public:
 	~SystemBody();
 	void PickPlanetType(MTRand &rand);
 	const SystemBody *FindStarAndTrueOrbitalRange(fixed &orbMin, fixed &orbMax);
-	SystemBody *parent;
-	std::vector<SystemBody*> children;
 
 	std::string GetAstroDescription() const;
 	const char *GetIcon() const;
@@ -136,6 +134,9 @@ public:
 	}
 
 	bool IsScoopable() const;
+
+	SystemBody *parent;
+	std::vector<SystemBody*> children;
 
 	BodyType type;
 	Uint32 id; // index into starsystem->m_bodies
