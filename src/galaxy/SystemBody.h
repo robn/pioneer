@@ -103,25 +103,25 @@ public:
 	BodySuperType GetSuperType() const;
 	double GetRadius() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return physical.radius.ToDouble() * SOL_RADIUS;
+			return phys.radius.ToDouble() * SOL_RADIUS;
 		else
-			return physical.radius.ToDouble() * EARTH_RADIUS;
+			return phys.radius.ToDouble() * EARTH_RADIUS;
 	}
 	double GetMass() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return physical.mass.ToDouble() * SOL_MASS;
+			return phys.mass.ToDouble() * SOL_MASS;
 		else
-			return physical.mass.ToDouble() * EARTH_MASS;
+			return phys.mass.ToDouble() * EARTH_MASS;
 	}
 	fixed GetMassInEarths() const {
 		if (GetSuperType() <= SUPERTYPE_STAR)
-			return physical.mass * 332998;
+			return phys.mass * 332998;
 		else
-			return physical.mass;
+			return phys.mass;
 	}
 	// returned in seconds
 	double GetRotationPeriod() const {
-		return physical.rotationPeriod.ToDouble()*60*60*24;
+		return phys.rotationPeriod.ToDouble()*60*60*24;
 	}
 	double CalcSurfaceGravity() const;
 
@@ -150,16 +150,16 @@ public:
 		fixed axialTilt;      // in radians
 		int averageTemp;      // celcius
 	};
-	PhysicalData physical;
+	PhysicalData phys;
 
-	struct OrbitData {
+	struct OrbitalData {
 		fixed      orbMin, orbMax; // periapsis, apoapsis in AUs
 		fixed      semiMajorAxis;  // in AUs
 		fixed      eccentricity;   // 0.0 - 1.0
 		fixed      orbitalOffset;  // radians
 		matrix4x4d position;       // initial position
 	};
-	OrbitData orbit;
+	OrbitalData orbit;
 
 	struct Composition {
 		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)

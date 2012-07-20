@@ -58,11 +58,11 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 		m_infoBox->PackStart(l);
 	}
 
-	_add_label_and_value(Lang::MASS, stringf(Lang::N_WHATEVER_MASSES, formatarg("mass", b->physical.mass.ToDouble()),
+	_add_label_and_value(Lang::MASS, stringf(Lang::N_WHATEVER_MASSES, formatarg("mass", b->phys.mass.ToDouble()),
 		formatarg("units", std::string(b->GetSuperType() == SystemBody::SUPERTYPE_STAR ? Lang::SOLAR : Lang::EARTH))));
 
 	if (b->type != SystemBody::TYPE_STARPORT_ORBITAL) {
-		_add_label_and_value(Lang::SURFACE_TEMPERATURE, stringf(Lang::N_CELSIUS, formatarg("temperature", b->physical.averageTemp-273)));
+		_add_label_and_value(Lang::SURFACE_TEMPERATURE, stringf(Lang::N_CELSIUS, formatarg("temperature", b->phys.averageTemp-273)));
 		_add_label_and_value(Lang::SURFACE_GRAVITY, stringf("%0{f.3} m/s^2", b->CalcSurfaceGravity()));
 	}
 
@@ -79,11 +79,11 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 		_add_label_and_value(Lang::APOAPSIS_DISTANCE, format_distance(b->orbit.orbMax.ToDouble()*AU, 3));
 		_add_label_and_value(Lang::ECCENTRICITY, stringf("%0{f.2}", orbit.GetEccentricity()));
 		if (b->type != SystemBody::TYPE_STARPORT_ORBITAL) {
-			_add_label_and_value(Lang::AXIAL_TILT, stringf(Lang::N_DEGREES, formatarg("angle", b->physical.axialTilt.ToDouble() * (180.0/M_PI))));
-			if (b->physical.rotationPeriod != 0) {
+			_add_label_and_value(Lang::AXIAL_TILT, stringf(Lang::N_DEGREES, formatarg("angle", b->phys.axialTilt.ToDouble() * (180.0/M_PI))));
+			if (b->phys.rotationPeriod != 0) {
 				_add_label_and_value(
 					std::string(Lang::DAY_LENGTH)+std::string(Lang::ROTATIONAL_PERIOD),
-					stringf(Lang::N_EARTH_DAYS, formatarg("days", b->physical.rotationPeriod.ToDouble())));
+					stringf(Lang::N_EARTH_DAYS, formatarg("days", b->phys.rotationPeriod.ToDouble())));
 			}
 		}
 		int numSurfaceStarports = 0;

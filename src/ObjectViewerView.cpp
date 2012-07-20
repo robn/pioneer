@@ -140,8 +140,8 @@ void ObjectViewerView::Update()
 			m_sbodyVolcanicity->SetText(stringf("%0{f.3}", sbody->composition.volcanicity.ToFloat()));
 			m_sbodyMetallicity->SetText(stringf("%0{f.3}", sbody->composition.metallicity.ToFloat()));
 			m_sbodySeed->SetText(stringf("%0{i}", int(sbody->seed)));
-			m_sbodyMass->SetText(stringf("%0{f}", sbody->physical.mass.ToFloat()));
-			m_sbodyRadius->SetText(stringf("%0{f}", sbody->physical.radius.ToFloat()));
+			m_sbodyMass->SetText(stringf("%0{f}", sbody->phys.mass.ToFloat()));
+			m_sbodyRadius->SetText(stringf("%0{f}", sbody->phys.radius.ToFloat()));
 		}
 	}
 	snprintf(buf, sizeof(buf), "View dist: %s     Object: %s", format_distance(viewingDist).c_str(), (body ? body->GetLabel().c_str() : "<none>"));
@@ -170,8 +170,8 @@ void ObjectViewerView::OnChangeTerrain()
 	SystemBody *sbody = const_cast<SystemBody*>(body->GetSystemBody());
 
 	sbody->seed = atoi(m_sbodySeed->GetText().c_str());
-	sbody->physical.radius = radius;
-	sbody->physical.mass = mass;
+	sbody->phys.radius = radius;
+	sbody->phys.mass = mass;
 	sbody->composition.metallicity = metallicity;
 	sbody->composition.volatileGas = volatileGas;
 	sbody->composition.volatileLiquid = volatileLiquid;

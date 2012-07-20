@@ -332,7 +332,7 @@ Frame *Space::GetFrameWithSystemBody(const SystemBody *b) const
 
 static void SetFrameOrientationFromSystemBodyAxialTilt(Frame *f, const SystemBody *sbody)
 {
-	matrix4x4d rot = matrix4x4d::RotateXMatrix(sbody->physical.axialTilt.ToDouble());
+	matrix4x4d rot = matrix4x4d::RotateXMatrix(sbody->phys.axialTilt.ToDouble());
 	f->SetRotationOnly(rot);
 }
 
@@ -371,7 +371,7 @@ static Frame *MakeFrameFor(SystemBody *sbody, Body *b, Frame *f)
 		//	(frameRadius ? frameRadius : 10*sbody->GetRadius())*0.001f,
 		//	sbody->GetRadius()*0.001f);
 
-		assert(sbody->physical.rotationPeriod != 0);
+		assert(sbody->phys.rotationPeriod != 0);
 		rotFrame = new Frame(orbFrame, sbody->name.c_str());
 		// rotating frame has size of GeoSphere terrain bounding sphere
 		rotFrame->SetRadius(b->GetBoundingRadius());
@@ -399,7 +399,7 @@ static Frame *MakeFrameFor(SystemBody *sbody, Body *b, Frame *f)
 //		orbFrame->SetRadius(10*sbody->GetRadius());
 		orbFrame->SetRadius(frameRadius);
 
-		assert(sbody->physical.rotationPeriod != 0);
+		assert(sbody->phys.rotationPeriod != 0);
 		rotFrame = new Frame(orbFrame, sbody->name.c_str());
 		rotFrame->SetRadius(1000.0);
 //		rotFrame->SetRadius(1.1*sbody->GetRadius());		// enough for collisions?

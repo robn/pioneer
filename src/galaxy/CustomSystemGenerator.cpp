@@ -49,9 +49,9 @@ void CustomSystemGenerator::GenerateFromCustom(const CustomSystem *customSys, MT
 
 	SystemBody *sbody = new SystemBody(csbody->type);
 	sbody->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
-	sbody->physical.radius = csbody->radius;
-	sbody->physical.mass = csbody->mass;
-	sbody->physical.averageTemp = csbody->averageTemp;
+	sbody->phys.radius = csbody->radius;
+	sbody->phys.mass = csbody->mass;
+	sbody->phys.averageTemp = csbody->averageTemp;
 	sbody->name = csbody->name;
 	m_bodies.push_back(sbody);
 
@@ -67,12 +67,12 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 		SystemBody *kid = new SystemBody(csbody->type);
 		kid->parent = parent;
 		kid->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
-		kid->physical.radius = csbody->radius;
-		kid->physical.averageTemp = csbody->averageTemp;
+		kid->phys.radius = csbody->radius;
+		kid->phys.averageTemp = csbody->averageTemp;
 		kid->name = csbody->name;
 
-		kid->physical.mass = csbody->mass;
-		if (kid->type == SystemBody::TYPE_PLANET_ASTEROID) kid->physical.mass /= 100000;
+		kid->phys.mass = csbody->mass;
+		if (kid->type == SystemBody::TYPE_PLANET_ASTEROID) kid->phys.mass /= 100000;
 
 		kid->composition.metallicity    = csbody->metallicity;
 		kid->composition.volatileGas    = csbody->volatileGas;
@@ -86,8 +86,8 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 		kid->orbit.orbitalOffset = csbody->orbitalOffset;
 		kid->orbit.semiMajorAxis = csbody->semiMajorAxis;
 
-		kid->physical.rotationPeriod = csbody->rotationPeriod;
-		kid->physical.axialTilt = csbody->axialTilt;
+		kid->phys.rotationPeriod = csbody->rotationPeriod;
+		kid->phys.axialTilt = csbody->axialTilt;
 		if (csbody->heightMapFilename.length() > 0) {
 			kid->heightMapFilename = csbody->heightMapFilename.c_str();
 			kid->heightMapFractal = csbody->heightMapFractal;

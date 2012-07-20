@@ -97,7 +97,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			if ((body->composition.life > fixed(7,10)) && (body->composition.volatileGas > fixed(2,10))) {
 				// There would be no life on the surface without atmosphere
 
-				if (body->physical.averageTemp > 240) {
+				if (body->phys.averageTemp > 240) {
 					const GeneratorInstancer choices[] = {
 						InstanceGenerator<TerrainHeightHillsRidged,TerrainColorEarthLike>,
 						InstanceGenerator<TerrainHeightHillsRivers,TerrainColorEarthLike>,
@@ -129,7 +129,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			// Harsh, habitable world
 			if ((body->composition.volatileGas > fixed(2,10)) && (body->composition.life > fixed(4,10)) ) {
 
-				if (body->physical.averageTemp > 240) {
+				if (body->phys.averageTemp > 240) {
 					const GeneratorInstancer choices[] = {
 						InstanceGenerator<TerrainHeightHillsRidged,TerrainColorTFGood>,
 						InstanceGenerator<TerrainHeightHillsRivers,TerrainColorTFGood>,
@@ -165,7 +165,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			// Marginally habitable world/ verging on mars like :)
 			else if ((body->composition.volatileGas > fixed(1,10)) && (body->composition.life > fixed(1,10)) ) {
 
-				if (body->physical.averageTemp > 240) {
+				if (body->phys.averageTemp > 240) {
 					const GeneratorInstancer choices[] = {
 						InstanceGenerator<TerrainHeightHillsRidged,TerrainColorTFPoor>,
 						InstanceGenerator<TerrainHeightHillsRivers,TerrainColorTFPoor>,
@@ -213,7 +213,7 @@ Terrain *Terrain::InstanceTerrain(const SystemBody *body)
 			}
 
 			// Frozen world
-			if ((body->composition.volatileIces > fixed(8,10)) &&  (body->physical.averageTemp < 250)) {
+			if ((body->composition.volatileIces > fixed(8,10)) &&  (body->phys.averageTemp < 250)) {
 				const GeneratorInstancer choices[] = {
 					InstanceGenerator<TerrainHeightHillsDunes,TerrainColorIce>,
 					InstanceGenerator<TerrainHeightHillsCraters,TerrainColorIce>,

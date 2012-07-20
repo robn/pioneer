@@ -289,7 +289,7 @@ static int l_sbody_attr_apoapsis(lua_State *l)
 static int l_sbody_attr_rotation_period(lua_State *l)
 {
 	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
-	lua_pushnumber(l, sbody->physical.rotationPeriod.ToDouble());
+	lua_pushnumber(l, sbody->phys.rotationPeriod.ToDouble());
 	return 1;
 }
 
@@ -349,7 +349,7 @@ static int l_sbody_attr_eccentricty(lua_State *l)
 static int l_sbody_attr_axial_tilt(lua_State *l)
 {
 	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
-	lua_pushnumber(l, sbody->physical.axialTilt.ToDouble());
+	lua_pushnumber(l, sbody->phys.axialTilt.ToDouble());
 	return 1;
 }
 
@@ -369,7 +369,7 @@ static int l_sbody_attr_axial_tilt(lua_State *l)
 static int l_sbody_attr_average_temp(lua_State *l)
 {
 	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
-	lua_pushinteger(l, sbody->physical.averageTemp);
+	lua_pushinteger(l, sbody->phys.averageTemp);
 	return 1;
 }
 

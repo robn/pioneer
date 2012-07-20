@@ -168,11 +168,11 @@ void AmbientSounds::Update()
 					case SystemBody::TYPE_STAR_B: sample = "B_Hot_Blue_STAR"; break;
 					case SystemBody::TYPE_STAR_O: sample = "Blue_Super_Giant"; break;
 					case SystemBody::TYPE_PLANET_GAS_GIANT: {
-							if (sbody->physical.mass > fixed(400,1)) {
+							if (sbody->phys.mass > fixed(400,1)) {
 								sample = "Very_Large_Gas_Giant";
-							} else if (sbody->physical.mass > fixed(80,1)) {
+							} else if (sbody->phys.mass > fixed(80,1)) {
 								sample = "Large_Gas_Giant";
-							} else if (sbody->physical.mass > fixed(20,1)) {
+							} else if (sbody->phys.mass > fixed(20,1)) {
 								sample = "Medium_Gas_Giant";
 							} else {
 								sample = "Small_Gas_Giant";

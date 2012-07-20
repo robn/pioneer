@@ -25,9 +25,9 @@ SystemBody SystemBody::NewStar(BodyType type, MTRand &rand)
 	SystemBody sbody(type);
 
 	sbody.seed = rand.Int32();
-	sbody.physical.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
-	sbody.physical.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
-	sbody.physical.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
+	sbody.phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
+	sbody.phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
+	sbody.phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
 
 	return sbody;
 }
@@ -104,17 +104,17 @@ std::string SystemBody::GetAstroDescription() const
 	switch (type) {
 
 		case TYPE_PLANET_GAS_GIANT:
-			if (physical.mass > 800) return Lang::VERY_LARGE_GAS_GIANT;
-			if (physical.mass > 300) return Lang::LARGE_GAS_GIANT;
-			if (physical.mass > 80) return Lang::MEDIUM_GAS_GIANT;
+			if (phys.mass > 800) return Lang::VERY_LARGE_GAS_GIANT;
+			if (phys.mass > 300) return Lang::LARGE_GAS_GIANT;
+			if (phys.mass > 80) return Lang::MEDIUM_GAS_GIANT;
 			else return Lang::SMALL_GAS_GIANT;
 
 		case TYPE_PLANET_TERRESTRIAL: {
 			std::string s;
-			if (physical.mass > fixed(2,1)) s = Lang::MASSIVE;
-			else if (physical.mass > fixed(3,2)) s = Lang::LARGE;
-			else if (physical.mass < fixed(1,10)) s = Lang::TINY;
-			else if (physical.mass < fixed(1,5)) s = Lang::SMALL;
+			if (phys.mass > fixed(2,1)) s = Lang::MASSIVE;
+			else if (phys.mass > fixed(3,2)) s = Lang::LARGE;
+			else if (phys.mass < fixed(1,10)) s = Lang::TINY;
+			else if (phys.mass < fixed(1,5)) s = Lang::SMALL;
 
 			if (composition.volcanicity > fixed(7,10)) {
 				if (s.size()) s += Lang::COMMA_HIGHLY_VOLCANIC;
@@ -123,18 +123,18 @@ std::string SystemBody::GetAstroDescription() const
 
 			if (composition.volatileIces + composition.volatileLiquid > fixed(4,5)) {
 				if (composition.volatileIces > composition.volatileLiquid) {
-					if (physical.averageTemp < fixed(250)) {
+					if (phys.averageTemp < fixed(250)) {
 						s += Lang::ICE_WORLD;
 					} else s += Lang::ROCKY_PLANET;
 				} else {
-					if (physical.averageTemp < fixed(250)) {
+					if (phys.averageTemp < fixed(250)) {
 						s += Lang::ICE_WORLD;
 					} else {
 						s += Lang::OCEANICWORLD;
 					}
 				}
 			} else if (composition.volatileLiquid > fixed(2,5)){
-				if (physical.averageTemp > fixed(250)) {
+				if (phys.averageTemp > fixed(250)) {
 					s += Lang::PLANET_CONTAINING_LIQUID_WATER;
 				} else {
 					s += Lang::PLANET_WITH_SOME_ICE;
@@ -246,26 +246,26 @@ const char *SystemBody::GetIcon() const
 
 	switch (type) {
 		case TYPE_PLANET_GAS_GIANT:
-			if (physical.mass > 800) {
-				if (physical.averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
+			if (phys.mass > 800) {
+				if (phys.averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
 				else return "icons/object_planet_large_gas_giant.png";
 			}
-			if (physical.mass > 300) {
-				if (physical.averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
+			if (phys.mass > 300) {
+				if (phys.averageTemp > 1000) return "icons/object_planet_large_gas_giant_hot.png";
 				else return "icons/object_planet_large_gas_giant.png";
 			}
-			if (physical.mass > 80) {
-				if (physical.averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
+			if (phys.mass > 80) {
+				if (phys.averageTemp > 1000) return "icons/object_planet_medium_gas_giant_hot.png";
 				else return "icons/object_planet_medium_gas_giant.png";
 			}
 			else {
-				if (physical.averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
+				if (phys.averageTemp > 1000) return "icons/object_planet_small_gas_giant_hot.png";
 				else return "icons/object_planet_small_gas_giant.png";
 			}
 
 		case TYPE_PLANET_TERRESTRIAL:
 			if (composition.volatileLiquid > fixed(7,10)) {
-				if (physical.averageTemp > 250) return "icons/object_planet_water.png";
+				if (phys.averageTemp > 250) return "icons/object_planet_water.png";
 				else return "icons/object_planet_ice.png";
 			}
 			if ((composition.life > fixed(9,10)) &&
@@ -283,16 +283,16 @@ const char *SystemBody::GetIcon() const
 			if ((composition.life > fixed(1,10)) &&
 				(composition.volatileGas > fixed(2,10))) return "icons/object_planet_life2.png";
 			if (composition.life > fixed(1,10)) return "icons/object_planet_life3.png";
-			if (physical.mass < fixed(1,100)) return "icons/object_planet_dwarf.png";
-			if (physical.mass < fixed(1,10)) return "icons/object_planet_small.png";
+			if (phys.mass < fixed(1,100)) return "icons/object_planet_dwarf.png";
+			if (phys.mass < fixed(1,10)) return "icons/object_planet_small.png";
 			if ((composition.volatileLiquid < fixed(1,10)) &&
 				(composition.volatileGas > fixed(1,5))) return "icons/object_planet_desert.png";
 
 			if (composition.volatileIces + composition.volatileLiquid > fixed(3,5)) {
 				if (composition.volatileIces > composition.volatileLiquid) {
-					if (physical.averageTemp < 250)	return "icons/object_planet_ice.png";
+					if (phys.averageTemp < 250)	return "icons/object_planet_ice.png";
 				} else {
-					if (physical.averageTemp > 250) {
+					if (phys.averageTemp > 250) {
 						return "icons/object_planet_water.png";
 					} else return "icons/object_planet_ice.png";
 				}
@@ -300,12 +300,12 @@ const char *SystemBody::GetIcon() const
 
 			if (composition.volatileGas > fixed(1,2)) {
 				if (composition.atmosOxidizing < fixed(1,2)) {
-					if (physical.averageTemp > 300) return "icons/object_planet_methane3.png";
-					else if (physical.averageTemp > 250) return "icons/object_planet_methane2.png";
+					if (phys.averageTemp > 300) return "icons/object_planet_methane3.png";
+					else if (phys.averageTemp > 250) return "icons/object_planet_methane2.png";
 					else return "icons/object_planet_methane.png";
 				} else {
-					if (physical.averageTemp > 300) return "icons/object_planet_co2_2.png";
-					else if (physical.averageTemp > 250) {
+					if (phys.averageTemp > 300) return "icons/object_planet_co2_2.png";
+					else if (phys.averageTemp > 250) {
 						if ((composition.volatileLiquid > fixed(3,10)) && (composition.volatileGas > fixed(2,10)))
 							return "icons/object_planet_co2_4.png";
 						else return "icons/object_planet_co2_3.png";
@@ -469,7 +469,7 @@ const SystemBody *SystemBody::FindStarAndTrueOrbitalRange(fixed &orbMin_, fixed 
 	return star;
 }
 
-// star_physical.radius in sol radii
+// star_phys.radius in sol radii
 // star_temp in kelvin,
 // object_dist in AU
 // return Watts/m^2
@@ -487,12 +487,12 @@ static int CalcSurfaceTemp(const SystemBody *primary, fixed distToPrimary, fixed
 	fixed energy_per_meter2;
 	if (primary->type == SystemBody::TYPE_GRAVPOINT) {
 		// binary. take energies of both stars
-		energy_per_meter2 = calcEnergyPerUnitAreaAtDist(primary->children[0]->physical.radius,
-			primary->children[0]->physical.averageTemp, distToPrimary);
-		energy_per_meter2 += calcEnergyPerUnitAreaAtDist(primary->children[1]->physical.radius,
-			primary->children[1]->physical.averageTemp, distToPrimary);
+		energy_per_meter2 = calcEnergyPerUnitAreaAtDist(primary->children[0]->phys.radius,
+			primary->children[0]->phys.averageTemp, distToPrimary);
+		energy_per_meter2 += calcEnergyPerUnitAreaAtDist(primary->children[1]->phys.radius,
+			primary->children[1]->phys.averageTemp, distToPrimary);
 	} else {
-		energy_per_meter2 = calcEnergyPerUnitAreaAtDist(primary->physical.radius, primary->physical.averageTemp, distToPrimary);
+		energy_per_meter2 = calcEnergyPerUnitAreaAtDist(primary->phys.radius, primary->phys.averageTemp, distToPrimary);
 	}
 	const fixed surface_temp_pow4 = energy_per_meter2*(1-albedo)/(1-greenhouse);
 	return int(isqrt(isqrt((surface_temp_pow4.v>>fixed::FRAC)*4409673)));
@@ -510,17 +510,17 @@ void SystemBody::PickPlanetType(MTRand &rand)
 	/* first calculate blackbody temp (no greenhouse effect, zero albedo) */
 	int bbody_temp = CalcSurfaceTemp(star, averageDistToStar, albedo, greenhouse);
 
-	physical.averageTemp = bbody_temp;
+	phys.averageTemp = bbody_temp;
 
-	// physical.radius is just the cube root of the physical.mass. we get some more fractional
-	// bits for small bodies otherwise we can easily end up with 0 physical.radius
+	// phys.radius is just the cube root of the phys.mass. we get some more fractional
+	// bits for small bodies otherwise we can easily end up with 0 phys.radius
 	// which breaks stuff elsewhere
-	if (physical.mass <= fixed(1,1))
-		physical.radius = fixed(fixedf<48>::CubeRootOf(fixedf<48>(physical.mass)));
+	if (phys.mass <= fixed(1,1))
+		phys.radius = fixed(fixedf<48>::CubeRootOf(fixedf<48>(phys.mass)));
 	else
-		physical.radius = fixed::CubeRootOf(physical.mass);
+		phys.radius = fixed::CubeRootOf(phys.mass);
 	// enforce minimum size of 10km
-	physical.radius = std::max(physical.radius, fixed(1,630));
+	phys.radius = std::max(phys.radius, fixed(1,630));
 
 	if (parent->type <= TYPE_STAR_MAX)
 		// get it from the table now rather than setting it on stars/gravpoints as
@@ -530,7 +530,7 @@ void SystemBody::PickPlanetType(MTRand &rand)
 		// this assumes the parent's parent is a star/gravpoint, which is currently always true
 		composition.metallicity = SystemConstants::starMetallicities[parent->parent->type] * rand.Fixed();
 	// harder to be volcanic when you are tiny (you cool down)
-	composition.volcanicity = std::min(fixed(1,1), physical.mass) * rand.Fixed();
+	composition.volcanicity = std::min(fixed(1,1), phys.mass) * rand.Fixed();
 	composition.atmosOxidizing = rand.Fixed();
 	composition.life = fixed(0);
 	composition.volatileGas = fixed(0);
@@ -538,55 +538,55 @@ void SystemBody::PickPlanetType(MTRand &rand)
 	composition.volatileIces = fixed(0);
 
 	// pick body type
-	if (physical.mass > 317*13) {
-		// more than 13 jupiter physical.masses can fuse deuterium - is a brown dwarf
+	if (phys.mass > 317*13) {
+		// more than 13 jupiter phys.masses can fuse deuterium - is a brown dwarf
 		type = SystemBody::TYPE_BROWN_DWARF;
-		physical.averageTemp = physical.averageTemp + rand.Int32(SystemConstants::starTypeInfo[type].tempMin,
+		phys.averageTemp = phys.averageTemp + rand.Int32(SystemConstants::starTypeInfo[type].tempMin,
 					SystemConstants::starTypeInfo[type].tempMax);
-		// prevent physical.mass exceeding 65 jupiter physical.masses or so, when it becomes a star
-		// XXX since TYPE_BROWN_DWARF is supertype star, physical.mass is now in
-		// solar physical.masses. what a fucking mess
-		physical.mass = std::min(physical.mass, fixed(317*65, 1)) / 332998;
-		//physical.radius is too high as it now uses the planetary calculations to work out physical.radius (Cube root of physical.mass)
+		// prevent phys.mass exceeding 65 jupiter phys.masses or so, when it becomes a star
+		// XXX since TYPE_BROWN_DWARF is supertype star, phys.mass is now in
+		// solar phys.masses. what a fucking mess
+		phys.mass = std::min(phys.mass, fixed(317*65, 1)) / 332998;
+		//phys.radius is too high as it now uses the planetary calculations to work out phys.radius (Cube root of phys.mass)
 		// So tell it to use the star data instead:
-		physical.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0],
+		phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0],
 				SystemConstants::starTypeInfo[type].radius[1]), 100);
-	} else if (physical.mass > 6) {
+	} else if (phys.mass > 6) {
 		type = SystemBody::TYPE_PLANET_GAS_GIANT;
-	} else if (physical.mass > fixed(1, 15000)) {
+	} else if (phys.mass > fixed(1, 15000)) {
 		type = SystemBody::TYPE_PLANET_TERRESTRIAL;
 
 		fixed amount_volatiles = fixed(2,1)*rand.Fixed();
-		if (rand.Int32(3)) amount_volatiles *= physical.mass;
+		if (rand.Int32(3)) amount_volatiles *= phys.mass;
 		// total atmosphere loss
-		if (rand.Fixed() > physical.mass) amount_volatiles = fixed(0);
+		if (rand.Fixed() > phys.mass) amount_volatiles = fixed(0);
 
 		// fudge how much of the volatiles are in which state
 		greenhouse = fixed(0);
 		albedo = fixed(0);
 		// CO2 sublimation
-		if (physical.averageTemp > 195) greenhouse += amount_volatiles * fixed(1,3);
+		if (phys.averageTemp > 195) greenhouse += amount_volatiles * fixed(1,3);
 		else albedo += fixed(2,6);
 		// H2O liquid
-		if (physical.averageTemp > 273) greenhouse += amount_volatiles * fixed(1,5);
+		if (phys.averageTemp > 273) greenhouse += amount_volatiles * fixed(1,5);
 		else albedo += fixed(3,6);
 		// H2O boils
-		if (physical.averageTemp > 373) greenhouse += amount_volatiles * fixed(1,3);
+		if (phys.averageTemp > 373) greenhouse += amount_volatiles * fixed(1,3);
 
-		physical.averageTemp = CalcSurfaceTemp(star, averageDistToStar, albedo, greenhouse);
+		phys.averageTemp = CalcSurfaceTemp(star, averageDistToStar, albedo, greenhouse);
 
-		const fixed proportion_gas = physical.averageTemp / (fixed(100,1) + physical.averageTemp);
+		const fixed proportion_gas = phys.averageTemp / (fixed(100,1) + phys.averageTemp);
 		composition.volatileGas = proportion_gas * amount_volatiles;
 
-		const fixed proportion_liquid = (fixed(1,1)-proportion_gas) * (physical.averageTemp / (fixed(50,1) + physical.averageTemp));
+		const fixed proportion_liquid = (fixed(1,1)-proportion_gas) * (phys.averageTemp / (fixed(50,1) + phys.averageTemp));
 		composition.volatileLiquid = proportion_liquid * amount_volatiles;
 
 		const fixed proportion_ices = fixed(1,1) - (proportion_gas + proportion_liquid);
 		composition.volatileIces = proportion_ices * amount_volatiles;
 
 		if ((composition.volatileLiquid > fixed(0)) &&
-		    (physical.averageTemp > CELSIUS-60) &&
-		    (physical.averageTemp < CELSIUS+200)) {
+		    (phys.averageTemp > CELSIUS-60) &&
+		    (phys.averageTemp < CELSIUS+200)) {
 			// try for life
 			int minTemp = CalcSurfaceTemp(star, maxDistToStar, albedo, greenhouse);
 			int maxTemp = CalcSurfaceTemp(star, minDistToStar, albedo, greenhouse);
@@ -629,7 +629,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	m_population = fixed(0);
 
 	// Bad type of planet for settlement
-	if ((physical.averageTemp > CELSIUS+100) || (physical.averageTemp < 100) ||
+	if ((phys.averageTemp > CELSIUS+100) || (phys.averageTemp < 100) ||
 	    (type != SystemBody::TYPE_PLANET_TERRESTRIAL && type != SystemBody::TYPE_PLANET_ASTEROID)) {
 
 		// orbital starports should carry a small amount of population
@@ -644,10 +644,10 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	m_agricultural = fixed(0);
 
 	if (composition.life > fixed(9,10)) {
-		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-physical.averageTemp, 40), fixed(0), fixed(1,1));
+		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-phys.averageTemp, 40), fixed(0), fixed(1,1));
 		system->m_agricultural += 2*m_agricultural;
 	} else if (composition.life > fixed(1,2)) {
-		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-physical.averageTemp, 50), fixed(0), fixed(1,1));
+		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-phys.averageTemp, 50), fixed(0), fixed(1,1));
 		system->m_agricultural += 1*m_agricultural;
 	} else {
 		// don't bother populating crap planets
