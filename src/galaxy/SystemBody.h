@@ -154,10 +154,11 @@ public:
 	PhysicalData physical;
 
 	struct OrbitData {
-		fixed orbMin, orbMax; // periapsis, apoapsis in AUs
-		fixed semiMajorAxis;  // in AUs
-		fixed eccentricity;   // 0.0 - 1.0
-		fixed orbitalOffset;  // radians
+		fixed      orbMin, orbMax; // periapsis, apoapsis in AUs
+		fixed      semiMajorAxis;  // in AUs
+		fixed      eccentricity;   // 0.0 - 1.0
+		fixed      orbitalOffset;  // radians
+		matrix4x4d position;       // initial position
 	};
 	OrbitData orbit;
 
@@ -181,8 +182,7 @@ public:
 	const char *heightMapFilename;
 	unsigned int heightMapFractal;
 
-	const Orbit &GetOrbit() const { return m_orbit; }
-	Orbit m_orbit; // XXX public temporarily until I can do the math to generate on the fly in GetOrbit()
+	Orbit GetOrbit() const;
 
 private:
 	Color m_atmosColor;

@@ -731,3 +731,13 @@ SystemBody::~SystemBody()
 		delete (*i);
 	}
 }
+
+Orbit SystemBody::GetOrbit() const
+{
+	if (!parent) return Orbit();
+
+	if (parent->type == TYPE_GRAVPOINT)
+		return Orbit(orbit.eccentricity.ToDouble(), orbit.semiMajorAxis.ToDouble()*AU, parent->children[0]->GetMass()+parent->children[1]->GetMass(), orbit.position);
+	
+	return Orbit(orbit.eccentricity.ToDouble(), orbit.semiMajorAxis.ToDouble()*AU, parent->GetMass()+GetMass(), orbit.position);
+}

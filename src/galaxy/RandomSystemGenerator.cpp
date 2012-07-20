@@ -164,20 +164,19 @@ void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed m
 		mul *= 2;
 	} while (a->orbit.semiMajorAxis < minDist);
 
-	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
-	const float rotY = static_cast<float>(rand.Double(M_PI));
-	const matrix4x4d rotA = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
-	const matrix4x4d rotB = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
-
-	a->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), a->orbit.semiMajorAxis.ToDouble()*AU, a->GetMass()+b->GetMass(), rotA);
-	b->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), a->orbit.semiMajorAxis.ToDouble()*AU, a->GetMass()+b->GetMass(), rotB);
-
 	fixed orbMin = a->orbit.semiMajorAxis - a->orbit.eccentricity*a->orbit.semiMajorAxis;
 	fixed orbMax = 2*a->orbit.semiMajorAxis - orbMin;
 	a->orbit.orbMin = orbMin;
-	b->orbit.orbMin = orbMin;
 	a->orbit.orbMax = orbMax;
+	b->orbit.orbMin = orbMin;
 	b->orbit.orbMax = orbMax;
+
+	b->orbit = a->orbit;
+
+	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
+	const float rotY = static_cast<float>(rand.Double(M_PI));
+	a->orbit.position = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
+	b->orbit.position = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
 }
 
 static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
@@ -317,8 +316,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
-		const matrix4x4d rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
-		planet->m_orbit = Orbit(ecc.ToDouble(), semiMajorAxis.ToDouble()*AU, primary->GetMass(), rotMatrix);
+		planet->orbit.position = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
 
 		planet->orbit.orbMin = periapsis;
 		planet->orbit.orbMax = apoapsis;
@@ -356,14 +354,13 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 // Position a surface starport anywhere. Space.cpp::MakeFrameFor() ensures it
 // is on dry land (discarding this position if necessary)
 // XXX horror reuse of Orbit
-static Orbit position_settlement_on_planet(SystemBody *b)
+static void position_settlement_on_planet(SystemBody *b)
 {
 	MTRand r(b->seed);
 	// used for orientation on planet surface
 	double r2 = r.Double(); 	// function parameter evaluation order is implementation-dependent
 	double r1 = r.Double();		// can't put two rands in the same expression
-
-	return Orbit(0.0, 0.0, 0.0, matrix4x4d::RotateZMatrix(2*M_PI*r1) * matrix4x4d::RotateYMatrix(2*M_PI*r2));
+	b->orbit.position = matrix4x4d::RotateZMatrix(2*M_PI*r1) * matrix4x4d::RotateYMatrix(2*M_PI*r2);
 }
 
 void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
@@ -402,9 +399,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->orbit.semiMajorAxis = orbMinS;
 		sp->orbit.eccentricity = fixed(0);
 		sp->physical.axialTilt = fixed(0);
-
-		sp->m_orbit = Orbit(0.0, sp->orbit.semiMajorAxis.ToDouble()*AU, body->GetMass(), matrix4x4d::Identity());
-
+		sp->orbit.position = matrix4x4d::Identity();
 		sp->orbit.orbMin = sp->orbit.semiMajorAxis;
 		sp->orbit.orbMax = sp->orbit.semiMajorAxis;
 
@@ -420,7 +415,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 			SystemPath path2 = sp2->path;
 			*sp2 = *sp;
 			sp2->path = path2;
-			sp2->m_orbit = Orbit(0.0, sp->orbit.semiMajorAxis.ToDouble()*AU, body->GetMass(), matrix4x4d::RotateZMatrix(M_PI));
+			sp2->orbit.position = matrix4x4d::RotateZMatrix(M_PI);
 			sp2->name = Pi::luaNameGen->BodyName(sp2, namerand);
 
 			m_bodies.push_back(sp2);
@@ -443,8 +438,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->physical.mass = 0;
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
 
-		// XXX horror reuse of Orbit
-		sp->m_orbit = position_settlement_on_planet(sp);
+		position_settlement_on_planet(sp);
 
 		m_bodies.push_back(sp);
 		body->children.insert(body->children.begin(), sp);

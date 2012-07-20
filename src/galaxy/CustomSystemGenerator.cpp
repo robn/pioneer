@@ -93,19 +93,15 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 			kid->heightMapFractal = csbody->heightMapFractal;
 		}
 
-		matrix4x4d rotMatrix;
-		if (kid->type == SystemBody::TYPE_STARPORT_SURFACE) {
-			rotMatrix = matrix4x4d::RotateYMatrix(csbody->longitude) *
-				matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
-		} else {
+		if (kid->type == SystemBody::TYPE_STARPORT_SURFACE)
+			kid->orbit.position = matrix4x4d::RotateYMatrix(csbody->longitude) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
+		else {
 			if (kid->orbit.semiMajorAxis.ToDouble()*AU < 1.2 * parent->GetRadius()) {
 				Error("%s's orbit is too close to its parent", csbody->name.c_str());
 			}
 			double offset = csbody->want_rand_offset ? rand.Double(2*M_PI) : (csbody->orbitalOffset.ToDouble()*M_PI);
-			rotMatrix = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
+			kid->orbit.position = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		}
-
-		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, parent->GetMass(), rotMatrix);
 
 		// perihelion and aphelion (in AUs)
 		kid->orbit.orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;
