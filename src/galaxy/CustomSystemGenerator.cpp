@@ -59,11 +59,6 @@ void CustomSystemGenerator::GenerateFromCustom(const CustomSystem *customSys, MT
 	CustomGetKidsOf(sbody, csbody->children, &humanInfestedness, rand);
 }
 
-static double calc_orbital_period(double semiMajorAxis, double centralMass)
-{
-	return 2.0*M_PI*sqrt((semiMajorAxis*semiMajorAxis*semiMajorAxis)/(G*centralMass));
-}
-
 void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vector<CustomSystemBody*> &children, int *outHumanInfestedness, MTRand &rand)
 {
 	for (std::vector<CustomSystemBody*>::const_iterator i = children.begin(); i != children.end(); i++) {
@@ -110,7 +105,7 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 			rotMatrix = matrix4x4d::RotateYMatrix(offset) * matrix4x4d::RotateXMatrix(-0.5*M_PI + csbody->latitude);
 		}
 
-		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, calc_orbital_period(kid->orbit.semiMajorAxis.ToDouble()*AU, parent->GetMass()), rotMatrix);
+		kid->m_orbit = Orbit(csbody->eccentricity.ToDouble(), csbody->semiMajorAxis.ToDouble()*AU, parent->GetMass(), rotMatrix);
 
 		// perihelion and aphelion (in AUs)
 		kid->orbit.orbMin = csbody->semiMajorAxis - csbody->eccentricity*csbody->semiMajorAxis;

@@ -1,6 +1,14 @@
 #include "Orbit.h"
 #include "libs.h"
 
+Orbit::Orbit(double eccentricity, double semiMajorAxis, double mass, const matrix4x4d &position) :
+	m_eccentricity(eccentricity), m_semiMajorAxis(semiMajorAxis), m_position(position)
+{
+	// Kepler's third law
+	// http://en.wikipedia.org/wiki/Orbital_period
+	m_period =  2.0 * M_PI * semiMajorAxis * sqrt(semiMajorAxis / (G * mass));
+}
+
 vector3d Orbit::OrbitalPosAtTime(double t) const
 {
 	const double e = m_eccentricity;

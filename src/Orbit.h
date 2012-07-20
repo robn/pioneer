@@ -8,10 +8,9 @@ class Orbit {
 public:
 	// eccentricity:  0.0 (circular) - 1.0 (parabolic)
 	// semiMajorAxis: distance in AU
-	// period:        orbital period in seconds
+	// mass:          total mass of system (both objects) in Kg
 	// position:      initial position as a rotation about the origin
-	Orbit(double eccentricity, double semiMajorAxis, double period, const matrix4x4d &position) :
-		m_eccentricity(eccentricity), m_semiMajorAxis(semiMajorAxis), m_period(period), m_position(position) {}
+	Orbit(double eccentricity, double semiMajorAxis, double mass, const matrix4x4d &position);
 
 	Orbit() :
 		m_eccentricity(0.0), m_semiMajorAxis(0.0), m_period(0.0), m_position(matrix4x4d::Identity()) {}
@@ -26,7 +25,7 @@ public:
 	const matrix4x4d &GetInitialPosition() const { return m_position; }
 
 private:
-	double m_eccentricity;	// 0.0-1.0
+	double m_eccentricity;  // 0.0-1.0
 	double m_semiMajorAxis; // AU
 	double m_period;        // seconds
 

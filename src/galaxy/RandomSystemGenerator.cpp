@@ -148,18 +148,8 @@ try_that_again_guvnah:
 	return s;
 }
 
-// Kepler's third law
-// http://en.wikipedia.org/wiki/Orbital_period
-static double calc_orbital_period(double semiMajorAxis, double mass1, double mass2 = 0.0)
-{
-	return 2.0*M_PI*semiMajorAxis*sqrt(semiMajorAxis/(G*(mass1+mass2)));
-}
-
 void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
 {
-	fixed m = a->physical.mass + b->physical.mass;
-	fixed a0 = b->physical.mass / m;
-	fixed a1 = a->physical.mass / m;
 	a->orbit.eccentricity = rand.NFixed(3);
 	int mul = 1;
 
@@ -174,16 +164,13 @@ void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed m
 		mul *= 2;
 	} while (a->orbit.semiMajorAxis < minDist);
 
-	double semiMajorAxis = a->orbit.semiMajorAxis.ToDouble()*AU;
-	double period = calc_orbital_period(semiMajorAxis, a->GetMass(), b->GetMass());
-
 	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
 	const float rotY = static_cast<float>(rand.Double(M_PI));
 	const matrix4x4d rotA = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
 	const matrix4x4d rotB = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
 
-	a->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), (a->orbit.semiMajorAxis * a0).ToDouble()*AU, period, rotA);
-	b->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), (a->orbit.semiMajorAxis * a1).ToDouble()*AU, period, rotB);
+	a->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), a->orbit.semiMajorAxis.ToDouble()*AU, a->GetMass()+b->GetMass(), rotA);
+	b->m_orbit = Orbit(a->orbit.eccentricity.ToDouble(), a->orbit.semiMajorAxis.ToDouble()*AU, a->GetMass()+b->GetMass(), rotB);
 
 	fixed orbMin = a->orbit.semiMajorAxis - a->orbit.eccentricity*a->orbit.semiMajorAxis;
 	fixed orbMax = 2*a->orbit.semiMajorAxis - orbMin;
@@ -331,7 +318,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
 		const matrix4x4d rotMatrix = matrix4x4d::RotateYMatrix(r1) * matrix4x4d::RotateXMatrix(-0.5*M_PI + r2*M_PI/2.0);
-		planet->m_orbit = Orbit(ecc.ToDouble(), semiMajorAxis.ToDouble()*AU, calc_orbital_period(semiMajorAxis.ToDouble()*AU, primary->GetMass()), rotMatrix);
+		planet->m_orbit = Orbit(ecc.ToDouble(), semiMajorAxis.ToDouble()*AU, primary->GetMass(), rotMatrix);
 
 		planet->orbit.orbMin = periapsis;
 		planet->orbit.orbMax = apoapsis;
@@ -416,11 +403,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		sp->orbit.eccentricity = fixed(0);
 		sp->physical.axialTilt = fixed(0);
 
-		const double eccentricity = 0.0;
-		const double semiMajorAxis = sp->orbit.semiMajorAxis.ToDouble()*AU;
-		const double period = calc_orbital_period(semiMajorAxis, body->physical.mass.ToDouble() * EARTH_MASS);
-
-		sp->m_orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::Identity());
+		sp->m_orbit = Orbit(0.0, sp->orbit.semiMajorAxis.ToDouble()*AU, body->GetMass(), matrix4x4d::Identity());
 
 		sp->orbit.orbMin = sp->orbit.semiMajorAxis;
 		sp->orbit.orbMax = sp->orbit.semiMajorAxis;
@@ -437,7 +420,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 			SystemPath path2 = sp2->path;
 			*sp2 = *sp;
 			sp2->path = path2;
-			sp2->m_orbit = Orbit(eccentricity, semiMajorAxis, period, matrix4x4d::RotateZMatrix(M_PI));
+			sp2->m_orbit = Orbit(0.0, sp->orbit.semiMajorAxis.ToDouble()*AU, body->GetMass(), matrix4x4d::RotateZMatrix(M_PI));
 			sp2->name = Pi::luaNameGen->BodyName(sp2, namerand);
 
 			m_bodies.push_back(sp2);
