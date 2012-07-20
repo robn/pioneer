@@ -148,6 +148,13 @@ try_that_again_guvnah:
 	return s;
 }
 
+// Kepler's third law
+// http://en.wikipedia.org/wiki/Orbital_period
+static double calc_orbital_period(double semiMajorAxis, double mass1, double mass2 = 0.0)
+{
+	return 2.0*M_PI*semiMajorAxis*sqrt(semiMajorAxis/(G*(mass1+mass2)));
+}
+
 void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
 {
 	fixed m = a->physical.mass + b->physical.mass;
@@ -167,7 +174,8 @@ void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed m
 		mul *= 2;
 	} while (a->orbit.semiMajorAxis < minDist);
 
-	double period = 60*60*24*365* a->orbit.semiMajorAxis.ToDouble() * sqrt(a->orbit.semiMajorAxis.ToDouble() / m.ToDouble());
+	double semiMajorAxis = a->orbit.semiMajorAxis.ToDouble()*AU;
+	double period = calc_orbital_period(semiMajorAxis, a->GetMass(), b->GetMass());
 
 	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
 	const float rotY = static_cast<float>(rand.Double(M_PI));
@@ -215,11 +223,6 @@ static fixed get_disc_density(SystemBody *primary, fixed discMin, fixed discMax,
 	discMax = std::max(discMax, discMin);
 	fixed total = mass_from_disk_area(discMin, discMax, discMax);
 	return primary->GetMassInEarths() * percentOfPrimaryMass / total;
-}
-
-static double calc_orbital_period(double semiMajorAxis, double centralMass)
-{
-	return 2.0*M_PI*sqrt((semiMajorAxis*semiMajorAxis*semiMajorAxis)/(G*centralMass));
 }
 
 // http://en.wikipedia.org/wiki/Hill_sphere
