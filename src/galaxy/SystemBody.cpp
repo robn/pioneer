@@ -614,7 +614,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 	// unexplored systems have no population (that we know about)
 	if (system->m_unexplored) {
-		m_population = outTotalPop = fixed(0);
+		econ.population = outTotalPop = fixed(0);
 		return;
 	}
 
@@ -625,7 +625,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	rand.seed(_init, 6);
 	namerand.seed(_init, 6);
 
-	m_population = fixed(0);
+	econ.population = fixed(0);
 
 	// Bad type of planet for settlement
 	if ((phys.averageTemp > CELSIUS+100) || (phys.averageTemp < 100) ||
@@ -633,21 +633,21 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 		// orbital starports should carry a small amount of population
 		if (type == SystemBody::TYPE_STARPORT_ORBITAL) {
-			m_population = fixed(1,100000);
-			outTotalPop += m_population;
+			econ.population = fixed(1,100000);
+			outTotalPop += econ.population;
 		}
 
 		return;
 	}
 
-	m_agricultural = fixed(0);
+	econ.agricultural = fixed(0);
 
 	if (composition.life > fixed(9,10)) {
-		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-phys.averageTemp, 40), fixed(0), fixed(1,1));
-		system->m_agricultural += 2*m_agricultural;
+		econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-phys.averageTemp, 40), fixed(0), fixed(1,1));
+		system->m_agricultural += 2*econ.agricultural;
 	} else if (composition.life > fixed(1,2)) {
-		m_agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-phys.averageTemp, 50), fixed(0), fixed(1,1));
-		system->m_agricultural += 1*m_agricultural;
+		econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-phys.averageTemp, 50), fixed(0), fixed(1,1));
+		system->m_agricultural += 1*econ.agricultural;
 	} else {
 		// don't bother populating crap planets
 		if (composition.metallicity < fixed(5,10) &&
@@ -675,7 +675,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 		fixed affinity = fixed(1,1);
 		if (itype.econType & ECON_AGRICULTURE) {
-			affinity *= 2*m_agricultural;
+			affinity *= 2*econ.agricultural;
 		}
 		if (itype.econType & ECON_INDUSTRY) affinity *= system->m_industrial;
 		// make industry after we see if agriculture and mining are viable
@@ -689,7 +689,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		}
 		assert(affinity >= 0);
 		// workforce...
-		m_population += affinity * system->m_humanProx;
+		econ.population += affinity * system->m_humanProx;
 
 		int howmuch = (affinity * 256).ToInt32();
 
@@ -700,7 +700,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		}
 	}
 
-	if (!system->m_hasCustomBodies && m_population > 0)
+	if (!system->m_hasCustomBodies && econ.population > 0)
 		name = Pi::luaNameGen->BodyName(this, namerand);
 
 	// Add a bunch of things people consume
@@ -719,9 +719,9 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		system->m_tradeLevel[t] += rand.Int32(32,128);
 	}
 	// well, outdoor worlds should have way more people
-	m_population = fixed(1,10)*m_population + m_population*m_agricultural;
+	econ.population = fixed(1,10)*econ.population + econ.population*econ.agricultural;
 
-	outTotalPop += m_population;
+	outTotalPop += econ.population;
 }
 
 SystemBody::~SystemBody()

@@ -375,9 +375,9 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 	rand.seed(_init, 6);
 	namerand.seed(_init, 6);
 
-	if (body->m_population < fixed(1,1000)) return;
+	if (body->econ.population < fixed(1,1000)) return;
 
-	fixed pop = body->m_population + rand.Fixed();
+	fixed pop = body->econ.population + rand.Fixed();
 
 	fixed orbMaxS = fixed(1,4)*calc_hill_radius(body);
 	fixed orbMinS = 4 * body->phys.radius * AU_EARTH_RADIUS;
@@ -422,7 +422,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 	}
 
 	// starports - surface
-	pop = body->m_population + rand.Fixed();
+	pop = body->econ.population + rand.Fixed();
 	int max = 6;
 	while (max-- > 0) {
 		pop -= rand.Fixed();

@@ -172,9 +172,11 @@ public:
 	};
 	CompositionData composition;
 
-	/* economy type stuff */
-	fixed m_population;
-	fixed m_agricultural;
+	struct EconomicData {
+		fixed population;   // in billions
+		fixed agricultural; // XXX what is this?
+	};
+	EconomicData econ;
 
 	const char *heightMapFilename;
 	unsigned int heightMapFractal;

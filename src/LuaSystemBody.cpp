@@ -169,7 +169,7 @@ static int l_sbody_attr_parent(lua_State *l)
 static int l_sbody_attr_population(lua_State *l)
 {
 	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
-	lua_pushnumber(l, sbody->m_population.ToDouble());
+	lua_pushnumber(l, sbody->econ.population.ToDouble());
 	return 1;
 }
 
