@@ -8,6 +8,7 @@
 #include "SystemPath.h"
 #include "SystemBody.h"
 #include "Array.h"
+#include <cassert>
 
 class CustomSystem;
 
@@ -23,7 +24,9 @@ public:
 		starType(_starType),
 		seed(0),
 		customSys(0)
-	{}
+	{
+		assert(numStars > 0 && numStars <= MAX_STARS);
+	}
 
 	SystemPath path;                                // sector and system index
 	vector3f pos;                                   // position within sector
