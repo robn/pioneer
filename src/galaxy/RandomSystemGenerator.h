@@ -11,6 +11,8 @@ public:
 	virtual RefCountedPtr<StarSystem> GenerateSystem();
 
 private:
+	static SystemBody *NewBinaryPair(SystemBody::BodyType typeA, SystemBody::BodyType typeB, MTRand &rand);
+
 	void MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand);
 	void MakePlanetsAround(SystemBody *primary, MTRand &rand);
 	void PopulateAddStations(SystemBody *body);

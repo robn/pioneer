@@ -48,24 +48,46 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	int dist = isqrt(1 + path.sectorX*path.sectorX + path.sectorY*path.sectorY + path.sectorZ*path.sectorZ);
 	bool unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
-	SystemBody *star[4];
-	SystemBody *centGrav1(NULL), *centGrav2(NULL);
+	SystemBody *star[SystemDescriptor::MAX_STARS];
+
+	SystemBody *superCentGrav = 0, *centGrav1 = 0, *centGrav2 = 0;
+
+	switch (m_desc.numStars) {
+		case 1:
+			star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
+			star[0]->name = m_desc.name;
+			m_bodies.push_back(star[0]);
+			break;
+
+		case 2: {
+			SystemBody *gravpoint = NewBinaryPair(m_desc.starType[0], m_desc.starType[1], rand);
+			star[0] = gravpoint->children[0];
+			star[1] = gravpoint->children[1];
+			gravpoint->name = m_desc.name + " A,B";
+			star[0]->name = m_desc.name + " A";
+			star[1]->name = m_desc.name + " B";
+			m_bodies.push_back(gravpoint);
+			m_bodies.push_back(star[0]);
+			m_bodies.push_back(star[1]);
+
+			centGrav1 = gravpoint; // XXX
+			break;
+		}
+
+		case 3:
+		case 4:
+			break;
+	}
+
 
 	const int numStars = m_desc.numStars;
 	assert((numStars >= 1) && (numStars <= 4));
 
-	SystemBody *superCentGrav = 0;
 	if (numStars > 2) {
 		superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT, SystemBody::PhysicalData());
 		superCentGrav->name = m_desc.name;
 		m_bodies.push_back(superCentGrav);
-	}
 
-	if (numStars == 1) {
-		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
-		star[0]->name = m_desc.name;
-		m_bodies.push_back(star[0]);
-	} else {
 		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
 		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], *star[0], rand));
 
@@ -149,6 +171,52 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	PopulateAddStations(m_bodies[0]);
 
 	return s;
+}
+
+SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, SystemBody::BodyType typeB, MTRand &rand)
+{
+	// XXX kind of in the wrong spot, but we need the radius for the minDist
+	// calc. hrm.
+	SystemBody *a = new SystemBody(SystemBody::NewStar(typeA, rand));
+	SystemBody *b = new SystemBody(new_star_lighter_than(typeB, *a, rand));
+
+	SystemBody::OrbitalData orbit;
+
+	orbit.eccentricity = rand.NFixed(3);
+
+	const fixed minDist = (a->phys.radius + a->phys.radius) * AU_SOL_RADIUS;
+	int mul = 1;
+	do {
+		switch (rand.Int32(3)) {
+			case 2: orbit.semiMajorAxis = fixed(rand.Int32(100,10000), 100); break;
+			case 1: orbit.semiMajorAxis = fixed(rand.Int32(10,1000), 100); break;
+			default:
+			case 0: orbit.semiMajorAxis = fixed(rand.Int32(1,100), 100); break;
+		}
+		orbit.semiMajorAxis *= mul;
+		mul *= 2;
+	} while (orbit.semiMajorAxis < minDist);
+
+	orbit.orbMin = orbit.semiMajorAxis - orbit.eccentricity*orbit.semiMajorAxis;
+	orbit.orbMax = 2*orbit.semiMajorAxis - orbit.orbMin;
+
+	a->orbit = b->orbit = orbit;
+
+	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
+	const float rotY = static_cast<float>(rand.Double(M_PI));
+	a->orbit.position = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
+	b->orbit.position = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
+
+	SystemBody::PhysicalData gravpointPhys;
+	gravpointPhys.mass = a->phys.mass + b->phys.mass;
+
+	SystemBody *gravpoint = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
+
+	a->parent = b->parent = gravpoint;
+	gravpoint->children.push_back(a);
+	gravpoint->children.push_back(b);
+
+	return gravpoint;
 }
 
 void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
