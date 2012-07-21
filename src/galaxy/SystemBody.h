@@ -96,6 +96,7 @@ public:
 		int averageTemp;      // celcius
 	};
 	struct OrbitalData {
+		OrbitalData() : orbMin(0), orbMax(0), semiMajorAxis(0), eccentricity(0), orbitalOffset(0), position(matrix4x4d::Identity()) {}
 		fixed      orbMin, orbMax; // periapsis, apoapsis in AUs
 		fixed      semiMajorAxis;  // in AUs
 		fixed      eccentricity;   // 0.0 - 1.0
@@ -103,6 +104,7 @@ public:
 		matrix4x4d position;       // initial position
 	};
 	struct CompositionData {
+		CompositionData() : metallicity(0), volatileGas(0), volatileLiquid(0), volatileIces(0), volcanicity(0), atmosOxidizing(0), life(0) {}
 		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
 		fixed volatileGas;    // 1.0 = earth atmosphere density
 		fixed volatileLiquid; // 1.0 = 100% ocean cover (earth = 70%)
@@ -112,6 +114,7 @@ public:
 		fixed life;           // 0.0 = dead, 1.0 = teeming
 	};
 	struct EconomicData {
+		EconomicData() : population(0), agricultural(0) {}
 		fixed population;   // in billions
 		fixed agricultural; // XXX what is this?
 	};
