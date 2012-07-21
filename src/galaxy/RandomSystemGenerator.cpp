@@ -24,8 +24,11 @@ static SystemBody new_star_lighter_than(SystemBody::BodyType type, const SystemB
 	}
 
 	// just make one the same size as the current one, sigh
-	SystemBody body(type);
-	body.phys.mass = orig.phys.mass;
+	SystemBody::PhysicalData phys;
+	phys.radius = orig.phys.radius;
+	phys.mass = orig.phys.mass;
+	phys.averageTemp = orig.phys.averageTemp;
+	SystemBody body(type, phys);
 
 	return body;
 }
@@ -53,7 +56,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 
 	SystemBody *superCentGrav = 0;
 	if (numStars > 2) {
-		superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT);
+		superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT, SystemBody::PhysicalData());
 		superCentGrav->name = m_desc.name;
 		m_bodies.push_back(superCentGrav);
 	}
@@ -63,21 +66,23 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 		star[0]->name = m_desc.name;
 		m_bodies.push_back(star[0]);
 	} else {
-		centGrav1 = new SystemBody(SystemBody::TYPE_GRAVPOINT);
+		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
+		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], *star[0], rand));
+
+		SystemBody::PhysicalData gravpointPhys;
+		gravpointPhys.mass = star[0]->phys.mass + star[1]->phys.mass;
+		centGrav1 = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
 		centGrav1->name = m_desc.name + " A,B";
 		m_bodies.push_back(centGrav1);
 
-		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
 		star[0]->name = m_desc.name + " A";
 		star[0]->parent = centGrav1;
 		m_bodies.push_back(star[0]);
 
-		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], *star[0], rand));
 		star[1]->name = m_desc.name + " B";
 		star[1]->parent = centGrav1;
 		m_bodies.push_back(star[1]);
 
-		centGrav1->phys.mass = star[0]->phys.mass + star[1]->phys.mass;
 		centGrav1->children.push_back(star[0]);
 		centGrav1->children.push_back(star[1]);
 		const fixed minDist1 = (star[0]->phys.radius + star[1]->phys.radius) * AU_SOL_RADIUS;
@@ -96,23 +101,25 @@ try_that_again_guvnah:
 				m_bodies.push_back(star[2]);
 				centGrav2 = star[2];
 			} else {
-				centGrav2 = new SystemBody(SystemBody::TYPE_GRAVPOINT);
+				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
+				star[3] = new SystemBody(new_star_lighter_than(m_desc.starType[3], *star[2], rand));
+
+				gravpointPhys.mass = star[2]->phys.mass + star[3]->phys.mass;
+
+				centGrav2 = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
 				centGrav2->name = m_desc.name + " C,D";
 				m_bodies.push_back(centGrav2);
 
-				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
 				star[2]->name = m_desc.name + " C";
 				star[2]->parent = centGrav2;
 				m_bodies.push_back(star[2]);
 
-				star[3] = new SystemBody(new_star_lighter_than(m_desc.starType[3], *star[2], rand));
 				star[3]->name = m_desc.name + " D";
 				star[3]->parent = centGrav2;
 				m_bodies.push_back(star[3]);
 
 				const fixed minDist2 = (star[2]->phys.radius + star[3]->phys.radius) * AU_SOL_RADIUS;
 				MakeBinaryPair(star[2], star[3], minDist2, rand);
-				centGrav2->phys.mass = star[2]->phys.mass + star[3]->phys.mass;
 				centGrav2->children.push_back(star[2]);
 				centGrav2->children.push_back(star[3]);
 			}
@@ -304,14 +311,18 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 			mass *= rand.Fixed() * discDensity;
 		}
 
-		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL);
-		planet->seed = rand.Int32();
+		Uint32 seed = rand.Int32();
+
+		SystemBody::PhysicalData phys;
+		phys.axialTilt = fixed(100,157)*rand.NFixed(2);
+		phys.mass = mass;
+		phys.rotationPeriod = fixed(rand.Int32(1,200), 24);
+
+		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL, phys);
+		planet->seed = seed;
 		planet->orbit.eccentricity = ecc;
-		planet->phys.axialTilt = fixed(100,157)*rand.NFixed(2);
 		planet->orbit.semiMajorAxis = semiMajorAxis;
 		planet->parent = primary;
-		planet->phys.mass = mass;
-		planet->phys.rotationPeriod = fixed(rand.Int32(1,200), 24);
 
 		double r1 = rand.Double(2*M_PI);		// function parameter evaluation order is implementation-dependent
 		double r2 = rand.NDouble(5);			// can't put two rands in the same expression
@@ -387,16 +398,16 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 	pop -= rand.Fixed();
 	if ((orbMinS < orbMaxS) && (pop >= 0)) {
 
-		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL);
+		SystemBody::PhysicalData phys;
+		phys.rotationPeriod = fixed(1,3600);
+		phys.averageTemp = body->phys.averageTemp;
+
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL, phys);
 		sp->seed = rand.Int32();
 		sp->parent = body;
-		sp->phys.rotationPeriod = fixed(1,3600);
-		sp->phys.averageTemp = body->phys.averageTemp;
-		sp->phys.mass = 0;
 		// just always plonk starports in near orbit
 		sp->orbit.semiMajorAxis = orbMinS;
 		sp->orbit.eccentricity = fixed(0);
-		sp->phys.axialTilt = fixed(0);
 		sp->orbit.position = matrix4x4d::Identity();
 		sp->orbit.orbMin = sp->orbit.semiMajorAxis;
 		sp->orbit.orbMax = sp->orbit.semiMajorAxis;
@@ -409,7 +420,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		pop -= rand.Fixed();
 		if (pop > 0) {
 			// XXX horrid
-			SystemBody *sp2 = new SystemBody(sp->type);
+			SystemBody *sp2 = new SystemBody(sp->type, phys);
 			SystemPath path2 = sp2->path;
 			*sp2 = *sp;
 			sp2->path = path2;
@@ -428,11 +439,12 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		pop -= rand.Fixed();
 		if (pop < 0) break;
 
-		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE);
+		SystemBody::PhysicalData phys;
+		phys.averageTemp = body->phys.averageTemp;
+
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE, phys);
 		sp->seed = rand.Int32();
 		sp->parent = body;
-		sp->phys.averageTemp = body->phys.averageTemp;
-		sp->phys.mass = 0;
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);
 
 		position_settlement_on_planet(sp);

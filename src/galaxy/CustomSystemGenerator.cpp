@@ -47,11 +47,13 @@ void CustomSystemGenerator::GenerateFromCustom(const CustomSystem *customSys, MT
 
 	const CustomSystemBody *csbody = customSys->sBody;
 
-	SystemBody *sbody = new SystemBody(csbody->type);
+	SystemBody::PhysicalData phys;
+	phys.radius = csbody->radius;
+	phys.mass = csbody->mass;
+	phys.averageTemp = csbody->averageTemp;
+
+	SystemBody *sbody = new SystemBody(csbody->type, phys);
 	sbody->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
-	sbody->phys.radius = csbody->radius;
-	sbody->phys.mass = csbody->mass;
-	sbody->phys.averageTemp = csbody->averageTemp;
 	sbody->name = csbody->name;
 	m_bodies.push_back(sbody);
 
@@ -64,15 +66,18 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 	for (std::vector<CustomSystemBody*>::const_iterator i = children.begin(); i != children.end(); i++) {
 		const CustomSystemBody *csbody = *i;
 
-		SystemBody *kid = new SystemBody(csbody->type);
+		SystemBody::PhysicalData phys;
+		phys.radius = csbody->radius;
+		phys.averageTemp = csbody->averageTemp;
+		phys.mass = csbody->mass;
+		if (csbody->type == SystemBody::TYPE_PLANET_ASTEROID) phys.mass /= 100000;
+		phys.rotationPeriod = csbody->rotationPeriod;
+		phys.axialTilt = csbody->axialTilt;
+
+		SystemBody *kid = new SystemBody(csbody->type, phys);
 		kid->parent = parent;
 		kid->seed = csbody->want_rand_seed ? rand.Int32() : csbody->seed;
-		kid->phys.radius = csbody->radius;
-		kid->phys.averageTemp = csbody->averageTemp;
 		kid->name = csbody->name;
-
-		kid->phys.mass = csbody->mass;
-		if (kid->type == SystemBody::TYPE_PLANET_ASTEROID) kid->phys.mass /= 100000;
 
 		kid->composition.metallicity    = csbody->metallicity;
 		kid->composition.volatileGas    = csbody->volatileGas;
@@ -86,8 +91,6 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 		kid->orbit.orbitalOffset = csbody->orbitalOffset;
 		kid->orbit.semiMajorAxis = csbody->semiMajorAxis;
 
-		kid->phys.rotationPeriod = csbody->rotationPeriod;
-		kid->phys.axialTilt = csbody->axialTilt;
 		if (csbody->heightMapFilename.length() > 0) {
 			kid->heightMapFilename = csbody->heightMapFilename.c_str();
 			kid->heightMapFractal = csbody->heightMapFractal;

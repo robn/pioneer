@@ -87,7 +87,36 @@ public:
 		SUPERTYPE_STARPORT = 4,
 	};
 
-	SystemBody(BodyType type);
+	struct PhysicalData {
+		PhysicalData() : radius(0), mass(0), rotationPeriod(0), axialTilt(0), averageTemp(0) {}
+		fixed radius;
+		fixed mass;           // earth masses if planet, solar masses if star
+		fixed rotationPeriod; // in days
+		fixed axialTilt;      // in radians
+		int averageTemp;      // celcius
+	};
+	struct OrbitalData {
+		fixed      orbMin, orbMax; // periapsis, apoapsis in AUs
+		fixed      semiMajorAxis;  // in AUs
+		fixed      eccentricity;   // 0.0 - 1.0
+		fixed      orbitalOffset;  // radians
+		matrix4x4d position;       // initial position
+	};
+	struct CompositionData {
+		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
+		fixed volatileGas;    // 1.0 = earth atmosphere density
+		fixed volatileLiquid; // 1.0 = 100% ocean cover (earth = 70%)
+		fixed volatileIces;   // 1.0 = 100% ice cover (earth = 3%)
+		fixed volcanicity;    // 0 = none, 1.0 = fucking volcanic
+		fixed atmosOxidizing; // 0.0 = reducing (H2, NH3, etc), 1.0 = oxidising (CO2, O2, etc)
+		fixed life;           // 0.0 = dead, 1.0 = teeming
+	};
+	struct EconomicData {
+		fixed population;   // in billions
+		fixed agricultural; // XXX what is this?
+	};
+
+	SystemBody(BodyType type, const PhysicalData &_phys);
 
 	static SystemBody NewStar(BodyType type, MTRand &rand);
 
@@ -143,39 +172,9 @@ public:
 	Uint32 seed; // Planet.cpp can use to generate terrain
 	std::string name;
 
-	struct PhysicalData {
-		fixed radius;
-		fixed mass;           // earth masses if planet, solar masses if star
-		fixed rotationPeriod; // in days
-		fixed axialTilt;      // in radians
-		int averageTemp;      // celcius
-	};
 	PhysicalData phys;
-
-	struct OrbitalData {
-		fixed      orbMin, orbMax; // periapsis, apoapsis in AUs
-		fixed      semiMajorAxis;  // in AUs
-		fixed      eccentricity;   // 0.0 - 1.0
-		fixed      orbitalOffset;  // radians
-		matrix4x4d position;       // initial position
-	};
 	OrbitalData orbit;
-
-	struct CompositionData {
-		fixed metallicity;    // (crust) 0.0 = light (Al, SiO2, etc), 1.0 = heavy (Fe, heavy metals)
-		fixed volatileGas;    // 1.0 = earth atmosphere density
-		fixed volatileLiquid; // 1.0 = 100% ocean cover (earth = 70%)
-		fixed volatileIces;   // 1.0 = 100% ice cover (earth = 3%)
-		fixed volcanicity;    // 0 = none, 1.0 = fucking volcanic
-		fixed atmosOxidizing; // 0.0 = reducing (H2, NH3, etc), 1.0 = oxidising (CO2, O2, etc)
-		fixed life;           // 0.0 = dead, 1.0 = teeming
-	};
 	CompositionData composition;
-
-	struct EconomicData {
-		fixed population;   // in billions
-		fixed agricultural; // XXX what is this?
-	};
 	EconomicData econ;
 
 	const char *heightMapFilename;

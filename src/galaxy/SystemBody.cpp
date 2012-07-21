@@ -8,10 +8,11 @@
 #include <iostream>
 #include <cassert>
 
-SystemBody::SystemBody(BodyType _type) :
+SystemBody::SystemBody(BodyType _type, const PhysicalData &_phys) :
 	parent(0),
 	type(_type),
 	seed(0),
+	phys(_phys),
 	heightMapFilename(0),
 	heightMapFractal(0),
 	m_atmosDensity(0.0)
@@ -21,12 +22,15 @@ SystemBody::SystemBody(BodyType _type) :
 
 SystemBody SystemBody::NewStar(BodyType type, MTRand &rand)
 {
-	SystemBody sbody(type);
+	Uint32 seed = rand.Int32();
 
-	sbody.seed = rand.Int32();
-	sbody.phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
-	sbody.phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
-	sbody.phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
+	PhysicalData phys;
+	phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
+	phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
+	phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
+
+	SystemBody sbody(type, phys);
+	sbody.seed = seed;
 
 	return sbody;
 }
