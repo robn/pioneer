@@ -13,26 +13,6 @@ static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
 // orbits at (0.5 * s * SAFE_DIST_FROM_BINARY)
 static const fixed SAFE_DIST_FROM_BINARY = fixed(5,1);
 
-static SystemBody new_star_lighter_than(SystemBody::BodyType type, const SystemBody &orig, MTRand &rand)
-{
-	// try for a while until we get one
-	int tries = 16;
-	while (tries--) {
-		SystemBody body(SystemBody::NewStar(type, rand));
-		if (body.phys.mass <= orig.phys.mass)
-			return body;
-	}
-
-	// just make one the same size as the current one, sigh
-	SystemBody::PhysicalData phys;
-	phys.radius = orig.phys.radius;
-	phys.mass = orig.phys.mass;
-	phys.averageTemp = orig.phys.averageTemp;
-	SystemBody body(type, phys);
-
-	return body;
-}
-
 RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 {
 	m_bodies.empty();
@@ -89,7 +69,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 		m_bodies.push_back(superCentGrav);
 
 		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
-		star[1] = new SystemBody(new_star_lighter_than(m_desc.starType[1], *star[0], rand));
+		star[1] = new SystemBody(SystemBody::NewStar(m_desc.starType[1], rand));
 
 		SystemBody::PhysicalData gravpointPhys;
 		gravpointPhys.mass = star[0]->phys.mass + star[1]->phys.mass;
@@ -114,13 +94,13 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
-				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
+				star[2] = new SystemBody(SystemBody::NewStar(m_desc.starType[2], rand));
 				star[2]->name = m_desc.name + " C";
 				m_bodies.push_back(star[2]);
 				centGrav2 = star[2];
 			} else {
-				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
-				star[3] = new SystemBody(new_star_lighter_than(m_desc.starType[3], *star[2], rand));
+				star[2] = new SystemBody(SystemBody::NewStar(m_desc.starType[2], rand));
+				star[3] = new SystemBody(SystemBody::NewStar(m_desc.starType[3], rand));
 
 				gravpointPhys.mass = star[2]->phys.mass + star[3]->phys.mass;
 
@@ -178,7 +158,7 @@ SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, Sys
 	// XXX kind of in the wrong spot, but we need the radius for the minDist
 	// calc. hrm.
 	SystemBody *a = new SystemBody(SystemBody::NewStar(typeA, rand));
-	SystemBody *b = new SystemBody(new_star_lighter_than(typeB, *a, rand));
+	SystemBody *b = new SystemBody(SystemBody::NewStar(typeB, rand));
 
 	SystemBody::OrbitalData orbit;
 
