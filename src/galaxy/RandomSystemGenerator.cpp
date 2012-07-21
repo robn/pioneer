@@ -34,7 +34,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 
 	switch (m_desc.numStars) {
 		case 1:
-			star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
+			star[0] = NewStar(m_desc.starType[0], rand);
 			star[0]->name = m_desc.name;
 			m_bodies.push_back(star[0]);
 			break;
@@ -68,8 +68,8 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 		superCentGrav->name = m_desc.name;
 		m_bodies.push_back(superCentGrav);
 
-		star[0] = new SystemBody(SystemBody::NewStar(m_desc.starType[0], rand));
-		star[1] = new SystemBody(SystemBody::NewStar(m_desc.starType[1], rand));
+		star[0] = NewStar(m_desc.starType[0], rand);
+		star[1] = NewStar(m_desc.starType[1], rand);
 
 		SystemBody::PhysicalData gravpointPhys;
 		gravpointPhys.mass = star[0]->phys.mass + star[1]->phys.mass;
@@ -94,13 +94,13 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
-				star[2] = new SystemBody(SystemBody::NewStar(m_desc.starType[2], rand));
+				star[2] = NewStar(m_desc.starType[2], rand);
 				star[2]->name = m_desc.name + " C";
 				m_bodies.push_back(star[2]);
 				centGrav2 = star[2];
 			} else {
-				star[2] = new SystemBody(SystemBody::NewStar(m_desc.starType[2], rand));
-				star[3] = new SystemBody(SystemBody::NewStar(m_desc.starType[3], rand));
+				star[2] = NewStar(m_desc.starType[2], rand);
+				star[3] = NewStar(m_desc.starType[3], rand);
 
 				gravpointPhys.mass = star[2]->phys.mass + star[3]->phys.mass;
 
@@ -153,12 +153,27 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	return s;
 }
 
+SystemBody *RandomSystemGenerator::NewStar(SystemBody::BodyType type, MTRand &rand)
+{
+	Uint32 seed = rand.Int32();
+
+	SystemBody::PhysicalData phys;
+	phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
+	phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
+	phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
+
+	SystemBody *star = new SystemBody(type, phys);
+	star->seed = seed;
+
+	return star;
+}
+
 SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, SystemBody::BodyType typeB, MTRand &rand)
 {
 	// XXX kind of in the wrong spot, but we need the radius for the minDist
 	// calc. hrm.
-	SystemBody *a = new SystemBody(SystemBody::NewStar(typeA, rand));
-	SystemBody *b = new SystemBody(SystemBody::NewStar(typeB, rand));
+	SystemBody *a = NewStar(typeA, rand);
+	SystemBody *b = NewStar(typeB, rand);
 
 	SystemBody::OrbitalData orbit;
 

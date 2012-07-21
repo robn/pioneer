@@ -121,8 +121,6 @@ public:
 
 	SystemBody(BodyType type, const PhysicalData &_phys);
 
-	static SystemBody NewStar(BodyType type, MTRand &rand);
-
 	// XXX old interface to be checked
 	~SystemBody();
 	void PickPlanetType(MTRand &rand);

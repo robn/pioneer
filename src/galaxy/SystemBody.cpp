@@ -20,21 +20,6 @@ SystemBody::SystemBody(BodyType _type, const PhysicalData &_phys) :
 	assert(type >= TYPE_GRAVPOINT && type < TYPE_LAST);
 }
 
-SystemBody SystemBody::NewStar(BodyType type, MTRand &rand)
-{
-	Uint32 seed = rand.Int32();
-
-	PhysicalData phys;
-	phys.radius = fixed(rand.Int32(SystemConstants::starTypeInfo[type].radius[0], SystemConstants::starTypeInfo[type].radius[1]), 100);
-	phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
-	phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
-
-	SystemBody sbody(type, phys);
-	sbody.seed = seed;
-
-	return sbody;
-}
-
 static const int CELSIUS = 273;
 
 SystemBody::BodySuperType SystemBody::GetSuperType() const
