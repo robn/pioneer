@@ -86,14 +86,10 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 		centGrav1->children.push_back(star[0]);
 		centGrav1->children.push_back(star[1]);
 		const fixed minDist1 = (star[0]->phys.radius + star[1]->phys.radius) * AU_SOL_RADIUS;
-try_that_again_guvnah:
 		MakeBinaryPair(star[0], star[1], minDist1, rand);
 
 		if (numStars > 2) {
-			if (star[0]->orbit.orbMax > fixed(100,1)) {
-				// reduce to < 100 AU...
-				goto try_that_again_guvnah;
-			}
+
 			// 3rd and maybe 4th star
 			if (numStars == 3) {
 				star[2] = new SystemBody(new_star_lighter_than(m_desc.starType[2], *star[0], rand));
