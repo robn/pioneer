@@ -11,10 +11,14 @@ public:
 	virtual RefCountedPtr<StarSystem> GenerateSystem();
 
 private:
-	static SystemBody *NewStar(SystemBody::BodyType type, MTRand &rand);
-	static SystemBody *NewBinaryPair(SystemBody::BodyType typeA, SystemBody::BodyType typeB, MTRand &rand);
+	void GenerateSystemSingle(MTRand &rand);
+	void GenerateSystemDouble(MTRand &rand);
+	void GenerateSystemTriple(MTRand &rand);
+	void GenerateSystemQuadruple(MTRand &rand);
 
-	void MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand);
+	static SystemBody *NewStar(SystemBody::BodyType type, MTRand &rand);
+	static SystemBody *MakeBinaryPair(SystemBody *a, SystemBody *b, MTRand &rand);
+
 	void MakePlanetsAround(SystemBody *primary, MTRand &rand);
 	void PopulateAddStations(SystemBody *body);
 

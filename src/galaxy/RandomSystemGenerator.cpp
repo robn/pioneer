@@ -13,6 +13,100 @@ static const fixed AU_EARTH_RADIUS = fixed(3, 65536);
 // orbits at (0.5 * s * SAFE_DIST_FROM_BINARY)
 static const fixed SAFE_DIST_FROM_BINARY = fixed(5,1);
 
+void RandomSystemGenerator::GenerateSystemSingle(MTRand &rand)
+{
+	SystemBody *star = NewStar(m_desc.starType[0], rand);
+
+	star->name = m_desc.name;
+
+	m_bodies.push_back(star);
+
+	MakePlanetsAround(star, rand);
+}
+
+void RandomSystemGenerator::GenerateSystemDouble(MTRand &rand)
+{
+	SystemBody *star0 = NewStar(m_desc.starType[0], rand);
+	SystemBody *star1 = NewStar(m_desc.starType[1], rand);
+	SystemBody *grav = MakeBinaryPair(star0, star1, rand);
+
+	grav->name = m_desc.name + " A,B";
+	star0->name = m_desc.name + " A";
+	star1->name = m_desc.name + " B";
+
+	m_bodies.push_back(grav);
+	m_bodies.push_back(star0);
+	m_bodies.push_back(star1);
+
+	MakePlanetsAround(star0, rand);
+	MakePlanetsAround(star1, rand);
+	MakePlanetsAround(grav, rand);
+}
+
+void RandomSystemGenerator::GenerateSystemTriple(MTRand &rand)
+{
+	SystemBody *star0 = NewStar(m_desc.starType[0], rand);
+	SystemBody *star1 = NewStar(m_desc.starType[1], rand);
+	SystemBody *star2 = NewStar(m_desc.starType[2], rand);
+
+	SystemBody *grav = MakeBinaryPair(star0, star1, rand);
+
+	SystemBody *supergrav = MakeBinaryPair(grav, star2, rand);
+
+	supergrav->name = m_desc.name;
+	grav->name = m_desc.name + " A,B";
+	star0->name = m_desc.name + " A";
+	star1->name = m_desc.name + " B";
+	star2->name = m_desc.name + " C";
+
+	m_bodies.push_back(supergrav);
+	m_bodies.push_back(grav);
+	m_bodies.push_back(star0);
+	m_bodies.push_back(star1);
+	m_bodies.push_back(star2);
+
+	MakePlanetsAround(star0, rand);
+	MakePlanetsAround(star1, rand);
+	MakePlanetsAround(star2, rand);
+	MakePlanetsAround(grav, rand);
+}
+
+void RandomSystemGenerator::GenerateSystemQuadruple(MTRand &rand)
+{
+	SystemBody *star0 = NewStar(m_desc.starType[0], rand);
+	SystemBody *star1 = NewStar(m_desc.starType[1], rand);
+	SystemBody *star2 = NewStar(m_desc.starType[2], rand);
+	SystemBody *star3 = NewStar(m_desc.starType[3], rand);
+
+	SystemBody *grav1 = MakeBinaryPair(star0, star1, rand);
+	SystemBody *grav2 = MakeBinaryPair(star2, star3, rand);
+
+	SystemBody *supergrav = MakeBinaryPair(grav1, grav2, rand);
+
+	supergrav->name = m_desc.name;
+	grav1->name = m_desc.name + " A,B";
+	grav2->name = m_desc.name + " C,D";
+	star0->name = m_desc.name + " A";
+	star1->name = m_desc.name + " B";
+	star2->name = m_desc.name + " C";
+	star3->name = m_desc.name + " D";
+
+	m_bodies.push_back(supergrav);
+	m_bodies.push_back(grav1);
+	m_bodies.push_back(star0);
+	m_bodies.push_back(star1);
+	m_bodies.push_back(grav2);
+	m_bodies.push_back(star2);
+	m_bodies.push_back(star3);
+
+	MakePlanetsAround(star0, rand);
+	MakePlanetsAround(star1, rand);
+	MakePlanetsAround(star2, rand);
+	MakePlanetsAround(star3, rand);
+	MakePlanetsAround(grav1, rand);
+	MakePlanetsAround(grav2, rand);
+}
+
 RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 {
 	m_bodies.empty();
@@ -28,116 +122,26 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	int dist = isqrt(1 + path.sectorX*path.sectorX + path.sectorY*path.sectorY + path.sectorZ*path.sectorZ);
 	bool unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
-	SystemBody *star[SystemDescriptor::MAX_STARS];
-
-	SystemBody *superCentGrav = 0, *centGrav1 = 0, *centGrav2 = 0;
-
 	switch (m_desc.numStars) {
 		case 1:
-			star[0] = NewStar(m_desc.starType[0], rand);
-			star[0]->name = m_desc.name;
-			m_bodies.push_back(star[0]);
+			GenerateSystemSingle(rand);
 			break;
 
-		case 2: {
-			SystemBody *gravpoint = NewBinaryPair(m_desc.starType[0], m_desc.starType[1], rand);
-			star[0] = gravpoint->children[0];
-			star[1] = gravpoint->children[1];
-			gravpoint->name = m_desc.name + " A,B";
-			star[0]->name = m_desc.name + " A";
-			star[1]->name = m_desc.name + " B";
-			m_bodies.push_back(gravpoint);
-			m_bodies.push_back(star[0]);
-			m_bodies.push_back(star[1]);
-
-			centGrav1 = gravpoint; // XXX
+		case 2:
+			GenerateSystemDouble(rand);
 			break;
-		}
 
 		case 3:
-		case 4:
+			GenerateSystemTriple(rand);
 			break;
+
+		case 4:
+			GenerateSystemQuadruple(rand);
+			break;
+
+		default:
+			abort();
 	}
-
-
-	const int numStars = m_desc.numStars;
-	assert((numStars >= 1) && (numStars <= 4));
-
-	if (numStars > 2) {
-		superCentGrav = new SystemBody(SystemBody::TYPE_GRAVPOINT, SystemBody::PhysicalData());
-		superCentGrav->name = m_desc.name;
-		m_bodies.push_back(superCentGrav);
-
-		star[0] = NewStar(m_desc.starType[0], rand);
-		star[1] = NewStar(m_desc.starType[1], rand);
-
-		SystemBody::PhysicalData gravpointPhys;
-		gravpointPhys.mass = star[0]->phys.mass + star[1]->phys.mass;
-		centGrav1 = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
-		centGrav1->name = m_desc.name + " A,B";
-		m_bodies.push_back(centGrav1);
-
-		star[0]->name = m_desc.name + " A";
-		star[0]->parent = centGrav1;
-		m_bodies.push_back(star[0]);
-
-		star[1]->name = m_desc.name + " B";
-		star[1]->parent = centGrav1;
-		m_bodies.push_back(star[1]);
-
-		centGrav1->children.push_back(star[0]);
-		centGrav1->children.push_back(star[1]);
-		const fixed minDist1 = (star[0]->phys.radius + star[1]->phys.radius) * AU_SOL_RADIUS;
-		MakeBinaryPair(star[0], star[1], minDist1, rand);
-
-		if (numStars > 2) {
-
-			// 3rd and maybe 4th star
-			if (numStars == 3) {
-				star[2] = NewStar(m_desc.starType[2], rand);
-				star[2]->name = m_desc.name + " C";
-				m_bodies.push_back(star[2]);
-				centGrav2 = star[2];
-			} else {
-				star[2] = NewStar(m_desc.starType[2], rand);
-				star[3] = NewStar(m_desc.starType[3], rand);
-
-				gravpointPhys.mass = star[2]->phys.mass + star[3]->phys.mass;
-
-				centGrav2 = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
-				centGrav2->name = m_desc.name + " C,D";
-				m_bodies.push_back(centGrav2);
-
-				star[2]->name = m_desc.name + " C";
-				star[2]->parent = centGrav2;
-				m_bodies.push_back(star[2]);
-
-				star[3]->name = m_desc.name + " D";
-				star[3]->parent = centGrav2;
-				m_bodies.push_back(star[3]);
-
-				const fixed minDist2 = (star[2]->phys.radius + star[3]->phys.radius) * AU_SOL_RADIUS;
-				MakeBinaryPair(star[2], star[3], minDist2, rand);
-				centGrav2->children.push_back(star[2]);
-				centGrav2->children.push_back(star[3]);
-			}
-
-			centGrav1->parent = superCentGrav;
-			centGrav2->parent = superCentGrav;
-			const fixed minDistSuper = star[0]->orbit.orbMax + star[2]->orbit.orbMax;
-			MakeBinaryPair(centGrav1, centGrav2, 4*minDistSuper, rand);
-
-			superCentGrav->children.push_back(centGrav1);
-			superCentGrav->children.push_back(centGrav2);
-
-			superCentGrav = 0;
-		}
-	}
-
-	for (std::size_t i=0; i<m_desc.numStars; i++) MakePlanetsAround(star[i], rand);
-
-	if (m_desc.numStars > 1) MakePlanetsAround(centGrav1, rand);
-	if (m_desc.numStars == 4) MakePlanetsAround(centGrav2, rand);
 
 	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies));
 
@@ -168,13 +172,8 @@ SystemBody *RandomSystemGenerator::NewStar(SystemBody::BodyType type, MTRand &ra
 	return star;
 }
 
-SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, SystemBody::BodyType typeB, MTRand &rand)
+SystemBody *RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, MTRand &rand)
 {
-	// XXX kind of in the wrong spot, but we need the radius for the minDist
-	// calc. hrm.
-	SystemBody *a = NewStar(typeA, rand);
-	SystemBody *b = NewStar(typeB, rand);
-
 	SystemBody::OrbitalData orbit;
 
 	orbit.eccentricity = rand.NFixed(3);
@@ -204,7 +203,7 @@ SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, Sys
 
 	SystemBody::PhysicalData gravpointPhys;
 	gravpointPhys.mass = a->phys.mass + b->phys.mass;
-
+	gravpointPhys.radius = 4 * (a->orbit.orbMax + b->orbit.orbMax) / AU_SOL_RADIUS;
 	SystemBody *gravpoint = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
 
 	a->parent = b->parent = gravpoint;
@@ -212,37 +211,6 @@ SystemBody *RandomSystemGenerator::NewBinaryPair(SystemBody::BodyType typeA, Sys
 	gravpoint->children.push_back(b);
 
 	return gravpoint;
-}
-
-void RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, fixed minDist, MTRand &rand)
-{
-	a->orbit.eccentricity = rand.NFixed(3);
-	int mul = 1;
-
-	do {
-		switch (rand.Int32(3)) {
-			case 2: a->orbit.semiMajorAxis = fixed(rand.Int32(100,10000), 100); break;
-			case 1: a->orbit.semiMajorAxis = fixed(rand.Int32(10,1000), 100); break;
-			default:
-			case 0: a->orbit.semiMajorAxis = fixed(rand.Int32(1,100), 100); break;
-		}
-		a->orbit.semiMajorAxis *= mul;
-		mul *= 2;
-	} while (a->orbit.semiMajorAxis < minDist);
-
-	fixed orbMin = a->orbit.semiMajorAxis - a->orbit.eccentricity*a->orbit.semiMajorAxis;
-	fixed orbMax = 2*a->orbit.semiMajorAxis - orbMin;
-	a->orbit.orbMin = orbMin;
-	a->orbit.orbMax = orbMax;
-	b->orbit.orbMin = orbMin;
-	b->orbit.orbMax = orbMax;
-
-	b->orbit = a->orbit;
-
-	const float rotX = -0.5f*float(M_PI);//(float)(rand.Double()*M_PI/2.0);
-	const float rotY = static_cast<float>(rand.Double(M_PI));
-	a->orbit.position = matrix4x4d::RotateYMatrix(rotY) * matrix4x4d::RotateXMatrix(rotX);
-	b->orbit.position = matrix4x4d::RotateYMatrix(rotY-M_PI) * matrix4x4d::RotateXMatrix(rotX);
 }
 
 static fixed mass_from_disk_area(fixed a, fixed b, fixed max)
