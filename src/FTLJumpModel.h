@@ -10,6 +10,8 @@ public:
 
 	void TimeStep(float step);
 
+	Body *GetTarget() const { return m_target; }
+
 	double GetTimeRemaining() const { return m_timeRemaining; }
 
 private:

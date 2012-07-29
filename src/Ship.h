@@ -243,6 +243,7 @@ public:
 
 	void StartFTLJump(Body *target);
 	bool IsFTLActive() const { return m_ftl; }
+	const FTLJumpModel *GetFTL() const { return m_ftl.Get(); }
 
 	sigc::signal<void> onDock;				// JJ: check what these are for
 	sigc::signal<void> onUndock;

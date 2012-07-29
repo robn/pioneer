@@ -746,7 +746,13 @@ void WorldView::RefreshButtonStateAndVisibility()
 		} else {
 			m_hudHyperspaceInfo->Hide();
 		}
-	} else {
+	}
+	else if (Pi::player->IsFTLActive()) {
+		const FTLJumpModel *ftl = Pi::player->GetFTL();
+		m_hudHyperspaceInfo->SetText(stringf("FTL jump to %target in %time{f.2} seconds", formatarg("target", ftl->GetTarget()->GetLabel()), formatarg("time", ftl->GetTimeRemaining())));
+		m_hudHyperspaceInfo->Show();
+	}
+	else {
 		m_hudHyperspaceInfo->Hide();
 	}
 }
