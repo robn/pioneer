@@ -13,9 +13,10 @@ FTLJumpModel::FTLJumpModel(Ship *ship, Body *target) :
 }
 
 void FTLJumpModel::TimeStep(float step) {
-	m_timeRemaining -= step;
+	if (m_timeRemaining > 0.0)
+	    m_timeRemaining -= step;
 
-	if (step <= 0.0) {
+	if (m_timeRemaining <= 0.0) {
 		// XXX jump time
 	}
 }
