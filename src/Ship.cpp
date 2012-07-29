@@ -726,8 +726,17 @@ void Ship::TimeStepUpdate(const float timeStep)
 	// If docked, station is responsible for updating position/orient of ship
 	// but we call this crap anyway and hope it doesn't do anything bad
 
-	if (m_ftl)
+	if (m_ftl) {
 		m_ftl->TimeStep(timeStep);
+
+		if (m_ftl->GetTimeRemaining() <= 0.0) {
+			const Body *target = m_ftl->GetTarget();
+			SetFrame(target->GetFrame());
+			SetPosition(m_ftl->CalcFinalPosition());
+
+			m_ftl.Reset(0);
+		}
+	}
 
 	vector3d maxThrust = GetMaxThrust(m_thrusters);
 	vector3d thrust = vector3d(maxThrust.x*m_thrusters.x, maxThrust.y*m_thrusters.y,

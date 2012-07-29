@@ -15,8 +15,10 @@ FTLJumpModel::FTLJumpModel(Ship *ship, Body *target) :
 void FTLJumpModel::TimeStep(float step) {
 	if (m_timeRemaining > 0.0)
 	    m_timeRemaining -= step;
+}
 
-	if (m_timeRemaining <= 0.0) {
-		// XXX jump time
-	}
+vector3d FTLJumpModel::CalcFinalPosition() const
+{
+    // XXX mix in timeRemaining and some safe offfset
+    return m_target->GetPosition();
 }
