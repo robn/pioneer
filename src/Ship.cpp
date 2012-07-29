@@ -1269,3 +1269,7 @@ void Ship::EnterSystem() {
 void Ship::OnEnterSystem() {
 	m_hyperspaceCloud = 0;
 }
+
+void Ship::StartFTLJump(Body *target) {
+	m_ftl.Reset(new FTLJumpModel(this, target));
+}

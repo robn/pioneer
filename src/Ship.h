@@ -14,6 +14,7 @@
 #include "Serializer.h"
 #include "Camera.h"
 #include "scenegraph/SceneGraph.h"
+#include "FTLJumpModel.h"
 #include <list>
 
 class SpaceStation;
@@ -240,6 +241,9 @@ public:
 
 	HyperspaceCloud *GetHyperspaceCloud() const { return m_hyperspaceCloud; }
 
+	void StartFTLJump(Body *target);
+	bool IsFTLActive() const { return m_ftl; }
+
 	sigc::signal<void> onDock;				// JJ: check what these are for
 	sigc::signal<void> onUndock;
 
@@ -304,6 +308,8 @@ private:
 		double duration;
 	} m_hyperspace;
 	HyperspaceCloud *m_hyperspaceCloud;
+
+	ScopedPtr<FTLJumpModel> m_ftl;
 
 	AICommand *m_curAICmd;
 	AIError m_aiMessage;

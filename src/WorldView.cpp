@@ -1014,8 +1014,7 @@ static void player_target_hypercloud(HyperspaceCloud *cloud)
 
 static void player_ftl_jump(Ship *ship, Body *target)
 {
-	// XXX do something
-	printf("ship %s ftl jump to %s\n", ship->GetLabel().c_str(), target->GetLabel().c_str());
+	ship->StartFTLJump(target);
 }
 
 void WorldView::UpdateCommsOptions()
@@ -1094,9 +1093,11 @@ void WorldView::UpdateCommsOptions()
 			}
 		}
 
-		button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", navtarget->GetLabel())), ypos, optnum++);
-		button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, navtarget));
-		ypos += 32;
+		if (!Pi::player->IsFTLActive()) {
+			button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", navtarget->GetLabel())), ypos, optnum++);
+			button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, navtarget));
+			ypos += 32;
+		}
 	}
 
 	if (comtarget) {
@@ -1109,9 +1110,11 @@ void WorldView::UpdateCommsOptions()
 			ypos += 32;
 		}
 
-		button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", comtarget->GetLabel())), ypos, optnum++);
-		button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, comtarget));
-		ypos += 32;
+		if (!Pi::player->IsFTLActive()) {
+			button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", comtarget->GetLabel())), ypos, optnum++);
+			button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, comtarget));
+			ypos += 32;
+		}
 	}
 }
 
