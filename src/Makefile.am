@@ -46,6 +46,7 @@ noinst_HEADERS = \
 	Form.h \
 	FormController.h \
 	Frame.h \
+	FTLJumpModel.h \
 	GalacticView.h \
 	Game.h \
 	GameMenuView.h \
@@ -194,6 +195,7 @@ pioneer_SOURCES	= \
 	FileSystem.cpp \
 	FontCache.cpp \
 	FormController.cpp \
+	FTLJumpModel.cpp \
 	Frame.cpp \
 	GalacticView.cpp \
 	Game.cpp \
