@@ -69,7 +69,7 @@ void WorldView::InitObject()
 
 	m_commsOptions = new Fixed(size[0], size[1]/2);
 	m_commsOptions->SetTransparency(true);
-	Add(m_commsOptions, 10, 200);
+	Add(m_commsOptions, 10, 100);
 
 	m_commsNavOptionsContainer = new Gui::HBox();
 	m_commsNavOptionsContainer->SetSpacing(5);
@@ -1012,6 +1012,12 @@ static void player_target_hypercloud(HyperspaceCloud *cloud)
 	Pi::sectorView->SetHyperspaceTarget(cloud->GetShip()->GetHyperspaceDest());
 }
 
+static void player_ftl_jump(Ship *ship, Body *target)
+{
+	// XXX do something
+	printf("ship %s ftl jump to %s\n", ship->GetLabel().c_str(), target->GetLabel().c_str());
+}
+
 void WorldView::UpdateCommsOptions()
 {
 	m_commsOptions->DeleteAllChildren();
@@ -1084,14 +1090,27 @@ void WorldView::UpdateCommsOptions()
 			if (!cloud->IsArrival()) {
 				button = AddCommsOption(Lang::SET_HYPERSPACE_TARGET_TO_FOLLOW_THIS_DEPARTURE, ypos, optnum++);
 				button->onClick.connect(sigc::bind(sigc::ptr_fun(player_target_hypercloud), cloud));
+				ypos += 32;
 			}
 		}
+
+		button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", navtarget->GetLabel())), ypos, optnum++);
+		button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, navtarget));
+		ypos += 32;
 	}
-	if (comtarget && hasAutopilot) {
+
+	if (comtarget) {
 		m_commsOptions->Add(new Gui::Label("#f00"+comtarget->GetLabel()), 16, float(ypos));
 		ypos += 32;
-		button = AddCommsOption(stringf(Lang::AUTOPILOT_FLY_TO_VICINITY_OF, formatarg("target", comtarget->GetLabel())), ypos, optnum++);
-		button->onClick.connect(sigc::bind(sigc::ptr_fun(autopilot_flyto), comtarget));
+
+		if (hasAutopilot) {
+			button = AddCommsOption(stringf(Lang::AUTOPILOT_FLY_TO_VICINITY_OF, formatarg("target", comtarget->GetLabel())), ypos, optnum++);
+			button->onClick.connect(sigc::bind(sigc::ptr_fun(autopilot_flyto), comtarget));
+			ypos += 32;
+		}
+
+		button = AddCommsOption(stringf("FTL jump to %target", formatarg("target", comtarget->GetLabel())), ypos, optnum++);
+		button->onClick.connect(sigc::bind(sigc::ptr_fun(player_ftl_jump), Pi::player, comtarget));
 		ypos += 32;
 	}
 }
