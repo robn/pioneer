@@ -6,5 +6,16 @@ FTLJumpModel::FTLJumpModel(Ship *ship, Body *target) :
 	m_ship(ship),
 	m_target(target)
 {
-	printf("ship %s ftl jump to %s\n", m_ship->GetLabel().c_str(), m_target->GetLabel().c_str());
+	// XXX make a real calculation here
+	m_timeRemaining = m_ship->GetPositionRelTo(m_target).Length() / AU;
+
+	printf("ship %s ftl jump to %s in %f seconds\n", m_ship->GetLabel().c_str(), m_target->GetLabel().c_str(), m_timeRemaining);
+}
+
+void FTLJumpModel::TimeStep(float step) {
+	m_timeRemaining -= step;
+
+	if (step <= 0.0) {
+		// XXX jump time
+	}
 }

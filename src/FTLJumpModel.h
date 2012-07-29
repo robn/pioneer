@@ -8,9 +8,15 @@ class FTLJumpModel {
 public:
 	FTLJumpModel(Ship *ship, Body *target);
 
+	void TimeStep(float step);
+
+	double GetTimeRemaining() const { return m_timeRemaining; }
+
 private:
 	Ship *m_ship;
 	Body *m_target;
+
+	double m_timeRemaining;
 };
 
 #endif
