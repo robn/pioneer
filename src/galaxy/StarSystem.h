@@ -24,6 +24,7 @@ enum EconType { // <enum name=EconType prefix=ECON_>
 	ECON_INDUSTRY = 1<<2,
 };
 
+
 class StarSystem : public DeleteEmitter, public RefCounted {
 public:
 	friend class SystemBody;

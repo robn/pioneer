@@ -11,6 +11,14 @@
 
 class StarSystem;
 
+struct RingStyle {
+	// note: radius values are given as proportions of the planet radius
+	// (e.g., 1.6)
+	fixed minRadius;
+	fixed maxRadius;
+	Color4ub baseColor;
+};
+
 class SystemBody {
 public:
 
@@ -119,6 +127,8 @@ public:
 		fixed agricultural; // XXX what is this?
 	};
 
+	RingStyle m_rings;
+
 	SystemBody(BodyType type, const PhysicalData &_phys);
 
 	// XXX old interface to be checked
@@ -156,12 +166,30 @@ public:
 	double GetMaxChildOrbitalDistance() const;
 	void PopulateStage1(StarSystem *system, fixed &outTotalPop);
 
+
+	bool HasRings() const { return bool(m_rings.maxRadius.v); }
+	void PickRings(bool forceRings = false);
+
+
+	// XXX merge all this atmosphere stuff
 	bool HasAtmosphere() const;
+
 	void PickAtmosphere();
 	void GetAtmosphereFlavor(Color *outColor, double *outDensity) const {
 		*outColor = m_atmosColor;
 		*outDensity = m_atmosDensity;
 	}
+
+	struct AtmosphereParameters {
+		float atmosRadius;
+		float atmosInvScaleHeight;
+		float atmosDensity;
+		float planetRadius;
+		Color atmosCol;
+	};
+
+	AtmosphereParameters CalcAtmosphereParams() const;
+
 
 	bool IsScoopable() const;
 

@@ -112,6 +112,25 @@ void CustomSystemGenerator::CustomGetKidsOf(SystemBody *parent, const std::vecto
 
 		kid->PickAtmosphere();
 
+		// pick or specify rings
+		switch (csbody->ringStatus) {
+			case CustomSystemBody::WANT_NO_RINGS:
+				kid->m_rings.minRadius = fixed(0);
+				kid->m_rings.maxRadius = fixed(0);
+				break;
+			case CustomSystemBody::WANT_RINGS:
+				kid->PickRings(true);
+				break;
+			case CustomSystemBody::WANT_RANDOM_RINGS:
+				kid->PickRings(false);
+				break;
+			case CustomSystemBody::WANT_CUSTOM_RINGS:
+				kid->m_rings.minRadius = csbody->ringInnerRadius;
+				kid->m_rings.maxRadius = csbody->ringOuterRadius;
+				kid->m_rings.baseColor = csbody->ringColor;
+				break;
+		}
+
 		m_bodies.push_back(kid);
 
 		if (kid->GetSuperType() == SystemBody::SUPERTYPE_STARPORT)

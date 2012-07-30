@@ -594,6 +594,116 @@ void SystemBody::PickPlanetType(MTRand &rand)
     PickAtmosphere();
 }
 
+static const unsigned char RANDOM_RING_COLORS[][4] = {
+	{ 156, 122,  98, 217 }, // jupiter-like
+	{ 156, 122,  98, 217 }, // saturn-like
+	{ 181, 173, 174, 217 }, // neptune-like
+	{ 130, 122,  98, 217 }, // uranus-like
+	{ 207, 122,  98, 217 }  // brown dwarf-like
+};
+
+void SystemBody::PickRings(bool forceRings)
+{
+	m_rings.minRadius = fixed(0);
+	m_rings.maxRadius = fixed(0);
+	m_rings.baseColor = Color4ub(255,255,255,255);
+
+	if (type == SystemBody::TYPE_PLANET_GAS_GIANT) {
+		MTRand ringRng(seed + 965467);
+
+		// today's forecast: 50% chance of rings
+		double rings_die = ringRng.Double();
+		if (forceRings || (rings_die < 0.5)) {
+			const unsigned char * const baseCol
+				= RANDOM_RING_COLORS[ringRng.Int32(COUNTOF(RANDOM_RING_COLORS))];
+			m_rings.baseColor.r = Clamp(baseCol[0] + ringRng.Int32(-20,20), 0, 255);
+			m_rings.baseColor.g = Clamp(baseCol[1] + ringRng.Int32(-20,20), 0, 255);
+			m_rings.baseColor.b = Clamp(baseCol[2] + ringRng.Int32(-20,10), 0, 255);
+			m_rings.baseColor.a = Clamp(baseCol[3] + ringRng.Int32(-5,5), 0, 255);
+
+			// from wikipedia: http://en.wikipedia.org/wiki/Roche_limit
+			// basic Roche limit calculation assuming a rigid satellite
+			// d = R (2 p_M / p_m)^{1/3}
+			// 
+			// where R is the radius of the primary, p_M is the density of
+			// the primary and p_m is the density of the satellite
+			//
+			// I assume a satellite density of 500 kg/m^3
+			// (which Wikipedia says is an average comet density)
+			//
+			// also, I can't be bothered to think about unit conversions right now,
+			// so I'm going to ignore the real density of the primary and take it as 1100 kg/m^3
+			// (note: density of Saturn is ~687, Jupiter ~1,326, Neptune ~1,638, Uranus ~1,318)
+			//
+			// This gives: d = 1.638642 * R
+			fixed innerMin = fixed(110, 100);
+			fixed innerMax = fixed(145, 100);
+			fixed outerMin = fixed(150, 100);
+			fixed outerMax = fixed(168642, 100000);
+
+			m_rings.minRadius = innerMin + (innerMax - innerMin)*ringRng.Fixed();
+			m_rings.maxRadius = outerMin + (outerMax - outerMin)*ringRng.Fixed();
+		}
+	}
+}
+
+// Calculate parameters used in the atmospheric model for shaders
+// used by both LmrModels and Geosphere
+SystemBody::AtmosphereParameters SystemBody::CalcAtmosphereParams() const
+{
+	AtmosphereParameters params;
+
+	double atmosDensity;
+
+	GetAtmosphereFlavor(&params.atmosCol, &atmosDensity);
+	// adjust global atmosphere opacity
+	atmosDensity *= 1e-5;
+
+	params.atmosDensity = static_cast<float>(atmosDensity);
+
+	// Calculate parameters used in the atmospheric model for shaders
+	// Isothermal atmospheric model
+	// See http://en.wikipedia.org/wiki/Atmospheric_pressure#Altitude_atmospheric_pressure_variation
+	// This model features an exponential decrease in pressure and density with altitude.
+	// The scale height is 1/the exponential coefficient.
+
+	// The equation for pressure is:
+	// Pressure at height h = Pressure surface * e^((-Mg/RT)*h)
+
+	// calculate (inverse) atmosphere scale height		
+	// The formula for scale height is:
+	// h = RT / Mg
+	// h is height above the surface in meters
+	// R is the universal gas constant
+	// T is the surface temperature in Kelvin
+	// g is the gravity in m/s^2
+	// M is the molar mass of air in kg/mol
+
+	// calculate gravity
+	// radius of the planet
+	const double radiusPlanet_in_m = (phys.radius.ToDouble()*EARTH_RADIUS);
+	const double massPlanet_in_kg = (phys.mass.ToDouble()*EARTH_MASS);
+	const double g = G*massPlanet_in_kg/(radiusPlanet_in_m*radiusPlanet_in_m);
+
+	const double T = static_cast<double>(phys.averageTemp);
+
+	// XXX just use earth's composition for now
+	const double M = 0.02897f; // in kg/mol
+
+	const float atmosScaleHeight = static_cast<float>(GAS_CONSTANT_R*T/(M*g));
+
+	// min of 2.0 corresponds to a scale height of 1/20 of the planet's radius,
+	params.atmosInvScaleHeight = std::max(20.0f, static_cast<float>(GetRadius() / atmosScaleHeight));
+	// integrate atmospheric density between surface and this radius. this is 10x the scale
+	// height, which should be a height at which the atmospheric density is negligible
+	params.atmosRadius = 1.0f + static_cast<float>(10.0f * atmosScaleHeight) / GetRadius();
+
+	params.planetRadius = static_cast<float>(radiusPlanet_in_m);
+
+	return params;
+}
+
+
 // Set natural resources, tech level, industry strengths and population levels
 void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 {
