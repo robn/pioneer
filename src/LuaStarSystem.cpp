@@ -147,7 +147,7 @@ static int l_starsystem_get_commodity_base_price_alterations(lua_State *l)
 
 	for (int e = Equip::FIRST_COMMODITY; e <= Equip::LAST_COMMODITY; e++) {
 		lua_pushstring(l, LuaConstants::GetConstantString(l, "EquipType", e));
-		lua_pushnumber(l, s->GetCommodityBasePriceModPercent(e));
+		lua_pushnumber(l, s->econ.tradeLevel[e]);
 		lua_rawset(l, -3);
 	}
 
@@ -405,7 +405,7 @@ static int l_starsystem_attr_lawlessness(lua_State *l)
 static int l_starsystem_attr_population(lua_State *l)
 {
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	lua_pushnumber(l, s->m_totalPop.ToDouble());
+	lua_pushnumber(l, s->econ.totalPop.ToDouble());
 	return 1;
 }
 

@@ -693,7 +693,7 @@ bool SpaceStation::DoesSell(Equip::Type t) const {
 }
 
 Sint64 SpaceStation::GetPrice(Equip::Type t) const {
-	Sint64 mul = 100 + Pi::game->GetSpace()->GetStarSystem()->GetCommodityBasePriceModPercent(t);
+	Sint64 mul = 100 + Pi::game->GetSpace()->GetStarSystem()->econ.tradeLevel[t];
 	return (mul * Sint64(Equip::types[t].basePrice)) / 100;
 }
 

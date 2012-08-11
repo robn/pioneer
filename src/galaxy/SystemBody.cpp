@@ -712,7 +712,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 	}
 
 	// unexplored systems have no population (that we know about)
-	if (system->m_unexplored) {
+	if (system->unexplored) {
 		econ.population = outTotalPop = fixed(0);
 		return;
 	}
@@ -743,14 +743,14 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 
 	if (composition.life > fixed(9,10)) {
 		econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-phys.averageTemp, 40), fixed(0), fixed(1,1));
-		system->m_agricultural += 2*econ.agricultural;
+		system->econ.agricultural += 2*econ.agricultural;
 	} else if (composition.life > fixed(1,2)) {
 		econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-phys.averageTemp, 50), fixed(0), fixed(1,1));
-		system->m_agricultural += 1*econ.agricultural;
+		system->econ.agricultural += 1*econ.agricultural;
 	} else {
 		// don't bother populating crap planets
 		if (composition.metallicity < fixed(5,10) &&
-			composition.metallicity < (fixed(1,1) - system->m_humanProx)) return;
+			composition.metallicity < (fixed(1,1) - system->econ.humanProx)) return;
 	}
 
 	const int NUM_CONSUMABLES = 10;
@@ -776,7 +776,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		if (itype.econType & ECON_AGRICULTURE) {
 			affinity *= 2*econ.agricultural;
 		}
-		if (itype.econType & ECON_INDUSTRY) affinity *= system->m_industrial;
+		if (itype.econType & ECON_INDUSTRY) affinity *= system->econ.industrial;
 		// make industry after we see if agriculture and mining are viable
 		if (itype.econType & ECON_MINING) {
 			affinity *= composition.metallicity;
@@ -788,14 +788,14 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 		}
 		assert(affinity >= 0);
 		// workforce...
-		econ.population += affinity * system->m_humanProx;
+		econ.population += affinity * system->econ.humanProx;
 
 		int howmuch = (affinity * 256).ToInt32();
 
-		system->m_tradeLevel[t] += -2*howmuch;
+		system->econ.tradeLevel[t] += -2*howmuch;
 		for (int j=0; j<EQUIP_INPUTS; j++) {
 			if (!itype.inputs[j]) continue;
-			system->m_tradeLevel[itype.inputs[j]] += howmuch;
+			system->econ.tradeLevel[itype.inputs[j]] += howmuch;
 		}
 	}
 
@@ -815,7 +815,7 @@ void SystemBody::PopulateStage1(StarSystem *system, fixed &outTotalPop)
 				continue;
 			}
 		}
-		system->m_tradeLevel[t] += rand.Int32(32,128);
+		system->econ.tradeLevel[t] += rand.Int32(32,128);
 	}
 	// well, outdoor worlds should have way more people
 	econ.population = fixed(1,10)*econ.population + econ.population*econ.agricultural;

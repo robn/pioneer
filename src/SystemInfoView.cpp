@@ -125,7 +125,7 @@ void SystemInfoView::UpdateEconomyTab()
 	std::vector<std::string> crud;
 	data = std::string("#ff0")+std::string(Lang::MAJOR_IMPORTS)+std::string("\n");
 	for (int i=1; i<Equip::TYPE_MAX; i++) {
-		if (s->GetCommodityBasePriceModPercent(i) > 10)
+		if (s->econ.tradeLevel[i] > 10)
 			crud.push_back(std::string("#fff")+Equip::types[i].name);
 	}
 	if (crud.size()) data += string_join(crud, "\n")+"\n";
@@ -135,7 +135,7 @@ void SystemInfoView::UpdateEconomyTab()
 	crud.clear();
 	data = std::string("#ff0")+std::string(Lang::MINOR_IMPORTS)+std::string("\n");
 	for (int i=1; i<Equip::TYPE_MAX; i++) {
-		if ((s->GetCommodityBasePriceModPercent(i) > 2) && (s->GetCommodityBasePriceModPercent(i) <= 10))
+		if ((s->econ.tradeLevel[i] > 2) && (s->econ.tradeLevel[i] <= 10))
 			crud.push_back(std::string("#777")+Equip::types[i].name);
 	}
 	if (crud.size()) data += string_join(crud, "\n")+"\n";
@@ -145,7 +145,7 @@ void SystemInfoView::UpdateEconomyTab()
 	crud.clear();
 	data = std::string("#ff0")+std::string(Lang::MAJOR_EXPORTS)+std::string("\n");
 	for (int i=1; i<Equip::TYPE_MAX; i++) {
-		if (s->GetCommodityBasePriceModPercent(i) < -10)
+		if (s->econ.tradeLevel[i] < -10)
 			crud.push_back(std::string("#fff")+Equip::types[i].name);
 	}
 	if (crud.size()) data += string_join(crud, "\n")+"\n";
@@ -155,7 +155,7 @@ void SystemInfoView::UpdateEconomyTab()
 	crud.clear();
 	data = std::string("#ff0")+std::string(Lang::MINOR_EXPORTS)+std::string("\n");
 	for (int i=1; i<Equip::TYPE_MAX; i++) {
-		if ((s->GetCommodityBasePriceModPercent(i) < -2) && (s->GetCommodityBasePriceModPercent(i) >= -10))
+		if ((s->econ.tradeLevel[i] < -2) && (s->econ.tradeLevel[i] >= -10))
 			crud.push_back(std::string("#777")+Equip::types[i].name);
 	}
 	if (crud.size()) data += string_join(crud, "\n")+"\n";
@@ -245,7 +245,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 
 	m_sbodyInfoTab = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight()-100));
 
-	if (m_system->m_unexplored) {
+	if (m_system->unexplored) {
 		Add(m_sbodyInfoTab, 0, 0);
 
 		std::string _info =
@@ -375,7 +375,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 
 		col1->Add((new Gui::Label(Lang::POPULATION))->Color(1,1,0), 0, 4*YSEP);
 		std::string popmsg;
-		fixed pop = m_system->m_totalPop;
+		fixed pop = m_system->econ.totalPop;
 		if (pop >= fixed(1,1)) { popmsg = stringf(Lang::OVER_N_BILLION, formatarg("population", pop.ToInt32())); }
 		else if (pop >= fixed(1,1000)) { popmsg = stringf(Lang::OVER_N_MILLION, formatarg("population", (pop*1000).ToInt32())); }
 		else if (pop != fixed(0)) { popmsg = Lang::A_FEW_THOUSAND; }

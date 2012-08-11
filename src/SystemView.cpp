@@ -306,7 +306,7 @@ void SystemView::Draw3D()
 	if (m_selectedObject) GetTransformTo(m_selectedObject, pos);
 
 	m_objectLabels->Clear();
-	if (m_system->m_unexplored)
+	if (m_system->unexplored)
 		m_infoLabel->SetText(Lang::UNEXPLORED_SYSTEM_NO_SYSTEM_VIEW);
 	else if (m_system->rootBody) {
 		PutBody(m_system->rootBody, pos);

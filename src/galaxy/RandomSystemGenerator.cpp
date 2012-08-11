@@ -143,13 +143,13 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 			abort();
 	}
 
-	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies));
+	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, StarSystem::EconomicData(), false));
 
 	// used in MakeshortDescription
 	// XXX except this does not reflect the actual mining happening in this system
-	s->m_metallicity = SystemConstants::starMetallicities[s->rootBody->type];
+	s->econ.metallicity = SystemConstants::starMetallicities[s->rootBody->type];
 
-	s->m_unexplored = unexplored;
+	s->unexplored = unexplored;
 
 	s->Populate();
 	PopulateAddStations(m_bodies[0]);

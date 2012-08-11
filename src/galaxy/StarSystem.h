@@ -31,7 +31,9 @@ public:
 	friend class RandomSystemGenerator;
 	friend class CustomSystemGenerator;
 
-	StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies);
+	struct EconomicData;
+
+	StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ, bool _unexplored);
 	~StarSystem();
 
 	const SystemDescriptor desc;
@@ -48,21 +50,32 @@ public:
 	// index into this will be the SystemBody ID used by SystemPath
 	std::vector<SystemBody*> m_bodies;
 
-	fixed m_metallicity;
-	fixed m_industrial;
-	fixed m_agricultural;
+	struct EconomicData {
+		EconomicData() : metallicity(0), industrial(0), agricultural(0), humanProx(0), totalPop(0), econType(0) {
+			for (int i = 0; i < Equip::TYPE_MAX; i++)
+				tradeLevel[i] = 0;
+		}
 
-	fixed m_humanProx;
-	fixed m_totalPop;
-	// percent price alteration
-	int m_tradeLevel[Equip::TYPE_MAX];
-	int m_econType;
+		EconomicData(fixed _metallicity, fixed _industrial, fixed _agricultural, fixed _humanProx, fixed _totalPop, int _econType) :
+			metallicity(_metallicity), industrial(_industrial), agricultural(_agricultural), humanProx(_humanProx), totalPop(_totalPop), econType(_econType) {
+			for (int i = 0; i < Equip::TYPE_MAX; i++)
+				tradeLevel[i] = 0;
+		}
 
-	bool m_unexplored;
+		fixed metallicity;  // metals -> mining
+		fixed industrial;   // industrial capacity
+		fixed agricultural; // agricultural capacity
 
-	int GetCommodityBasePriceModPercent(int t) {
-		return m_tradeLevel[t];
-	}
+		fixed humanProx;    // distance to Sol, 0->1 == far->near
+		fixed totalPop;     // population in billions
+
+		// percent price alteration
+		int tradeLevel[Equip::TYPE_MAX];
+		int econType;
+	};
+	EconomicData econ;
+
+	bool unexplored;
 
 private:
 	void MakeShortDescription(MTRand &rand);
