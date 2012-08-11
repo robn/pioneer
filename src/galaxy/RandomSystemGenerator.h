@@ -3,6 +3,7 @@
 
 #include "SystemGenerator.h"
 #include "SystemDescriptor.h"
+#include "StarSystem.h"
 
 class RandomSystemGenerator : public SystemGenerator {
 public:
@@ -23,8 +24,8 @@ private:
 	void PopulateAddStations(SystemBody *body);
 
 	const SystemDescriptor m_desc;
-
 	std::vector<SystemBody*> m_bodies;
+	StarSystem::EconomicData m_econ;
 };
 
 #endif
