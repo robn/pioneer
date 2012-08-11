@@ -453,7 +453,7 @@ void Pi::Init()
 	Galaxy::Init();
 	draw_progress(0.2f);
 
-	CustomSystem::Init();
+	// XXX SYSGEN CustomSystem::Init();
 	draw_progress(0.4f);
 
 	LmrModelCompilerInit(Pi::renderer);

@@ -18,7 +18,8 @@ RefCountedPtr<StarSystem> SystemCache::GetSystem(const SystemPath &path)
 	const SystemDescriptor &sysDesc = sec.m_systems[sysPath.systemIndex];
 	
 	// XXX choose appropriate generator here
-	RefCountedPtr<StarSystem> s(sysDesc.customSys ? CustomSystemGenerator(sysDesc).GenerateSystem() : RandomSystemGenerator(sysDesc).GenerateSystem());
+	// XXX RefCountedPtr<StarSystem> s(sysDesc.customSys ? CustomSystemGenerator(sysDesc).GenerateSystem() : RandomSystemGenerator(sysDesc).GenerateSystem());
+	RefCountedPtr<StarSystem> s(RandomSystemGenerator(sysDesc).GenerateSystem());
 	m_cache.insert(std::make_pair(sysPath, s));
 
 	return s;
