@@ -77,13 +77,11 @@ public:
 
 	bool unexplored;
 
-private:
-	void MakeShortDescription(MTRand &rand);
-	void Populate();
-
+    // XXX temporarily making public
 	std::string m_shortDesc, m_longDesc;
 	SysPolit m_polit;
 
+private:
 	bool m_isCustom;
 	bool m_hasCustomBodies;
 };

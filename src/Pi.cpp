@@ -943,7 +943,8 @@ void Pi::HandleMenuKey(int n)
 
 		case 0: // Earth start point
 		{
-			game = new Game(SystemPath(0,0,0,0,9));  // Los Angeles, Earth
+			//game = new Game(SystemPath(0,0,0,0,9));  // Los Angeles, Earth
+			game = new Game(SystemPath(0,-1,-3,0,23));
 			break;
 		}
 

@@ -164,7 +164,6 @@ public:
 	double CalcSurfaceGravity() const;
 
 	double GetMaxChildOrbitalDistance() const;
-	void PopulateStage1(StarSystem *system, fixed &outTotalPop);
 
 
 	bool HasRings() const { return bool(m_rings.maxRadius.v); }

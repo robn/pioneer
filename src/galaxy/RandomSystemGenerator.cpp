@@ -3,6 +3,7 @@
 #include "SystemConstants.h"
 #include "Pi.h"
 #include "LuaNameGen.h"
+#include "Lang.h"
 #include <cassert>
 
 // very crudely
@@ -120,7 +121,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	// ~500ly - ~700ly (65-90 sectors): gradual
 	// ~700ly+: unexplored
 	int dist = isqrt(1 + path.sectorX*path.sectorX + path.sectorY*path.sectorY + path.sectorZ*path.sectorZ);
-	bool unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
+	m_unexplored = (dist > 90) || (dist > 65 && rand.Int32(dist) > 40);
 
 	switch (m_desc.numStars) {
 		case 1:
@@ -147,10 +148,13 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	// XXX except this does not reflect the actual mining happening in this system
 	m_econ.metallicity = SystemConstants::starMetallicities[m_bodies[0]->type]; // XXX broken for gravpoints
 
-	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, m_econ, unexplored));
-
-	s->Populate();
+	Populate();
 	PopulateAddStations(m_bodies[0]);
+
+	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, m_econ, m_unexplored));
+
+    // XXX SYSGEN
+	Polit::GetSysPolitStarSystem(s.Get(), s->econ.totalPop, s->m_polit);
 
 	return s;
 }
@@ -483,3 +487,211 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		body->children.insert(body->children.begin(), sp);
 	}
 }
+
+// percent
+static const int MAX_COMMODITY_BASE_PRICE_ADJUSTMENT = 25;
+
+void RandomSystemGenerator::Populate()
+{
+	unsigned long _init[5] = { m_desc.path.systemIndex, Uint32(m_desc.path.sectorX), Uint32(m_desc.path.sectorY), Uint32(m_desc.path.sectorZ), UNIVERSE_SEED };
+	MTRand rand;
+	rand.seed(_init, 5);
+
+	// Various system-wide characteristics
+	// This is 1 in sector (0,0,0) and approaches 0 farther out
+	// (1,0,0) ~ .688, (1,1,0) ~ .557, (1,1,1) ~ .48
+	m_econ.humanProx = fixed(3,1) / isqrt(9 + 10*(m_desc.path.sectorX*m_desc.path.sectorX + m_desc.path.sectorY*m_desc.path.sectorY + m_desc.path.sectorZ*m_desc.path.sectorZ));
+	m_econ.econType = ECON_INDUSTRY;
+	m_econ.industrial = rand.Fixed();
+	m_econ.agricultural = 0;
+
+	// system attributes
+	m_econ.totalPop = fixed(0);
+	PopulateStage1(m_bodies[0], m_econ.totalPop);
+
+	// So now we have balances of trade of various commodities.
+	// Lets use black magic to turn these into percentage base price
+	// alterations
+	int maximum = 0;
+	for (int i=Equip::FIRST_COMMODITY; i<=Equip::LAST_COMMODITY; i++) {
+		maximum = std::max(abs(m_econ.tradeLevel[i]), maximum);
+	}
+	if (maximum) for (int i=Equip::FIRST_COMMODITY; i<=Equip::LAST_COMMODITY; i++) {
+		m_econ.tradeLevel[i] = (m_econ.tradeLevel[i] * MAX_COMMODITY_BASE_PRICE_ADJUSTMENT) / maximum;
+		m_econ.tradeLevel[i] += rand.Int32(-5, 5);
+	}
+
+	// XXX SYSGEN Polit::GetSysPolitStarSystem(this, m_econ.totalPop, m_polit);
+
+	if (!m_shortDesc.size())
+		MakeShortDescription(rand);
+}
+
+static const int CELSIUS = 273;
+
+// Set natural resources, tech level, industry strengths and population levels
+void RandomSystemGenerator::PopulateStage1(SystemBody *sbody, fixed &outTotalPop)
+{
+	for (unsigned int i=0; i<sbody->children.size(); i++) {
+		PopulateStage1(sbody->children[i], outTotalPop);
+	}
+
+	// unexplored systems have no population (that we know about)
+	if (m_unexplored) {
+		sbody->econ.population = outTotalPop = fixed(0);
+		return;
+	}
+
+	unsigned long _init[6] = { m_desc.path.systemIndex, Uint32(m_desc.path.sectorX), Uint32(m_desc.path.sectorY), Uint32(m_desc.path.sectorZ), UNIVERSE_SEED, Uint32(m_desc.seed) };
+
+	MTRand rand, namerand;
+	rand.seed(_init, 6);
+	namerand.seed(_init, 6);
+
+	sbody->econ.population = fixed(0);
+
+	// Bad type of planet for settlement
+	if ((sbody->phys.averageTemp > CELSIUS+100) || (sbody->phys.averageTemp < 100) ||
+	    (sbody->type != SystemBody::TYPE_PLANET_TERRESTRIAL && sbody->type != SystemBody::TYPE_PLANET_ASTEROID)) {
+
+		// orbital starports should carry a small amount of population
+		if (sbody->type == SystemBody::TYPE_STARPORT_ORBITAL) {
+			sbody->econ.population = fixed(1,100000);
+			outTotalPop += sbody->econ.population;
+		}
+
+		return;
+	}
+
+	sbody->econ.agricultural = fixed(0);
+
+	if (sbody->composition.life > fixed(9,10)) {
+		sbody->econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+25-sbody->phys.averageTemp, 40), fixed(0), fixed(1,1));
+		m_econ.agricultural += 2*sbody->econ.agricultural;
+	} else if (sbody->composition.life > fixed(1,2)) {
+		sbody->econ.agricultural = Clamp(fixed(1,1) - fixed(CELSIUS+30-sbody->phys.averageTemp, 50), fixed(0), fixed(1,1));
+		m_econ.agricultural += 1*sbody->econ.agricultural;
+	} else {
+		// don't bother populating crap planets
+		if (sbody->composition.metallicity < fixed(5,10) &&
+			sbody->composition.metallicity < (fixed(1,1) - m_econ.humanProx)) return;
+	}
+
+	const int NUM_CONSUMABLES = 10;
+	const Equip::Type consumables[NUM_CONSUMABLES] = {
+		Equip::AIR_PROCESSORS,
+		Equip::GRAIN,
+		Equip::FRUIT_AND_VEG,
+		Equip::ANIMAL_MEAT,
+		Equip::LIQUOR,
+		Equip::CONSUMER_GOODS,
+		Equip::MEDICINES,
+		Equip::HAND_WEAPONS,
+		Equip::NARCOTICS,
+		Equip::LIQUID_OXYGEN
+	};
+
+	// Commodities we produce (mining and agriculture)
+	for (int i=Equip::FIRST_COMMODITY; i<Equip::LAST_COMMODITY; i++) {
+		Equip::Type t = Equip::Type(i);
+		const EquipType &itype = Equip::types[t];
+
+		fixed affinity = fixed(1,1);
+		if (itype.econType & ECON_AGRICULTURE) {
+			affinity *= 2*sbody->econ.agricultural;
+		}
+		if (itype.econType & ECON_INDUSTRY) affinity *= m_econ.industrial;
+		// make industry after we see if agriculture and mining are viable
+		if (itype.econType & ECON_MINING) {
+			affinity *= sbody->composition.metallicity;
+		}
+		affinity *= rand.Fixed();
+		// producing consumables is wise
+		for (int j=0; j<NUM_CONSUMABLES; j++) {
+			if (i == consumables[j]) affinity *= 2; break;
+		}
+		assert(affinity >= 0);
+		// workforce...
+		sbody->econ.population += affinity * m_econ.humanProx;
+
+		int howmuch = (affinity * 256).ToInt32();
+
+		m_econ.tradeLevel[t] += -2*howmuch;
+		for (int j=0; j<EQUIP_INPUTS; j++) {
+			if (!itype.inputs[j]) continue;
+			m_econ.tradeLevel[itype.inputs[j]] += howmuch;
+		}
+	}
+
+#if 0
+XXX SYSGEN
+	if (!system->m_hasCustomBodies && sbody->econ.population > 0)
+		name = Pi::luaNameGen->BodyName(this, namerand);
+#endif
+
+	// Add a bunch of things people consume
+	for (int i=0; i<NUM_CONSUMABLES; i++) {
+		Equip::Type t = consumables[i];
+		if (sbody->composition.life > fixed(1,2)) {
+			// life planets can make this jizz probably
+			if ((t == Equip::AIR_PROCESSORS) ||
+			    (t == Equip::LIQUID_OXYGEN) ||
+			    (t == Equip::GRAIN) ||
+			    (t == Equip::FRUIT_AND_VEG) ||
+			    (t == Equip::ANIMAL_MEAT)) {
+				continue;
+			}
+		}
+		m_econ.tradeLevel[t] += rand.Int32(32,128);
+	}
+	// well, outdoor worlds should have way more people
+	sbody->econ.population = fixed(1,10)*sbody->econ.population + sbody->econ.population*sbody->econ.agricultural;
+
+	outTotalPop += sbody->econ.population;
+}
+
+void RandomSystemGenerator::MakeShortDescription(MTRand &rand)
+{
+	m_econ.econType = 0;
+	if ((m_econ.industrial > m_econ.metallicity) && (m_econ.industrial > m_econ.agricultural)) {
+		m_econ.econType = ECON_INDUSTRY;
+	} else if (m_econ.metallicity > m_econ.agricultural) {
+		m_econ.econType = ECON_MINING;
+	} else {
+		m_econ.econType = ECON_AGRICULTURE;
+	}
+
+	if (m_unexplored) {
+		m_shortDesc = Lang::UNEXPLORED_SYSTEM_NO_DATA;
+	}
+
+	/* Total population is in billions */
+	else if(m_econ.totalPop == 0) {
+		m_shortDesc = Lang::SMALL_SCALE_PROSPECTING_NO_SETTLEMENTS;
+	} else if (m_econ.totalPop < fixed(1,10)) {
+		switch (m_econ.econType) {
+			case ECON_INDUSTRY: m_shortDesc = Lang::SMALL_INDUSTRIAL_OUTPOST; break;
+			case ECON_MINING: m_shortDesc = Lang::SOME_ESTABLISHED_MINING; break;
+			case ECON_AGRICULTURE: m_shortDesc = Lang::YOUNG_FARMING_COLONY; break;
+		}
+	} else if (m_econ.totalPop < fixed(1,2)) {
+		switch (m_econ.econType) {
+			case ECON_INDUSTRY: m_shortDesc = Lang::INDUSTRIAL_COLONY; break;
+			case ECON_MINING: m_shortDesc = Lang::MINING_COLONY; break;
+			case ECON_AGRICULTURE: m_shortDesc = Lang::OUTDOOR_AGRICULTURAL_WORLD; break;
+		}
+	} else if (m_econ.totalPop < fixed(5,1)) {
+		switch (m_econ.econType) {
+			case ECON_INDUSTRY: m_shortDesc = Lang::HEAVY_INDUSTRY; break;
+			case ECON_MINING: m_shortDesc = Lang::EXTENSIVE_MINING; break;
+			case ECON_AGRICULTURE: m_shortDesc = Lang::THRIVING_OUTDOOR_WORLD; break;
+		}
+	} else {
+		switch (m_econ.econType) {
+			case ECON_INDUSTRY: m_shortDesc = Lang::INDUSTRIAL_HUB_SYSTEM; break;
+			case ECON_MINING: m_shortDesc = Lang::VAST_STRIP_MINE; break;
+			case ECON_AGRICULTURE: m_shortDesc = Lang::HIGH_POPULATION_OUTDOOR_WORLD; break;
+		}
+	}
+}
+
