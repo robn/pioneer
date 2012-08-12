@@ -221,7 +221,7 @@ bool Frame::IsStationRotFrame() const
 
 // Find system body this frame is for.
 
-SystemBody *Frame::GetSystemBodyFor() const
+const SystemBody *Frame::GetSystemBodyFor() const
 {
 	if (m_sbody) return m_sbody;
 	if (m_parent) return m_parent->m_sbody; // rotating frame of planet

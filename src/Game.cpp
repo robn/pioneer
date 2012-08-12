@@ -487,7 +487,7 @@ void Game::SwitchToNormalSpace()
 					// flyto command in onEnterSystem so it should sort it
 					// itself out long before the player can get near
 
-					SystemBody *sbody = m_space->GetStarSystem()->GetBodyByPath(&sdest);
+					const SystemBody *sbody = m_space->GetStarSystem()->GetBodyByPath(&sdest);
 					if (sbody->type == SystemBody::TYPE_STARPORT_ORBITAL) {
 						ship->SetFrame(target_body->GetFrame());
 						ship->SetPosition(MathUtil::RandomPointOnSphere(1000.0)*1000.0); // somewhere 1000km out

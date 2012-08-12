@@ -52,7 +52,7 @@ static void position_system_lights(Frame *camFrame, Frame *frame, std::vector<Ca
 	if (lights.size() > 3) return;
 	// not using frame->GetSystemBodyFor() because it snoops into parent frames,
 	// causing duplicate finds for static and rotating frame
-	SystemBody *body = frame->m_sbody;
+	const SystemBody *body = frame->m_sbody;
 
 	if (body && (body->GetSuperType() == SystemBody::SUPERTYPE_STAR)) {
 		matrix4x4d m;

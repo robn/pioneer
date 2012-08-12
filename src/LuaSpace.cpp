@@ -22,7 +22,7 @@
  * Various functions to create and find objects in the current physics space.
  */
 
-static void _unpack_hyperspace_args(lua_State *l, int index, SystemPath* &path, double &due)
+static void _unpack_hyperspace_args(lua_State *l, int index, const SystemPath* &path, double &due)
 {
 	if (lua_isnone(l, index)) return;
 
@@ -48,7 +48,7 @@ static void _unpack_hyperspace_args(lua_State *l, int index, SystemPath* &path, 
 	LUA_DEBUG_END(l, 0);
 }
 
-static Body *_maybe_wrap_ship_with_cloud(Ship *ship, SystemPath *path, double due)
+static Body *_maybe_wrap_ship_with_cloud(Ship *ship, const SystemPath *path, double due)
 {
 	if (!path) return ship;
 
@@ -121,7 +121,7 @@ static int l_space_spawn_ship(lua_State *l)
 	float min_dist = luaL_checknumber(l, 2);
 	float max_dist = luaL_checknumber(l, 3);
 
-	SystemPath *path = NULL;
+	const SystemPath *path = 0;
 	double due = -1;
 	_unpack_hyperspace_args(l, 4, path, due);
 
@@ -204,7 +204,7 @@ static int l_space_spawn_ship_near(lua_State *l)
 	float min_dist = luaL_checknumber(l, 3);
 	float max_dist = luaL_checknumber(l, 4);
 
-	SystemPath *path = NULL;
+	const SystemPath *path = 0;
 	double due = -1;
 	_unpack_hyperspace_args(l, 5, path, due);
 

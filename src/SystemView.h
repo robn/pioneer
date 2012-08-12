@@ -19,18 +19,18 @@ public:
 private:
 	static const double PICK_OBJECT_RECT_SIZE;
 	void PutOrbit(const Orbit &orbit, vector3d offset);
-	void PutBody(SystemBody *b, vector3d offset);
-	void PutLabel(SystemBody *b, vector3d offset);
+	void PutBody(const SystemBody *b, vector3d offset);
+	void PutLabel(const SystemBody *b, vector3d offset);
 	void PutSelectionBox(const SystemBody *b, const vector3d &rootPos, const Color &col);
 	void PutSelectionBox(const vector3d &worldPos, const Color &col);
-	void GetTransformTo(SystemBody *b, vector3d &pos);
-	void OnClickObject(SystemBody *b);
+	void GetTransformTo(const SystemBody *b, vector3d &pos);
+	void OnClickObject(const SystemBody *b);
 	void OnClickAccel(float step);
 	void ResetViewpoint();
 	void MouseButtonDown(int button, int x, int y);
 
 	RefCountedPtr<StarSystem> m_system;
-	SystemBody *m_selectedObject;
+	const SystemBody *m_selectedObject;
 	float m_rot_x, m_rot_z;
 	float m_zoom;
 	double m_time;

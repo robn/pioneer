@@ -20,7 +20,7 @@ SystemInfoView::SystemInfoView()
 	m_refresh = false;
 }
 
-void SystemInfoView::OnBodySelected(SystemBody *b)
+void SystemInfoView::OnBodySelected(const SystemBody *b)
 {
 	RefCountedPtr<StarSystem> currentSys = Pi::game->GetSpace()->GetStarSystem();
 	if (currentSys && currentSys->GetDescriptor().path == m_system->GetDescriptor().path) {
@@ -32,7 +32,7 @@ void SystemInfoView::OnBodySelected(SystemBody *b)
 	UpdateIconSelections();
 }
 
-void SystemInfoView::OnBodyViewed(SystemBody *b)
+void SystemInfoView::OnBodyViewed(const SystemBody *b)
 {
 	std::string desc, data;
 
@@ -88,7 +88,7 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 		}
 		int numSurfaceStarports = 0;
 		std::string nameList;
-		for (std::vector<SystemBody*>::iterator i = b->children.begin(); i != b->children.end(); ++i) {
+		for (std::vector<const SystemBody*>::const_iterator i = b->children.begin(); i != b->children.end(); ++i) {
 			if ((*i)->type == SystemBody::TYPE_STARPORT_SURFACE) {
 				nameList += (numSurfaceStarports ? ", " : "") + (*i)->name;
 				numSurfaceStarports++;
@@ -175,7 +175,7 @@ void SystemInfoView::UpdateEconomyTab()
 	m_econInfoTab->ResizeRequest();
 }
 
-void SystemInfoView::PutBodies(SystemBody *body, Gui::Fixed *container, int dir, float pos[2], int &majorBodies, int &starports, int &onSurface, float &prevSize)
+void SystemInfoView::PutBodies(const SystemBody *body, Gui::Fixed *container, int dir, float pos[2], int &majorBodies, int &starports, int &onSurface, float &prevSize)
 {
 	float size[2];
 	float myPos[2];
@@ -190,7 +190,7 @@ void SystemInfoView::PutBodies(SystemBody *body, Gui::Fixed *container, int dir,
 		BodyIcon *ib = new BodyIcon(body->GetIcon());
 		ib->SetRenderer(m_renderer);
 		if (body->GetSuperType() == SystemBody::SUPERTYPE_ROCKY_PLANET) {
-			for (std::vector<SystemBody*>::iterator i = body->children.begin(); i != body->children.end(); ++i) {
+			for (std::vector<const SystemBody*>::const_iterator i = body->children.begin(); i != body->children.end(); ++i) {
 				if ((*i)->type == SystemBody::TYPE_STARPORT_SURFACE) {
 					ib->SetHasStarport();
 					break;
@@ -218,7 +218,7 @@ void SystemInfoView::PutBodies(SystemBody *body, Gui::Fixed *container, int dir,
 	}
 
 	float prevSizeForKids = size[!dir];
-	for (std::vector<SystemBody*>::iterator i = body->children.begin();
+	for (std::vector<const SystemBody*>::const_iterator i = body->children.begin();
 	     i != body->children.end(); ++i) {
 		PutBodies(*i, container, dir, myPos, majorBodies, starports, onSurface, prevSizeForKids);
 	}

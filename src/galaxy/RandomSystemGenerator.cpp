@@ -373,9 +373,12 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 	int idx=0;
 	bool make_moons = superType <= SystemBody::SUPERTYPE_STAR;
 
-	for (std::vector<SystemBody*>::iterator i = primary->children.begin(); i != primary->children.end(); ++i) {
+	for (std::vector<const SystemBody*>::iterator i = primary->children.begin(); i != primary->children.end(); ++i) {
+		// XXX SYSGEN CONST
+		SystemBody *sbody = const_cast<SystemBody*>(*i);
+
 		// planets around a binary pair [gravpoint] -- ignore the stars...
-		if ((*i)->GetSuperType() == SystemBody::SUPERTYPE_STAR) continue;
+		if (sbody->GetSuperType() == SystemBody::SUPERTYPE_STAR) continue;
 		// Turn them into something!!!!!!!
 		char buf[8];
 		if (superType <= SystemBody::SUPERTYPE_STAR) {
@@ -385,9 +388,9 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 			// moon naming scheme
 			snprintf(buf, sizeof(buf), " %d", 1+idx);
 		}
-		(*i)->name = primary->name+buf;
-		(*i)->PickPlanetType(rand);
-		if (make_moons) MakePlanetsAround(*i, rand);
+		sbody->name = primary->name+buf;
+		sbody->PickPlanetType(rand);
+		if (make_moons) MakePlanetsAround(sbody, rand);
 		idx++;
 	}
 }
@@ -407,7 +410,7 @@ static void position_settlement_on_planet(SystemBody *b)
 void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 {
 	for (unsigned int i=0; i<body->children.size(); i++) {
-		PopulateAddStations(body->children[i]);
+		PopulateAddStations(const_cast<SystemBody*>(body->children[i])); // XXX SYSGEN CONST
 	}
 
 	unsigned long _init[6] = { m_desc.path.systemIndex, Uint32(m_desc.path.sectorX),
@@ -528,7 +531,7 @@ static const int CELSIUS = 273;
 void RandomSystemGenerator::PopulateStage1(SystemBody *sbody, fixed &outTotalPop)
 {
 	for (unsigned int i=0; i<sbody->children.size(); i++) {
-		PopulateStage1(sbody->children[i], outTotalPop);
+		PopulateStage1(const_cast<SystemBody*>(sbody->children[i]), outTotalPop); // XXX SYSGEN CONST
 	}
 
 	// unexplored systems have no population (that we know about)

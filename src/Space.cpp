@@ -125,7 +125,7 @@ Body *Space::GetBodyByIndex(Uint32 idx) const
 	return m_bodyIndex[idx];
 }
 
-SystemBody *Space::GetSystemBodyByIndex(Uint32 idx) const
+const SystemBody *Space::GetSystemBodyByIndex(Uint32 idx) const
 {
 	assert(m_sbodyIndexValid);
 	assert(m_sbodyIndex.size() > idx);
@@ -167,7 +167,7 @@ void Space::AddFrameToIndex(Frame *frame)
 		AddFrameToIndex(*i);
 }
 
-void Space::AddSystemBodyToIndex(SystemBody *sbody)
+void Space::AddSystemBodyToIndex(const SystemBody *sbody)
 {
 	assert(sbody);
 	m_sbodyIndex.push_back(sbody);
@@ -301,7 +301,7 @@ Body *Space::FindNearestTo(const Body *b, Object::Type t) const
 Body *Space::FindBodyForPath(const SystemPath *path) const
 {
 	// it is a bit dumb that currentSystem is not part of Space...
-	SystemBody *body = m_starSystem->GetBodyByPath(path);
+	const SystemBody *body = m_starSystem->GetBodyByPath(path);
 
 	if (!body) return 0;
 
@@ -336,7 +336,7 @@ static void SetFrameOrientationFromSystemBodyAxialTilt(Frame *f, const SystemBod
 	f->SetRotationOnly(rot);
 }
 
-static Frame *MakeFrameFor(SystemBody *sbody, Body *b, Frame *f)
+static Frame *MakeFrameFor(const SystemBody *sbody, Body *b, Frame *f)
 {
 	Frame *orbFrame, *rotFrame;
 	double frameRadius;
@@ -448,7 +448,7 @@ static Frame *MakeFrameFor(SystemBody *sbody, Body *b, Frame *f)
 	return NULL;
 }
 
-void Space::GenBody(SystemBody *sbody, Frame *f)
+void Space::GenBody(const SystemBody *sbody, Frame *f)
 {
 	Body *b = 0;
 
@@ -470,7 +470,7 @@ void Space::GenBody(SystemBody *sbody, Frame *f)
 	}
 	f = MakeFrameFor(sbody, b, f);
 
-	for (std::vector<SystemBody*>::iterator i = sbody->children.begin(); i != sbody->children.end(); ++i) {
+	for (std::vector<const SystemBody*>::const_iterator i = sbody->children.begin(); i != sbody->children.end(); ++i) {
 		GenBody(*i, f);
 	}
 }

@@ -7,7 +7,7 @@
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 
-TerrainBody::TerrainBody(SystemBody *sbody) :
+TerrainBody::TerrainBody(const SystemBody *sbody) :
 	Body(),
 	m_sbody(0),
 	m_pos(vector3d(0,0,0)),
@@ -33,7 +33,7 @@ TerrainBody::~TerrainBody()
 }
 
 
-void TerrainBody::InitTerrainBody(SystemBody *sbody)
+void TerrainBody::InitTerrainBody(const SystemBody *sbody)
 {
 	assert(!m_sbody);
 	m_sbody = sbody;
@@ -53,7 +53,7 @@ void TerrainBody::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
 	m_pos = rd.Vector3d();
-	SystemBody *sbody = space->GetSystemBodyByIndex(rd.Int32());
+	const SystemBody *sbody = space->GetSystemBodyByIndex(rd.Int32());
 	InitTerrainBody(sbody);
 }
 

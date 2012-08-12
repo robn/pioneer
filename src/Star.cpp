@@ -11,7 +11,7 @@ Star::Star() : TerrainBody()
 {
 }
 
-Star::Star(SystemBody *sbody): TerrainBody(sbody)
+Star::Star(const SystemBody *sbody): TerrainBody(sbody)
 {
 	m_hasDoubleFrame = false;
 }

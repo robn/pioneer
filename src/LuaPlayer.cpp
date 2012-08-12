@@ -76,7 +76,7 @@ static void _table_to_mission(lua_State *l, Mission &m, bool create)
 
 	lua_getfield(l, -1, "location");
 	if (create || !lua_isnil(l, -1)) {
-		SystemPath *sbody = LuaSystemPath::GetFromLua(-1);
+		const SystemPath *sbody = LuaSystemPath::GetFromLua(-1);
 		m.location = *sbody;
 	}
 	lua_pop(l, 1);

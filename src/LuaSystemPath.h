@@ -2,6 +2,6 @@
 #define _LUASYSTEMPATH_H
 
 class SystemPath;
-typedef LuaObjectUncopyable<SystemPath,LuaUncopyable<SystemPath> > LuaSystemPath;
+typedef LuaObjectUncopyable<const SystemPath,LuaUncopyable<const SystemPath> > LuaSystemPath;
 
 #endif

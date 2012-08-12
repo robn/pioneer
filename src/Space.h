@@ -35,7 +35,7 @@ public:
 	// if called while invalid
 	Frame *GetFrameByIndex(Uint32 idx) const;
 	Body  *GetBodyByIndex(Uint32 idx) const;
-	SystemBody *GetSystemBodyByIndex(Uint32 idx) const;
+	const SystemBody *GetSystemBodyByIndex(Uint32 idx) const;
 	Uint32 GetIndexForFrame(const Frame *frame) const;
 	Uint32 GetIndexForBody(const Body *body) const;
 	Uint32 GetIndexForSystemBody(const SystemBody *sbody) const;
@@ -62,7 +62,7 @@ public:
 	Background::Container& GetBackground() { return m_background; }
 
 private:
-	void GenBody(SystemBody *b, Frame *f);
+	void GenBody(const SystemBody *b, Frame *f);
 	// make sure SystemBody* is in Pi::currentSystem
 	Frame *GetFrameWithSystemBody(const SystemBody *b) const;
 
@@ -88,12 +88,12 @@ private:
 	void RebuildSystemBodyIndex();
 
 	void AddFrameToIndex(Frame *frame);
-	void AddSystemBodyToIndex(SystemBody *sbody);
+	void AddSystemBodyToIndex(const SystemBody *sbody);
 
 	bool m_frameIndexValid, m_bodyIndexValid, m_sbodyIndexValid;
 	std::vector<Frame*> m_frameIndex;
 	std::vector<Body*>  m_bodyIndex;
-	std::vector<SystemBody*> m_sbodyIndex;
+	std::vector<const SystemBody*> m_sbodyIndex;
 
 	//background (elements that are infinitely far away,
 	//e.g. starfield and milky way)

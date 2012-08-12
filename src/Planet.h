@@ -13,7 +13,7 @@ namespace Graphics {
 class Planet: public TerrainBody {
 public:
 	OBJDEF(Planet, TerrainBody, PLANET);
-	Planet(SystemBody*);
+	Planet(const SystemBody*);
 	Planet();
 	virtual ~Planet();
 

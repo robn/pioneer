@@ -84,7 +84,7 @@ void AmbientSounds::Update()
 
 		// lets try something random for the time being
 		if (!planetSurfaceNoise.IsPlaying()) {
-			SystemBody *sbody = Pi::player->GetFrame()->GetSystemBodyFor();
+			const SystemBody *sbody = Pi::player->GetFrame()->GetSystemBodyFor();
 			assert(sbody);
 			const char *sample = NULL;
 

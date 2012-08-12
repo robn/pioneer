@@ -110,7 +110,7 @@ void SystemView::PutOrbit(const Orbit &orbit, vector3d offset)
 	m_renderer->DrawLines(COUNTOF(vts), vts, green, LINE_LOOP);
 }
 
-void SystemView::OnClickObject(SystemBody *b)
+void SystemView::OnClickObject(const SystemBody *b)
 {
 	m_selectedObject = b;
 	std::string desc;
@@ -152,7 +152,7 @@ void SystemView::OnClickObject(SystemBody *b)
 	}
 }
 
-void SystemView::PutLabel(SystemBody *b, vector3d offset)
+void SystemView::PutLabel(const SystemBody *b, vector3d offset)
 {
 	Gui::Screen::EnterOrtho();
 
@@ -171,7 +171,7 @@ void SystemView::PutLabel(SystemBody *b, vector3d offset)
 
 matrix4x4f s_invRot;
 
-void SystemView::PutBody(SystemBody *b, vector3d offset)
+void SystemView::PutBody(const SystemBody *b, vector3d offset)
 {
 	if (b->type == SystemBody::TYPE_STARPORT_SURFACE) return;
 	if (b->type != SystemBody::TYPE_GRAVPOINT) {
@@ -195,7 +195,7 @@ void SystemView::PutBody(SystemBody *b, vector3d offset)
 		PutLabel(b, offset);
 	}
 
-	if (b->children.size()) for(std::vector<SystemBody*>::iterator kid = b->children.begin(); kid != b->children.end(); ++kid) {
+	if (b->children.size()) for(std::vector<const SystemBody*>::const_iterator kid = b->children.begin(); kid != b->children.end(); ++kid) {
 
 		const Orbit orbit = (*kid)->GetOrbit();
 		if (is_zero_general(orbit.GetSemiMajorAxis())) continue;
@@ -262,7 +262,7 @@ void SystemView::PutSelectionBox(const vector3d &worldPos, const Color &col)
 static const GLfloat fogDensity = 0.1f;
 static const GLfloat fogColor[4] = { 0,0,0,1.0f };
 
-void SystemView::GetTransformTo(SystemBody *b, vector3d &pos)
+void SystemView::GetTransformTo(const SystemBody *b, vector3d &pos)
 {
 	if (b->parent) {
 		GetTransformTo(b->parent, pos);

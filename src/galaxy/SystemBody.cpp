@@ -706,7 +706,7 @@ SystemBody::AtmosphereParameters SystemBody::CalcAtmosphereParams() const
 
 SystemBody::~SystemBody()
 {
-	for (std::vector<SystemBody*>::iterator i = children.begin(); i != children.end(); ++i) {
+	for (std::vector<const SystemBody*>::iterator i = children.begin(); i != children.end(); ++i) {
 		delete (*i);
 	}
 }

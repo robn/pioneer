@@ -833,21 +833,21 @@ void WorldView::AddCommsNavOption(std::string msg, Body *target)
 
 void WorldView::BuildCommsNavOptions()
 {
-	std::map< Uint32,std::vector<SystemBody*> > groups;
+	std::map< Uint32,std::vector<const SystemBody*> > groups;
 
 	m_commsNavOptions->PackEnd(new Gui::Label(std::string("#ff0")+std::string(Lang::NAVIGATION_TARGETS_IN_THIS_SYSTEM)+std::string("\n")));
 
-	for ( std::vector<SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->m_bodies.begin();
+	for ( std::vector<const SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->m_bodies.begin();
 	      i != Pi::game->GetSpace()->GetStarSystem()->m_bodies.end(); ++i) {
         if ((*i)->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)
             continue;
 		groups[(*i)->parent->path.bodyIndex].push_back(*i);
 	}
 
-	for ( std::map< Uint32,std::vector<SystemBody*> >::const_iterator i = groups.begin(); i != groups.end(); ++i ) {
+	for ( std::map< Uint32,std::vector<const SystemBody*> >::const_iterator i = groups.begin(); i != groups.end(); ++i ) {
 		m_commsNavOptions->PackEnd(new Gui::Label("#f0f" + Pi::game->GetSpace()->GetStarSystem()->m_bodies[(*i).first]->name));
 
-		for ( std::vector<SystemBody*>::const_iterator j = (*i).second.begin(); j != (*i).second.end(); ++j) {
+		for ( std::vector<const SystemBody*>::const_iterator j = (*i).second.begin(); j != (*i).second.end(); ++j) {
 			Body *body = Pi::game->GetSpace()->FindBodyForPath(&((*j)->path));
 			AddCommsNavOption((*j)->name, body);
 		}

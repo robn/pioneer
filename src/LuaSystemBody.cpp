@@ -33,7 +33,7 @@
  */
 static int l_sbody_attr_index(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->path.bodyIndex);
 	return 1;
 }
@@ -53,7 +53,7 @@ static int l_sbody_attr_index(lua_State *l)
  */
 static int l_sbody_attr_name(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, sbody->name.c_str());
 	return 1;
 }
@@ -73,7 +73,7 @@ static int l_sbody_attr_name(lua_State *l)
  */
 static int l_sbody_attr_type(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, LuaConstants::GetConstantString(l, "BodyType", sbody->type));
 	return 1;
 }
@@ -93,7 +93,7 @@ static int l_sbody_attr_type(lua_State *l)
  */
 static int l_sbody_attr_super_type(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushstring(l, LuaConstants::GetConstantString(l, "BodySuperType", sbody->GetSuperType()));
 	return 1;
 }
@@ -119,7 +119,7 @@ static int l_sbody_attr_super_type(lua_State *l)
  */
 static int l_sbody_attr_seed(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->seed);
 	return 1;
 }
@@ -139,12 +139,12 @@ static int l_sbody_attr_seed(lua_State *l)
  */
 static int l_sbody_attr_parent(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 
 	// sbody->parent is 0 as it was cleared by the acquirer. we need to go
 	// back to the starsystem proper to get what we need.
 	RefCountedPtr<StarSystem> s = Pi::systemCache->GetSystem(sbody->path);
-	SystemBody *live_sbody = s->GetBodyByPath(sbody->path);
+	const SystemBody *live_sbody = s->GetBodyByPath(sbody->path);
 
 	if (!live_sbody->parent)
 		return 0;
@@ -168,7 +168,7 @@ static int l_sbody_attr_parent(lua_State *l)
  */
 static int l_sbody_attr_population(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->econ.population.ToDouble());
 	return 1;
 }
@@ -188,7 +188,7 @@ static int l_sbody_attr_population(lua_State *l)
  */
 static int l_sbody_attr_radius(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->GetRadius());
 	return 1;
 }
@@ -208,7 +208,7 @@ static int l_sbody_attr_radius(lua_State *l)
  */
 static int l_sbody_attr_mass(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->GetMass());
 	return 1;
 }
@@ -228,7 +228,7 @@ static int l_sbody_attr_mass(lua_State *l)
  */
 static int l_sbody_attr_gravity(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->CalcSurfaceGravity());
 	return 1;
 }
@@ -248,7 +248,7 @@ static int l_sbody_attr_gravity(lua_State *l)
  */
 static int l_sbody_attr_periapsis(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbit.orbMin.ToDouble()*AU);
 	return 1;
 }
@@ -268,7 +268,7 @@ static int l_sbody_attr_periapsis(lua_State *l)
  */
 static int l_sbody_attr_apoapsis(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbit.orbMax.ToDouble()*AU);
 	return 1;
 }
@@ -288,7 +288,7 @@ static int l_sbody_attr_apoapsis(lua_State *l)
  */
 static int l_sbody_attr_rotation_period(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->phys.rotationPeriod.ToDouble());
 	return 1;
 }
@@ -308,7 +308,7 @@ static int l_sbody_attr_rotation_period(lua_State *l)
  */
 static int l_sbody_attr_semi_major_axis(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbit.semiMajorAxis.ToDouble()*AU);
 	return 1;
 }
@@ -328,7 +328,7 @@ static int l_sbody_attr_semi_major_axis(lua_State *l)
  */
 static int l_sbody_attr_eccentricty(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->orbit.eccentricity.ToDouble());
 	return 1;
 }
@@ -348,7 +348,7 @@ static int l_sbody_attr_eccentricty(lua_State *l)
  */
 static int l_sbody_attr_axial_tilt(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushnumber(l, sbody->phys.axialTilt.ToDouble());
 	return 1;
 }
@@ -368,7 +368,7 @@ static int l_sbody_attr_axial_tilt(lua_State *l)
  */
 static int l_sbody_attr_average_temp(lua_State *l)
 {
-	SystemBody *sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody *sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushinteger(l, sbody->phys.averageTemp);
 	return 1;
 }
@@ -389,7 +389,7 @@ static int l_sbody_attr_average_temp(lua_State *l)
 
 static int l_sbody_attr_has_atmosphere(lua_State *l)
 {
-	SystemBody * sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody * sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushboolean(l, sbody->HasAtmosphere());
 	return 1;
 }
@@ -410,14 +410,14 @@ static int l_sbody_attr_has_atmosphere(lua_State *l)
 
 static int l_sbody_attr_is_scoopable(lua_State *l)
 {
-	SystemBody * sbody = LuaSystemBody::GetFromLua(1);
+	const SystemBody * sbody = LuaSystemBody::GetFromLua(1);
 	lua_pushboolean(l, sbody->IsScoopable());
 	return 1;
 }
 
-template <> const char *LuaObject<LuaUncopyable<SystemBody> >::s_type = "SystemBody";
+template <> const char *LuaObject<LuaUncopyable<const SystemBody> >::s_type = "SystemBody";
 
-template <> void LuaObject<LuaUncopyable<SystemBody> >::RegisterClass()
+template <> void LuaObject<LuaUncopyable<const SystemBody> >::RegisterClass()
 {
 	static const luaL_Reg l_attrs[] = {
 		{ "index",          l_sbody_attr_index           },

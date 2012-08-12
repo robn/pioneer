@@ -30,17 +30,17 @@ public:
 	}
 
 protected:
-	TerrainBody(SystemBody*);
+	TerrainBody(const SystemBody*);
 	TerrainBody();
 	virtual ~TerrainBody();
 
-	void InitTerrainBody(SystemBody *);
+	void InitTerrainBody(const SystemBody *);
 
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
 
 private:
-	SystemBody *m_sbody;
+	const SystemBody *m_sbody;
 	vector3d m_pos;
 	double m_mass;
 	GeoSphere *m_geosphere;

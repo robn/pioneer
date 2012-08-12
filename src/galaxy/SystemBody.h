@@ -192,8 +192,8 @@ public:
 
 	bool IsScoopable() const;
 
-	SystemBody *parent;
-	std::vector<SystemBody*> children;
+	const SystemBody *parent;
+	std::vector<const SystemBody*> children;
 
 	BodyType type;
 	SystemPath path;

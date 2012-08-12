@@ -26,7 +26,7 @@ StarSystem::StarSystem(
 	rootBody = m_bodies[0];
 }
 
-SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
+const SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
 	assert(m_desc.path.IsSameSystem(path));
 	assert(path.IsBodyPath());

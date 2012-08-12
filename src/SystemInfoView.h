@@ -33,10 +33,10 @@ private:
 	};
 	void SystemChanged(const SystemPath &path);
 	void UpdateEconomyTab();
-	void OnBodyViewed(SystemBody *b);
-	void OnBodySelected(SystemBody *b);
+	void OnBodyViewed(const SystemBody *b);
+	void OnBodySelected(const SystemBody *b);
 	void OnClickBackground(Gui::MouseButtonEvent *e);
-	void PutBodies(SystemBody *body, Gui::Fixed *container, int dir, float pos[2], int &majorBodies, int &starports, int &onSurface, float &prevSize);
+	void PutBodies(const SystemBody *body, Gui::Fixed *container, int dir, float pos[2], int &majorBodies, int &starports, int &onSurface, float &prevSize);
 	void UpdateIconSelections();
 	Gui::VBox *m_infoBox;
 	Gui::Label *m_econInfo;

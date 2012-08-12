@@ -963,7 +963,7 @@ static int l_ship_fire_missile_at(lua_State *l)
 static int l_ship_check_hyperspace_to(lua_State *l)
 {
 	Ship *s = LuaShip::GetFromLua(1);
-	SystemPath *dest = LuaSystemPath::GetFromLua(2);
+	const SystemPath *dest = LuaSystemPath::GetFromLua(2);
 
 	int fuel;
 	double duration;
@@ -1015,7 +1015,7 @@ static int l_ship_check_hyperspace_to(lua_State *l)
 static int l_ship_get_hyperspace_details(lua_State *l)
 {
 	Ship *s = LuaShip::GetFromLua(1);
-	SystemPath *dest = LuaSystemPath::GetFromLua(2);
+	const SystemPath *dest = LuaSystemPath::GetFromLua(2);
 
 	int fuel;
 	double duration;
@@ -1067,7 +1067,7 @@ static int l_ship_get_hyperspace_details(lua_State *l)
 static int l_ship_hyperspace_to(lua_State *l)
 {
 	Ship *s = LuaShip::GetFromLua(1);
-	SystemPath *dest = LuaSystemPath::GetFromLua(2);
+	const SystemPath *dest = LuaSystemPath::GetFromLua(2);
 
 	int fuel;
 	double duration;

@@ -59,7 +59,7 @@ public:
 		bool _unexplored, const std::string &_shortDesc, const std::string &_longDesc = "");
 	~StarSystem();
 
-	SystemBody *GetBodyByPath(const SystemPath &path) const;
+	const SystemBody *GetBodyByPath(const SystemPath &path) const;
 	static void Serialize(Serializer::Writer &wr, StarSystem *);
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
 
@@ -69,9 +69,9 @@ public:
 	const std::string &GetShortDescription() const { return m_shortDesc; }
 	const std::string &GetLongDescription() const { return m_longDesc; }
 
-	SystemBody *rootBody;
+	const SystemBody *rootBody;
 	// index into this will be the SystemBody ID used by SystemPath
-	std::vector<SystemBody*> m_bodies;
+	std::vector<const SystemBody*> m_bodies;
 
 private:
 	SystemDescriptor m_desc;

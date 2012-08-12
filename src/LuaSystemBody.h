@@ -19,6 +19,6 @@ public:
 };
 
 class SystemBody;
-typedef LuaObjectUncopyable<SystemBody,LuaUncopyable<SystemBody> > LuaSystemBody;
+typedef LuaObjectUncopyable<const SystemBody,LuaUncopyable<const SystemBody> > LuaSystemBody;
 
 #endif
