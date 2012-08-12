@@ -354,6 +354,8 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 	}
 
 	{
+		SysPolit polit = Polit::MakeSysPolit(m_system.Get());
+
 		Gui::Fixed *col1 = new Gui::Fixed();
 		demographicsTab->Add(col1, 200, 350);
 		Gui::Fixed *col2 = new Gui::Fixed();
@@ -365,13 +367,13 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		col2->Add(new Gui::Label(m_system->GetShortDescription()), 0, 0);
 
 		col1->Add((new Gui::Label(Lang::GOVERNMENT_TYPE))->Color(1,1,0), 0, YSEP);
-		col2->Add(new Gui::Label(m_system->GetSysPolit().GetGovernmentDesc()), 0, YSEP);
+		col2->Add(new Gui::Label(polit.GetGovernmentDesc()), 0, YSEP);
 
 		col1->Add((new Gui::Label(Lang::ECONOMY_TYPE))->Color(1,1,0), 0, 2*YSEP);
-		col2->Add(new Gui::Label(m_system->GetSysPolit().GetEconomicDesc()), 0, 2*YSEP);
+		col2->Add(new Gui::Label(polit.GetEconomicDesc()), 0, 2*YSEP);
 
 		col1->Add((new Gui::Label(Lang::ALLEGIANCE))->Color(1,1,0), 0, 3*YSEP);
-		col2->Add(new Gui::Label(m_system->GetSysPolit().GetAllegianceDesc()), 0, 3*YSEP);
+		col2->Add(new Gui::Label(polit.GetAllegianceDesc()), 0, 3*YSEP);
 
 		col1->Add((new Gui::Label(Lang::POPULATION))->Color(1,1,0), 0, 4*YSEP);
 		std::string popmsg;

@@ -7,6 +7,7 @@
 #include "LmrModel.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "Polit.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 #include "galaxy/SystemCache.h"

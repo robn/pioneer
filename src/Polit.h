@@ -65,6 +65,8 @@ namespace Polit {
 	void AddCrime(Sint64 crimeBitset, Sint64 addFine);
 	void GetCrime(Sint64 *crimeBitset, Sint64 *fine);
 
+	SysPolit MakeSysPolit(const StarSystem *s);
+
 	extern const char *crimeNames[64];
 }
 

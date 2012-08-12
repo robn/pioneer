@@ -3,7 +3,6 @@
 
 #include "libs.h"
 #include "EquipType.h"
-#include "Polit.h"
 #include "Serializer.h"
 #include <vector>
 #include <string>
@@ -43,7 +42,6 @@ public:
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
 	const char *GetShortDescription() const { return m_shortDesc.c_str(); }
 	const char *GetLongDescription() const { return m_longDesc.c_str(); }
-	const SysPolit &GetSysPolit() const { return m_polit; }
 
 	SystemBody *rootBody;
 	std::vector<SystemBody*> m_spaceStations;
@@ -79,7 +77,6 @@ public:
 
     // XXX temporarily making public
 	std::string m_shortDesc, m_longDesc;
-	SysPolit m_polit;
 
 private:
 	bool m_isCustom;

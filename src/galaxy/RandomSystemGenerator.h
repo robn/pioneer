@@ -30,7 +30,6 @@ private:
 	bool m_unexplored;
 
 	std::string m_shortDesc, m_longDesc;
-	SysPolit m_polit;
 
 	const SystemDescriptor m_desc;
 	std::vector<SystemBody*> m_bodies;

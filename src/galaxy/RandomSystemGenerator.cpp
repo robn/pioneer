@@ -153,9 +153,6 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 
 	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, m_econ, m_unexplored));
 
-    // XXX SYSGEN
-	Polit::GetSysPolitStarSystem(s.Get(), s->econ.totalPop, s->m_polit);
-
 	return s;
 }
 
@@ -520,8 +517,6 @@ void RandomSystemGenerator::Populate()
 		m_econ.tradeLevel[i] = (m_econ.tradeLevel[i] * MAX_COMMODITY_BASE_PRICE_ADJUSTMENT) / maximum;
 		m_econ.tradeLevel[i] += rand.Int32(-5, 5);
 	}
-
-	// XXX SYSGEN Polit::GetSysPolitStarSystem(this, m_econ.totalPop, m_polit);
 
 	if (!m_shortDesc.size())
 		MakeShortDescription(rand);

@@ -385,7 +385,7 @@ static int l_starsystem_attr_path(lua_State *l)
 static int l_starsystem_attr_lawlessness(lua_State *l)
 {
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	lua_pushnumber(l, s->GetSysPolit().lawlessness.ToDouble());
+	lua_pushnumber(l, Polit::MakeSysPolit(s).lawlessness.ToDouble());
 	return 1;
 }
 

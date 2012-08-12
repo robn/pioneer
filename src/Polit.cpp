@@ -129,7 +129,7 @@ void NotifyOfCrime(Ship *s, enum Crime crime)
 		Pi::cpan->MsgLog()->ImportantMessage(station->GetLabel(),
 				stringf(Lang::X_CANNOT_BE_TOLERATED_HERE, formatarg("crime", crimeNames[crimeIdx])));
 
-		float lawlessness = Pi::game->GetSpace()->GetStarSystem()->GetSysPolit().lawlessness.ToFloat();
+		float lawlessness = MakeSysPolit(Pi::game->GetSpace()->GetStarSystem().Get()).lawlessness.ToFloat();
 		Sint64 oldCrimes, oldFine;
 		GetCrime(&oldCrimes, &oldFine);
 		Sint64 newFine = std::max(1, 1 + int(crimeBaseFine[crimeIdx] * (1.0-lawlessness)));
@@ -141,7 +141,7 @@ void NotifyOfCrime(Ship *s, enum Crime crime)
 
 void AddCrime(Sint64 crimeBitset, Sint64 addFine)
 {
-	int politType = Pi::game->GetSpace()->GetStarSystem()->GetSysPolit().govType;
+	int politType = MakeSysPolit(Pi::game->GetSpace()->GetStarSystem().Get()).govType;
 
 	if (s_govDesc[politType].bloc != BLOC_NONE) {
 		const Bloc b = s_govDesc[politType].bloc;
@@ -165,7 +165,7 @@ void GetCrime(Sint64 *crimeBitset, Sint64 *fine)
 		return ;
 	}
 
-	int politType = Pi::game->GetSpace()->GetStarSystem()->GetSysPolit().govType;
+	int politType = MakeSysPolit(Pi::game->GetSpace()->GetStarSystem().Get()).govType;
 
 	if (s_govDesc[politType].bloc != BLOC_NONE) {
 		const Bloc b = s_govDesc[politType].bloc;
@@ -217,7 +217,7 @@ bool IsCommodityLegal(const StarSystem *s, Equip::Type t)
 	const unsigned long _init[5] = { Uint32(path.sectorX), Uint32(path.sectorY), Uint32(path.sectorZ), path.systemIndex, POLIT_SALT };
 	MTRand rand(_init, 5);
 
-	Polit::GovType a = s->GetSysPolit().govType;
+	Polit::GovType a = MakeSysPolit(s).govType;
 	const Bloc b = s_govDesc[a].bloc;
 
 	if (a == GOV_NONE) return true;
@@ -249,6 +249,12 @@ bool IsCommodityLegal(const StarSystem *s, Equip::Type t)
 			return false;
 		default: return true;
 	}
+}
+
+SysPolit MakeSysPolit(const StarSystem *s) {
+	SysPolit polit;
+	Polit::GetSysPolitStarSystem(s, s->econ.totalPop, polit);
+	return polit;
 }
 
 }

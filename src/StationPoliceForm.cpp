@@ -7,6 +7,7 @@
 #include "SpaceStationView.h"
 #include "Lang.h"
 #include "StringF.h"
+#include "Polit.h"
 
 void StationPoliceForm::OnOptionClicked(int option)
 {
