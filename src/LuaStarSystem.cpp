@@ -60,8 +60,11 @@ static int l_starsystem_get_station_paths(lua_State *l)
 	lua_newtable(l);
 	pi_lua_table_ro(l);
 
-	for (std::vector<SystemBody*>::const_iterator i = s->m_spaceStations.begin(); i != s->m_spaceStations.end(); i++)
+	for (std::vector<SystemBody*>::const_iterator i = s->m_bodies.begin(); i != s->m_bodies.end(); i++)
 	{
+		if ((*i)->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)
+			continue;
+
 		lua_pushinteger(l, lua_rawlen(l, -1)+1);
 		LuaSystemPath::PushToLua(&(*i)->path);
 		lua_rawset(l, -3);

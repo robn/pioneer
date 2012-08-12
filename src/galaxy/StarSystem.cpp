@@ -22,9 +22,6 @@ StarSystem::StarSystem(
 		(*i)->path = desc.path;
 		(*i)->path.bodyIndex = m_bodies.size();
 		m_bodies.push_back(*i);
-
-		if ((*i)->GetSuperType() == SystemBody::SUPERTYPE_STARPORT)
-			m_spaceStations.push_back(*i);
 	}
 	rootBody = m_bodies[0];
 }

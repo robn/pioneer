@@ -70,7 +70,6 @@ public:
 	const std::string &GetLongDescription() const { return m_longDesc; }
 
 	SystemBody *rootBody;
-	std::vector<SystemBody*> m_spaceStations;
 	// index into this will be the SystemBody ID used by SystemPath
 	std::vector<SystemBody*> m_bodies;
 

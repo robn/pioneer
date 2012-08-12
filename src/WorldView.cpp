@@ -837,9 +837,10 @@ void WorldView::BuildCommsNavOptions()
 
 	m_commsNavOptions->PackEnd(new Gui::Label(std::string("#ff0")+std::string(Lang::NAVIGATION_TARGETS_IN_THIS_SYSTEM)+std::string("\n")));
 
-	for ( std::vector<SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->m_spaceStations.begin();
-	      i != Pi::game->GetSpace()->GetStarSystem()->m_spaceStations.end(); ++i) {
-
+	for ( std::vector<SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->m_bodies.begin();
+	      i != Pi::game->GetSpace()->GetStarSystem()->m_bodies.end(); ++i) {
+        if ((*i)->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)
+            continue;
 		groups[(*i)->parent->path.bodyIndex].push_back(*i);
 	}
 
@@ -964,7 +965,7 @@ void WorldView::UpdateCommsOptions()
 
 	if (m_showTargetActionsTimeout == 0) return;
 
-	if (Pi::game->GetSpace()->GetStarSystem()->m_spaceStations.size() > 0)
+	if (Pi::game->GetSpace()->GetStarSystem()->GetEconomicData().totalPop > 0)
 	{
 		BuildCommsNavOptions();
 	}
