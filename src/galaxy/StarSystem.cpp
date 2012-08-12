@@ -13,8 +13,10 @@
 #include "SystemConstants.h"
 #include "SystemCache.h"
 
-StarSystem::StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ, bool _unexplored) :
-	desc(_desc), econ(_econ), unexplored(_unexplored)
+StarSystem::StarSystem(
+	const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ,
+	bool _unexplored, const std::string &_shortDesc, const std::string &_longDesc) :
+		desc(_desc), econ(_econ), unexplored(_unexplored), shortDesc(_shortDesc), longDesc(_longDesc)
 {
 	for (std::vector<SystemBody*>::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
 		(*i)->path = desc.path;

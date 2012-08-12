@@ -151,7 +151,7 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 	Populate();
 	PopulateAddStations(m_bodies[0]);
 
-	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, m_econ, m_unexplored));
+	RefCountedPtr<StarSystem> s(new StarSystem(m_desc, m_bodies, m_econ, m_unexplored, m_shortDesc));
 
 	return s;
 }

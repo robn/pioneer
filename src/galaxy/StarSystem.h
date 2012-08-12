@@ -32,7 +32,9 @@ public:
 
 	struct EconomicData;
 
-	StarSystem(const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ, bool _unexplored);
+	StarSystem(
+		const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ,
+		bool _unexplored, const std::string &_shortDesc, const std::string &_longDesc = "");
 	~StarSystem();
 
 	const SystemDescriptor desc;
@@ -40,8 +42,8 @@ public:
 	SystemBody *GetBodyByPath(const SystemPath &path) const;
 	static void Serialize(Serializer::Writer &wr, StarSystem *);
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
-	const char *GetShortDescription() const { return m_shortDesc.c_str(); }
-	const char *GetLongDescription() const { return m_longDesc.c_str(); }
+	const char *GetShortDescription() const { return shortDesc.c_str(); }
+	const char *GetLongDescription() const { return longDesc.c_str(); }
 
 	SystemBody *rootBody;
 	std::vector<SystemBody*> m_spaceStations;
@@ -75,8 +77,8 @@ public:
 
 	bool unexplored;
 
-    // XXX temporarily making public
-	std::string m_shortDesc, m_longDesc;
+	std::string shortDesc;
+	std::string longDesc;
 
 private:
 	bool m_isCustom;

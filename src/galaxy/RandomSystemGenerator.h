@@ -29,7 +29,7 @@ private:
 
 	bool m_unexplored;
 
-	std::string m_shortDesc, m_longDesc;
+	std::string m_shortDesc;
 
 	const SystemDescriptor m_desc;
 	std::vector<SystemBody*> m_bodies;
