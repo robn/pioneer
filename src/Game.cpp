@@ -334,7 +334,7 @@ double Game::GetHyperspaceArrivalProbability() const
 void Game::SwitchToHyperspace()
 {
 	// remember where we came from so we can properly place the player on exit
-	m_hyperspaceSource = m_space->GetStarSystem()->desc.path;
+	m_hyperspaceSource = m_space->GetStarSystem()->GetDescriptor().path;
 
 	const SystemPath &dest = m_player->GetHyperspaceDest();
 
@@ -561,7 +561,7 @@ void Game::CreatePlayer()
 	// XXX this should probably be in lua somewhere
 	// XXX no really, it should. per system hacks? oh my.
 
-	SystemPath startPath = m_space->GetStarSystem()->desc.path;
+	SystemPath startPath = m_space->GetStarSystem()->GetDescriptor().path;
 
 	if (startPath.IsSameSystem(SystemPath(-2,1,90,0))) {
 		// Lave

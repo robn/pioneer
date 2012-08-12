@@ -14,9 +14,9 @@
 #include "SystemCache.h"
 
 StarSystem::StarSystem(
-	const SystemDescriptor &_desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ,
-	bool _unexplored, const std::string &_shortDesc, const std::string &_longDesc) :
-		desc(_desc), econ(_econ), unexplored(_unexplored), shortDesc(_shortDesc), longDesc(_longDesc)
+	const SystemDescriptor &desc, const std::vector<SystemBody*> &bodies, const EconomicData &econ,
+	bool unexplored, const std::string &shortDesc, const std::string &longDesc) :
+		m_desc(desc), m_econ(econ), m_unexplored(unexplored), m_shortDesc(shortDesc), m_longDesc(longDesc)
 {
 	for (std::vector<SystemBody*>::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
 		(*i)->path = desc.path;
@@ -31,7 +31,7 @@ StarSystem::StarSystem(
 
 SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
-	assert(desc.path.IsSameSystem(path));
+	assert(m_desc.path.IsSameSystem(path));
 	assert(path.IsBodyPath());
 	assert(path.bodyIndex < m_bodies.size());
 
@@ -47,10 +47,10 @@ void StarSystem::Serialize(Serializer::Writer &wr, StarSystem *s)
 {
 	if (s) {
 		wr.Byte(1);
-		wr.Int32(s->desc.path.sectorX);
-		wr.Int32(s->desc.path.sectorY);
-		wr.Int32(s->desc.path.sectorZ);
-		wr.Int32(s->desc.path.systemIndex);
+		wr.Int32(s->m_desc.path.sectorX);
+		wr.Int32(s->m_desc.path.sectorY);
+		wr.Int32(s->m_desc.path.sectorZ);
+		wr.Int32(s->m_desc.path.systemIndex);
 	} else {
 		wr.Byte(0);
 	}

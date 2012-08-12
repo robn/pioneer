@@ -136,9 +136,9 @@ void AmbientSounds::Update()
 		{
 			if (Pi::game->IsNormalSpace()) {
 				StarSystem *s = Pi::game->GetSpace()->GetStarSystem().Get();
-				if (astroNoiseSeed != s->desc.seed) {
+				if (astroNoiseSeed != s->GetDescriptor().seed) {
 					// change sound!
-					astroNoiseSeed = s->desc.seed;
+					astroNoiseSeed = s->GetDescriptor().seed;
 					float target[2] = {0.0f,0.0f};
 					float dv_dt[2] = {0.1f,0.1f};
 					starNoise.VolumeAnimate(target, dv_dt);

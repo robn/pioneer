@@ -47,7 +47,7 @@ Space::Space(Game *game, const SystemPath &path)
 #endif
 {
 	m_starSystem = Pi::systemCache->GetSystem(path);
-	m_background.Refresh(m_starSystem->desc.seed);
+	m_background.Refresh(m_starSystem->GetDescriptor().seed);
 
 	// XXX set radius in constructor
 	m_rootFrame.Reset(new Frame(0, Lang::SYSTEM));
@@ -69,7 +69,7 @@ Space::Space(Game *game, Serializer::Reader &rd)
 #endif
 {
 	m_starSystem = StarSystem::Unserialize(rd);
-	m_background.Refresh(m_starSystem->desc.seed);
+	m_background.Refresh(m_starSystem->GetDescriptor().seed);
 	RebuildSystemBodyIndex();
 
 	Serializer::Reader section = rd.RdSection("Frames");
@@ -253,7 +253,7 @@ vector3d Space::GetHyperspaceExitPoint(const SystemPath &source) const
 	assert(m_starSystem);
 	assert(source.IsSystemPath());
 
-	const SystemPath &dest = m_starSystem->desc.path;
+	const SystemPath &dest = m_starSystem->GetDescriptor().path;
 
 	Sector source_sec(source.sectorX, source.sectorY, source.sectorZ);
 	Sector dest_sec(dest.sectorX, dest.sectorY, dest.sectorZ);
@@ -729,6 +729,6 @@ void Space::DebugDumpFrames()
 {
 	memset(space, ' ', sizeof(space));
 
-	printf("Frame structure for '%s':\n", m_starSystem->desc.name.c_str());
+	printf("Frame structure for '%s':\n", m_starSystem->GetDescriptor().name.c_str());
 	DebugDumpFrame(m_rootFrame.Get(), 2);
 }

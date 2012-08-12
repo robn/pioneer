@@ -147,7 +147,7 @@ static int l_starsystem_get_commodity_base_price_alterations(lua_State *l)
 
 	for (int e = Equip::FIRST_COMMODITY; e <= Equip::LAST_COMMODITY; e++) {
 		lua_pushstring(l, LuaConstants::GetConstantString(l, "EquipType", e));
-		lua_pushnumber(l, s->econ.tradeLevel[e]);
+		lua_pushnumber(l, s->GetEconomicData().tradeLevel[e]);
 		lua_rawset(l, -3);
 	}
 
@@ -233,7 +233,7 @@ static int l_starsystem_get_nearby_systems(lua_State *l)
 	lua_newtable(l);
 	pi_lua_table_ro(l);
 
-	SystemPath here = s->desc.path;
+	SystemPath here = s->GetDescriptor().path;
 
 	int here_x = here.sectorX;
 	int here_y = here.sectorY;
@@ -308,12 +308,12 @@ static int l_starsystem_distance_to(lua_State *l)
 	LUA_DEBUG_START(l);
 
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	const SystemPath *loc1 = &(s->desc.path);
+	const SystemPath *loc1 = &(s->GetDescriptor().path);
 
 	const SystemPath *loc2 = LuaSystemPath::CheckFromLua(2);
 	if (!loc2) {
 		StarSystem *s2 = LuaStarSystem::GetFromLua(2);
-		loc2 = &(s2->desc.path);
+		loc2 = &(s2->GetDescriptor().path);
 	}
 
 	Sector sec1(loc1->sectorX, loc1->sectorY, loc1->sectorZ);
@@ -344,7 +344,7 @@ static int l_starsystem_distance_to(lua_State *l)
 static int l_starsystem_attr_name(lua_State *l)
 {
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	lua_pushstring(l, s->desc.name.c_str());
+	lua_pushstring(l, s->GetDescriptor().name.c_str());
 	return 1;
 }
 
@@ -364,7 +364,7 @@ static int l_starsystem_attr_name(lua_State *l)
 static int l_starsystem_attr_path(lua_State *l)
 {
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	SystemPath path = s->desc.path;
+	SystemPath path = s->GetDescriptor().path;
 	LuaSystemPath::PushToLua(&path);
 	return 1;
 }
@@ -405,7 +405,7 @@ static int l_starsystem_attr_lawlessness(lua_State *l)
 static int l_starsystem_attr_population(lua_State *l)
 {
 	StarSystem *s = LuaStarSystem::GetFromLua(1);
-	lua_pushnumber(l, s->econ.totalPop.ToDouble());
+	lua_pushnumber(l, s->GetEconomicData().totalPop.ToDouble());
 	return 1;
 }
 

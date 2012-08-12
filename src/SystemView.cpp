@@ -144,7 +144,7 @@ void SystemView::OnClickObject(SystemBody *b)
 	m_infoText->SetText(data);
 
 	if (Pi::KeyState(SDLK_LSHIFT) || Pi::KeyState(SDLK_RSHIFT)) {
-		if (Pi::game->GetSpace()->GetStarSystem()->desc.path == m_system->desc.path) {
+		if (Pi::game->GetSpace()->GetStarSystem()->GetDescriptor().path == m_system->GetDescriptor().path) {
 			Body* body = Pi::game->GetSpace()->FindBodyForPath(&(b->path));
 			if (body != 0)
 				Pi::player->SetNavTarget(body);
@@ -277,7 +277,7 @@ void SystemView::Draw3D()
 
 	SystemPath path = Pi::sectorView->GetSelectedSystem();
 	if (m_system) {
-		if (!m_system->desc.path.IsSameSystem(path)) {
+		if (!m_system->GetDescriptor().path.IsSameSystem(path)) {
 			m_system.Reset();
 			ResetViewpoint();
 		}
@@ -306,7 +306,7 @@ void SystemView::Draw3D()
 	if (m_selectedObject) GetTransformTo(m_selectedObject, pos);
 
 	m_objectLabels->Clear();
-	if (m_system->unexplored)
+	if (m_system->IsUnexplored())
 		m_infoLabel->SetText(Lang::UNEXPLORED_SYSTEM_NO_SYSTEM_VIEW);
 	else if (m_system->rootBody) {
 		PutBody(m_system->rootBody, pos);

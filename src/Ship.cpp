@@ -468,7 +468,7 @@ void Ship::UpdateStats()
 
 static float distance_to_system(const SystemPath &dest)
 {
-	SystemPath here = Pi::game->GetSpace()->GetStarSystem()->desc.path;
+	SystemPath here = Pi::game->GetSpace()->GetStarSystem()->GetDescriptor().path;
 	assert(here.HasValidSystem());
 	assert(dest.HasValidSystem());
 
@@ -496,7 +496,7 @@ Ship::HyperjumpStatus Ship::GetHyperspaceDetails(const SystemPath &dest, int &ou
 		return HYPERJUMP_NO_DRIVE;
 
 	StarSystem *s = Pi::game->GetSpace()->GetStarSystem().Get();
-	if (s && s->desc.path.IsSameSystem(dest))
+	if (s && s->GetDescriptor().path.IsSameSystem(dest))
 		return HYPERJUMP_CURRENT_SYSTEM;
 
 	float dist = distance_to_system(dest);
