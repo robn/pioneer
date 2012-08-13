@@ -302,6 +302,7 @@ pioneer_SOURCES	= \
 pioneer_LDADD = \
 	../contrib/miniz/libminiz.a \
 	../contrib/jenkins/libjenkins.a \
+	../contrib/softfloat/libsoftfloat.a \
 	collider/libcollider.a \
 	text/libtext.a \
 	gui/libgui.a \
