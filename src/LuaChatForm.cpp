@@ -266,7 +266,7 @@ void LuaChatForm::Sold(Equip::Type t) {
  * object drives the user interface the player users to interact with the
  * script.
  *
- * As described in <SpaceStation.AddAdvert>, the chat function receives the ad
+ * As->described in <SpaceStation.AddAdvert>, the chat function receives the ad
  * reference and an action value. This function is responsible for calling
  * methods on the <ChatForm> object to modify the user interface in response
  * to the player's selections.

@@ -47,7 +47,7 @@ Space::Space(Game *game, const SystemPath &path)
 #endif
 {
 	m_starSystem = Pi::systemCache->GetSystem(path);
-	m_background.Refresh(m_starSystem->GetDescriptor().seed);
+	m_background.Refresh(m_starSystem->desc.seed);
 
 	// XXX set radius in constructor
 	m_rootFrame.Reset(new Frame(0, Lang::SYSTEM));
@@ -69,15 +69,15 @@ Space::Space(Game *game, Serializer::Reader &rd)
 #endif
 {
 	m_starSystem = StarSystem::Unserialize(rd);
-	m_background.Refresh(m_starSystem->GetDescriptor().seed);
+	m_background.Refresh(m_starSystem->desc.seed);
 	RebuildSystemBodyIndex();
 
 	Serializer::Reader section = rd.RdSection("Frames");
 	m_rootFrame.Reset(Frame::Unserialize(section, this, 0));
 	RebuildFrameIndex();
 
-	Uint32 nbodies = rd.Int32();
-	for (Uint32 i = 0; i < nbodies; i++)
+	Uint32 nm_bodies = rd.Int32();
+	for (Uint32 i = 0; i < nm_bodies; i++)
 		m_bodies.push_back(Body::Unserialize(rd, this));
 	RebuildBodyIndex();
 
@@ -195,7 +195,7 @@ void Space::RebuildBodyIndex()
 		m_bodyIndex.push_back(*i);
 		// also index ships inside clouds
 		// XXX we should not have to know about this. move indexing grunt work
-		// down into the bodies?
+		// down into the m_bodies?
 		if ((*i)->IsType(Object::HYPERSPACECLOUD)) {
 			Ship *s = static_cast<HyperspaceCloud*>(*i)->GetShip();
 			if (s) m_bodyIndex.push_back(s);
@@ -253,7 +253,7 @@ vector3d Space::GetHyperspaceExitPoint(const SystemPath &source) const
 	assert(m_starSystem);
 	assert(source.IsSystemPath());
 
-	const SystemPath &dest = m_starSystem->GetDescriptor().path;
+	const SystemPath &dest = m_starSystem->desc.path;
 
 	Sector source_sec(source.sectorX, source.sectorY, source.sectorZ);
 	Sector dest_sec(dest.sectorX, dest.sectorY, dest.sectorZ);
@@ -639,7 +639,7 @@ void Space::TimeStep(float step)
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		(*i)->UpdateFrame();
 
-	// AI acts here, then move all bodies and frames
+	// AI acts here, then move all m_bodies and frames
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		(*i)->StaticUpdate(step);
 
@@ -729,6 +729,6 @@ void Space::DebugDumpFrames()
 {
 	memset(space, ' ', sizeof(space));
 
-	printf("Frame structure for '%s':\n", m_starSystem->GetDescriptor().name.c_str());
+	printf("Frame structure for '%s':\n", m_starSystem->desc.name.c_str());
 	DebugDumpFrame(m_rootFrame.Get(), 2);
 }

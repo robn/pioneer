@@ -13,26 +13,32 @@
 #include "SystemConstants.h"
 #include "SystemCache.h"
 
-StarSystem::StarSystem(
-	const SystemDescriptor &desc, const std::vector<SystemBody*> &bodies, const EconomicData &econ,
-	bool unexplored, const std::string &shortDesc, const std::string &longDesc) :
-		m_desc(desc), m_econ(econ), m_unexplored(unexplored), m_shortDesc(shortDesc), m_longDesc(longDesc)
+static std::vector<const SystemBody*> _LinkBodies(const SystemDescriptor &desc, const std::vector<SystemBody*> &bodies)
 {
+	std::vector<const SystemBody*> linkedBodies;
 	for (std::vector<SystemBody*>::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
 		(*i)->path = desc.path;
-		(*i)->path.bodyIndex = m_bodies.size();
-		m_bodies.push_back(*i);
+		(*i)->path.bodyIndex = linkedBodies.size();
+		linkedBodies.push_back(*i);
 	}
-	rootBody = m_bodies[0];
+	return linkedBodies;
+}
+
+StarSystem::StarSystem(
+	const SystemDescriptor &_desc, const std::vector<SystemBody*> &_bodies, const EconomicData &_econ,
+	bool _unexplored, const std::string &_shortDescription, const std::string &_longDescription) :
+		rootBody(_bodies[0]), bodies(_LinkBodies(_desc, _bodies)),
+		desc(_desc), econ(_econ), unexplored(_unexplored), shortDescription(_shortDescription), longDescription(_longDescription)
+{
 }
 
 const SystemBody *StarSystem::GetBodyByPath(const SystemPath &path) const
 {
-	assert(m_desc.path.IsSameSystem(path));
+	assert(desc.path.IsSameSystem(path));
 	assert(path.IsBodyPath());
-	assert(path.bodyIndex < m_bodies.size());
+	assert(path.bodyIndex < bodies.size());
 
-	return m_bodies[path.bodyIndex];
+	return bodies[path.bodyIndex];
 }
 
 StarSystem::~StarSystem()
@@ -44,10 +50,10 @@ void StarSystem::Serialize(Serializer::Writer &wr, StarSystem *s)
 {
 	if (s) {
 		wr.Byte(1);
-		wr.Int32(s->m_desc.path.sectorX);
-		wr.Int32(s->m_desc.path.sectorY);
-		wr.Int32(s->m_desc.path.sectorZ);
-		wr.Int32(s->m_desc.path.systemIndex);
+		wr.Int32(s->desc.path.sectorX);
+		wr.Int32(s->desc.path.sectorY);
+		wr.Int32(s->desc.path.sectorZ);
+		wr.Int32(s->desc.path.systemIndex);
 	} else {
 		wr.Byte(0);
 	}

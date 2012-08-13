@@ -80,9 +80,9 @@ public:
 			innerbox->Add(l, 80, ypos);
 
 			if (!path.IsBodyPath())
-				l = new Gui::Label(stringf("%0 [%1{d},%2{d},%3{d}]", s->GetDescriptor().name.c_str(), path.sectorX, path.sectorY, path.sectorZ));
+				l = new Gui::Label(stringf("%0 [%1{d},%2{d},%3{d}]", s->desc.name.c_str(), path.sectorX, path.sectorY, path.sectorZ));
 			else
-				l = new Gui::Label(stringf("%0\n%1 [%2{d},%3{d},%4{d}]", s->GetBodyByPath(&path)->name.c_str(), s->GetDescriptor().name.c_str(), path.sectorX, path.sectorY, path.sectorZ));
+				l = new Gui::Label(stringf("%0\n%1 [%2{d},%3{d},%4{d}]", s->GetBodyByPath(&path)->name.c_str(), s->desc.name.c_str(), path.sectorX, path.sectorY, path.sectorZ));
 			innerbox->Add(l, 240, ypos);
 
 			l = new Gui::Label(format_date((*i)->due));

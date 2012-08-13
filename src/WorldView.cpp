@@ -505,7 +505,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 		RefCountedPtr<StarSystem> s = Pi::systemCache->GetSystem(dest);
 
 		Pi::cpan->SetOverlayText(ShipCpanel::OVERLAY_TOP_LEFT, stringf(Lang::IN_TRANSIT_TO_N_X_X_X,
-			formatarg("system", s->GetDescriptor().name),
+			formatarg("system", s->desc.name),
 			formatarg("x", dest.sectorX),
 			formatarg("y", dest.sectorY),
 			formatarg("z", dest.sectorZ)));
@@ -837,15 +837,15 @@ void WorldView::BuildCommsNavOptions()
 
 	m_commsNavOptions->PackEnd(new Gui::Label(std::string("#ff0")+std::string(Lang::NAVIGATION_TARGETS_IN_THIS_SYSTEM)+std::string("\n")));
 
-	for ( std::vector<const SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->m_bodies.begin();
-	      i != Pi::game->GetSpace()->GetStarSystem()->m_bodies.end(); ++i) {
+	for ( std::vector<const SystemBody*>::const_iterator i = Pi::game->GetSpace()->GetStarSystem()->bodies.begin();
+	      i != Pi::game->GetSpace()->GetStarSystem()->bodies.end(); ++i) {
         if ((*i)->GetSuperType() != SystemBody::SUPERTYPE_STARPORT)
             continue;
 		groups[(*i)->parent->path.bodyIndex].push_back(*i);
 	}
 
 	for ( std::map< Uint32,std::vector<const SystemBody*> >::const_iterator i = groups.begin(); i != groups.end(); ++i ) {
-		m_commsNavOptions->PackEnd(new Gui::Label("#f0f" + Pi::game->GetSpace()->GetStarSystem()->m_bodies[(*i).first]->name));
+		m_commsNavOptions->PackEnd(new Gui::Label("#f0f" + Pi::game->GetSpace()->GetStarSystem()->bodies[(*i).first]->name));
 
 		for ( std::vector<const SystemBody*>::const_iterator j = (*i).second.begin(); j != (*i).second.end(); ++j) {
 			Body *body = Pi::game->GetSpace()->FindBodyForPath(&((*j)->path));
@@ -921,7 +921,7 @@ void WorldView::OnHyperspaceTargetChanged()
 	const SystemPath path = Pi::sectorView->GetHyperspaceTarget();
 
 	RefCountedPtr<StarSystem> system = Pi::systemCache->GetSystem(path);
-	Pi::cpan->MsgLog()->Message("", stringf(Lang::SET_HYPERSPACE_DESTINATION_TO, formatarg("system", system->GetDescriptor().name)));
+	Pi::cpan->MsgLog()->Message("", stringf(Lang::SET_HYPERSPACE_DESTINATION_TO, formatarg("system", system->desc.name)));
 }
 
 void WorldView::OnPlayerChangeTarget()
@@ -965,7 +965,7 @@ void WorldView::UpdateCommsOptions()
 
 	if (m_showTargetActionsTimeout == 0) return;
 
-	if (Pi::game->GetSpace()->GetStarSystem()->GetEconomicData().totalPop > 0)
+	if (Pi::game->GetSpace()->GetStarSystem()->econ.totalPop > 0)
 	{
 		BuildCommsNavOptions();
 	}

@@ -26,10 +26,6 @@ enum EconType { // <enum name=EconType prefix=ECON_>
 
 class StarSystem : public DeleteEmitter, public RefCounted {
 public:
-	friend class SystemBody;
-	friend class RandomSystemGenerator;
-	friend class CustomSystemGenerator;
-
 	struct EconomicData {
 		EconomicData() : metallicity(0), industrial(0), agricultural(0), humanProx(0), totalPop(0), econType(0) {
 			for (int i = 0; i < Equip::TYPE_MAX; i++)
@@ -55,36 +51,26 @@ public:
 	};
 
 	StarSystem(
-		const SystemDescriptor &desc, const std::vector<SystemBody*> &bodies, const EconomicData &_econ,
-		bool _unexplored, const std::string &_shortDesc, const std::string &_longDesc = "");
+		const SystemDescriptor &_desc, const std::vector<SystemBody*> &_bodies, const EconomicData &_econ,
+		bool _unexplored, const std::string &_shortDescription, const std::string &_longDescription = "");
 	~StarSystem();
 
 	const SystemBody *GetBodyByPath(const SystemPath &path) const;
 	static void Serialize(Serializer::Writer &wr, StarSystem *);
 	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
 
-	const SystemDescriptor &GetDescriptor() const { return m_desc; }
-	const EconomicData &GetEconomicData() const { return m_econ; }
-	bool IsUnexplored() const { return m_unexplored; }
-	const std::string &GetShortDescription() const { return m_shortDesc; }
-	const std::string &GetLongDescription() const { return m_longDesc; }
-
 	const SystemBody *rootBody;
 	// index into this will be the SystemBody ID used by SystemPath
-	std::vector<const SystemBody*> m_bodies;
+	const std::vector<const SystemBody*> bodies;
 
-private:
-	SystemDescriptor m_desc;
+	const SystemDescriptor desc;
 
-	EconomicData m_econ;
+	const EconomicData econ;
 
-	bool m_unexplored;
+	const bool unexplored;
 
-	std::string m_shortDesc;
-	std::string m_longDesc;
-
-	bool m_isCustom;
-	bool m_hasCustomBodies;
+	const std::string shortDescription;
+	const std::string longDescription;
 };
 
 #endif /* _STARSYSTEM_H */

@@ -183,7 +183,7 @@ static int l_player_add_mission(lua_State *l)
  * Return:
  *
  *   mission - a table containing the mission parameters. The fields of the
- *             table are the same as described in <AddMission>.
+ *             table are the same as->described in <AddMission>.
  *
  * Availability:
  *
