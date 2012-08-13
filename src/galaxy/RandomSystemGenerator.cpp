@@ -144,10 +144,6 @@ RefCountedPtr<StarSystem> RandomSystemGenerator::GenerateSystem()
 			abort();
 	}
 
-	// used in MakeshortDescription
-	// XXX except this does not reflect the actual mining happening in this system
-	m_econ.metallicity = SystemConstants::starMetallicities[m_bodies[0]->type]; // XXX broken for gravpoints
-
 	Populate();
 	PopulateAddStations(m_bodies[0]);
 
@@ -498,15 +494,21 @@ void RandomSystemGenerator::Populate()
 	rand.seed(_init, 5);
 
 	// Various system-wide characteristics
-	// This is 1 in sector (0,0,0) and approaches 0 farther out
-	// (1,0,0) ~ .688, (1,1,0) ~ .557, (1,1,1) ~ .48
-	m_econ.humanProx = fixed(3,1) / isqrt(9 + 10*(m_desc.path.sectorX*m_desc.path.sectorX + m_desc.path.sectorY*m_desc.path.sectorY + m_desc.path.sectorZ*m_desc.path.sectorZ));
-	m_econ.econType = ECON_INDUSTRY;
-	m_econ.industrial = rand.Fixed();
-	m_econ.agricultural = 0;
+	// XXX this is rubbish. it should be determined after all
+	//     the planets have been generated
+	m_econ = StarSystem::EconomicData(
+		SystemConstants::starMetallicities[m_bodies[0]->type], // metalicity  XXX broken for gravpoints
+		rand.Fixed(),                                          // industrial
+		0,                                                     // agricultural
 
-	// system attributes
-	m_econ.totalPop = fixed(0);
+		// human proximity. This is 1 in sector (0,0,0) and approaches 0 farther out
+		// (1,0,0) ~ .688, (1,1,0) ~ .557, (1,1,1) ~ .48
+		fixed(3,1) / isqrt(9 + 10*(m_desc.path.sectorX*m_desc.path.sectorX + m_desc.path.sectorY*m_desc.path.sectorY + m_desc.path.sectorZ*m_desc.path.sectorZ)),
+
+		0,                 // total population
+		ECON_INDUSTRY      // econ type
+	);
+
 	PopulateStage1(m_bodies[0], m_econ.totalPop);
 
 	// So now we have balances of trade of various commodities.
@@ -650,6 +652,8 @@ XXX SYSGEN
 
 void RandomSystemGenerator::MakeShortDescription(MTRand &rand)
 {
+	// XXX metallicity just comes from the star type so it doesn't reflect the
+	//     actual activity going on in this system
 	m_econ.econType = 0;
 	if ((m_econ.industrial > m_econ.metallicity) && (m_econ.industrial > m_econ.agricultural)) {
 		m_econ.econType = ECON_INDUSTRY;
