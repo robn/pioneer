@@ -129,7 +129,7 @@ public:
 
 	RingStyle m_rings;
 
-	SystemBody(BodyType _type, const PhysicalData &_phys, const OrbitalData &_orbit, const CompositionData &_composition, const EconomicData &_econ);
+	SystemBody(BodyType _type, Uint32 _seed, const PhysicalData &_phys, const OrbitalData &_orbit, const CompositionData &_composition, const EconomicData &_econ);
 
 	// XXX old interface to be checked
 	~SystemBody();

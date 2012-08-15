@@ -8,10 +8,10 @@
 #include <iostream>
 #include <cassert>
 
-SystemBody::SystemBody(BodyType _type, const PhysicalData &_phys, const OrbitalData &_orbit, const CompositionData &_composition, const EconomicData &_econ) :
+SystemBody::SystemBody(BodyType _type, Uint32 _seed, const PhysicalData &_phys, const OrbitalData &_orbit, const CompositionData &_composition, const EconomicData &_econ) :
 	parent(0),
 	type(_type),
-	seed(0),
+	seed(_seed),
 	phys(_phys),
 	orbit(_orbit),
 	composition(_composition),
