@@ -161,7 +161,7 @@ SystemBody *RandomSystemGenerator::NewStar(SystemBody::BodyType type, MTRand &ra
 	phys.mass = fixed(rand.Int32(SystemConstants::starTypeInfo[type].mass[0], SystemConstants::starTypeInfo[type].mass[1]), 100);
 	phys.averageTemp = rand.Int32(SystemConstants::starTypeInfo[type].tempMin, SystemConstants::starTypeInfo[type].tempMax);
 
-	SystemBody *star = new SystemBody(type, phys);
+	SystemBody *star = new SystemBody(type, phys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 	star->seed = seed;
 
 	return star;
@@ -199,7 +199,7 @@ SystemBody *RandomSystemGenerator::MakeBinaryPair(SystemBody *a, SystemBody *b, 
 	SystemBody::PhysicalData gravpointPhys;
 	gravpointPhys.mass = a->phys.mass + b->phys.mass;
 	gravpointPhys.radius = 4 * (a->orbit.orbMax + b->orbit.orbMax) / AU_SOL_RADIUS;
-	SystemBody *gravpoint = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys);
+	SystemBody *gravpoint = new SystemBody(SystemBody::TYPE_GRAVPOINT, gravpointPhys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 
 	a->parent = b->parent = gravpoint;
 	gravpoint->children.push_back(a);
@@ -345,7 +345,7 @@ void RandomSystemGenerator::MakePlanetsAround(SystemBody *primary, MTRand &rand)
 		phys.mass = mass;
 		phys.rotationPeriod = fixed(rand.Int32(1,200), 24);
 
-		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL, phys);
+		SystemBody *planet = new SystemBody(SystemBody::TYPE_PLANET_TERRESTRIAL, phys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 		planet->seed = seed;
 		planet->orbit.eccentricity = ecc;
 		planet->orbit.semiMajorAxis = semiMajorAxis;
@@ -432,7 +432,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		phys.rotationPeriod = fixed(1,3600);
 		phys.averageTemp = body->phys.averageTemp;
 
-		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL, phys);
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_ORBITAL, phys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 		sp->seed = rand.Int32();
 		sp->parent = body;
 		// just always plonk starports in near orbit
@@ -450,7 +450,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		pop -= rand.Fixed();
 		if (pop > 0) {
 			// XXX horrid
-			SystemBody *sp2 = new SystemBody(sp->type, phys);
+			SystemBody *sp2 = new SystemBody(sp->type, phys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 			SystemPath path2 = sp2->path;
 			*sp2 = *sp;
 			sp2->path = path2;
@@ -472,7 +472,7 @@ void RandomSystemGenerator::PopulateAddStations(SystemBody *body)
 		SystemBody::PhysicalData phys;
 		phys.averageTemp = body->phys.averageTemp;
 
-		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE, phys);
+		SystemBody *sp = new SystemBody(SystemBody::TYPE_STARPORT_SURFACE, phys, SystemBody::OrbitalData(), SystemBody::CompositionData(), SystemBody::EconomicData());
 		sp->seed = rand.Int32();
 		sp->parent = body;
 		sp->name = Pi::luaNameGen->BodyName(sp, namerand);

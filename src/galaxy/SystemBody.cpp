@@ -8,11 +8,14 @@
 #include <iostream>
 #include <cassert>
 
-SystemBody::SystemBody(BodyType _type, const PhysicalData &_phys) :
+SystemBody::SystemBody(BodyType _type, const PhysicalData &_phys, const OrbitalData &_orbit, const CompositionData &_composition, const EconomicData &_econ) :
 	parent(0),
 	type(_type),
 	seed(0),
 	phys(_phys),
+	orbit(_orbit),
+	composition(_composition),
+	econ(_econ),
 	heightMapFilename(0),
 	heightMapFractal(0),
 	m_atmosDensity(0.0)
