@@ -72,7 +72,7 @@ public:
 	float GetTimeStep() const { return s_timeAccelRates[m_timeAccel]*(1.0f/PHYSICS_HZ); }
 
 private:
-	void CreatePlayer();
+	void CreatePlayer(const SystemPath &path);
 
 	void CreateViews();
 	void LoadViews(Serializer::Reader &rd);

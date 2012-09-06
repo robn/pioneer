@@ -35,7 +35,7 @@ Game::Game(const SystemPath &path) :
 	SpaceStation *station = static_cast<SpaceStation*>(m_space->FindBodyForPath(&path));
 	assert(station);
 
-	CreatePlayer();
+	CreatePlayer(path);
 
 	m_space->AddBody(m_player.Get());
 
@@ -58,7 +58,7 @@ Game::Game(const SystemPath &path, const vector3d &pos) :
 	Body *b = m_space->FindBodyForPath(&path);
 	assert(b);
 
-	CreatePlayer();
+	CreatePlayer(path);
 
 	m_space->AddBody(m_player.Get());
 
@@ -558,14 +558,12 @@ void Game::RequestTimeAccel(TimeAccel t, bool force)
 	m_forceTimeAccel = force;
 }
 
-void Game::CreatePlayer()
+void Game::CreatePlayer(const SystemPath &path)
 {
 	// XXX this should probably be in lua somewhere
 	// XXX no really, it should. per system hacks? oh my.
 
-	SystemPath startPath = m_space->GetStarSystem()->GetPath();
-
-	if (startPath.IsSameSystem(SystemPath(-2,1,90,0))) {
+	if (path == SystemPath(-2,1,90,0,2)) {
 		// Lave
 		m_player.Reset(new Player("cobra3"));
 		m_player->m_equipment.Set(Equip::SLOT_ENGINE, 0, Equip::DRIVE_CLASS3);
@@ -574,6 +572,11 @@ void Game::CreatePlayer()
 		m_player->m_equipment.Add(Equip::MISSILE_GUIDED);
 		m_player->m_equipment.Add(Equip::MISSILE_GUIDED);
 		m_player->m_equipment.Add(Equip::SCANNER);
+	}
+
+	else if (path == SystemPath(0,0,0,0,11)) {
+		// Moon challenge
+		m_player.Reset(new Player("apollo_eagle"));
 	}
 
 	else {
