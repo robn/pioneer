@@ -849,6 +849,13 @@ void Pi::HandleMenuKey(int n)
         case 3: // Moon landing challenge
 		{
 			game = new Game(SystemPath(0,0,0,0,11), vector3d(0, EARTH_RADIUS, 0));
+			
+			Ship *serviceModule = new Ship(ShipType::EAGLE_LRF); // place holder for now, until i model a service module.
+			serviceModule->SetFrame(player->GetFrame());
+			serviceModule->SetPosition(player->GetPosition()+vector3d(0,50,0));
+			serviceModule->SetVelocity(vector3d(0,0,0));
+			game->GetSpace()->AddBody(serviceModule);
+
 			break;
 		}
 
