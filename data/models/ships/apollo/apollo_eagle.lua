@@ -8,26 +8,6 @@ define_model('apollo', {
 		bounding_radius = 75,
 		materials = {'black', 'gold', 'darkgold', 'foil', 'gray', 'darkgray', 'metal', 'silver'},
 		tags = {'ship'},
-		ship_defs = {
-			{
-				name='Apollo Eagle LM',
-				reverse_thrust=2000,
-				forward_thrust=-2000,
-				up_thrust=48000,
-				down_thrust=-2000,
-				left_thrust=-2000,
-				right_thrust=2000,
-				angular_thrust=2000,
-				max_cargo = 0,
-				max_fuelscoop = 0,
-				max_laser = 0,
-				max_missile = 0,
-				capacity = 50,
-				hull_mass = 14.696,
-				price = 250000,
-				hyperdrive_class = 0,
-			}
-		},
 	},
 	static = function(lod)
 		set_material('black', 0.1, 0.1, 0.1, 1, 0, 0, 0, 0)
