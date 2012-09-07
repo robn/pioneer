@@ -850,11 +850,12 @@ void Pi::HandleMenuKey(int n)
 		{
 			game = new Game(SystemPath(0,0,0,0,11), vector3d(0, EARTH_RADIUS, 0));
 			
-			Ship *serviceModule = new Ship("apollo_sm"); // place holder for now, until i model a service module.
+			Ship *serviceModule = new Ship("apollo_sm");
 			serviceModule->SetFrame(player->GetFrame());
 			serviceModule->SetPosition(player->GetPosition()+vector3d(0,50,0));
 			serviceModule->SetVelocity(vector3d(0,0,0));
 			game->GetSpace()->AddBody(serviceModule);
+			worldView->SetCamType(WorldView::CAM_EXTERNAL);
 
 			break;
 		}
