@@ -576,7 +576,7 @@ void Game::CreatePlayer(const SystemPath &path)
 
 	else if (path == SystemPath(0,0,0,0,11)) {
 		// Moon challenge
-		m_player.Reset(new Player("apollo_eagle"));
+		m_player.Reset(new Player("apollo_lm"));
 	}
 
 	else {

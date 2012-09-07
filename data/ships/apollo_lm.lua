@@ -1,6 +1,6 @@
 define_ship {
     name='Apollo Eagle LM',
-    model='apollo',
+    model='apollo_lm',
     reverse_thrust=20000,
     forward_thrust=-20000,
     up_thrust=480000,
