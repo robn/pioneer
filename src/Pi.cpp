@@ -854,6 +854,7 @@ void Pi::HandleMenuKey(int n)
 			serviceModule->SetFrame(player->GetFrame());
 			serviceModule->SetPosition(player->GetPosition()+vector3d(0,50,0));
 			serviceModule->SetVelocity(vector3d(0,0,0));
+			serviceModule->SetLabel("Columbia"); // Sadly, the Service Module didn't have a callsign.
 			game->GetSpace()->AddBody(serviceModule);
 			worldView->SetCamType(WorldView::CAM_EXTERNAL);
 
