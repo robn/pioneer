@@ -848,14 +848,19 @@ void Pi::HandleMenuKey(int n)
 
         case 3: // Moon landing challenge
 		{
-			game = new Game(SystemPath(0,0,0,0,11), vector3d(0, EARTH_RADIUS, 0));
-			
+			const SystemPath path(0,0,0,0,11);
+
+			game = new Game(path, vector3d(0.0, -774207.94157433172, -1798065.4785733714));
+			player->SetVelocity(vector3d(0.0, -1477.6577212650936, 520.55072403909674));
+
 			Ship *serviceModule = new Ship("apollo_sm");
 			serviceModule->SetFrame(player->GetFrame());
 			serviceModule->SetPosition(player->GetPosition()+vector3d(0,50,0));
-			serviceModule->SetVelocity(vector3d(0,0,0));
+			serviceModule->SetVelocity(player->GetVelocity());
 			serviceModule->SetLabel("Columbia"); // Sadly, the Service Module didn't have a callsign.
 			game->GetSpace()->AddBody(serviceModule);
+
+			player->SetNavTarget(game->GetSpace()->FindBodyForPath(&path));
 			worldView->SetCamType(WorldView::CAM_EXTERNAL);
 
 			break;
