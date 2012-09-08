@@ -1,3 +1,6 @@
+-- Apollo 11 radio transcripts taken from Spacelog
+-- http://apollo11.spacelog.org
+
 local ARMSTRONG = "Neil Armstrong (CDR)"
 local COLLINS   = "Michael Collins (CMP)"
 local DUKE      = "Charlie Duke (CAPCOM)"
