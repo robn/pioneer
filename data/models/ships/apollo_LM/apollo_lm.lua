@@ -1,7 +1,7 @@
 --
--- apolo eagle
+-- apollo lunar module
 --
-define_model('apollo', {
+define_model('apollo_lm', {
 	info = {
 		scale = 8,
 		lod_pixels = { 1, 10, 50, 0 },

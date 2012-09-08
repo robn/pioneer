@@ -718,7 +718,7 @@ static void draw_intro(Background::Container *background, float _time)
 		matrix4x4f::RotateZMatrix(0.6f*_time) *
 		matrix4x4f::RotateXMatrix(_time*0.7f) *
 		matrix4x4f::Translation(0.0f, -20.0f, 0.0f);
-	LmrLookupModelByName("apollo")->Render(trans, &params);
+	LmrLookupModelByName("apollo_lm")->Render(trans, &params);
 
 	glPopAttrib();
 	Pi::renderer->SetAmbientColor(oldSceneAmbientColor);
@@ -849,6 +849,15 @@ void Pi::HandleMenuKey(int n)
         case 3: // Moon landing challenge
 		{
 			game = new Game(SystemPath(0,0,0,0,11), vector3d(0, EARTH_RADIUS, 0));
+			
+			Ship *serviceModule = new Ship("apollo_sm");
+			serviceModule->SetFrame(player->GetFrame());
+			serviceModule->SetPosition(player->GetPosition()+vector3d(0,50,0));
+			serviceModule->SetVelocity(vector3d(0,0,0));
+			serviceModule->SetLabel("Columbia"); // Sadly, the Service Module didn't have a callsign.
+			game->GetSpace()->AddBody(serviceModule);
+			worldView->SetCamType(WorldView::CAM_EXTERNAL);
+
 			break;
 		}
 
