@@ -336,13 +336,13 @@ static size_t bufread_or_die(void *ptr, size_t size, size_t nmemb, ByteRange &bu
 	return read_count;
 }
 
-Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_heightMap(0), m_heightMapScaled(0), m_heightScaling(0), m_minh(0) {
+Terrain::Terrain(const SystemBody *body) : m_rand(body->seed), m_heightMap(0), m_heightMapScaled(0), m_heightScaling(0), m_minh(0) {
 
 	// load the heightmap
-	if (m_body->heightMapFilename) {
-		RefCountedPtr<FileSystem::FileData> fdata = FileSystem::gameDataFiles.ReadFile(m_body->heightMapFilename);
+	if (body->heightMapFilename) {
+		RefCountedPtr<FileSystem::FileData> fdata = FileSystem::gameDataFiles.ReadFile(body->heightMapFilename);
 		if (!fdata) {
-			fprintf(stderr, "Error: could not open file '%s'\n", m_body->heightMapFilename);
+			fprintf(stderr, "Error: could not open file '%s'\n", body->heightMapFilename);
 			abort();
 		}
 
@@ -352,7 +352,7 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		Uint16 v;
 
 		// XXX unify heightmap types
-		switch (m_body->heightMapFractal) {
+		switch (body->heightMapFractal) {
 			case 0: {
 				bufread_or_die(&v, 2, 1, databuf); m_heightMapSizeX = v;
 				bufread_or_die(&v, 2, 1, databuf); m_heightMapSizeY = v;
@@ -402,17 +402,17 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		case 4: m_fracmult = 0.1;break;
 	}
 
-	m_sealevel = Clamp(m_body->m_volatileLiquid.ToDouble(), 0.0, 1.0);
-	m_icyness = Clamp(m_body->m_volatileIces.ToDouble(), 0.0, 1.0);
-	m_volcanic = Clamp(m_body->m_volcanicity.ToDouble(), 0.0, 1.0); // height scales with volcanicity as well
+	m_sealevel = Clamp(body->m_volatileLiquid.ToDouble(), 0.0, 1.0);
+	m_icyness = Clamp(body->m_volatileIces.ToDouble(), 0.0, 1.0);
+	m_volcanic = Clamp(body->m_volcanicity.ToDouble(), 0.0, 1.0); // height scales with volcanicity as well
 
-	const double rad = m_body->GetRadius();
-	m_maxHeightInMeters = std::max(100.0, (9000.0*rad*rad*(m_volcanic+0.5)) / (m_body->GetMass() * 6.64e-12));
+	const double rad = body->GetRadius();
+	m_maxHeightInMeters = std::max(100.0, (9000.0*rad*rad*(m_volcanic+0.5)) / (body->GetMass() * 6.64e-12));
 	if (!isfinite(m_maxHeightInMeters)) m_maxHeightInMeters = rad * 0.5;
 	//             ^^^^ max mountain height for earth-like planet (same mass, radius)
 	// and then in sphere normalized jizz
 	m_maxHeight = std::min(1.0, m_maxHeightInMeters / rad);
-	//printf("%s: max terrain height: %fm [%f]\n", m_body->name.c_str(), m_maxHeightInMeters, m_maxHeight);
+	//printf("%s: max terrain height: %fm [%f]\n", body->name.c_str(), m_maxHeightInMeters, m_maxHeight);
 	m_invMaxHeight = 1.0 / m_maxHeight;
 	m_planetRadius = rad;
 	m_planetEarthRadii = rad / EARTH_RADIUS;
@@ -424,8 +424,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		r = m_rand.Double(0.3, 1.0);
 		g = m_rand.Double(0.3, r);
 		b = m_rand.Double(0.3, g);
-		r = std::max(b, r * m_body->m_metallicity.ToFloat());
-		g = std::max(b, g * m_body->m_metallicity.ToFloat());
+		r = std::max(b, r * body->m_metallicity.ToFloat());
+		g = std::max(b, g * body->m_metallicity.ToFloat());
 		m_rockColor[i] = vector3d(r, g, b);
 	}
 
@@ -436,8 +436,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		r = m_rand.Double(0.05, 0.3);
 		g = m_rand.Double(0.05, r);
 		b = m_rand.Double(0.05, g);
-		r = std::max(b, r * m_body->m_metallicity.ToFloat());
-		g = std::max(b, g * m_body->m_metallicity.ToFloat());
+		r = std::max(b, r * body->m_metallicity.ToFloat());
+		g = std::max(b, g * body->m_metallicity.ToFloat());
 		m_darkrockColor[i] = vector3d(r, g, b);
 	}
 
@@ -457,8 +457,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		g = m_rand.Double(0.3, 1.0);
 		r = m_rand.Double(0.3, g);
 		b = m_rand.Double(0.2, r);
-		g = std::max(r, g * m_body->m_life.ToFloat());
-		b *= (1.0-m_body->m_life.ToFloat());
+		g = std::max(r, g * body->m_life.ToFloat());
+		b *= (1.0-body->m_life.ToFloat());
 		m_plantColor[i] = vector3d(r, g, b);
 	}
 
@@ -470,8 +470,8 @@ Terrain::Terrain(const SystemBody *body) : m_body(body), m_rand(body->seed), m_h
 		g = m_rand.Double(0.05, 0.3);
 		r = m_rand.Double(0.00, g);
 		b = m_rand.Double(0.00, r);
-		g = std::max(r, g * m_body->m_life.ToFloat());
-		b *= (1.0-m_body->m_life.ToFloat());
+		g = std::max(r, g * body->m_life.ToFloat());
+		b *= (1.0-body->m_life.ToFloat());
 		m_darkplantColor[i] = vector3d(r, g, b);
 	}
 
