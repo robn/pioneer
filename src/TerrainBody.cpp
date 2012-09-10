@@ -66,7 +66,7 @@ double TerrainBody::GetBoundingRadius() const
 	return m_sbody->GetRadius() * (1.1+m_geosphere->GetMaxFeatureHeight());
 }
 
-void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform)
+void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects)
 {
 	matrix4x4d ftran = viewTransform;
 	vector3d fpos = viewCoords;

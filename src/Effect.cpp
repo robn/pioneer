@@ -5,7 +5,7 @@
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 
-ShieldEffect::ShieldEffect(Graphics::Renderer *r) :
+ShieldEffect::ShieldEffect(Graphics::Renderer *r) : Effect(),
 	m_renderer(r),
 	m_pos(vector3f(0.0f,0.0f,0.0f)),
 	m_size(0.0f)

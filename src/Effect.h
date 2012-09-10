@@ -10,6 +10,12 @@ namespace Graphics {
 }
 
 class Effect {
+public:
+	virtual void Draw() = 0;
+	virtual ~Effect() {}
+
+protected:
+	Effect() {}
 };
 
 class ShieldEffect : public Effect {

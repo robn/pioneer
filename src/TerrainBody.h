@@ -10,6 +10,7 @@
 #include "Camera.h"
 
 class Frame;
+class Effect;
 namespace Graphics { class Renderer; }
 
 class TerrainBody : public Body {
@@ -19,7 +20,7 @@ public:
 	virtual void SetPosition(const vector3d &pos) { m_pos = pos; }
 	virtual vector3d GetPosition() const { return m_pos; }
 	virtual double GetBoundingRadius() const;
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
+	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects);
 	virtual void SubRender(Graphics::Renderer *r, const Camera *camera, const vector3d &camPos) {}
 	virtual void SetFrame(Frame *f);
 	virtual bool OnCollision(Object *b, Uint32 flags, double relVel) { return true; }

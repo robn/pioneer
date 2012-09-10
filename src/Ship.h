@@ -21,6 +21,7 @@ class SpaceStation;
 class HyperspaceCloud;
 class AICommand;
 class ShipController;
+class Effect;
 namespace Graphics { class Renderer; }
 
 struct shipstats_t {
@@ -65,7 +66,7 @@ public:
 	/** Use GetDockedWith() to determine if docked */
 	SpaceStation *GetDockedWith() const { return m_dockedWith; }
 	int GetDockingPort() const { return m_dockedWithPort; }
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
+	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects);
 
 	const vector3d &GetFrontViewOffset() const { return m_frontViewOffset; }
 	const vector3d &GetRearViewOffset() const { return m_rearViewOffset; }
