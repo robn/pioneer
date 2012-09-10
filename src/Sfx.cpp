@@ -17,7 +17,6 @@
 using namespace Graphics;
 
 #define MAX_SFX_PER_FRAME 1024
-Graphics::Drawables::Sphere3D *Sfx::shieldEffect = 0;
 Graphics::Drawables::Sphere3D *Sfx::explosionEffect = 0;
 Graphics::Material *Sfx::damageParticle = 0;
 Graphics::Material *Sfx::ecmParticle = 0;
@@ -192,9 +191,7 @@ void Sfx::RenderAll(Renderer *renderer, const Frame *f, const Frame *camFrame)
 void Sfx::Init(Graphics::Renderer *r)
 {
 	Graphics::MaterialDescriptor desc;
-	RefCountedPtr<Graphics::Material> shieldMat(r->CreateMaterial(desc));
 	RefCountedPtr<Graphics::Material> explosionMat(r->CreateMaterial(desc));
-	shieldEffect = new Graphics::Drawables::Sphere3D(shieldMat, 2);
 	explosionEffect = new Graphics::Drawables::Sphere3D(explosionMat, 2);
 
 	desc.textures = 1;
@@ -206,7 +203,6 @@ void Sfx::Init(Graphics::Renderer *r)
 
 void Sfx::Uninit()
 {
-	delete shieldEffect; shieldEffect = 0;
 	delete explosionEffect; explosionEffect = 0;
 	delete damageParticle; damageParticle = 0;
 	delete ecmParticle; ecmParticle = 0;

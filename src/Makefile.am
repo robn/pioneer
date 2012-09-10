@@ -35,6 +35,7 @@ noinst_HEADERS = \
 	DeathView.h \
 	DeleteEmitter.h \
 	DynamicBody.h \
+	Effect.h \
 	EquipSet.h \
 	EquipType.h \
 	FaceVideoLink.h \
@@ -181,6 +182,7 @@ pioneer_SOURCES	= \
 	DeadVideoLink.cpp \
 	DeathView.cpp \
 	DynamicBody.cpp \
+	Effect.cpp \
 	EquipType.cpp \
 	FaceVideoLink.cpp \
 	Factions.cpp \

@@ -1193,20 +1193,11 @@ void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vect
 
 	// draw shield recharge bubble
 	if (m_stats.shield_mass_left < m_stats.shield_mass) {
-		const float shield = 0.01f*GetPercentShields();
-		renderer->SetBlendMode(Graphics::BLEND_ADDITIVE);
-		glPushMatrix();
-		matrix4x4f trans = matrix4x4f::Identity();
-		trans.Translate(viewCoords.x, viewCoords.y, viewCoords.z);
-		trans.Scale(GetLmrCollMesh()->GetBoundingRadius());
-		renderer->SetTransform(trans);
-
-		//fade based on strength
-		Sfx::shieldEffect->GetMaterial()->diffuse =
-			Color((1.0f-shield),shield,0.0,0.33f*(1.0f-shield));
-		Sfx::shieldEffect->Draw(renderer);
-		glPopMatrix();
-		renderer->SetBlendMode(Graphics::BLEND_SOLID);
+		if (!m_shieldEffect) m_shieldEffect.Reset(new ShieldEffect(renderer));
+		m_shieldEffect->SetPosition(viewCoords);
+		m_shieldEffect->SetSize(GetLmrCollMesh()->GetBoundingRadius());
+		m_shieldEffect->SetStrength(0.01f*GetPercentShields());
+		m_shieldEffect->Draw();
 	}
 
 	if (m_ecmRecharge > 0.0f) {

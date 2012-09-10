@@ -13,6 +13,8 @@
 #include "BezierCurve.h"
 #include "Serializer.h"
 #include "Camera.h"
+#include "SmartPtr.h"
+#include "Effect.h"
 #include <list>
 
 class SpaceStation;
@@ -316,6 +318,8 @@ private:
 
 	float m_thrusterFuel; //remaining fuel 0.0-1.0
 	float m_fuelUseWeights[4]; //rear, front, lateral, up&down. Rear thrusters are usually 1.0
+
+	ScopedPtr<ShieldEffect> m_shieldEffect;
 
 	int m_dockedWithIndex; // deserialisation
 };
