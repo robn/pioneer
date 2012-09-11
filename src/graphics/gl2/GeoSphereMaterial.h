@@ -18,9 +18,8 @@ namespace Graphics {
 			Uniform geosphereAtmosFogDensity;
 			Uniform geosphereAtmosInvScaleHeight;
 			Uniform geosphereAtmosTopRad; // in planet radii
+			Uniform geospherePlanetRadius;
 			Uniform geosphereCenter;
-			Uniform geosphereScale;
-			Uniform geosphereScaledRadius; // (planet radius) / scale
 
 		protected:
 			virtual void InitUniforms();

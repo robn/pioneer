@@ -1,8 +1,5 @@
 uniform vec4 atmosColor;
-// to keep distances sane we do a nearer, smaller scam. this is how many times
-// smaller the geosphere has been made
-uniform float geosphereScale;
-uniform float geosphereScaledRadius;
+uniform float geospherePlanetRadius;
 uniform float geosphereAtmosTopRad;
 uniform vec3 geosphereCenter;
 uniform float geosphereAtmosFogDensity;
@@ -29,15 +26,15 @@ void main(void)
 
 #ifdef ATMOSPHERE
 	// when does the eye ray intersect atmosphere
-	float atmosStart = findSphereEyeRayEntryDistance(geosphereCenter, eyepos, geosphereScaledRadius * geosphereAtmosTopRad);
+	float atmosStart = findSphereEyeRayEntryDistance(geosphereCenter, eyepos, geospherePlanetRadius * geosphereAtmosTopRad);
 
 	float fogFactor;
 	{
-		float atmosDist = geosphereScale * (length(eyepos) - atmosStart);
+		float atmosDist = length(eyepos) - atmosStart;
 		float ldprod;
 		// a&b scaled so length of 1.0 means planet surface.
-		vec3 a = (atmosStart * eyenorm - geosphereCenter) / geosphereScaledRadius;
-		vec3 b = (eyepos - geosphereCenter) / geosphereScaledRadius;
+		vec3 a = (atmosStart * eyenorm - geosphereCenter) / geospherePlanetRadius;
+		vec3 b = (eyepos - geosphereCenter) / geospherePlanetRadius;
 		ldprod = AtmosLengthDensityProduct(a, b, atmosColor.w*geosphereAtmosFogDensity, atmosDist, geosphereAtmosInvScaleHeight);
 		fogFactor = 1.0 / exp(ldprod);
 	}

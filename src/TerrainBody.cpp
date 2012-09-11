@@ -85,7 +85,7 @@ void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, con
 		campos = campos * (1.0/rad);		// position of camera relative to planet "model"
 
 		// translation not applied until patch render to fix jitter
-		m_geosphere->Render(renderer, -campos, m_sbody->GetRadius(), 1.0f);
+		m_geosphere->Render(renderer, -campos, m_sbody->GetRadius());
 		glTranslated(campos.x, campos.y, campos.z);
 
 		SubRender(renderer, camera, campos);

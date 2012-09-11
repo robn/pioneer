@@ -1297,7 +1297,7 @@ static void DrawAtmosphereSurface(Graphics::Renderer *renderer,
 	glPopMatrix();
 }
 
-void GeoSphere::Render(Graphics::Renderer *renderer, vector3d campos, const float radius, const float scale) {
+void GeoSphere::Render(Graphics::Renderer *renderer, vector3d campos, const float radius) {
 	glPushMatrix();
 	glTranslated(-campos.x, -campos.y, -campos.z);
 	Graphics::Frustum frustum = Graphics::Frustum::FromGLState();
@@ -1318,7 +1318,6 @@ void GeoSphere::Render(Graphics::Renderer *renderer, vector3d campos, const floa
 		m_atmosphereParameters = m_sbody->CalcAtmosphereParams();
 		m_atmosphereParameters.center = modelMatrix * vector3d(0.0, 0.0, 0.0);
 		m_atmosphereParameters.planetRadius = radius;
-		m_atmosphereParameters.scale = scale;
 
 		m_surfaceMaterial->specialParameter0 = &m_atmosphereParameters;
 

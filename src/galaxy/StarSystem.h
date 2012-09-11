@@ -165,7 +165,6 @@ public:
 		float planetRadius;
 		Color atmosCol;
 		vector3d center;
-		float scale;
 	};
 
 	AtmosphereParameters CalcAtmosphereParams() const;

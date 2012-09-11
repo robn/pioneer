@@ -23,9 +23,8 @@ void GeoSphereProgram::InitUniforms()
 	geosphereAtmosFogDensity.Init("geosphereAtmosFogDensity", m_program);
 	geosphereAtmosInvScaleHeight.Init("geosphereAtmosInvScaleHeight", m_program);
 	geosphereAtmosTopRad.Init("geosphereAtmosTopRad", m_program);
+	geospherePlanetRadius.Init("geospherePlanetRadius", m_program);
 	geosphereCenter.Init("geosphereCenter", m_program);
-	geosphereScale.Init("geosphereScale", m_program);
-	geosphereScaledRadius.Init("geosphereScaledRadius", m_program);
 }
 
 Program *GeoSphereSurfaceMaterial::CreateProgram(const MaterialDescriptor &desc)
@@ -59,9 +58,8 @@ void GeoSphereSurfaceMaterial::SetGSUniforms()
 	p->geosphereAtmosFogDensity.Set(ap.atmosDensity);
 	p->geosphereAtmosInvScaleHeight.Set(ap.atmosInvScaleHeight);
 	p->geosphereAtmosTopRad.Set(ap.atmosRadius);
+	p->geospherePlanetRadius.Set(ap.planetRadius);
 	p->geosphereCenter.Set(ap.center);
-	p->geosphereScaledRadius.Set(ap.planetRadius / ap.scale);
-	p->geosphereScale.Set(ap.scale);
 }
 
 Program *GeoSphereSkyMaterial::CreateProgram(const MaterialDescriptor &desc)
