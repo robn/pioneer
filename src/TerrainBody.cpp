@@ -72,27 +72,7 @@ void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, con
 	float znear, zfar;
 	renderer->GetNearFarRange(znear, zfar);
 
-	double len = fpos.Length();
-	int shrink = 0;
-	double scale = 1.0f;
-
-	double dist_to_horizon;
-	for (;;) {
-		if (len < rad) break;		// player inside radius case
-		dist_to_horizon = sqrt(len*len - rad*rad);
-
-		if (dist_to_horizon < zfar*0.5) break;
-
-		rad *= 0.25;
-		fpos = 0.25*fpos;
-		len *= 0.25;
-		scale *= 4.0f;
-		shrink++;
-	}
-	//if (GetLabel() == "Earth") printf("Horizon %fkm, shrink %d\n", dist_to_horizon*0.001, shrink);
-
-	glPushMatrix();		// initial matrix is actually identity after a long chain of wtf
-//	glTranslatef(float(fpos.x), float(fpos.y), float(fpos.z));
+	glPushMatrix();
 	glColor3f(1,1,1);
 
 	{
@@ -105,16 +85,10 @@ void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, con
 		campos = campos * (1.0/rad);		// position of camera relative to planet "model"
 
 		// translation not applied until patch render to fix jitter
-		m_geosphere->Render(renderer, -campos, m_sbody->GetRadius(), scale);
+		m_geosphere->Render(renderer, -campos, m_sbody->GetRadius(), 1.0f);
 		glTranslated(campos.x, campos.y, campos.z);
 
 		SubRender(renderer, camera, campos);
-
-		// if not using shader then z-buffer precision is hopeless and
-		// we can't place objects on the terrain without awful z artifacts
-		if (shrink || !Graphics::AreShadersEnabled()) {
-			renderer->ClearDepthBuffer();
-		}
 	}
 	glPopMatrix();
 }
