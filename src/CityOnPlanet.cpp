@@ -278,7 +278,7 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, Uint32 seed)
 }
 
 //Note: models get some ambient colour added when dark as the camera moves closer
-void CityOnPlanet::Render(Graphics::Renderer *r, const Camera *camera, const SpaceStation *station, const vector3d &viewCoords, const matrix4x4d &viewTransform, double illumination, double minIllumination)
+void CityOnPlanet::Render(Graphics::Renderer *r, Camera *camera, const SpaceStation *station, const vector3d &viewCoords, const matrix4x4d &viewTransform, double illumination, double minIllumination)
 {
 	matrix4x4d rot[4];
 	station->GetRotMatrix(rot[0]);

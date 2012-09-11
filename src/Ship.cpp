@@ -1172,7 +1172,7 @@ bool Ship::SetWheelState(bool down)
 	return true;
 }
 
-void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects)
+void Ship::Render(Graphics::Renderer *renderer, Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {
 	if (IsDead() || (!IsEnabled() && !m_flightState)) return;
 	LmrObjParams &params = GetLmrObjParams();
@@ -1197,7 +1197,7 @@ void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vect
 		m_shieldGraphic->SetPosition(viewCoords);
 		m_shieldGraphic->SetSize(GetLmrCollMesh()->GetBoundingRadius());
 		m_shieldGraphic->SetStrength(0.01f*GetPercentShields());
-		effects.push_back(m_shieldGraphic.Get());
+		camera->AddTransparentGraphic(m_shieldGraphic.Get());
 	}
 
 	if (m_ecmRecharge > 0.0f) {

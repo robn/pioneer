@@ -58,6 +58,10 @@ public:
 	const Graphics::Frustum &GetFrustum() const { return m_frustum; }
 
 	void SetBodyVisible(bool v) { m_showCameraBody = v; }
+ 
+	// add a Graphic to the opaque or transparent draw phases
+	void AddOpaqueGraphic(Graphic *g) { m_opaque.push_back(g); }
+	void AddTransparentGraphic(Graphic *g) { m_transparent.push_back(g); }
 
 private:
 	void OnBodyDeleted();
@@ -77,6 +81,9 @@ private:
 	matrix4x4d m_pose;
 
 	Frame *m_camFrame;
+
+	std::vector<Graphic*> m_opaque;
+	std::vector<Graphic*> m_transparent;
 
 	// temp attrs for sorting and drawing
 	struct BodyAttrs {

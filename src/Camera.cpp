@@ -176,7 +176,8 @@ void Camera::Draw(Renderer *renderer)
 		renderer->SetLights(rendererLights.size(), &rendererLights[0]);
 	}
 
-	std::vector<Graphic*> effects;
+	m_opaque.clear();
+	m_transparent.clear();
 
 	for (std::list<BodyAttrs>::iterator i = m_sortedBodies.begin(); i != m_sortedBodies.end(); ++i) {
 		BodyAttrs *attrs = &(*i);
@@ -196,10 +197,10 @@ void Camera::Draw(Renderer *renderer)
 		}
 		else if (screenrad >= 2 || attrs->body->IsType(Object::STAR) ||
 					(attrs->body->IsType(Object::PROJECTILE) && screenrad > 0.25))
-			attrs->body->Render(renderer, this, attrs->viewCoords, attrs->viewTransform, effects);
+			attrs->body->Render(renderer, this, attrs->viewCoords, attrs->viewTransform);
 	}
 
-	for (std::vector<Graphic*>::const_iterator i = effects.begin(); i != effects.end(); ++i)
+	for (std::vector<Graphic*>::const_iterator i = m_transparent.begin(); i != m_transparent.end(); ++i)
 		(*i)->Draw();
 
 	Sfx::RenderAll(renderer, Pi::game->GetSpace()->GetRootFrame(), m_camFrame);

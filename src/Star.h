@@ -17,7 +17,7 @@ public:
 	virtual ~Star() {};
 
 	virtual double GetClipRadius() const;
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects);
+	virtual void Render(Graphics::Renderer *r, Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 };
 
 #endif /* _STAR_H */
