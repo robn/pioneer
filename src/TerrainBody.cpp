@@ -69,9 +69,6 @@ void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, con
 	vector3d fpos = viewCoords;
 	double rad = m_sbody->GetRadius();
 
-	float znear, zfar;
-	renderer->GetNearFarRange(znear, zfar);
-
 	glPushMatrix();
 	glColor3f(1,1,1);
 
