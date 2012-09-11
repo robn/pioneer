@@ -239,7 +239,7 @@ void Projectile::StaticUpdate(const float timeStep)
 	}
 }
 
-void Projectile::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects)
+void Projectile::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects)
 {
 	vector3d _from = viewTransform * GetInterpolatedPosition();
 	vector3d _to = viewTransform * (GetInterpolatedPosition() + m_dirVel);

@@ -8,7 +8,7 @@
 
 class Frame;
 class Ship;
-class Effect;
+class Graphic;
 namespace Graphics {
 	class Material;
 	class Renderer;
@@ -29,7 +29,7 @@ public:
 	virtual void SetVelocity(const vector3d &v) { m_vel = v; }
 	virtual vector3d GetVelocity() const { return m_vel; }
 	virtual double GetBoundingRadius() const { return 1200.0; }
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects);
+	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects);
 	virtual void PostLoadFixup(Space *space);
 	virtual void TimeStepUpdate(const float timeStep);
 	Ship *GetShip() { return m_ship; }
@@ -52,11 +52,11 @@ private:
 	double m_due;
 	bool m_isArrival;
 
-	struct Graphic {
+	struct CloudGraphic {
 		ScopedPtr<Graphics::VertexArray> vertices;
 		ScopedPtr<Graphics::Material> material;
 	};
-	Graphic m_graphic;
+	CloudGraphic m_graphic;
 };
 
 #endif /* _HYPERSPACECLOUD_H */

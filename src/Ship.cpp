@@ -1172,7 +1172,7 @@ bool Ship::SetWheelState(bool down)
 	return true;
 }
 
-void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects)
+void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects)
 {
 	if (IsDead() || (!IsEnabled() && !m_flightState)) return;
 	LmrObjParams &params = GetLmrObjParams();
@@ -1193,11 +1193,11 @@ void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vect
 
 	// draw shield recharge bubble
 	if (m_stats.shield_mass_left < m_stats.shield_mass) {
-		if (!m_shieldEffect) m_shieldEffect.Reset(new ShieldEffect(renderer));
-		m_shieldEffect->SetPosition(viewCoords);
-		m_shieldEffect->SetSize(GetLmrCollMesh()->GetBoundingRadius());
-		m_shieldEffect->SetStrength(0.01f*GetPercentShields());
-		effects.push_back(m_shieldEffect.Get());
+		if (!m_shieldGraphic) m_shieldGraphic.Reset(new ShieldGraphic(renderer));
+		m_shieldGraphic->SetPosition(viewCoords);
+		m_shieldGraphic->SetSize(GetLmrCollMesh()->GetBoundingRadius());
+		m_shieldGraphic->SetStrength(0.01f*GetPercentShields());
+		effects.push_back(m_shieldGraphic.Get());
 	}
 
 	if (m_ecmRecharge > 0.0f) {

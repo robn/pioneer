@@ -1,11 +1,11 @@
-#include "Effect.h"
+#include "Graphic.h"
 
 #include "matrix4x4.h"
 #include "Color.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 
-ShieldEffect::ShieldEffect(Graphics::Renderer *r) : Effect(r),
+ShieldGraphic::ShieldGraphic(Graphics::Renderer *r) : Graphic(r),
 	m_size(0.0f)
 {
 	Graphics::MaterialDescriptor desc;
@@ -15,12 +15,12 @@ ShieldEffect::ShieldEffect(Graphics::Renderer *r) : Effect(r),
 	SetStrength(1.0f);
 }
 
-void ShieldEffect::SetStrength(float strength)
+void ShieldGraphic::SetStrength(float strength)
 {
 	m_sphere->GetMaterial()->diffuse = Color((1.0f-strength), strength, 0.0, 0.33f*(1.0f-strength));
 }
 
-void ShieldEffect::Draw()
+void ShieldGraphic::Draw()
 {
 	GetRenderer()->SetBlendMode(Graphics::BLEND_ADDITIVE);
 	glPushMatrix();

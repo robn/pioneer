@@ -1,5 +1,5 @@
-#ifndef _EFFECT_H
-#define _EFFECT_H
+#ifndef _GRAPHIC_H
+#define _GRAPHIC_H
 
 #include "vector3.h"
 #include "SmartPtr.h"
@@ -9,9 +9,9 @@ namespace Graphics {
 	class Renderer;
 }
 
-class Effect {
+class Graphic {
 public:
-	virtual ~Effect() {}
+	virtual ~Graphic() {}
 
 	Graphics::Renderer *GetRenderer() const { return m_renderer; }
 
@@ -21,16 +21,16 @@ public:
 	virtual void Draw() = 0;
 
 protected:
-	Effect(Graphics::Renderer *r) : m_renderer(r) {}
+	Graphic(Graphics::Renderer *r) : m_renderer(r) {}
 
 private:
 	Graphics::Renderer *m_renderer;
 	vector3d m_pos;
 };
 
-class ShieldEffect : public Effect {
+class ShieldGraphic : public Graphic {
 public:
-	ShieldEffect(Graphics::Renderer *r);
+	ShieldGraphic(Graphics::Renderer *r);
 
 	void SetSize(float size) { m_size = size; }
 	void SetStrength(float strength);

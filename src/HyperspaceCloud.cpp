@@ -148,7 +148,7 @@ void HyperspaceCloud::UpdateInterpolatedTransform(double alpha)
 	m_interpolatedTransform[14] = p.z;
 }
 
-void HyperspaceCloud::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects)
+void HyperspaceCloud::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects)
 {
 	renderer->SetBlendMode(BLEND_ALPHA_ONE);
 	glPushMatrix();

@@ -6,7 +6,7 @@
 
 #include "TerrainBody.h"
 
-class Effect;
+class Graphic;
 namespace Graphics { class Renderer; }
 
 class Star: public TerrainBody {
@@ -17,7 +17,7 @@ public:
 	virtual ~Star() {};
 
 	virtual double GetClipRadius() const;
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects);
+	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects);
 };
 
 #endif /* _STAR_H */

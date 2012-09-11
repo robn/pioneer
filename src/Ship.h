@@ -14,14 +14,14 @@
 #include "Serializer.h"
 #include "Camera.h"
 #include "SmartPtr.h"
-#include "Effect.h"
+#include "Graphic.h"
 #include <list>
 
 class SpaceStation;
 class HyperspaceCloud;
 class AICommand;
 class ShipController;
-class Effect;
+class Graphic;
 namespace Graphics { class Renderer; }
 
 struct shipstats_t {
@@ -66,7 +66,7 @@ public:
 	/** Use GetDockedWith() to determine if docked */
 	SpaceStation *GetDockedWith() const { return m_dockedWith; }
 	int GetDockingPort() const { return m_dockedWithPort; }
-	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects);
+	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects);
 
 	const vector3d &GetFrontViewOffset() const { return m_frontViewOffset; }
 	const vector3d &GetRearViewOffset() const { return m_rearViewOffset; }
@@ -320,7 +320,7 @@ private:
 	float m_thrusterFuel; //remaining fuel 0.0-1.0
 	float m_fuelUseWeights[4]; //rear, front, lateral, up&down. Rear thrusters are usually 1.0
 
-	ScopedPtr<ShieldEffect> m_shieldEffect;
+	ScopedPtr<ShieldGraphic> m_shieldGraphic;
 
 	int m_dockedWithIndex; // deserialisation
 };

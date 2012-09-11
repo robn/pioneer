@@ -894,7 +894,7 @@ void FadeInModelIfDark(Graphics::Renderer *r, double modelRadius, double dist, d
 //	Lighting: Calculates available light for model and splits light between directly and ambiently lit
 //            Lighting is done by manipulating global lights or setting uniforms in atmospheric models shader
 //            Adds an ambient light at close ranges if dark by manipulating the global ambient level
-void SpaceStation::Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Effect*> &effects)
+void SpaceStation::Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, std::vector<Graphic*> &effects)
 {
 	LmrObjParams &params = GetLmrObjParams();
 	params.label = GetLabel().c_str();

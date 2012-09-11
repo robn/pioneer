@@ -10,7 +10,7 @@
 #include "Sfx.h"
 #include "Game.h"
 #include "Planet.h"
-#include "Effect.h"
+#include "Graphic.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 #include "graphics/VertexArray.h"
@@ -176,7 +176,7 @@ void Camera::Draw(Renderer *renderer)
 		renderer->SetLights(rendererLights.size(), &rendererLights[0]);
 	}
 
-	std::vector<Effect*> effects;
+	std::vector<Graphic*> effects;
 
 	for (std::list<BodyAttrs>::iterator i = m_sortedBodies.begin(); i != m_sortedBodies.end(); ++i) {
 		BodyAttrs *attrs = &(*i);
@@ -199,7 +199,7 @@ void Camera::Draw(Renderer *renderer)
 			attrs->body->Render(renderer, this, attrs->viewCoords, attrs->viewTransform, effects);
 	}
 
-	for (std::vector<Effect*>::const_iterator i = effects.begin(); i != effects.end(); ++i)
+	for (std::vector<Graphic*>::const_iterator i = effects.begin(); i != effects.end(); ++i)
 		(*i)->Draw();
 
 	Sfx::RenderAll(renderer, Pi::game->GetSpace()->GetRootFrame(), m_camFrame);

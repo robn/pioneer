@@ -35,7 +35,6 @@ noinst_HEADERS = \
 	DeathView.h \
 	DeleteEmitter.h \
 	DynamicBody.h \
-	Effect.h \
 	EquipSet.h \
 	EquipType.h \
 	FaceVideoLink.h \
@@ -52,6 +51,7 @@ noinst_HEADERS = \
 	GameLoaderSaver.h \
 	GameMenuView.h \
 	GeoSphere.h \
+	Graphic.h \
 	HyperspaceCloud.h \
 	InfoView.h \
 	IniConfig.h \
@@ -182,7 +182,6 @@ pioneer_SOURCES	= \
 	DeadVideoLink.cpp \
 	DeathView.cpp \
 	DynamicBody.cpp \
-	Effect.cpp \
 	EquipType.cpp \
 	FaceVideoLink.cpp \
 	Factions.cpp \
@@ -198,6 +197,7 @@ pioneer_SOURCES	= \
 	GameLoaderSaver.cpp \
 	GameMenuView.cpp \
 	GeoSphere.cpp \
+	Graphic.cpp \
 	HyperspaceCloud.cpp \
 	InfoView.cpp \
 	IniConfig.cpp \
