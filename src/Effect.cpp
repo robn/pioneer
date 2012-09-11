@@ -5,13 +5,11 @@
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 
-ShieldEffect::ShieldEffect(Graphics::Renderer *r) : Effect(),
-	m_renderer(r),
-	m_pos(vector3f(0.0f,0.0f,0.0f)),
+ShieldEffect::ShieldEffect(Graphics::Renderer *r) : Effect(r),
 	m_size(0.0f)
 {
 	Graphics::MaterialDescriptor desc;
-	RefCountedPtr<Graphics::Material> mat(m_renderer->CreateMaterial(desc));
+	RefCountedPtr<Graphics::Material> mat(GetRenderer()->CreateMaterial(desc));
 	m_sphere.Reset(new Graphics::Drawables::Sphere3D(mat, 2));
 
 	SetStrength(1.0f);
@@ -24,15 +22,15 @@ void ShieldEffect::SetStrength(float strength)
 
 void ShieldEffect::Draw()
 {
-	m_renderer->SetBlendMode(Graphics::BLEND_ADDITIVE);
+	GetRenderer()->SetBlendMode(Graphics::BLEND_ADDITIVE);
 	glPushMatrix();
 	matrix4x4d trans = matrix4x4d::Identity();
-	trans.Translate(m_pos);
+	trans.Translate(GetPosition());
 	trans.Scale(m_size);
-	m_renderer->SetTransform(trans);
+	GetRenderer()->SetTransform(trans);
 
 	//fade based on strength
-	m_sphere->Draw(m_renderer);
+	m_sphere->Draw(GetRenderer());
 	glPopMatrix();
-	m_renderer->SetBlendMode(Graphics::BLEND_SOLID);
+	GetRenderer()->SetBlendMode(Graphics::BLEND_SOLID);
 }
