@@ -16,6 +16,10 @@ class matrix4x4 {
 		cell[7] = cell[8] = cell[9] = cell[10] = cell[11] = cell[12] = cell[13] =
 		cell[14] = cell[15] = val;
 	}
+	template <typename T2> explicit matrix4x4 (const matrix4x4<T2> &m)
+	{
+		for (int i=0; i<16; i++) cell[i] = m[i];
+	}
 	matrix4x4 (const T *vals) {
 		memcpy(cell, vals, sizeof(T)*16);
 	}

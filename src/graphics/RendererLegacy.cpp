@@ -165,6 +165,7 @@ bool RendererLegacy::SetTransform(const matrix4x4d &m)
 	//GL2+ or ES2 renderers can forego the classic matrix stuff entirely and use uniforms
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(&m[0]);
+	m_transform = m;
 	return true;
 }
 
@@ -173,7 +174,13 @@ bool RendererLegacy::SetTransform(const matrix4x4f &m)
 	//same as above
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(&m[0]);
+	m_transform = matrix4x4d(m);
 	return true;
+}
+
+matrix4x4d RendererLegacy::GetTransform() const
+{
+	return m_transform;
 }
 
 bool RendererLegacy::SetPerspectiveProjection(float fov, float aspect, float near, float far)

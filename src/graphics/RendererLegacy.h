@@ -30,6 +30,8 @@ public:
 
 	virtual bool SetTransform(const matrix4x4d &m);
 	virtual bool SetTransform(const matrix4x4f &m);
+	virtual matrix4x4d GetTransform() const;
+
 	virtual bool SetPerspectiveProjection(float fov, float aspect, float near, float far);
 	virtual bool SetOrthographicProjection(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
 
@@ -73,6 +75,7 @@ protected:
 	virtual bool BufferStaticMesh(StaticMesh *m);
 	float m_minZNear;
 	float m_maxZFar;
+	matrix4x4d m_transform;
 };
 
 }
