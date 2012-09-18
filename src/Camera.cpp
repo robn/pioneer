@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "Planet.h"
 #include "Graphic.h"
+#include "GraphicCollector.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 #include "graphics/VertexArray.h"
@@ -176,8 +177,7 @@ void Camera::Draw(Renderer *renderer)
 		renderer->SetLights(rendererLights.size(), &rendererLights[0]);
 	}
 
-	m_opaque.clear();
-	m_transparent.clear();
+	GraphicCollector collector;
 
 	for (std::list<BodyAttrs>::iterator i = m_sortedBodies.begin(); i != m_sortedBodies.end(); ++i) {
 		BodyAttrs *attrs = &(*i);
@@ -197,10 +197,10 @@ void Camera::Draw(Renderer *renderer)
 		}
 		else if (screenrad >= 2 || attrs->body->IsType(Object::STAR) ||
 					(attrs->body->IsType(Object::PROJECTILE) && screenrad > 0.25))
-			attrs->body->Render(renderer, this, attrs->viewCoords, attrs->viewTransform);
+			attrs->body->Render(renderer, this, collector, attrs->viewCoords, attrs->viewTransform);
 	}
 
-	for (std::vector<Graphic*>::const_iterator i = m_transparent.begin(); i != m_transparent.end(); ++i)
+	for (GraphicCollector::GraphicList::const_iterator i = collector.BeginTransparent(); i != collector.EndTransparent(); ++i)
 		(*i)->Draw();
 
 	Sfx::RenderAll(renderer, Pi::game->GetSpace()->GetRootFrame(), m_camFrame);

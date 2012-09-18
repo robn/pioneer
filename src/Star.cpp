@@ -28,7 +28,7 @@ double Star::GetClipRadius() const
 	return sbody->GetRadius() * 8 * wf;
 }
 
-void Star::Render(Graphics::Renderer *renderer, Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform)
+void Star::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCollector &collector, const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {
 	renderer->SetDepthTest(false);
 	glPushMatrix();
@@ -79,5 +79,5 @@ void Star::Render(Graphics::Renderer *renderer, Camera *camera, const vector3d &
 	glPopMatrix();
 	renderer->SetDepthTest(true);
 
-	TerrainBody::Render(renderer, camera, viewCoords, viewTransform);
+	TerrainBody::Render(renderer, camera, collector, viewCoords, viewTransform);
 }

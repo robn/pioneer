@@ -52,6 +52,7 @@ noinst_HEADERS = \
 	GameMenuView.h \
 	GeoSphere.h \
 	Graphic.h \
+	GraphicCollector.h \
 	HyperspaceCloud.h \
 	InfoView.h \
 	IniConfig.h \

@@ -10,6 +10,7 @@
 #include "GeoSphere.h"
 #include "terrain/Terrain.h"
 #include "Planet.h"
+#include "GraphicCollector.h"
 #include "graphics/Light.h"
 #include "graphics/Renderer.h"
 
@@ -111,7 +112,8 @@ void ObjectViewerView::Draw3D()
 		}
 		m_renderer->SetLights(1, &light);
 
-		body->Render(m_renderer, 0, vector3d(0,0,-viewingDist), m_camRot);
+		GraphicCollector collector;
+		body->Render(m_renderer, 0, collector, vector3d(0,0,-viewingDist), m_camRot);
 	}
 }
 
