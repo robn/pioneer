@@ -1,7 +1,7 @@
 #ifndef _GRAPHIC_H
 #define _GRAPHIC_H
 
-#include "vector3.h"
+#include "matrix4x4.h"
 #include "SmartPtr.h"
 #include "graphics/Drawables.h"
 
@@ -15,30 +15,28 @@ public:
 
 	Graphics::Renderer *GetRenderer() const { return m_renderer; }
 
-	void SetPosition(const vector3d &pos) { m_pos = pos; }
-	const vector3d &GetPosition() const { return m_pos; }
+	void SetTransform(const matrix4x4d &transform) { m_transform = transform; }
+	const matrix4x4d &GetTransform() const { return m_transform; }
 
 	virtual void Draw() = 0;
 
 protected:
-	Graphic(Graphics::Renderer *r) : m_renderer(r) {}
+	Graphic(Graphics::Renderer *r) : m_renderer(r), m_transform(matrix4x4d::Identity()) {}
 
 private:
 	Graphics::Renderer *m_renderer;
-	vector3d m_pos;
+	matrix4x4d m_transform;
 };
 
 class ShieldGraphic : public Graphic {
 public:
 	ShieldGraphic(Graphics::Renderer *r);
 
-	void SetSize(float size) { m_size = size; }
 	void SetStrength(float strength);
 
 	void Draw();
 
 private:
-	float m_size;
 	ScopedPtr<Graphics::Drawables::Sphere3D> m_sphere;
 };
 

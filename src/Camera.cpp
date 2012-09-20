@@ -200,8 +200,10 @@ void Camera::Draw(Renderer *renderer)
 			attrs->body->Render(renderer, this, collector, attrs->viewCoords, attrs->viewTransform);
 	}
 
-	for (GraphicCollector::GraphicList::const_iterator i = collector.BeginTransparent(); i != collector.EndTransparent(); ++i)
+	for (GraphicCollector::GraphicList::const_iterator i = collector.BeginTransparent(); i != collector.EndTransparent(); ++i) {
+		renderer->SetTransform((*i)->GetTransform());
 		(*i)->Draw();
+	}
 
 	Sfx::RenderAll(renderer, Pi::game->GetSpace()->GetRootFrame(), m_camFrame);
 	UnbindAllBuffers();

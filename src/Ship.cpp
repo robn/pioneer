@@ -1194,8 +1194,7 @@ void Ship::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCollector
 	// draw shield recharge bubble
 	if (m_stats.shield_mass_left < m_stats.shield_mass) {
 		if (!m_shieldGraphic) m_shieldGraphic.Reset(new ShieldGraphic(renderer));
-		m_shieldGraphic->SetPosition(viewCoords);
-		m_shieldGraphic->SetSize(GetLmrCollMesh()->GetBoundingRadius());
+		m_shieldGraphic->SetTransform(matrix4x4d::Translation(viewCoords) * matrix4x4d::ScaleMatrix(GetLmrCollMesh()->GetBoundingRadius()));
 		m_shieldGraphic->SetStrength(0.01f*GetPercentShields());
 		collector.AddTransparent(m_shieldGraphic.Get());
 	}

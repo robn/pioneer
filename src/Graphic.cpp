@@ -5,8 +5,7 @@
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 
-ShieldGraphic::ShieldGraphic(Graphics::Renderer *r) : Graphic(r),
-	m_size(0.0f)
+ShieldGraphic::ShieldGraphic(Graphics::Renderer *r) : Graphic(r)
 {
 	Graphics::MaterialDescriptor desc;
 	RefCountedPtr<Graphics::Material> mat(GetRenderer()->CreateMaterial(desc));
@@ -23,14 +22,6 @@ void ShieldGraphic::SetStrength(float strength)
 void ShieldGraphic::Draw()
 {
 	GetRenderer()->SetBlendMode(Graphics::BLEND_ADDITIVE);
-	glPushMatrix();
-	matrix4x4d trans = matrix4x4d::Identity();
-	trans.Translate(GetPosition());
-	trans.Scale(m_size);
-	GetRenderer()->SetTransform(trans);
-
-	//fade based on strength
 	m_sphere->Draw(GetRenderer());
-	glPopMatrix();
 	GetRenderer()->SetBlendMode(Graphics::BLEND_SOLID);
 }
