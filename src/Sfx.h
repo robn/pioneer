@@ -35,7 +35,6 @@ public:
 	static void Uninit();
 	static Graphics::Drawables::Sphere3D *explosionEffect;
 	static Graphics::Material *damageParticle;
-	static Graphics::Material *ecmParticle;
 
 private:
 	static Sfx *AllocSfxInFrame(Frame *f);

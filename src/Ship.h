@@ -321,6 +321,7 @@ private:
 	float m_fuelUseWeights[4]; //rear, front, lateral, up&down. Rear thrusters are usually 1.0
 
 	ScopedPtr<ShieldGraphic> m_shieldGraphic;
+	ScopedPtr<ECMGraphic> m_ecmGraphic;
 
 	int m_dockedWithIndex; // deserialisation
 };

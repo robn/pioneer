@@ -19,7 +19,6 @@ using namespace Graphics;
 #define MAX_SFX_PER_FRAME 1024
 Graphics::Drawables::Sphere3D *Sfx::explosionEffect = 0;
 Graphics::Material *Sfx::damageParticle = 0;
-Graphics::Material *Sfx::ecmParticle = 0;
 
 Sfx::Sfx()
 {
@@ -197,13 +196,10 @@ void Sfx::Init(Graphics::Renderer *r)
 	desc.textures = 1;
 	damageParticle = r->CreateMaterial(desc);
 	damageParticle->texture0 = Graphics::TextureBuilder::Billboard("textures/smoke.png").GetOrCreateTexture(r, "billboard");
-	ecmParticle = r->CreateMaterial(desc);
-	ecmParticle->texture0 = Graphics::TextureBuilder::Billboard("textures/ecm.png").GetOrCreateTexture(r, "billboard");
 }
 
 void Sfx::Uninit()
 {
 	delete explosionEffect; explosionEffect = 0;
 	delete damageParticle; damageParticle = 0;
-	delete ecmParticle; ecmParticle = 0;
 }

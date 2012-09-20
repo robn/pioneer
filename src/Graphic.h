@@ -3,6 +3,7 @@
 
 #include "matrix4x4.h"
 #include "SmartPtr.h"
+#include "graphics/Material.h"
 #include "graphics/Drawables.h"
 
 namespace Graphics {
@@ -38,6 +39,20 @@ public:
 
 private:
 	ScopedPtr<Graphics::Drawables::Sphere3D> m_sphere;
+};
+
+class ECMGraphic : public Graphic {
+public:
+	ECMGraphic(Graphics::Renderer *r);
+
+	void SetStrength(float strength);
+	void SetRadius(float radius) { m_radius = radius; }
+
+	void Draw();
+
+private:
+	RefCountedPtr<Graphics::Material> m_material;
+	float m_radius;
 };
 
 #endif

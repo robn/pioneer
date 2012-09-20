@@ -1199,27 +1199,16 @@ void Ship::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCollector
 		collector.AddTransparent(m_shieldGraphic.Get());
 	}
 
+	// ecm cloud
 	if (m_ecmRecharge > 0.0f) {
-		// ECM effect: a cloud of particles for a sparkly effect
-		vector3f v[100];
-		for (int i=0; i<100; i++) {
-			const double r1 = Pi::rng.Double()-0.5;
-			const double r2 = Pi::rng.Double()-0.5;
-			const double r3 = Pi::rng.Double()-0.5;
-			v[i] = vector3f(viewTransform * (
-				GetPosition() +
-				GetLmrCollMesh()->GetBoundingRadius() *
-				vector3d(r1, r2, r3).Normalized()
-			));
+		const float totalRechargeTime = GetECMRechargeTime();
+		if (totalRechargeTime > 0.0f) {
+			if (!m_ecmGraphic) m_ecmGraphic.Reset(new ECMGraphic(renderer));
+			m_ecmGraphic->SetTransform(matrix4x4d::Translation(viewCoords));
+			m_ecmGraphic->SetRadius(GetLmrCollMesh()->GetBoundingRadius());
+			m_ecmGraphic->SetStrength(m_ecmRecharge / totalRechargeTime);
+			collector.AddTransparent(m_ecmGraphic.Get());
 		}
-		Color c(0.5,0.5,1.0,1.0);
-		float totalRechargeTime = GetECMRechargeTime();
-		if (totalRechargeTime >= 0.0f) {
-			c.a = m_ecmRecharge / totalRechargeTime;
-		}
-
-		Sfx::ecmParticle->diffuse = c;
-		renderer->DrawPointSprites(100, v, Sfx::ecmParticle, 50.f);
 	}
 }
 
