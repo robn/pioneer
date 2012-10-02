@@ -8,6 +8,7 @@
 #include "EquipType.h"
 #include "graphics/Material.h"
 #include "SmartPtr.h"
+#include "Graphic.h"
 
 class Frame;
 class Graphic;
@@ -49,10 +50,7 @@ private:
 
 	int m_parentIndex; // deserialisation
 
-	ScopedPtr<Graphics::VertexArray> m_sideVerts;
-	ScopedPtr<Graphics::VertexArray> m_glowVerts;
-	ScopedPtr<Graphics::Material> m_sideMat;
-	ScopedPtr<Graphics::Material> m_glowMat;
+	ScopedPtr<LaserGraphic> m_laserGraphic;
 };
 
 #endif /* _PROJECTILE_H */

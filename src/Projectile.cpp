@@ -30,68 +30,6 @@ Projectile::Projectile(): Body()
 	m_parent = 0;
 	m_radius = 0;
 	m_flags |= FLAG_DRAW_LAST;
-
-	//set up materials
-	Graphics::MaterialDescriptor desc;
-	desc.textures = 1;
-	desc.twoSided = true;
-	m_sideMat.Reset(Pi::renderer->CreateMaterial(desc));
-	m_glowMat.Reset(Pi::renderer->CreateMaterial(desc));
-	m_sideMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_l.png").GetOrCreateTexture(Pi::renderer, "billboard");
-	m_glowMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_w.png").GetOrCreateTexture(Pi::renderer, "billboard");
-
-	//zero at projectile position
-	//+x down
-	//+y right
-	//+z forwards (or projectile direction)
-	const float w = 0.5f;
-
-	vector3f one(0.f, -w, 0.f); //top left
-	vector3f two(0.f,  w, 0.f); //top right
-	vector3f three(0.f,  w, -1.f); //bottom right
-	vector3f four(0.f, -w, -1.f); //bottom left
-
-	//uv coords
-	const vector2f topLeft(0.f, 1.f);
-	const vector2f topRight(1.f, 1.f);
-	const vector2f botLeft(0.f, 0.f);
-	const vector2f botRight(1.f, 0.f);
-
-	m_sideVerts.Reset(new Graphics::VertexArray(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0));
-	m_glowVerts.Reset(new Graphics::VertexArray(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0));
-
-	//add four intersecting planes to create a volumetric effect
-	for (int i=0; i < 4; i++) {
-		m_sideVerts->Add(one, topLeft);
-		m_sideVerts->Add(two, topRight);
-		m_sideVerts->Add(three, botRight);
-
-		m_sideVerts->Add(three, botRight);
-		m_sideVerts->Add(four, botLeft);
-		m_sideVerts->Add(one, topLeft);
-
-		one.ArbRotate(vector3f(0.f, 0.f, 1.f), DEG2RAD(45.f));
-		two.ArbRotate(vector3f(0.f, 0.f, 1.f), DEG2RAD(45.f));
-		three.ArbRotate(vector3f(0.f, 0.f, 1.f), DEG2RAD(45.f));
-		four.ArbRotate(vector3f(0.f, 0.f, 1.f), DEG2RAD(45.f));
-	}
-
-	//create quads for viewing on end
-	float gw = 0.5f;
-	float gz = -0.1f;
-
-	for (int i=0; i < 4; i++) {
-		m_glowVerts->Add(vector3f(-gw, -gw, gz), topLeft);
-		m_glowVerts->Add(vector3f(-gw, gw, gz), topRight);
-		m_glowVerts->Add(vector3f(gw, gw, gz), botRight);
-
-		m_glowVerts->Add(vector3f(gw, gw, gz), botRight);
-		m_glowVerts->Add(vector3f(gw, -gw, gz), botLeft);
-		m_glowVerts->Add(vector3f(-gw, -gw, gz), topLeft);
-
-		gw -= 0.1f; // they get smaller
-		gz -= 0.2f; // as they move back
-	}
 }
 
 Projectile::~Projectile()
@@ -248,7 +186,7 @@ void Projectile::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCol
 	vector3f dir = vector3f(_dir).Normalized();
 
 	vector3f v1, v2;
-	matrix4x4f m = matrix4x4f::Identity();
+	matrix4x4d m = matrix4x4d::Identity();
 	v1.x = dir.y; v1.y = dir.z; v1.z = dir.x;
 	v2 = v1.Cross(dir).Normalized();
 	v1 = v2.Cross(dir);
@@ -260,44 +198,12 @@ void Projectile::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCol
 	m[13] = from.y;
 	m[14] = from.z;
 
-	// increase visible size based on distance from camera, z is always negative
-	// allows them to be smaller while maintaining visibility for game play
-	const float dist_scale = float(viewCoords.z / -500);
-	const float length = Equip::lasers[m_type].length + dist_scale;
-	const float width = Equip::lasers[m_type].width + dist_scale;
+	if (!m_laserGraphic) m_laserGraphic.Reset(new LaserGraphic(renderer));
+	m_laserGraphic->SetTransform(m);
+	m_laserGraphic->SetLaserType(Equip::lasers[m_type]);
+	m_laserGraphic->SetAge(m_age);
 
-	renderer->SetTransform(m * matrix4x4f::ScaleMatrix(width, width, length));
-
-	renderer->SetBlendMode(Graphics::BLEND_ALPHA_ONE);
-	renderer->SetDepthWrite(false);
-
-	Color color = Equip::lasers[m_type].color;
-	// fade them out as they age so they don't suddenly disappear
-	// this matches the damage fall-off calculation
-	const float base_alpha = sqrt(1.0f - m_age/Equip::lasers[m_type].lifespan);
-	// fade out side quads when viewing nearly edge on
-	vector3f view_dir = vector3f(viewCoords).Normalized();
-	color.a = base_alpha * (1.f - powf(fabs(dir.Dot(view_dir)), length));
-
-	if (color.a > 0.01f) {
-		m_sideMat->diffuse = color;
-		renderer->DrawTriangles(m_sideVerts.Get(), m_sideMat.Get());
-	}
-
-	// fade out glow quads when viewing nearly edge on
-	// these and the side quads fade at different rates
-	// so that they aren't both at the same alpha as that looks strange
-	color.a = base_alpha * powf(fabs(dir.Dot(view_dir)), width);
-
-	if (color.a > 0.01f) {
-		m_glowMat->diffuse = color;
-		renderer->DrawTriangles(m_glowVerts.Get(), m_glowMat.Get());
-	}
-
-	renderer->SetBlendMode(Graphics::BLEND_SOLID);
-	renderer->SetDepthWrite(true);
-
-	renderer->SetTransform(matrix4x4f::Identity());
+	collector.AddTransparent(m_laserGraphic.Get());
 }
 
 void Projectile::Add(Body *parent, Equip::Type type, const vector3d &pos, const vector3d &baseVel, const vector3d &dirVel)

@@ -5,6 +5,7 @@
 #include "SmartPtr.h"
 #include "graphics/Material.h"
 #include "graphics/Drawables.h"
+#include "EquipType.h"
 
 namespace Graphics {
 	class Renderer;
@@ -55,4 +56,23 @@ private:
 	float m_radius;
 };
 
+
+class LaserGraphic : public Graphic {
+public:
+	LaserGraphic(Graphics::Renderer *r);
+
+	void Draw();
+
+	void SetLaserType(const LaserType &laserType) { m_laserType = laserType; }
+	void SetAge(float age) { m_age = age; }
+
+private:
+	ScopedPtr<Graphics::VertexArray> m_sideVerts;
+	ScopedPtr<Graphics::VertexArray> m_glowVerts;
+	ScopedPtr<Graphics::Material> m_sideMat;
+	ScopedPtr<Graphics::Material> m_glowMat;
+
+	LaserType m_laserType;
+	float m_age;
+};
 #endif
