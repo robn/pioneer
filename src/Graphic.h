@@ -75,4 +75,20 @@ private:
 	LaserType m_laserType;
 	float m_age;
 };
+
+class HyperspaceCloudGraphic : public Graphic {
+public:
+	HyperspaceCloudGraphic(Graphics::Renderer *r, const Color &color);
+
+	void Draw();
+
+	void SetRadius(float radius) { m_radius = radius; }
+
+private:
+	ScopedPtr<Graphics::Material> m_material;
+	ScopedPtr<Graphics::VertexArray> m_vertices;
+
+	float m_radius;
+};
+
 #endif

@@ -28,22 +28,12 @@ HyperspaceCloud::HyperspaceCloud(Ship *s, double dueDate, bool isArrival)
 	m_birthdate = Pi::game->GetTime();
 	m_due = dueDate;
 	SetIsArrival(isArrival);
-	InitGraphics();
 }
 
 HyperspaceCloud::HyperspaceCloud()
 {
 	m_ship = 0;
 	m_pos = vector3d(0,0,0);
-	InitGraphics();
-}
-
-void HyperspaceCloud::InitGraphics()
-{
-	m_graphic.vertices.Reset(new Graphics::VertexArray(ATTRIB_POSITION | ATTRIB_DIFFUSE));
-	Graphics::MaterialDescriptor desc;
-	desc.vertexColors = true;
-	m_graphic.material.Reset(Pi::renderer->CreateMaterial(desc));
 }
 
 HyperspaceCloud::~HyperspaceCloud()
@@ -128,15 +118,6 @@ Ship *HyperspaceCloud::EvictShip()
 	return s;
 }
 
-static void make_circle_thing(VertexArray &va, float radius, const Color &colCenter, const Color &colEdge)
-{
-	va.Add(vector3f(0.f, 0.f, 0.f), colCenter);
-	for (float ang=0; ang<float(M_PI)*2.f; ang+=0.1f) {
-		va.Add(vector3f(radius*sin(ang), radius*cos(ang), 0.0f), colEdge);
-	}
-	va.Add(vector3f(0.f, radius, 0.f), colEdge);
-}
-
 void HyperspaceCloud::UpdateInterpolatedTransform(double alpha)
 {
 	m_interpolatedTransform = matrix4x4d::Identity();
@@ -150,30 +131,13 @@ void HyperspaceCloud::UpdateInterpolatedTransform(double alpha)
 
 void HyperspaceCloud::Render(Graphics::Renderer *renderer, Camera *camera, GraphicCollector &collector, const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {
-	renderer->SetBlendMode(BLEND_ALPHA_ONE);
-	glPushMatrix();
-
-	matrix4x4d trans = matrix4x4d::Identity();
-	trans.Translate(float(viewCoords.x), float(viewCoords.y), float(viewCoords.z));
-
-	// face the camera dammit
-	vector3d zaxis = viewCoords.NormalizedSafe();
-	vector3d xaxis = vector3d(0,1,0).Cross(zaxis).Normalized();
-	vector3d yaxis = zaxis.Cross(xaxis);
-	matrix4x4d rot = matrix4x4d::MakeRotMatrix(xaxis, yaxis, zaxis).InverseOf();
-	renderer->SetTransform(trans * rot);
+	if (!m_graphic) m_graphic.Reset(new HyperspaceCloudGraphic(renderer, m_isArrival ? Color::BLUE : Color::RED));
+	m_graphic->SetTransform(matrix4x4d::Translation(viewCoords));
 
 	// precise to the rendered frame (better than PHYSICS_HZ granularity)
 	const double preciseTime = Pi::game->GetTime() + Pi::GetGameTickAlpha()*Pi::game->GetTimeStep();
-
-	// Flickering gradient circle, departure clouds are red and arrival clouds blue
-	// XXX could just alter the scale instead of recreating the model
 	const float radius = 1000.0f + 200.0f*float(noise(10.0*preciseTime, 0, 0));
-	m_graphic.vertices->Clear();
-	Color4f outerColor = m_isArrival ? Color::BLUE : Color::RED;
-	outerColor.a = 0.f;
-	make_circle_thing(*m_graphic.vertices.Get(), radius, Color(1.0,1.0,1.0,1.0), outerColor);
-	renderer->DrawTriangles(m_graphic.vertices.Get(), m_graphic.material.Get(), TRIANGLE_FAN);
-	renderer->SetBlendMode(BLEND_SOLID);
-	glPopMatrix();
+	m_graphic->SetRadius(radius);
+
+	collector.AddTransparent(m_graphic.Get());
 }

@@ -5,6 +5,7 @@
 #define _HYPERSPACECLOUD_H
 
 #include "Body.h"
+#include "Graphic.h"
 
 class Frame;
 class Ship;
@@ -52,11 +53,7 @@ private:
 	double m_due;
 	bool m_isArrival;
 
-	struct CloudGraphic {
-		ScopedPtr<Graphics::VertexArray> vertices;
-		ScopedPtr<Graphics::Material> material;
-	};
-	CloudGraphic m_graphic;
+	ScopedPtr<HyperspaceCloudGraphic> m_graphic;
 };
 
 #endif /* _HYPERSPACECLOUD_H */

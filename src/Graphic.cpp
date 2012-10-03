@@ -6,6 +6,7 @@
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureBuilder.h"
+#include "graphics/VertexArray.h"
 
 ShieldGraphic::ShieldGraphic(Graphics::Renderer *r) : Graphic(r)
 {
@@ -159,4 +160,28 @@ void LaserGraphic::Draw()
 
 	GetRenderer()->SetBlendMode(Graphics::BLEND_SOLID);
 	GetRenderer()->SetDepthWrite(true);
+}
+
+HyperspaceCloudGraphic::HyperspaceCloudGraphic(Graphics::Renderer *r, const Color &color) : Graphic(r)
+{
+	m_vertices.Reset(new Graphics::VertexArray(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE));
+
+	Graphics::MaterialDescriptor desc;
+	desc.vertexColors = true;
+	m_material.Reset(GetRenderer()->CreateMaterial(desc));
+
+	Color c(color);
+	c.a = 0.0f;
+	m_vertices->Add(vector3f(0.f, 0.f, 0.f), Color::WHITE);
+	for (int i = 72; i >= 0; i--)
+		m_vertices->Add(vector3f( 0.f+sinf(DEG2RAD(i*5.f)), 0.f+cosf(DEG2RAD(i*5.f)), 0.f), c);
+}
+
+void HyperspaceCloudGraphic::Draw()
+{
+	GetRenderer()->SetTransform(GetTransform() * matrix4x4d::ScaleMatrix(m_radius));
+
+	GetRenderer()->SetBlendMode(Graphics::BLEND_ALPHA_ONE);
+	GetRenderer()->DrawTriangles(m_vertices.Get(), m_material.Get(), Graphics::TRIANGLE_FAN);
+	GetRenderer()->SetBlendMode(Graphics::BLEND_SOLID);
 }
