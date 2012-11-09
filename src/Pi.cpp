@@ -75,6 +75,7 @@
 #include "scenegraph/Lua.h"
 #include "ui/Context.h"
 #include "ui/Lua.h"
+#include "ServerAgent.h"
 #include <algorithm>
 #include <sstream>
 
@@ -1018,9 +1019,22 @@ void Pi::StartGame()
 	LuaEvent::Emit();
 }
 
+static void sa_success(const ServerAgent::DataMap &data)
+{
+	printf("ServerAgent success\n");
+}
+
+static void sa_fail()
+{
+	printf("ServerAgent fail\n");
+}
+
 void Pi::Start()
 {
 	Pi::bRequestEndGame = false;
+
+	ServerAgent sa("http://localhost:5000");
+	sa.Call("foo", ServerAgent::DataMap(), sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
 
 	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
 
@@ -1069,6 +1083,8 @@ void Pi::Start()
 		Pi::frameTime = 0.001f*(SDL_GetTicks() - last_time);
 		_time += Pi::frameTime;
 		last_time = SDL_GetTicks();
+
+		sa.ProcessResponses();
 	}
 
 	ui->DropAllLayers();
