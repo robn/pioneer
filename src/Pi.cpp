@@ -1021,7 +1021,8 @@ void Pi::StartGame()
 
 static void sa_success(const Json::Value &data)
 {
-	printf("ServerAgent success\n");
+	printf("ServerAgent success:\n");
+	printf("%s\n", data.toStyledString().c_str());
 }
 
 static void sa_fail()

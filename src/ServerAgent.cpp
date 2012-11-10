@@ -113,6 +113,9 @@ void ServerAgent::ThreadMain()
 		for (std::map<std::string,std::string>::const_iterator i = r.data.begin(); i != r.data.end(); ++i)
 			curl_formadd(&formPost, &last, CURLFORM_COPYNAME, (*i).first.c_str(), CURLFORM_COPYCONTENTS, (*i).second.c_str(), CURLFORM_END);
 
+		Response resp(r.onSuccess, r.onFail);
+
+		// XXX reuse connection to get keepalive support
 		CURL *curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
@@ -120,17 +123,28 @@ void ServerAgent::ThreadMain()
 		curl_easy_setopt(curl, CURLOPT_URL, std::string(m_baseUrl+"/"+r.method).c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formPost);
 
-		CURLcode res = curl_easy_perform(curl);
-		
-		Response resp(res == CURLE_OK, r.onSuccess, r.onFail); // XXX check for 200 status code as well
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resp);
 
-		// XXX parse response, fill resp.data
+		CURLcode rc = curl_easy_perform(curl);
+		resp.success = rc == CURLE_OK; // XXX check for 200 status code as well
+
+		if (resp.success) {
+			Json::Reader reader;
+			resp.success = reader.parse(resp.contentBuffer, resp.data, false); // XXX error report
+		}
 		
 		SDL_LockMutex(m_responseQueueLock);
 		m_responseQueue.push(resp);
 		SDL_UnlockMutex(m_responseQueueLock);
 
 		curl_easy_cleanup(curl);
-
 	}
+}
+
+size_t ServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	ServerAgent::Response *resp = reinterpret_cast<ServerAgent::Response*>(userdata);
+	resp->contentBuffer.append(ptr, size*nmemb);
+	return size*nmemb;
 }

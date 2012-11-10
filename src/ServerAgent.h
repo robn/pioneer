@@ -23,8 +23,6 @@ public:
 	void ProcessResponses();
 
 private:
-	static int ThreadEntry(void *data);
-	void ThreadMain();
 
 	struct Request {
 		Request(const std::string &_method, const DataMap &_data, SuccessCallback _onSuccess, FailCallback _onFail) :
@@ -36,13 +34,19 @@ private:
 	};
 
 	struct Response {
-		Response(bool _success, SuccessCallback _onSuccess, FailCallback _onFail) :
-			success(_success), onSuccess(_onSuccess), onFail(_onFail) {}
+		Response(SuccessCallback _onSuccess, FailCallback _onFail) :
+			onSuccess(_onSuccess), onFail(_onFail) {}
 		bool success;
 		SuccessCallback onSuccess;
 		FailCallback onFail;
+		std::string contentBuffer;
 		Json::Value data;
 	};
+
+	static int ThreadEntry(void *data);
+	void ThreadMain();
+
+	static size_t FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 	static void IgnoreSuccessCallback(const Json::Value &data) {}
 	static void IgnoreFailCallback() {}
