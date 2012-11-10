@@ -7,6 +7,7 @@
 #include "libs.h"
 #include <map>
 #include <queue>
+#include <json/json.h>
 
 class ServerAgent {
 public:
@@ -14,7 +15,7 @@ public:
 	virtual ~ServerAgent();
 
 	typedef std::map<std::string,std::string> DataMap;
-	typedef sigc::slot<void,const DataMap &> SuccessCallback;
+	typedef sigc::slot<void,const Json::Value &> SuccessCallback;
 	typedef sigc::slot<void> FailCallback;
 
 	void Call(const std::string &method, const DataMap &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
@@ -40,10 +41,10 @@ private:
 		bool success;
 		SuccessCallback onSuccess;
 		FailCallback onFail;
-		DataMap data;
+		Json::Value data;
 	};
 
-	static void IgnoreSuccessCallback(const DataMap &data) {}
+	static void IgnoreSuccessCallback(const Json::Value &data) {}
 	static void IgnoreFailCallback() {}
 
 	static bool s_initialised;

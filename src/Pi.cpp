@@ -1019,7 +1019,7 @@ void Pi::StartGame()
 	LuaEvent::Emit();
 }
 
-static void sa_success(const ServerAgent::DataMap &data)
+static void sa_success(const Json::Value &data)
 {
 	printf("ServerAgent success\n");
 }
