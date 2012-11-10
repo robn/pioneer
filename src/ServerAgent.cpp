@@ -12,6 +12,9 @@ ServerAgent::ServerAgent(const std::string &baseUrl) :
 	if (!s_initialised)
 		curl_global_init(CURL_GLOBAL_ALL);
 
+	m_curl = curl_easy_init();
+	curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1);
+
 	m_requestQueueLock = SDL_CreateMutex();
 	m_requestQueueCond = SDL_CreateCond();
 
@@ -41,6 +44,8 @@ ServerAgent::~ServerAgent()
 	SDL_DestroyMutex(m_responseQueueLock);
 	SDL_DestroyMutex(m_requestQueueLock);
 	SDL_DestroyCond(m_requestQueueCond);
+
+	curl_easy_cleanup(m_curl);
 }
 
 void ServerAgent::Call(const std::string &method, const std::map<std::string,std::string> &data, SuccessCallback onSuccess, FailCallback onFail)
@@ -115,18 +120,14 @@ void ServerAgent::ThreadMain()
 
 		Response resp(r.onSuccess, r.onFail);
 
-		// XXX reuse connection to get keepalive support
-		CURL *curl = curl_easy_init();
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(m_curl, CURLOPT_POST, 1);
+		curl_easy_setopt(m_curl, CURLOPT_URL, std::string(m_baseUrl+"/"+r.method).c_str());
+		curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formPost);
 
-		curl_easy_setopt(curl, CURLOPT_POST, 1);
-		curl_easy_setopt(curl, CURLOPT_URL, std::string(m_baseUrl+"/"+r.method).c_str());
-		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formPost);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &resp);
 
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resp);
-
-		CURLcode rc = curl_easy_perform(curl);
+		CURLcode rc = curl_easy_perform(m_curl);
 		resp.success = rc == CURLE_OK; // XXX check for 200 status code as well
 
 		if (resp.success) {
@@ -138,7 +139,7 @@ void ServerAgent::ThreadMain()
 		m_responseQueue.push(resp);
 		SDL_UnlockMutex(m_responseQueueLock);
 
-		curl_easy_cleanup(curl);
+		curl_formfree(formPost);
 	}
 }
 

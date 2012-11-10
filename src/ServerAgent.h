@@ -8,6 +8,7 @@
 #include <map>
 #include <queue>
 #include <json/json.h>
+#include <curl/curl.h>
 
 class ServerAgent {
 public:
@@ -56,6 +57,8 @@ private:
 	const std::string m_baseUrl;
 	
 	SDL_Thread *m_thread;
+
+	CURL *m_curl;
 
 	std::queue<Request> m_requestQueue;
 	SDL_mutex *m_requestQueueLock;
