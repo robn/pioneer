@@ -1025,9 +1025,9 @@ static void sa_success(const Json::Value &data)
 	printf("%s\n", data.toStyledString().c_str());
 }
 
-static void sa_fail()
+static void sa_fail(const std::string &error)
 {
-	printf("ServerAgent fail\n");
+	printf("ServerAgent fail: %s\n", error.c_str());
 }
 
 void Pi::Start()

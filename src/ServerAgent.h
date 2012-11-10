@@ -17,7 +17,7 @@ public:
 
 	typedef std::map<std::string,std::string> DataMap;
 	typedef sigc::slot<void,const Json::Value &> SuccessCallback;
-	typedef sigc::slot<void> FailCallback;
+	typedef sigc::slot<void,const std::string &> FailCallback;
 
 	void Call(const std::string &method, const DataMap &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
 
@@ -37,11 +37,15 @@ private:
 	struct Response {
 		Response(SuccessCallback _onSuccess, FailCallback _onFail) :
 			onSuccess(_onSuccess), onFail(_onFail) {}
+
 		bool success;
+
+		std::string buffer;
+
 		SuccessCallback onSuccess;
-		FailCallback onFail;
-		std::string contentBuffer;
 		Json::Value data;
+
+		FailCallback onFail;
 	};
 
 	static int ThreadEntry(void *data);
@@ -50,7 +54,7 @@ private:
 	static size_t FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 	static void IgnoreSuccessCallback(const Json::Value &data) {}
-	static void IgnoreFailCallback() {}
+	static void IgnoreFailCallback(const std::string &error) {}
 
 	static bool s_initialised;
 

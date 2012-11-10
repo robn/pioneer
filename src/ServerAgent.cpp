@@ -2,6 +2,7 @@
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ServerAgent.h"
+#include "StringF.h"
 #include <curl/curl.h>
 
 bool ServerAgent::s_initialised = false;
@@ -75,7 +76,7 @@ void ServerAgent::ProcessResponses()
 		if (resp.success)
 			resp.onSuccess(resp.data);
 		else
-			resp.onFail();
+			resp.onFail(resp.buffer);
 
 		responseQueue.pop();
 	}
@@ -128,11 +129,24 @@ void ServerAgent::ThreadMain()
 		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &resp);
 
 		CURLcode rc = curl_easy_perform(m_curl);
-		resp.success = rc == CURLE_OK; // XXX check for 200 status code as well
+		resp.success = rc == CURLE_OK;
+		if (!resp.success)
+			resp.buffer = std::string("call failed: " + std::string(curl_easy_strerror(rc)));
+
+		if (resp.success) {
+			long code;
+			curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &code);
+			if (code != 200) {
+				resp.success = false;
+				resp.buffer = stringf("call returned HTTP status: %0{d}", code);
+			}
+		}
 
 		if (resp.success) {
 			Json::Reader reader;
-			resp.success = reader.parse(resp.contentBuffer, resp.data, false); // XXX error report
+			resp.success = reader.parse(resp.buffer, resp.data, false);
+			if (!resp.success)
+				resp.buffer = std::string("JSON parse error: " + reader.getFormattedErrorMessages());
 		}
 		
 		SDL_LockMutex(m_responseQueueLock);
@@ -146,6 +160,6 @@ void ServerAgent::ThreadMain()
 size_t ServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	ServerAgent::Response *resp = reinterpret_cast<ServerAgent::Response*>(userdata);
-	resp->contentBuffer.append(ptr, size*nmemb);
+	resp->buffer.append(ptr, size*nmemb);
 	return size*nmemb;
 }
