@@ -10,7 +10,7 @@
 
 struct CallbackPair {
 	CallbackPair(lua_State *l, int successIndex, int failIndex) :
-        lua(l),
+		lua(l),
 		successCallback(l, successIndex),
 		failCallback(l, failIndex)
 		{}
@@ -23,11 +23,45 @@ static Json::Value _lua_to_json(lua_State *l, int idx)
 {
 	int data = lua_absindex(l, idx);
 
-	Json::Value json;
+	switch (lua_type(l, data)) {
+		case LUA_TNIL:
+			return Json::Value();
+			
+		case LUA_TNUMBER:
+			return Json::Value(lua_tonumber(l, data));
 
-	// XXX do things
+		case LUA_TBOOLEAN:
+			return Json::Value(lua_toboolean(l, data));
 
-	return json;
+		case LUA_TSTRING:
+			return Json::Value(lua_tostring(l, data));
+
+		case LUA_TTABLE: {
+
+			// XXX handle arrays
+
+			Json::Value object(Json::objectValue);
+
+			lua_pushnil(l);
+			while (lua_next(l, data)) {
+				const std::string key(luaL_checkstring(l, -2));
+				Json::Value value(_lua_to_json(l, -1));
+				object[key] = value;
+				lua_pop(l, 1);
+			}
+
+			return object;
+		}
+
+		default:
+			luaL_error(l, "can't convert Lua type %s to JSON", lua_typename(l, lua_type(l, idx)));
+			return Json::Value();
+	}
+
+	// shouldn't get here
+	assert(0);
+
+	return Json::Value();
 }
 
 static void _json_to_lua(lua_State *l, const Json::Value &data)
