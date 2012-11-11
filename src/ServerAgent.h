@@ -12,15 +12,40 @@
 
 class ServerAgent {
 public:
-	ServerAgent(const std::string &baseUrl);
-	virtual ~ServerAgent();
+	virtual ~ServerAgent() {}
 
 	typedef sigc::slot<void,const Json::Value &> SuccessCallback;
 	typedef sigc::slot<void,const std::string &> FailCallback;
 
-	void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
+	virtual void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback)) = 0;
 
-	void ProcessResponses();
+	virtual void ProcessResponses() = 0;
+
+protected:
+	static void IgnoreSuccessCallback(const Json::Value &data) {}
+	static void IgnoreFailCallback(const std::string &error) {}
+};
+
+
+class NullServerAgent : public ServerAgent {
+public:
+	virtual void Call(const std::string &method, const Json::Value &data, ServerAgent::SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), ServerAgent::FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
+
+	virtual void ProcessResponses();
+
+private:
+	std::queue<ServerAgent::FailCallback> m_queue;
+};
+
+
+class HTTPServerAgent : public ServerAgent {
+public:
+	HTTPServerAgent(const std::string &baseUrl);
+	virtual ~HTTPServerAgent();
+
+	virtual void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
+
+	virtual void ProcessResponses();
 
 private:
 
@@ -56,9 +81,6 @@ private:
 
 	static size_t FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 	static size_t FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
-
-	static void IgnoreSuccessCallback(const Json::Value &data) {}
-	static void IgnoreFailCallback(const std::string &error) {}
 
 	static bool s_initialised;
 

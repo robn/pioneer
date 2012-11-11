@@ -5,9 +5,23 @@
 #include "StringF.h"
 #include <curl/curl.h>
 
-bool ServerAgent::s_initialised = false;
+void NullServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail)
+{
+	m_queue.push(onFail);
+}
 
-ServerAgent::ServerAgent(const std::string &baseUrl) :
+void NullServerAgent::ProcessResponses()
+{
+	while (m_queue.size() > 0) {
+		m_queue.front()("ServerAgent not available");
+		m_queue.pop();
+	}
+}
+
+
+bool HTTPServerAgent::s_initialised = false;
+
+HTTPServerAgent::HTTPServerAgent(const std::string &baseUrl) :
 	m_baseUrl(baseUrl)
 {
 	if (!s_initialised)
@@ -18,8 +32,8 @@ ServerAgent::ServerAgent(const std::string &baseUrl) :
 
 	curl_easy_setopt(m_curl, CURLOPT_POST, 1);
 
-	curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, ServerAgent::FillRequestBuffer);
-	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
+	curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, HTTPServerAgent::FillRequestBuffer);
+	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, HTTPServerAgent::FillResponseBuffer);
 
 	m_curlHeaders = 0;
 	m_curlHeaders = curl_slist_append(m_curlHeaders, "Content-type: application/json");
@@ -30,10 +44,10 @@ ServerAgent::ServerAgent(const std::string &baseUrl) :
 
 	m_responseQueueLock = SDL_CreateMutex();
 
-	m_thread = SDL_CreateThread(&ServerAgent::ThreadEntry, "ServerAgent", this);
+	m_thread = SDL_CreateThread(&HTTPServerAgent::ThreadEntry, "HTTPServerAgent", this);
 }
 
-ServerAgent::~ServerAgent()
+HTTPServerAgent::~HTTPServerAgent()
 {
 	// flush the queue
 	SDL_LockMutex(m_requestQueueLock);
@@ -60,7 +74,7 @@ ServerAgent::~ServerAgent()
 	curl_easy_cleanup(m_curl);
 }
 
-void ServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail)
+void HTTPServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail)
 {
 	SDL_LockMutex(m_requestQueueLock);
 	m_requestQueue.push(Request(method, data, onSuccess, onFail));
@@ -69,7 +83,7 @@ void ServerAgent::Call(const std::string &method, const Json::Value &data, Succe
 	SDL_CondBroadcast(m_requestQueueCond);
 }
 
-void ServerAgent::ProcessResponses()
+void HTTPServerAgent::ProcessResponses()
 {
 	std::queue<Response> responseQueue;
 
@@ -93,13 +107,13 @@ void ServerAgent::ProcessResponses()
 	}
 }
 
-int ServerAgent::ThreadEntry(void *data)
+int HTTPServerAgent::ThreadEntry(void *data)
 {
-	reinterpret_cast<ServerAgent*>(data)->ThreadMain();
+	reinterpret_cast<HTTPServerAgent*>(data)->ThreadMain();
 	return 0;
 }
 
-void ServerAgent::ThreadMain()
+void HTTPServerAgent::ThreadMain()
 {
 	while (1) {
 
@@ -165,18 +179,18 @@ void ServerAgent::ThreadMain()
 	}
 }
 
-size_t ServerAgent::FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t HTTPServerAgent::FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	ServerAgent::Request *req = reinterpret_cast<ServerAgent::Request*>(userdata);
+	HTTPServerAgent::Request *req = reinterpret_cast<HTTPServerAgent::Request*>(userdata);
 	size_t amount = std::max(size*nmemb, req->buffer.size());
 	memcpy(ptr, req->buffer.data(), amount);
 	req->buffer.erase(0, amount);
 	return amount;
 }
 
-size_t ServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t HTTPServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	ServerAgent::Response *resp = reinterpret_cast<ServerAgent::Response*>(userdata);
+	HTTPServerAgent::Response *resp = reinterpret_cast<HTTPServerAgent::Response*>(userdata);
 	resp->buffer.append(ptr, size*nmemb);
 	return size*nmemb;
 }
