@@ -59,6 +59,9 @@ void LuaRef::CheckCopyCount() {
 
 LuaRef::LuaRef(lua_State * l, int index): m_lua(l), m_id(0) {
 	assert(m_lua && index);
+	if (index == LUA_NOREF)
+		return;
+
 	index = lua_absindex(m_lua, index);
 
 	PushGlobalToStack();
