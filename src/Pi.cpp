@@ -1035,22 +1035,9 @@ void Pi::StartGame()
 	LuaEvent::Emit();
 }
 
-static void sa_success(const Json::Value &data)
-{
-	printf("ServerAgent success:\n");
-	printf("%s\n", data.toStyledString().c_str());
-}
-
-static void sa_fail(const std::string &error)
-{
-	printf("ServerAgent fail: %s\n", error.c_str());
-}
-
 void Pi::Start()
 {
 	Pi::bRequestEndGame = false;
-
-	Pi::serverAgent->Call("foo", Json::Value(), sigc::ptr_fun(sa_success), sigc::ptr_fun(sa_fail));
 
 	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
 
