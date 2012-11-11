@@ -90,6 +90,7 @@ sigc::signal<void> Pi::onPlayerChangeFlightControlState;
 LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
+ServerAgent *Pi::serverAgent;
 int Pi::keyModState;
 std::map<SDL_Keycode,bool> Pi::keyState; // XXX SDL2 SDLK_LAST
 char Pi::mouseButton[6];
@@ -445,6 +446,19 @@ void Pi::Init(const std::map<std::string,std::string> &options, bool no_gui)
 	Lua::Init();
 
 	Pi::ui.Reset(new UI::Context(Lua::manager, Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight()));
+
+	Pi::serverAgent = 0;
+	if (config->Int("EnableNetwork")) {
+		const std::string baseUrl(config->String("HTTPBaseURL"));
+		if (baseUrl.size() > 0) {
+			printf("Network enabled\n");
+			Pi::serverAgent = new HTTPServerAgent(baseUrl);
+		}
+	}
+	if (!Pi::serverAgent) {
+		printf("Network disabled\n");
+		Pi::serverAgent = new NullServerAgent();
+	}
 
 	LuaInit();
 
@@ -1034,13 +1048,7 @@ void Pi::Start()
 {
 	Pi::bRequestEndGame = false;
 
-	NullServerAgent sa;
-	Json::Value v;
-	v["foo"] = "bar";
-	sa.Call("foo", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
-	sa.Call("bar", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
-	sa.Call("baz", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
-	sa.Call("quux", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
+	Pi::serverAgent->Call("foo", Json::Value(), sigc::ptr_fun(sa_success), sigc::ptr_fun(sa_fail));
 
 	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
 
@@ -1090,7 +1098,7 @@ void Pi::Start()
 		_time += Pi::frameTime;
 		last_time = SDL_GetTicks();
 
-		sa.ProcessResponses();
+		Pi::serverAgent->ProcessResponses();
 	}
 
 	ui->DropAllLayers();
