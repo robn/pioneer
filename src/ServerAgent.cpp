@@ -14,7 +14,7 @@ ServerAgent::ServerAgent(const std::string &baseUrl) :
 		curl_global_init(CURL_GLOBAL_ALL);
 
 	m_curl = curl_easy_init();
-	curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1);
+	//curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1);
 
 	curl_easy_setopt(m_curl, CURLOPT_POST, 1);
 
