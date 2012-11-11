@@ -67,6 +67,7 @@ private:
 	SDL_Thread *m_thread;
 
 	CURL *m_curl;
+	curl_slist *m_curlHeaders;
 
 	std::queue<Request> m_requestQueue;
 	SDL_mutex *m_requestQueueLock;

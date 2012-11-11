@@ -16,6 +16,15 @@ ServerAgent::ServerAgent(const std::string &baseUrl) :
 	m_curl = curl_easy_init();
 	curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1);
 
+	curl_easy_setopt(m_curl, CURLOPT_POST, 1);
+
+	curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, ServerAgent::FillRequestBuffer);
+	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
+
+	m_curlHeaders = 0;
+	m_curlHeaders = curl_slist_append(m_curlHeaders, "Content-type: application/json");
+	curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, m_curlHeaders);
+
 	m_requestQueueLock = SDL_CreateMutex();
 	m_requestQueueCond = SDL_CreateCond();
 
@@ -45,6 +54,8 @@ ServerAgent::~ServerAgent()
 	SDL_DestroyMutex(m_responseQueueLock);
 	SDL_DestroyMutex(m_requestQueueLock);
 	SDL_DestroyCond(m_requestQueueCond);
+
+	curl_slist_free_all(m_curlHeaders);
 
 	curl_easy_cleanup(m_curl);
 }
@@ -119,19 +130,9 @@ void ServerAgent::ThreadMain()
 
 		Response resp(req.onSuccess, req.onFail);
 
-		curl_easy_setopt(m_curl, CURLOPT_POST, 1);
 		curl_easy_setopt(m_curl, CURLOPT_URL, std::string(m_baseUrl+"/"+req.method).c_str());
-
 		curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, req.buffer.size());
-
-		struct curl_slist *headers;
-		headers = curl_slist_append(headers, "Content-type: application/json");
-		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, headers);
-
-		curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, ServerAgent::FillRequestBuffer);
 		curl_easy_setopt(m_curl, CURLOPT_READDATA, &req);
-
-		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
 		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &resp);
 
 		CURLcode rc = curl_easy_perform(m_curl);
@@ -155,8 +156,6 @@ void ServerAgent::ThreadMain()
 				resp.buffer = std::string("JSON parse error: " + reader.getFormattedErrorMessages());
 		}
 
-		curl_slist_free_all(headers);
-		
 		SDL_LockMutex(m_responseQueueLock);
 		m_responseQueue.push(resp);
 		SDL_UnlockMutex(m_responseQueueLock);
