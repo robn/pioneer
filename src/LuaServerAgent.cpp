@@ -66,9 +66,50 @@ static Json::Value _lua_to_json(lua_State *l, int idx)
 
 static void _json_to_lua(lua_State *l, const Json::Value &data)
 {
-	lua_newtable(l);
+	LUA_DEBUG_START(l);
 
-	// XXX do things
+	switch (data.type()) {
+		case Json::nullValue:
+			lua_pushnil(l);
+			break;
+
+		case Json::intValue:
+		case Json::uintValue:
+		case Json::realValue:
+			lua_pushnumber(l, data.asDouble());
+			break;
+
+		case Json::stringValue: {
+			const std::string &str(data.asString());
+			lua_pushlstring(l, str.c_str(), str.size());
+			break;
+		}
+
+		case Json::booleanValue:
+			lua_pushboolean(l, data.asBool());
+			break;
+
+		case Json::arrayValue: {
+			lua_newtable(l);
+			for (int i = 0; i < int(data.size()); i++) {
+				lua_pushinteger(l, i+1);
+				_json_to_lua(l, data[i]);
+				lua_rawset(l, -3);
+			}
+		}
+
+		case Json::objectValue: {
+			lua_newtable(l);
+			for (Json::Value::const_iterator i = data.begin(); i != data.end(); ++i) {
+				const std::string &key(i.key().asString());
+				lua_pushlstring(l, key.c_str(), key.size());
+				_json_to_lua(l, *i);
+				lua_rawset(l, -3);
+			}
+		}
+	}
+
+	LUA_DEBUG_END(l, 1);
 }
 
 static void _success_callback(const Json::Value &data, void *userdata)
