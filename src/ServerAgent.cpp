@@ -49,7 +49,7 @@ ServerAgent::~ServerAgent()
 	curl_easy_cleanup(m_curl);
 }
 
-void ServerAgent::Call(const std::string &method, const std::map<std::string,std::string> &data, SuccessCallback onSuccess, FailCallback onFail)
+void ServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail)
 {
 	SDL_LockMutex(m_requestQueueLock);
 	m_requestQueue.push(Request(method, data, onSuccess, onFail));
@@ -108,22 +108,28 @@ void ServerAgent::ThreadMain()
 		}
 
 		// grab a request
-		Request r = m_requestQueue.front();
+		Request req = m_requestQueue.front();
 		m_requestQueue.pop();
 
 		// done with the queue
 		SDL_UnlockMutex(m_requestQueueLock);
 
-		// build up a form structure from our data
-		curl_httppost *formPost = 0, *last = 0;
-		for (std::map<std::string,std::string>::const_iterator i = r.data.begin(); i != r.data.end(); ++i)
-			curl_formadd(&formPost, &last, CURLFORM_COPYNAME, (*i).first.c_str(), CURLFORM_COPYCONTENTS, (*i).second.c_str(), CURLFORM_END);
+		Json::FastWriter writer;
+		req.buffer = writer.write(req.data);
 
-		Response resp(r.onSuccess, r.onFail);
+		Response resp(req.onSuccess, req.onFail);
 
 		curl_easy_setopt(m_curl, CURLOPT_POST, 1);
-		curl_easy_setopt(m_curl, CURLOPT_URL, std::string(m_baseUrl+"/"+r.method).c_str());
-		curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formPost);
+		curl_easy_setopt(m_curl, CURLOPT_URL, std::string(m_baseUrl+"/"+req.method).c_str());
+
+		curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, req.buffer.size());
+
+		struct curl_slist *headers;
+		headers = curl_slist_append(headers, "Content-type: application/json");
+		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, headers);
+
+		curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, ServerAgent::FillRequestBuffer);
+		curl_easy_setopt(m_curl, CURLOPT_READDATA, &req);
 
 		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, ServerAgent::FillResponseBuffer);
 		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &resp);
@@ -148,13 +154,22 @@ void ServerAgent::ThreadMain()
 			if (!resp.success)
 				resp.buffer = std::string("JSON parse error: " + reader.getFormattedErrorMessages());
 		}
+
+		curl_slist_free_all(headers);
 		
 		SDL_LockMutex(m_responseQueueLock);
 		m_responseQueue.push(resp);
 		SDL_UnlockMutex(m_responseQueueLock);
-
-		curl_formfree(formPost);
 	}
+}
+
+size_t ServerAgent::FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	ServerAgent::Request *req = reinterpret_cast<ServerAgent::Request*>(userdata);
+	size_t amount = std::max(size*nmemb, req->buffer.size());
+	memcpy(ptr, req->buffer.data(), amount);
+	req->buffer.erase(0, amount);
+	return amount;
 }
 
 size_t ServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)

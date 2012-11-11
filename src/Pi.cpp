@@ -1035,7 +1035,9 @@ void Pi::Start()
 	Pi::bRequestEndGame = false;
 
 	ServerAgent sa("http://localhost:5000");
-	sa.Call("foo", ServerAgent::DataMap(), sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
+	Json::Value v;
+	v["foo"] = "bar";
+	sa.Call("foo", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
 
 	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
 

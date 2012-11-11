@@ -15,21 +15,24 @@ public:
 	ServerAgent(const std::string &baseUrl);
 	virtual ~ServerAgent();
 
-	typedef std::map<std::string,std::string> DataMap;
 	typedef sigc::slot<void,const Json::Value &> SuccessCallback;
 	typedef sigc::slot<void,const std::string &> FailCallback;
 
-	void Call(const std::string &method, const DataMap &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
+	void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback));
 
 	void ProcessResponses();
 
 private:
 
 	struct Request {
-		Request(const std::string &_method, const DataMap &_data, SuccessCallback _onSuccess, FailCallback _onFail) :
+		Request(const std::string &_method, const Json::Value &_data, SuccessCallback _onSuccess, FailCallback _onFail) :
 			method(_method), data(_data), onSuccess(_onSuccess), onFail(_onFail) {}
+
 		const std::string method;
-		const DataMap data;
+		const Json::Value data;
+
+		std::string buffer;
+
 		SuccessCallback onSuccess;
 		FailCallback onFail;
 	};
@@ -51,6 +54,7 @@ private:
 	static int ThreadEntry(void *data);
 	void ThreadMain();
 
+	static size_t FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 	static size_t FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 	static void IgnoreSuccessCallback(const Json::Value &data) {}
