@@ -103,9 +103,12 @@ void ServerAgent::ThreadMain()
 {
 	while (1) {
 
-		// sleep until the main thread wakes us
+		// look for requests
 		SDL_LockMutex(m_requestQueueLock);
-		SDL_CondWait(m_requestQueueCond, m_requestQueueLock);
+
+		// if there's no requests, wait until the main thread wakes us
+		if (m_requestQueue.size() == 0)
+			SDL_CondWait(m_requestQueueCond, m_requestQueueLock);
 
 		// woken up but nothing on the queue means we're being destroyed
 		if (m_requestQueue.size() == 0) {

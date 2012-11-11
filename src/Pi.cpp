@@ -1038,6 +1038,9 @@ void Pi::Start()
 	Json::Value v;
 	v["foo"] = "bar";
 	sa.Call("foo", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
+	sa.Call("bar", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
+	sa.Call("baz", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
+	sa.Call("quux", v, sigc::ptr_fun(&sa_success), sigc::ptr_fun(&sa_fail));
 
 	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
 
