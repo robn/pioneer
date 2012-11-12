@@ -31,7 +31,7 @@ class TransferPlanner;
 class UIView;
 class View;
 class SDLGraphics;
-class ServerAgent;
+class RPCAgent;
 namespace Graphics { class Renderer; }
 namespace SceneGraph { class Model; }
 namespace Sound { class MusicPlayer; }
@@ -126,7 +126,7 @@ public:
 
 	static LuaNameGen *luaNameGen;
 
-	static ServerAgent *serverAgent;
+	static RPCAgent *rpcAgent;
 
 	static RefCountedPtr<UI::Context> ui;
 

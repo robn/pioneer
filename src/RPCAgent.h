@@ -1,8 +1,8 @@
 // Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#ifndef SERVERAGENT_H
-#define SERVERAGENT_H
+#ifndef RPCAGENT_H
+#define RPCAGENT_H
 
 #include "libs.h"
 #include <map>
@@ -10,9 +10,9 @@
 #include <json/json.h>
 #include <curl/curl.h>
 
-class ServerAgent {
+class RPCAgent {
 public:
-	virtual ~ServerAgent() {}
+	virtual ~RPCAgent() {}
 
 	typedef sigc::slot<void,const Json::Value &,void *> SuccessCallback;
 	typedef sigc::slot<void,const std::string &,void *> FailCallback;
@@ -27,9 +27,9 @@ protected:
 };
 
 
-class NullServerAgent : public ServerAgent {
+class NullRPCAgent : public RPCAgent {
 public:
-	virtual void Call(const std::string &method, const Json::Value &data, ServerAgent::SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), ServerAgent::FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback), void *userdata = 0);
+	virtual void Call(const std::string &method, const Json::Value &data, RPCAgent::SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback), RPCAgent::FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback), void *userdata = 0);
 
 	virtual void ProcessResponses();
 
@@ -48,12 +48,12 @@ private:
 };
 
 
-class HTTPServerAgent : public ServerAgent {
+class HTTPRPCAgent : public RPCAgent {
 public:
-	HTTPServerAgent(const std::string &baseUrl);
-	virtual ~HTTPServerAgent();
+	HTTPRPCAgent(const std::string &baseUrl);
+	virtual ~HTTPRPCAgent();
 
-	virtual void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&ServerAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&ServerAgent::IgnoreFailCallback), void *userdata = 0);
+	virtual void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback), void *userdata = 0);
 
 	virtual void ProcessResponses();
 

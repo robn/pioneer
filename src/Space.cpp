@@ -26,7 +26,7 @@
 #include "Game.h"
 #include "MathUtil.h"
 #include "LuaEvent.h"
-#include "ServerAgent.h"
+#include "RPCAgent.h"
 
 //#define DEBUG_CACHE
 
@@ -924,7 +924,7 @@ void Space::TimeStep(float step)
 	// XXX processing incoming server responses almost certainly doesn't
 	// belong here - it should be in the mainloop directly. But I think the
 	// "don't call Lua in hyperspace" rule is more important right now.
-	Pi::serverAgent->ProcessResponses();
+	Pi::rpcAgent->ProcessResponses();
 
 	UpdateBodies();
 

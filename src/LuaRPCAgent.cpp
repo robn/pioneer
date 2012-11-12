@@ -1,10 +1,10 @@
 // Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#include "LuaServerAgent.h"
+#include "LuaRPCAgent.h"
 #include "LuaObject.h"
 #include "LuaRef.h"
-#include "ServerAgent.h"
+#include "RPCAgent.h"
 #include "Pi.h"
 #include <json/json.h>
 
@@ -138,7 +138,7 @@ static void _fail_callback(const std::string &error, void *userdata)
 	delete cp;
 }
 
-static int l_serveragent_call(lua_State *l)
+static int l_rpcagent_call(lua_State *l)
 {
 	const std::string method(luaL_checkstring(l, 1));
 	const Json::Value data(_lua_to_json(l, 2));
@@ -156,18 +156,18 @@ static int l_serveragent_call(lua_State *l)
 
 	CallbackPair *cp = new CallbackPair(l, successIndex, failIndex);
 		
-	Pi::serverAgent->Call(method, data, sigc::ptr_fun(_success_callback), sigc::ptr_fun(_fail_callback), cp);
+	Pi::rpcAgent->Call(method, data, sigc::ptr_fun(_success_callback), sigc::ptr_fun(_fail_callback), cp);
 
 	return 0;
 }
 
-void LuaServerAgent::Register()
+void LuaRPCAgent::Register()
 {
 	static const luaL_Reg l_methods[] = {
-		{ "Call", l_serveragent_call },
+		{ "Call", l_rpcagent_call },
 		{ 0, 0 }
 	};
 
 	LuaObjectBase::CreateObject(l_methods, 0, 0);
-	lua_setglobal(Lua::manager->GetLuaState(), "ServerAgent");
+	lua_setglobal(Lua::manager->GetLuaState(), "RPCAgent");
 }

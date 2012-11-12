@@ -31,7 +31,7 @@
 #include "LuaMusic.h"
 #include "LuaNameGen.h"
 #include "LuaRef.h"
-#include "LuaServerAgent.h"
+#include "LuaRPCAgent.h"
 #include "LuaShipDef.h"
 #include "LuaSpace.h"
 #include "LuaTimer.h"
@@ -76,7 +76,7 @@
 #include "scenegraph/Lua.h"
 #include "ui/Context.h"
 #include "ui/Lua.h"
-#include "ServerAgent.h"
+#include "RPCAgent.h"
 #include <algorithm>
 #include <sstream>
 
@@ -91,7 +91,7 @@ sigc::signal<void> Pi::onPlayerChangeFlightControlState;
 LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
-ServerAgent *Pi::serverAgent;
+RPCAgent *Pi::rpcAgent;
 int Pi::keyModState;
 std::map<SDL_Keycode,bool> Pi::keyState; // XXX SDL2 SDLK_LAST
 char Pi::mouseButton[6];
@@ -272,7 +272,7 @@ static void LuaInit()
 	LuaLang::Register();
 	LuaEngine::Register();
 	LuaFileSystem::Register();
-	LuaServerAgent::Register();
+	LuaRPCAgent::Register();
 	LuaGame::Register();
 	LuaComms::Register();
 	LuaFormat::Register();
@@ -449,17 +449,17 @@ void Pi::Init(const std::map<std::string,std::string> &options, bool no_gui)
 
 	Pi::ui.Reset(new UI::Context(Lua::manager, Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight()));
 
-	Pi::serverAgent = 0;
+	Pi::rpcAgent = 0;
 	if (config->Int("EnableNetwork")) {
 		const std::string baseUrl(config->String("HTTPBaseURL"));
 		if (baseUrl.size() > 0) {
 			printf("Network enabled\n");
-			Pi::serverAgent = new HTTPServerAgent(baseUrl);
+			Pi::rpcAgent = new HTTPRPCAgent(baseUrl);
 		}
 	}
-	if (!Pi::serverAgent) {
+	if (!Pi::rpcAgent) {
 		printf("Network disabled\n");
-		Pi::serverAgent = new NullServerAgent();
+		Pi::rpcAgent = new NullRPCAgent();
 	}
 
 	LuaInit();
@@ -1087,7 +1087,7 @@ void Pi::Start()
 		_time += Pi::frameTime;
 		last_time = SDL_GetTicks();
 
-		Pi::serverAgent->ProcessResponses();
+		Pi::rpcAgent->ProcessResponses();
 	}
 
 	ui->DropAllLayers();

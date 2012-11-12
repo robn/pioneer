@@ -1,28 +1,28 @@
 // Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#include "ServerAgent.h"
+#include "RPCAgent.h"
 #include "StringF.h"
 #include <curl/curl.h>
 
-void NullServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail, void *userdata)
+void NullRPCAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail, void *userdata)
 {
 	m_queue.push(Response(onFail, userdata));
 }
 
-void NullServerAgent::ProcessResponses()
+void NullRPCAgent::ProcessResponses()
 {
 	while (m_queue.size() > 0) {
 		Response &resp(m_queue.front());
-		resp.onFail("ServerAgent not available", resp.userdata);
+		resp.onFail("RPCAgent not available", resp.userdata);
 		m_queue.pop();
 	}
 }
 
 
-bool HTTPServerAgent::s_initialised = false;
+bool HTTPRPCAgent::s_initialised = false;
 
-HTTPServerAgent::HTTPServerAgent(const std::string &baseUrl) :
+HTTPRPCAgent::HTTPRPCAgent(const std::string &baseUrl) :
 	m_baseUrl(baseUrl)
 {
 	if (!s_initialised)
@@ -33,8 +33,8 @@ HTTPServerAgent::HTTPServerAgent(const std::string &baseUrl) :
 
 	curl_easy_setopt(m_curl, CURLOPT_POST, 1);
 
-	curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, HTTPServerAgent::FillRequestBuffer);
-	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, HTTPServerAgent::FillResponseBuffer);
+	curl_easy_setopt(m_curl, CURLOPT_READFUNCTION, HTTPRPCAgent::FillRequestBuffer);
+	curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, HTTPRPCAgent::FillResponseBuffer);
 
 	m_curlHeaders = 0;
 	m_curlHeaders = curl_slist_append(m_curlHeaders, "Content-type: application/json");
@@ -45,10 +45,10 @@ HTTPServerAgent::HTTPServerAgent(const std::string &baseUrl) :
 
 	m_responseQueueLock = SDL_CreateMutex();
 
-	m_thread = SDL_CreateThread(&HTTPServerAgent::ThreadEntry, "HTTPServerAgent", this);
+	m_thread = SDL_CreateThread(&HTTPRPCAgent::ThreadEntry, "HTTPRPCAgent", this);
 }
 
-HTTPServerAgent::~HTTPServerAgent()
+HTTPRPCAgent::~HTTPRPCAgent()
 {
 	// flush the queue
 	SDL_LockMutex(m_requestQueueLock);
@@ -75,7 +75,7 @@ HTTPServerAgent::~HTTPServerAgent()
 	curl_easy_cleanup(m_curl);
 }
 
-void HTTPServerAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail, void *userdata)
+void HTTPRPCAgent::Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess, FailCallback onFail, void *userdata)
 {
 	SDL_LockMutex(m_requestQueueLock);
 	m_requestQueue.push(Request(method, data, onSuccess, onFail, userdata));
@@ -84,7 +84,7 @@ void HTTPServerAgent::Call(const std::string &method, const Json::Value &data, S
 	SDL_CondBroadcast(m_requestQueueCond);
 }
 
-void HTTPServerAgent::ProcessResponses()
+void HTTPRPCAgent::ProcessResponses()
 {
 	std::queue<Response> responseQueue;
 
@@ -108,13 +108,13 @@ void HTTPServerAgent::ProcessResponses()
 	}
 }
 
-int HTTPServerAgent::ThreadEntry(void *data)
+int HTTPRPCAgent::ThreadEntry(void *data)
 {
-	reinterpret_cast<HTTPServerAgent*>(data)->ThreadMain();
+	reinterpret_cast<HTTPRPCAgent*>(data)->ThreadMain();
 	return 0;
 }
 
-void HTTPServerAgent::ThreadMain()
+void HTTPRPCAgent::ThreadMain()
 {
 	while (1) {
 
@@ -180,18 +180,18 @@ void HTTPServerAgent::ThreadMain()
 	}
 }
 
-size_t HTTPServerAgent::FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t HTTPRPCAgent::FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	HTTPServerAgent::Request *req = reinterpret_cast<HTTPServerAgent::Request*>(userdata);
+	HTTPRPCAgent::Request *req = reinterpret_cast<HTTPRPCAgent::Request*>(userdata);
 	size_t amount = std::max(size*nmemb, req->buffer.size());
 	memcpy(ptr, req->buffer.data(), amount);
 	req->buffer.erase(0, amount);
 	return amount;
 }
 
-size_t HTTPServerAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t HTTPRPCAgent::FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	HTTPServerAgent::Response *resp = reinterpret_cast<HTTPServerAgent::Response*>(userdata);
+	HTTPRPCAgent::Response *resp = reinterpret_cast<HTTPRPCAgent::Response*>(userdata);
 	resp->buffer.append(ptr, size*nmemb);
 	return size*nmemb;
 }

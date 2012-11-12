@@ -78,9 +78,9 @@ noinst_HEADERS = \
 	LuaObject.h \
 	LuaPushPull.h \
 	LuaRef.h \
+	LuaRPCAgent.h \
 	LuaSerializer.h \
 	LuaShipDef.h \
-	LuaServerAgent.h \
 	LuaSpace.h \
 	LuaTable.h \
 	LuaTimer.h \
@@ -141,7 +141,7 @@ noinst_HEADERS = \
 	VideoLink.h \
 	View.h \
 	WorldView.h \
-	ServerAgent.h \
+	RPCAgent.h \
 	SmartPtr.h \
 	buildopts.h \
 	fixed.h \
@@ -221,7 +221,7 @@ pioneer_SOURCES	= \
 	LuaPropertiedObject.cpp \
 	LuaRand.cpp \
 	LuaRef.cpp \
-	LuaServerAgent.cpp \
+	LuaRPCAgent.cpp \
 	LuaSystemBody.cpp \
 	LuaSystemPath.cpp \
 	LuaSerializer.cpp \
@@ -250,11 +250,11 @@ pioneer_SOURCES	= \
 	Polit.cpp \
 	Projectile.cpp \
 	PropertyMap.cpp \
+	RPCAgent.cpp \
 	SDLWrappers.cpp \
 	SectorView.cpp \
 	Sensors.cpp \
 	Serializer.cpp \
-	ServerAgent.cpp \
 	StringF.cpp \
 	Sfx.cpp \
 	Shields.cpp \
