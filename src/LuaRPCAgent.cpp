@@ -8,6 +8,17 @@
 #include "Pi.h"
 #include <json/json.h>
 
+/*
+ * Interface: RPCAgent
+ *
+ * An object that provides access to an RPC server. This allows your scripts
+ * to call remote functions and send and recieve data from a remote server.
+ *
+ * This page documents the API only. There are other things that need to be
+ * done to enable and use this interface. See
+ * http://pioneerwiki.com/RPCAgent for more information.
+ */
+
 struct CallbackPair {
 	CallbackPair(lua_State *l, int successIndex, int failIndex) :
 		lua(l),
@@ -138,6 +149,36 @@ static void _fail_callback(const std::string &error, void *userdata)
 	delete cp;
 }
 
+/*
+ * Function: Call
+ *
+ * Call a remote function, optionally sending or receiving data.
+ *
+ * > RPCAgent.Call(method, data, onSuccess, onFailure)
+ *
+ * Parameters:
+ *
+ *   method - name of the remote function/method to call.
+ *
+ *   data - optional. an arbitrary data item to be sent to the server along
+ *          with the call.
+ *
+ *   onSuccess - optional. a function to call when the remote call completes
+ *               successfully. If the call returned data, it will be passed as
+ *               the first argument to the function.
+ *
+ *   onFailure - optional. a function to call if the remote call fails for any
+ *               reason. The text of the error will be passed as the first
+ *               argument to the function.
+ *
+ * Availability:
+ *
+ *   alpha 29
+ *
+ * Status:
+ *
+ *   experimental
+ */
 static int l_rpcagent_call(lua_State *l)
 {
 	const std::string method(luaL_checkstring(l, 1));

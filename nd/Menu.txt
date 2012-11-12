@@ -60,6 +60,8 @@ Group: Src  {
    File: Constants  (/home/robn/code/pioneer/src/LuaConstants.cpp)
    File: Engine  (/home/robn/code/pioneer/src/LuaEngine.cpp)
    File: EquipType  (/home/robn/code/pioneer/src/LuaEquipType.cpp)
+   File: Faction  (/home/robn/code/pioneer/src/LuaFaction.cpp)
+   File: FileSystem  (/home/robn/code/pioneer/src/LuaFileSystem.cpp)
    File: Format  (/home/robn/code/pioneer/src/LuaFormat.cpp)
    File: Game  (/home/robn/code/pioneer/src/LuaGame.cpp)
    File: Lang  (/home/robn/code/pioneer/src/LuaLang.cpp)
@@ -69,6 +71,7 @@ Group: Src  {
    File: Planet  (/home/robn/code/pioneer/src/LuaPlanet.cpp)
    File: Player  (/home/robn/code/pioneer/src/LuaPlayer.cpp)
    File: Rand  (/home/robn/code/pioneer/src/LuaRand.cpp)
+   File: RPCAgent  (/home/robn/code/pioneer/src/LuaRPCAgent.cpp)
    File: Ship  (/home/robn/code/pioneer/src/LuaShip.cpp)
    File: ShipType  (/home/robn/code/pioneer/src/LuaShipType.cpp)
    File: Space  (/home/robn/code/pioneer/src/LuaSpace.cpp)
@@ -85,6 +88,7 @@ File: Character  (no auto-title, /home/robn/code/pioneer/data/libs/Characters.lu
 File: Event  (/home/robn/code/pioneer/data/libs/00-Event.lua)
 File: FlightLog  (/home/robn/code/pioneer/data/libs/FlightLog.lua)
 File: NameGen  (/home/robn/code/pioneer/data/libs/NameGen.lua)
+File: Ship  (/home/robn/code/pioneer/data/libs/Ship.lua)
 File: Translate  (/home/robn/code/pioneer/data/libs/Translate.lua)
 
 Group: Index  {
