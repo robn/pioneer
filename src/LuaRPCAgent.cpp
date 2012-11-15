@@ -107,6 +107,7 @@ static void _json_to_lua(lua_State *l, const Json::Value &data)
 				_json_to_lua(l, data[i]);
 				lua_rawset(l, -3);
 			}
+			break;
 		}
 
 		case Json::objectValue: {
@@ -117,6 +118,7 @@ static void _json_to_lua(lua_State *l, const Json::Value &data)
 				_json_to_lua(l, *i);
 				lua_rawset(l, -3);
 			}
+			break;
 		}
 	}
 
