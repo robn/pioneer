@@ -93,6 +93,8 @@ private:
 	static int ThreadEntry(void *data);
 	void ThreadMain();
 
+	static const std::string &UserAgent();
+
 	static size_t FillRequestBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 	static size_t FillResponseBuffer(char *ptr, size_t size, size_t nmemb, void *userdata);
 
