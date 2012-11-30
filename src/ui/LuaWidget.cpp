@@ -20,6 +20,13 @@ public:
 	}
 
 
+	static int l_attr_is_on_screen(lua_State *l) {
+		UI::Widget *w = LuaObject<UI::Widget>::CheckFromLua(1);
+		lua_pushboolean(l, w->IsOnScreen());
+		return 1;
+	}
+
+
 	static int l_attr_on_key_down(lua_State *l) {
 		UI::Widget *w = LuaObject<UI::Widget>::CheckFromLua(1);
 		LuaSignalAccumulated<const KeyboardEvent &>().Wrap(l, w->onKeyDown);
@@ -96,6 +103,8 @@ template <> void LuaObject<UI::Widget>::RegisterClass()
 	};
 
 	static const luaL_Reg l_attrs[] = {
+		{ "isOnScreen",   LuaWidget::l_attr_is_on_screen   },
+
 		{ "onKeyDown",    LuaWidget::l_attr_on_key_down    },
 		{ "onKeyUp",      LuaWidget::l_attr_on_key_up      },
 		{ "onKeyPress",   LuaWidget::l_attr_on_key_press   },

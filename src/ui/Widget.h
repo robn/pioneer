@@ -141,6 +141,9 @@ public:
 
 	virtual bool IsSelectable() const { return false; }
 
+	// "onscreen" widgets are attached to a context somehow
+	bool IsOnScreen() const;
+
 	// font size. obviously used for text size but also sometimes used for
 	// general widget size (eg space size). might do nothing, depends on the
 	// widget

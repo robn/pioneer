@@ -82,6 +82,12 @@ Widget::Font Widget::GetFont() const
 	return m_font;
 }
 
+bool Widget::IsOnScreen() const
+{
+	Container *c = GetContainer();
+	return (this == GetContext() || (c && c->IsOnScreen()));
+}
+
 bool Widget::TriggerKeyDown(const KeyboardEvent &event, bool emit)
 {
 	HandleKeyDown(event);
