@@ -143,7 +143,8 @@ void ModelViewer::Run(const std::string &modelName)
 	renderer = Graphics::Init(videoSettings);
 
 	OS::LoadWindowIcon();
-	SDL_WM_SetCaption("Model viewer","Model viewer");
+	// XXX SDL2 set window title through settings
+	//SDL_WM_SetCaption("Model viewer","Model viewer");
 
 	NavLights::Init(renderer);
 
@@ -258,31 +259,31 @@ void ModelViewer::ChangeCameraPreset(SDL_Keycode key, SDL_Keymod mod)
 
 	switch (key)
 	{
-	case SDLK_KP7: case SDLK_u:
+	case SDLK_KP_7: case SDLK_u:
 		m_rotX = invert ? -90.f : 90.f;
 		m_rotY = 0.f;
 		AddLog(invert ? "Bottom view" : "Top view");
 		break;
-	case SDLK_KP3: case SDLK_PERIOD:
+	case SDLK_KP_3: case SDLK_PERIOD:
 		m_rotX = 0.f;
 		m_rotY = invert ? -90.f : 90.f;
 		AddLog(invert ? "Right view" : "Left view");
 		break;
-	case SDLK_KP1: case SDLK_m:
+	case SDLK_KP_1: case SDLK_m:
 		m_rotX = 0.f;
 		m_rotY = invert ? 0.f : 180.f;
 		AddLog(invert ? "Rear view" : "Front view");
 		break;
-	case SDLK_KP4: case SDLK_j:
+	case SDLK_KP_4: case SDLK_j:
 		m_rotY += 15.f;
 		break;
-	case SDLK_KP6: case SDLK_l:
+	case SDLK_KP_6: case SDLK_l:
 		m_rotY -= 15.f;
 		break;
-	case SDLK_KP2: case SDLK_COMMA:
+	case SDLK_KP_2: case SDLK_COMMA:
 		m_rotX += 15.f;
 		break;
-	case SDLK_KP8: case SDLK_i:
+	case SDLK_KP_8: case SDLK_i:
 		m_rotX -= 15.f;
 		break;
 	default:
@@ -744,7 +745,7 @@ void ModelViewer::PollEvents()
 			case SDLK_TAB:
 				m_options.showUI = !m_options.showUI;
 				break;
-			case SDLK_PRINT:
+			case SDLK_PRINTSCREEN:
 				m_screenshotQueued = true;
 				break;
 			case SDLK_g:
@@ -757,13 +758,13 @@ void ModelViewer::PollEvents()
 				if (event.key.keysym.mod & KMOD_SHIFT)
 					m_renderer->ReloadShaders();
 				break;
-			case SDLK_KP1: case SDLK_m:
-			case SDLK_KP2: case SDLK_COMMA:
-			case SDLK_KP3: case SDLK_PERIOD:
-			case SDLK_KP4: case SDLK_j:
-			case SDLK_KP6: case SDLK_l:
-			case SDLK_KP7: case SDLK_u:
-			case SDLK_KP8: case SDLK_i:
+			case SDLK_KP_1: case SDLK_m:
+			case SDLK_KP_2: case SDLK_COMMA:
+			case SDLK_KP_3: case SDLK_PERIOD:
+			case SDLK_KP_4: case SDLK_j:
+			case SDLK_KP_6: case SDLK_l:
+			case SDLK_KP_7: case SDLK_u:
+			case SDLK_KP_8: case SDLK_i:
 				ChangeCameraPreset(event.key.keysym.sym, event.key.keysym.mod);
 				break;
 			case SDLK_p: //landing pad test
