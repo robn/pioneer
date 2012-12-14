@@ -95,7 +95,7 @@ LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
 int Pi::keyModState;
-char Pi::keyState[SDLK_LAST];
+char Pi::keyState[512]; // XXX SDL2 SDLK_LAST
 char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;

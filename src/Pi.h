@@ -185,7 +185,7 @@ private:
 	static bool forceTimeAccel;
 	static float frameTime;
 	static float scrAspect;
-	static char keyState[SDLK_LAST];
+	static char keyState[512]; // XXX SDL2 SDLK_LAST
 	static int keyModState;
 	static char mouseButton[6];
 	static int mouseMotion[2];
