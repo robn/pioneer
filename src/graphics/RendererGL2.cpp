@@ -23,8 +23,8 @@ typedef std::vector<std::pair<MaterialDescriptor, GL2::Program*> >::const_iterat
 GL2::MultiProgram *vtxColorProg;
 GL2::MultiProgram *flatColorProg;
 
-RendererGL2::RendererGL2(const Graphics::Settings &vs)
-: RendererLegacy(vs)
+RendererGL2::RendererGL2(WindowSDL *window, const Graphics::Settings &vs)
+: RendererLegacy(window, vs)
 , m_invLogZfarPlus1(0.f)
 {
 	//the range is very large due to a "logarithmic z-buffer" trick used
