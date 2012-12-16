@@ -142,7 +142,7 @@ public:
 	static SystemView *systemView;
 	static WorldView *worldView;
 	static DeathView *deathView;
-	static SpaceStationView *spaceStationView;
+	static UIView *spaceStationView;
 	static UIView *infoView;
 	static LuaConsole *luaConsole;
 	static ShipCpanel *cpan;
