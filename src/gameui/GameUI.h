@@ -6,6 +6,7 @@
 
 #include "ui/Context.h"
 
+#include "Camera.h"
 #include "Face.h"
 #include "ShipSpinner.h"
 
