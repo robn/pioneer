@@ -314,6 +314,7 @@ pioneer_LDADD = \
 	ui/libui.a \
 	gameui/libgameui.a \
 	../contrib/miniz/libminiz.a \
+	../contrib/json/libjson.a \
 	../contrib/PicoDDS/libpicodds.a \
 	../contrib/jenkins/libjenkins.a
 
