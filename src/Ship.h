@@ -91,7 +91,6 @@ public:
 	const shipstats_t &GetStats() const { return m_stats; }
 
 	void Explode();
-	void SetGunState(int idx, int state);
 	void UpdateMass();
 	virtual bool SetWheelState(bool down); // returns success of state change, NOT state itself
 	void Blastoff();
@@ -221,7 +220,9 @@ public:
 	float GetPercentShields() const;
 	float GetPercentHull() const;
 	void SetPercentHull(float);
-	float GetGunTemperature(int idx) const { return m_gunTemperature[idx]; }
+
+	const GunMount &GetGunMount(int idx) const { return m_gunMount[i]; }
+	const Turret &GetTurret(int idx) const { return m_turret[i]; }
 
 	enum FuelState { // <enum scope='Ship' name=ShipFuelStatus prefix=FUEL_>
 		FUEL_OK,
@@ -265,9 +266,6 @@ protected:
 	SpaceStation *m_dockedWith;
 	int m_dockedWithPort;
 	ShipFlavour m_shipFlavour;
-	Uint32 m_gunState[ShipType::GUNMOUNT_MAX];
-	float m_gunRecharge[ShipType::GUNMOUNT_MAX];
-	float m_gunTemperature[ShipType::GUNMOUNT_MAX];
 	float m_ecmRecharge;
 
 	ShipController *m_controller;
@@ -275,8 +273,8 @@ protected:
 private:
 	float GetECMRechargeTime();
 	void DoThrusterSounds() const;
-	void FireWeapon(int num);
 	void Init();
+	void InitGunMounts();
 	bool IsFiringLasers();
 	void TestLanded();
 	void UpdateAlertState();
@@ -295,6 +293,9 @@ private:
 
 	vector3d m_thrusters;
 	vector3d m_angThrusters;
+
+	std::vector<GunMount> m_gunMount;
+	std::vector<Turret> m_turret;
 
 	AlertState m_alertState;
 	double m_lastFiringAlert;

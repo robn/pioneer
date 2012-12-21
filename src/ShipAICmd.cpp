@@ -242,7 +242,9 @@ bool AICmdKill::TimeStepUpdate()
 	// Accel will be wrong for a frame on timestep changes, but it doesn't matter
 	vector3d targaccel = (m_target->GetVelocity() - m_lastVel) / Pi::game->GetTimeStep();
 	m_lastVel = m_target->GetVelocity();		// may need next frame
-	vector3d leaddir = m_ship->AIGetLeadDir(m_target, targaccel, 0);
+
+	int lasertype = Equip::types[m_ship->GetEquip().Get(Equip::SLOT_LASER, 0)].tableIndex;
+	vector3d leaddir = m_ship->AIGetLeadDir(m_target, targaccel, lasertype);
 
 	if (targpos.Length() >= VICINITY_MIN) {			// if really far from target, intercept
 		printf("%s started AUTOPILOT\n", m_ship->GetLabel().c_str());

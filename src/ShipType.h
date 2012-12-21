@@ -20,14 +20,16 @@ struct ShipType {
 		THRUSTER_RIGHT,
 		THRUSTER_MAX // <enum skip>
 	};
-	enum {
-		GUN_FRONT,
-		GUN_REAR,
-		GUNMOUNT_MAX = 2
+	struct GunMount {			// fixed mount, front or rear
+		vector3d pos;
+		vector3d dir;			// not necessarily directly front or rear...
+		int size;				// maximum size of weapon to mount
+		std::string tag;
 	};
-	enum DualLaserOrientation { // <enum scope='ShipType' name='DualLaserOrientation' prefix='DUAL_LASERS_'>
-		DUAL_LASERS_HORIZONTAL,
-		DUAL_LASERS_VERTICAL
+	struct Turret : public GunMount {
+		double extent;			// maximum angle from dir in radians
+		double accel;
+		double maxspeed;			// max training speed & accel in radians
 	};
 	enum Tag { // <enum scope='ShipType' name=ShipTypeTag prefix=TAG_>
 		TAG_NONE,
@@ -45,12 +47,8 @@ struct ShipType {
 	std::string lmrModelName;
 	float linThrust[THRUSTER_MAX];
 	float angThrust;
-	struct GunMount {
-		vector3f pos;
-		vector3f dir;
-		double sep;
-		DualLaserOrientation orient;
-	} gunMount[GUNMOUNT_MAX];
+	std::vector<GunMount> gunMount;
+	std::vector<Turret> turret;
 	int equipSlotCapacity[Equip::SLOT_MAX];
 	int capacity; // tonnes
 	int hullMass;

@@ -14,12 +14,17 @@ define_ship {
 	camera_offset = v(-1,1.3,-54.5),
 	gun_mounts =
 	{
-		{ v(0,-2,-46), v(0,0,-1), 5, 'HORIZONTAL' },
-		{ v(0,0,0), v(0,0,1), 5, 'HORIZONTAL' },
+		{ v(-1,-2,-46), v(0,0,-1), 5, 'Left front' },
+		{ v(1,-2,-46), v(0,0,-1), 5, 'Right front' },
+		{ v(0,0,0), v(0,0,1), 5, 'Fixed rear' },
 	},
+	turrets = 
+	{
+		{ v(0,5,0), v(0,1,0), 5, 'Ventral', math.pi/2, math.pi/10, math.pi/2 },
+		{ v(0,-5,0), v(0,-1,0), 5, 'Dorsal', math.pi/2, math.pi/10, math.pi/2 },
+	}
 	max_atmoshield = 0,
 	max_cargo = 1220,
-	max_laser = 2,
 	max_missile = 12,
 	max_cargoscoop = 0,
 	capacity = 1220,
