@@ -2318,33 +2318,24 @@ StarSystem::~StarSystem()
 	clear_parent_and_child_pointers(rootBody.Get());
 }
 
-/* XXX SERIALIZER
-void StarSystem::Serialize(Serializer::Writer &wr, StarSystem *s)
-{
-	if (s) {
-		wr.Byte(1);
-		wr.Int32(s->m_path.sectorX);
-		wr.Int32(s->m_path.sectorY);
-		wr.Int32(s->m_path.sectorZ);
-		wr.Int32(s->m_path.systemIndex);
-	} else {
-		wr.Byte(0);
-	}
+Serializer::Object StarSystem::Serialize() const {
+	Json::Value data(Json::arrayValue);
+	data.append(m_path.sectorX);
+	data.append(m_path.sectorY);
+	data.append(m_path.sectorZ);
+	data.append(m_path.systemIndex);
+	return Serializer::Object(data);
 }
 
-RefCountedPtr<StarSystem> StarSystem::Unserialize(Serializer::Reader &rd)
+RefCountedPtr<StarSystem> StarSystem::Unserialize(const Serializer::Object &so)
 {
-	if (rd.Byte()) {
-		int sec_x = rd.Int32();
-		int sec_y = rd.Int32();
-		int sec_z = rd.Int32();
-		int sys_idx = rd.Int32();
-		return StarSystem::GetCached(SystemPath(sec_x, sec_y, sec_z, sys_idx));
-	} else {
-		return RefCountedPtr<StarSystem>(0);
-	}
+	const Json::Value &data(so.GetJson());
+	Sint32 sec_x = data[0].asInt();
+	Sint32 sec_y = data[1].asInt();
+	Sint32 sec_z = data[2].asInt();
+	Uint32 sys_idx = data[3].asUInt();
+	return StarSystem::GetCached(SystemPath(sec_x, sec_y, sec_z, sys_idx));
 }
-*/
 
 typedef std::map<SystemPath,StarSystem*> SystemCacheMap;
 static SystemCacheMap s_cachedSystems;

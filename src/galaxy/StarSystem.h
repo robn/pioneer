@@ -221,10 +221,11 @@ public:
 	const std::string &GetName() const { return m_name; }
 	SystemPath GetPathOf(const SystemBody *sbody) const;
 	SystemBody *GetBodyByPath(const SystemPath &path) const;
-/* XXX SERIALIZER
-	static void Serialize(Serializer::Writer &wr, StarSystem *);
-	static RefCountedPtr<StarSystem> Unserialize(Serializer::Reader &rd);
-*/
+
+	Serializer::Object Serialize() const;
+	// XXX Should be a constructor, but StarSystem isn't really set up for that yet
+	static RefCountedPtr<StarSystem> Unserialize(const Serializer::Object &so);
+
 	void Dump();
 	const SystemPath &GetPath() const { return m_path; }
 	const char *GetShortDescription() const { return m_shortDesc.c_str(); }

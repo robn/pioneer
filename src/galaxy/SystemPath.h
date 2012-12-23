@@ -102,23 +102,23 @@ public:
 		return SystemPath(sectorX, sectorY, sectorZ, systemIndex);
 	}
 
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr) const {
-		wr.Int32(sectorX);
-		wr.Int32(sectorY);
-		wr.Int32(sectorZ);
-		wr.Int32(Uint32(systemIndex));
-		wr.Int32(Uint32(bodyIndex));
+	Serializer::Object Serialize() const {
+		Json::Value data(Json::arrayValue);
+		data.append(sectorX);
+		data.append(sectorY);
+		data.append(sectorZ);
+		data.append(systemIndex);
+		data.append(bodyIndex);
+		return Serializer::Object(data);
 	}
-	static SystemPath Unserialize(Serializer::Reader &rd) {
-		Uint32 x = rd.Int32();
-		Uint32 y = rd.Int32();
-		Uint32 z = rd.Int32();
-		Sint32 si = Sint32(rd.Int32());
-		Sint32 bi = Sint32(rd.Int32());
-		return SystemPath(x, y, z, si, bi);
+	SystemPath(const Serializer::Object &so) {
+		const Json::Value &data(so.GetJson());
+		sectorX = data[0].asInt();
+		sectorY = data[1].asInt();
+		sectorZ = data[2].asInt();
+		systemIndex = data[3].asUInt();
+		bodyIndex = data[4].asUInt();
 	}
-*/
 };
 
 #endif
