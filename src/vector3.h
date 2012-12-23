@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "FloatComparison.h"
+#include "Serializer.h"
 
 // Need this pragma due to operator[] implementation.
 #pragma pack(4)
@@ -116,6 +117,20 @@ public:
 			sqrtf (u*u+v*v+w*w)*(-v*x+u*y)*sin_a;
 		t.z *= inv_poo;
 		*this = t;
+	}
+
+	Serializer::Object Serialize() const {
+		Json::Value data(Json::arrayValue);
+		data.append(Serializer::DoubleToHexFloat(x));
+		data.append(Serializer::DoubleToHexFloat(y));
+		data.append(Serializer::DoubleToHexFloat(z));
+		return Serializer::Object(data);
+	}
+	vector3(const Serializer::Object &so) {
+		const Json::Value &data(so.GetJson());
+		x = T(Serializer::HexFloatToDouble(data[0].asString()));
+		y = T(Serializer::HexFloatToDouble(data[1].asString()));
+		z = T(Serializer::HexFloatToDouble(data[2].asString()));
 	}
 };
 
