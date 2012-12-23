@@ -811,14 +811,23 @@ void Pi::Start()
 				while (SDL_PollEvent(&event)) {}
 		}
 
+		Pi::renderer->CheckErrors();
 		Pi::renderer->BeginFrame();
+		Pi::renderer->CheckErrors();
 		Pi::renderer->SetPerspectiveProjection(75, Pi::GetScrAspect(), 1.f, 10000.f);
+		Pi::renderer->CheckErrors();
 		Pi::renderer->SetTransform(matrix4x4f::Identity());
+		Pi::renderer->CheckErrors();
 		intro->Draw(_time);
+		Pi::renderer->CheckErrors();
 		Pi::renderer->EndFrame();
+		Pi::renderer->CheckErrors();
 
+		Pi::renderer->CheckErrors();
 		ui->Update();
+		Pi::renderer->CheckErrors();
 		ui->Draw();
+		Pi::renderer->CheckErrors();
 
 		Pi::renderer->SwapBuffers();
 
