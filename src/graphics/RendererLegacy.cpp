@@ -77,24 +77,6 @@ RendererLegacy::~RendererLegacy()
 
 }
 
-bool RendererLegacy::GetNearFarRange(float &near, float &far) const
-{
-	near = m_minZNear;
-	far = m_maxZFar;
-	return true;
-}
-
-bool RendererLegacy::BeginFrame()
-{
-	ClearScreen();
-	return true;
-}
-
-bool RendererLegacy::EndFrame()
-{
-	return true;
-}
-
 static std::string glerr_to_string(GLenum err)
 {
 	switch (err)
@@ -118,12 +100,9 @@ static std::string glerr_to_string(GLenum err)
 	}
 }
 
-bool RendererLegacy::SwapBuffers()
+void RendererLegacy::CheckErrors() const
 {
 #ifndef NDEBUG
-	// Check if an error occurred during the frame. This is not very useful for
-	// determining *where* the error happened. For that purpose, try GDebugger or
-	// the GL_KHR_DEBUG extension
 	GLenum err;
 	err = glGetError();
 	if (err != GL_NO_ERROR) {
@@ -136,6 +115,33 @@ bool RendererLegacy::SwapBuffers()
 		OS::Error("%s", ss.str().c_str());
 	}
 #endif
+}
+
+bool RendererLegacy::GetNearFarRange(float &near, float &far) const
+{
+	near = m_minZNear;
+	far = m_maxZFar;
+	return true;
+}
+
+bool RendererLegacy::BeginFrame()
+{
+	ClearScreen();
+	return true;
+}
+
+bool RendererLegacy::EndFrame()
+{
+	return true;
+}
+
+bool RendererLegacy::SwapBuffers()
+{
+	// Check if an error occurred during the frame. This is not very useful for
+	// determining *where* the error happened. For that purpose, try GDebugger or
+	// the GL_KHR_DEBUG extension, or put more calls to CheckErrors() around
+	// the place.
+	CheckErrors();
 
 	Graphics::SwapBuffers();
 	return true;

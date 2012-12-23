@@ -19,6 +19,8 @@ public:
 	RendererLegacy(const Graphics::Settings &vs);
 	virtual ~RendererLegacy();
 
+	virtual void CheckErrors() const;
+
 	virtual const char* GetName() const { return "Legacy renderer"; }
 	virtual bool GetNearFarRange(float &near, float &far) const;
 

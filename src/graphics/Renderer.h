@@ -69,6 +69,8 @@ public:
 	Renderer(int width, int height);
 	virtual ~Renderer();
 
+	virtual void CheckErrors() const {}
+
 	virtual const char* GetName() const = 0;
 	//get supported minimum for z near and maximum for z far values
 	virtual bool GetNearFarRange(float &near, float &far) const = 0;
