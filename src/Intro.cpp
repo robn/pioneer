@@ -52,6 +52,7 @@ void Intro::Draw(float _time)
 	// rotate background by time, and a bit extra Z so it's not so flat
 	matrix4x4d brot = matrix4x4d::RotateXMatrix(-0.25*_time) * matrix4x4d::RotateZMatrix(0.6);
 	m_background->Draw(m_renderer, brot);
+	m_renderer->CheckErrors();
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -65,6 +66,9 @@ void Intro::Draw(float _time)
 		matrix4x4f::RotateZMatrix(0.6f*_time) *
 		matrix4x4f::RotateXMatrix(_time*0.7f);
 	m_model->Render(m_renderer, trans, &m_modelParams);
+	m_renderer->CheckErrors();
+
 	glPopAttrib();
+	m_renderer->CheckErrors();
 	m_renderer->SetAmbientColor(oldSceneAmbientColor);
 }
