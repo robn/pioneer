@@ -54,7 +54,7 @@ void Intro::Draw(float _time)
 	m_background->Draw(m_renderer, brot);
 	m_renderer->CheckErrors();
 
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glPushAttrib(GL_ALL_ATTRIB_BITS & (~GL_POINT_BIT));
 
 	const Color oldSceneAmbientColor = m_renderer->GetAmbientColor();
 	m_renderer->SetAmbientColor(m_ambientColor);
