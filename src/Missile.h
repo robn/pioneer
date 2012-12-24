@@ -14,6 +14,9 @@ public:
 	Missile(ShipType::Id type, Body *owner, int power=-1);
 	Missile() {}
 	virtual ~Missile() {}
+
+	virtual Serializer::Object Serialize() const;
+
 	void TimeStepUpdate(const float timeStep);
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);
 	virtual bool OnDamage(Object *attacker, float kgDamage);

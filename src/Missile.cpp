@@ -33,6 +33,15 @@ void Missile::ECMAttack(int power_val)
 	}
 }
 
+Serializer::Object Missile::Serialize() const {
+	Serializer::Object so(Ship::Serialize());
+	so.Set("bodyClass", "Missile");
+	// XXX SERIALIZER owner index
+	so.Set("power", m_power);
+	so.Set("armed", m_armed);
+	return so;
+}
+
 /* XXX SERIALIZER
 void Missile::PostLoadFixup(Space *space)
 {
