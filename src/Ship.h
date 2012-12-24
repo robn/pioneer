@@ -57,6 +57,8 @@ public:
 	Ship() {} //default constructor used before Load
 	virtual ~Ship();
 
+	virtual Serializer::Object Serialize() const;
+
 	void SetController(ShipController *c); //deletes existing
 	ShipController *GetController() const { return m_controller; }
 	virtual bool IsPlayerShip() const { return false; } //XXX to be replaced with an owner check

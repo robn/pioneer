@@ -60,7 +60,66 @@ void SerializableEquipSet::Load(Serializer::Reader &rd)
 	}
 	onChange.emit(Equip::NONE);
 }
+#endif
 
+Serializer::Object Ship::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "Ship");
+	so.Set("angThrusters", m_angThrusters.Serialize());
+	so.Set("thrusters", m_thrusters.Serialize());
+	so.Set("wheelTransition", m_wheelTransition);
+	so.Set("wheelState", m_wheelState),
+	so.Set("launchLockTimeout", m_launchLockTimeout);
+	so.Set("testLanded", m_testLanded);
+	so.Set("flightState", static_cast<Sint32>(m_flightState)); // XXX SERIALIZER store constants
+	so.Set("alertState", static_cast<Sint32>(m_alertState));
+	so.Set("lastFiringAlert", m_lastFiringAlert);
+
+	// XXX make sure all hyperspace attrs and the cloud get saved
+	so.Set("hyperspaceDest", m_hyperspace.dest.Serialize());
+	so.Set("hyperspaceCountdown", m_hyperspace.countdown);
+
+	{
+	// XXX use named gunpoints
+	// XXX m_gun* should be a separate class
+	Json::Value gunmounts(Json::arrayValue);
+	for (int i = 0; i < ShipType::GUNMOUNT_MAX; i++) {
+		Serializer::Object gun;
+		gun.Set("gunState", m_gunState[i]);
+		gun.Set("gunRecharge", m_gunRecharge[i]);
+		gun.Set("gunTemperature", m_gunTemperature[i]);
+		gunmounts.append(gun.GetJson());
+	}
+	so.Set("gunmounts", Serializer::Object(gunmounts));
+	}
+
+	so.Set("ecmRecharge", m_ecmRecharge);
+
+	so.Set("shipType", m_type->id);
+
+	so.Set("dockedWithPort", m_dockedWithPort);
+	// XXX SERIALIZER docked with
+
+	// XXX SERIALIZER m_equipment
+
+	so.Set("hullMassLeft", m_stats.hull_mass_left);
+	so.Set("shieldMassLeft", m_stats.shield_mass_left);
+
+	// XXX SERIALIZER AI
+
+	so.Set("aiMessage", static_cast<Uint32>(m_aiMessage)); // XXX SERIALIZER constants
+
+	so.Set("thrusterFuel", m_thrusterFuel);
+	so.Set("reserveFuel", m_reserveFuel);
+
+	// XXX SERIALIZER controller
+
+	// XXX SERIALIZER navlights
+
+	return so;
+}
+
+#if 0
 void Ship::Save(Serializer::Writer &wr, Space *space)
 {
 	DynamicBody::Save(wr, space);
