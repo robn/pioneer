@@ -36,7 +36,7 @@ Planet::Planet(SystemBody *sbody): TerrainBody(sbody), m_ringVertices(RING_VERTE
 Planet::~Planet() {}
 
 Serializer::Object Planet::Serialize() const {
-	Serializer::Object so(Body::Serialize());
+	Serializer::Object so(TerrainBody::Serialize());
 	so.Set("bodyClass", "Planet");
 	return so;
 }

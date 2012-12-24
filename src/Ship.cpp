@@ -63,7 +63,7 @@ void SerializableEquipSet::Load(Serializer::Reader &rd)
 #endif
 
 Serializer::Object Ship::Serialize() const {
-	Serializer::Object so(Body::Serialize());
+	Serializer::Object so(DynamicBody::Serialize());
 	so.Set("bodyClass", "Ship");
 	so.Set("angThrusters", m_angThrusters.Serialize());
 	so.Set("thrusters", m_thrusters.Serialize());

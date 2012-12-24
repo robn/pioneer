@@ -55,7 +55,7 @@ void DynamicBody::AddRelTorque(const vector3d &t)
 }
 
 Serializer::Object DynamicBody::Serialize() const {
-	Serializer::Object so(Body::Serialize());
+	Serializer::Object so(ModelBody::Serialize());
 	so.Set("bodyClass", "DynamicBody");
 	so.Set("force", m_force.Serialize());
 	so.Set("torque", m_torque.Serialize());
