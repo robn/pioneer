@@ -25,6 +25,13 @@ Player::Player(ShipType::Id shipId): Ship(shipId)
 	SetController(new PlayerShipController());
 }
 
+Serializer::Object Player::Serialize() const {
+	Serializer::Object so(Ship::Serialize());
+	so.Set("bodyClass", "Player");
+	// XXX SERIALIZER marketagent
+	return so;
+}
+
 /* XXX SERIALIZER
 void Player::Save(Serializer::Writer &wr, Space *space)
 {
