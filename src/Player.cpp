@@ -28,7 +28,7 @@ Player::Player(ShipType::Id shipId): Ship(shipId)
 Serializer::Object Player::Serialize() const {
 	Serializer::Object so(Ship::Serialize());
 	so.Set("bodyClass", "Player");
-	// XXX SERIALIZER marketagent
+	so.Set("marketAgent", MarketAgent::Serialize());
 	return so;
 }
 

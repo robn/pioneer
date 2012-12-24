@@ -7,6 +7,12 @@
 #include "Pi.h"
 #include "Lang.h"
 
+Serializer::Object MarketAgent::Serialize() const {
+	Serializer::Object so;
+	so.Set("money", m_money);
+	return so;
+}
+
 /* XXX SERIALIZER
 void MarketAgent::Load(Serializer::Reader &rd)
 {

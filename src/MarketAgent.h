@@ -11,6 +11,9 @@
 class MarketAgent {
 public:
 	MarketAgent(): m_money(0) {}
+
+	Serializer::Object Serialize() const;
+
 	void SetMoney(Sint64 m) { m_money = m; }
 	Sint64 GetMoney() const { return m_money; }
 	bool Pay(MarketAgent *b, Sint64 amount, bool verbose = false);

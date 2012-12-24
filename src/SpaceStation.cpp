@@ -39,7 +39,7 @@ void SpaceStation::Uninit()
 Serializer::Object SpaceStation::Serialize() const {
 	Serializer::Object so(ModelBody::Serialize());
 	so.Set("bodyClass", "SpaceStation");
-	// XXX SERIALIZER market
+	so.Set("marketAgent", MarketAgent::Serialize());
 	// XXX SERIALIZER equipment stocks
 	// XXX SERIALIZER shipyard
 	// XXX SERIALIZER docked ships
