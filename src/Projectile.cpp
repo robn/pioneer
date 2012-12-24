@@ -114,6 +114,17 @@ Projectile::~Projectile()
 {
 }
 
+Serializer::Object Projectile::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "Projectile");
+	so.Set("baseVel", m_baseVel.Serialize());
+	so.Set("dirVel", m_dirVel.Serialize());
+	so.Set("age", m_age);
+	so.Set("type", m_type);
+	// XXX SERIALIZER parent body index
+	return so;
+}
+
 /* XXX SERIALIZER
 void Projectile::Save(Serializer::Writer &wr, Space *space)
 {

@@ -19,6 +19,8 @@ class Projectile: public Body {
 public:
 	OBJDEF(Projectile, Body, PROJECTILE);
 
+	virtual Serializer::Object Serialize() const;
+
 	static void Add(Body *parent, Equip::Type type, const vector3d &pos, const vector3d &baseVel, const vector3d &dirVel);
 
 	Projectile();
