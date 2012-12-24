@@ -59,6 +59,17 @@ void HyperspaceCloud::SetIsArrival(bool isArrival)
 	SetLabel(isArrival ? Lang::HYPERSPACE_ARRIVAL_CLOUD : Lang::HYPERSPACE_DEPARTURE_CLOUD);
 }
 
+Serializer::Object HyperspaceCloud::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "HyperspaceCloud");
+	so.Set("vel", m_vel.Serialize());
+	so.Set("birthdate", m_birthdate);
+	so.Set("due", m_due);
+	so.Set("isArrival", m_isArrival);
+	// XXX SERIALIZER m_ship
+	return so;
+}
+
 /* XXX SERIALIZER
 void HyperspaceCloud::Save(Serializer::Writer &wr, Space *space)
 {

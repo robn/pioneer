@@ -23,6 +23,9 @@ public:
 	HyperspaceCloud(Ship *, double dateDue, bool isArrival);
 	HyperspaceCloud();
 	virtual ~HyperspaceCloud();
+
+	virtual Serializer::Object Serialize() const;
+
 	virtual void SetVelocity(const vector3d &v) { m_vel = v; }
 	virtual vector3d GetVelocity() const { return m_vel; }
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
