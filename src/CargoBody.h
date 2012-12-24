@@ -15,6 +15,9 @@ public:
 	OBJDEF(CargoBody, DynamicBody, CARGOBODY);
 	CargoBody(Equip::Type t);
 	CargoBody() {}
+
+	virtual Serializer::Object Serialize() const;
+
 	Equip::Type GetCargoType() const { return m_type; }
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);

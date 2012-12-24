@@ -11,6 +11,14 @@
 #include "collider/collider.h"
 #include "scenegraph/SceneGraph.h"
 
+Serializer::Object CargoBody::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "CargoBody");
+	so.Set("type", static_cast<Sint32>(m_type)); // XXX SERIALIZER store constants
+	so.Set("hitpoints", m_hitpoints);
+	return so;
+}
+
 /* XXX SERIALIZER
 void CargoBody::Save(Serializer::Writer &wr, Space *space)
 {
