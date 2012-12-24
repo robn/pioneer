@@ -27,7 +27,26 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 }
 
 Serializer::Object Frame::Serialize() const {
-	return Serializer::Object();
+	Serializer::Object so;
+
+	so.Set("flags", m_flags);
+	so.Set("radius", m_radius);
+	so.Set("label", m_label);
+	so.Set("pos", m_pos.Serialize());
+	so.Set("orient", m_orient.Serialize());
+	so.Set("angSpeed", m_angSpeed);
+	// XXX SERIALIZER sbody and body indices
+
+	{
+	Json::Value children(Json::arrayValue);
+	for (ChildIterator i = BeginChildren(); i != EndChildren(); ++i)
+		children.append((*i)->Serialize().GetJson());
+	so.Set("children", Serializer::Object(children));
+	}
+
+	// XXX SERIALIZER sfx
+
+	return so;
 }
 
 /* XXX SERIALIZER
