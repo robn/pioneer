@@ -140,6 +140,18 @@ class matrix3x3 {
 		}
 		printf ("\n");
 	}
+
+	Serializer::Object Serialize() const {
+		Json::Value data(Json::arrayValue);
+		for (int i = 0; i < 9; i++)
+			data.append(Serializer::DoubleToHexFloat(cell[i]));
+		return Serializer::Object(data);
+	}
+	matrix3x3(const Serializer::Object &so) {
+		const Json::Value &data(so.GetJson());
+		for (int i = 0; i < 9; i++)
+			cell[i] = T(Serializer::HexFloatToDouble(data[i].asString()));
+	}
 };
 
 typedef matrix3x3<float> matrix3x3f;
