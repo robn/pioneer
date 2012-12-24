@@ -134,24 +134,27 @@ Space::~Space()
 	UpdateBodies();
 }
 
-/* XXX SERIALIZER
-void Space::Serialize(Serializer::Writer &wr)
+Serializer::Object Space::Serialize()
 {
+	// XXX SERIALIZER get rid of these
 	RebuildFrameIndex();
 	RebuildBodyIndex();
 	RebuildSystemBodyIndex();
 
-	StarSystem::Serialize(wr, m_starSystem.Get());
+	Serializer::Object so;
 
-	Serializer::Writer section;
-	Frame::Serialize(section, m_rootFrame.Get(), this);
-	wr.WrSection("Frames", section.GetData());
+	so.Set("system", m_starSystem->Serialize());
+	so.Set("frames", m_rootFrame->Serialize());
 
-	wr.Int32(m_bodies.size());
+	{
+	Json::Value bodies(Json::arrayValue);
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-		(*i)->Serialize(wr, this);
+		bodies.append((*i)->Serialize().GetJson());
+	so.Set("bodies", Serializer::Object(bodies));
+	}
+
+	return so;
 }
-*/
 
 Frame *Space::GetFrameByIndex(Uint32 idx) const
 {

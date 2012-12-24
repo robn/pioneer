@@ -22,6 +22,9 @@ public:
 	OBJDEF(Body, Object, BODY);
 	Body();
 	virtual ~Body();
+
+	virtual Serializer::Object Serialize() const;
+
 /* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr, Space *space);
 	static Body *Unserialize(Serializer::Reader &rd, Space *space);

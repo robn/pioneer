@@ -179,6 +179,9 @@ Serializer::Object Game::Serialize() const
 	so.Set("meta", meta);
 	}
 
+	// space, all the bodies and things
+	so.Set("space", m_space->Serialize());
+
 	return so;
 
 /* XXX SERIALIZER
@@ -194,7 +197,6 @@ Serializer::Object Game::Serialize() const
 	// space, all the bodies and things
 	m_space->Serialize(section);
 	wr.WrSection("Space", section.GetData());
-
 
 	// game state and space transition state
 	section = Serializer::Writer();

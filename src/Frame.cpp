@@ -26,6 +26,10 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 	Init(parent, label, flags);
 }
 
+Serializer::Object Frame::Serialize() const {
+	return Serializer::Object();
+}
+
 /* XXX SERIALIZER
 void Frame::Serialize(Serializer::Writer &wr, Frame *f, Space *space)
 {

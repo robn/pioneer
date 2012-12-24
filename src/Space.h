@@ -33,9 +33,8 @@ public:
 
 	virtual ~Space();
 
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr);
-*/
+	// XXX SERIALIZER make const as soon as the indexes aren't needed any longer
+	Serializer::Object Serialize();
 
 	// frame/body/sbody indexing for save/load. valid after
 	// construction/Serialize(), invalidated by TimeStep(). they will assert

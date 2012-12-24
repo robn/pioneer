@@ -36,6 +36,10 @@ Body::~Body()
 {
 }
 
+Serializer::Object Body::Serialize() const {
+	return Serializer::Object();
+}
+
 /* XXX SERIALIZER
 void Body::Save(Serializer::Writer &wr, Space *space)
 {
