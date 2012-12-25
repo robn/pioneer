@@ -36,20 +36,74 @@ void SpaceStation::Uninit()
 	SpaceStationType::Uninit();
 }
 
+Serializer::Object ShipOnSale::Serialize() const {
+	Serializer::Object so;
+	so.Set("id", id);
+	so.Set("regId", regId);
+	// XXX SERIALIZER model skin
+	return so;
+}
+
 Serializer::Object SpaceStation::Serialize() const {
 	Serializer::Object so(ModelBody::Serialize());
 	so.Set("bodyClass", "SpaceStation");
 	so.Set("marketAgent", MarketAgent::Serialize());
-	// XXX SERIALIZER equipment stocks
-	// XXX SERIALIZER shipyard
-	// XXX SERIALIZER docked ships
-	// XXX SERIALIZER bay groups
+
+	{
+	// XXX SERIALIZER constant keys
+	Json::Value equipmentStock(Json::arrayValue);
+	for (int i = 0; i < Equip::TYPE_MAX; i++)
+		equipmentStock.append(static_cast<Uint32>(m_equipmentStock[i]));
+	so.Set("equipmentStock", equipmentStock);
+	}
+
+	{
+	Json::Value shipsOnSale(Json::arrayValue);
+	for (std::vector<ShipOnSale>::const_iterator i = m_shipsOnSale.begin(); i != m_shipsOnSale.end(); ++i)
+		shipsOnSale.append((*i).Serialize().GetJson());
+	so.Set("shipsOnSale", shipsOnSale);
+	}
+
+	{
+	Json::Value shipDocking(Json::arrayValue);
+	for (int i = 0; i < MAX_DOCKING_PORTS; i++) {
+		Serializer::Object dock;
+		// XXX SERIALIZER ship body index
+		dock.Set("stage", m_shipDocking[i].stage);
+		dock.Set("stagePos", m_shipDocking[i].stagePos);
+		dock.Set("fromPos", m_shipDocking[i].fromPos.Serialize());
+		dock.Set("fromRot", m_shipDocking[i].fromRot.Serialize());
+		shipDocking.append(dock.GetJson());
+	}
+	so.Set("shipDocking", shipDocking);
+	}
+
+	{
+	Json::Value bayGroups(Json::arrayValue);
+	for (uint32_t i = 0; i < mBayGroups.size(); i++) {
+		Serializer::Object group;
+		group.Set("minShipSize", mBayGroups[i].minShipSize);
+		group.Set("maxShipSize", mBayGroups[i].maxShipSize);
+		group.Set("inUse", mBayGroups[i].inUse);
+		Json::Value bayIDs(Json::arrayValue);
+		for (uint32_t j = 0; j < mBayGroups[i].bayIDs.size(); j++)
+			bayIDs.append(mBayGroups[i].bayIDs[j]);
+		bayGroups.append(group.GetJson());
+	}
+	so.Set("bayGroups", bayGroups);
+	}
+
+	so.Set("bbCreated", m_bbCreated);
+	so.Set("lastUpdatedShipyard", m_lastUpdatedShipyard);
+
 	// XXX SERIALIZER sbody index
-	// XXX SERIALIZER police
-	// XXX SERIALIZER lights
+
+	so.Set("numPoliceDocked", m_numPoliceDocked);
+
+	// XXX SERIALIZER navlights
+
 	return so;
 }
-
 /* XXX SERIALIZER
 void SpaceStation::Save(Serializer::Writer &wr, Space *space)
 {

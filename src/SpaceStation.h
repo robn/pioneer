@@ -44,6 +44,8 @@ struct ShipOnSale {
 	ShipType::Id          id;
 	std::string           regId;
 	SceneGraph::ModelSkin skin;
+
+	Serializer::Object Serialize() const;
 };
 
 class SpaceStation: public ModelBody, public MarketAgent {
