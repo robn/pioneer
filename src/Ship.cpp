@@ -26,6 +26,21 @@
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
+Serializer::Object SerializableEquipSet::Serialize() const
+{
+	// XXX SERIALIZER constants through here
+
+	Json::Value slots(Json::arrayValue);
+	for (int i=0; i<Equip::SLOT_MAX; i++) {
+		Json::Value slot(Json::arrayValue);
+		for (unsigned int j=0; j<equip[i].size(); j++)
+			slot.append(static_cast<Uint32>(equip[i][j]));
+		slots.append(slot);
+	}
+
+	return Serializer::Object(slots);
+}
+
 #if 0
 XXX SERIALIZER
 void SerializableEquipSet::Save(Serializer::Writer &wr)
@@ -100,7 +115,7 @@ Serializer::Object Ship::Serialize() const {
 	so.Set("dockedWithPort", m_dockedWithPort);
 	// XXX SERIALIZER docked with
 
-	// XXX SERIALIZER m_equipment
+	so.Set("equipment", m_equipment.Serialize());
 
 	so.Set("hullMassLeft", m_stats.hull_mass_left);
 	so.Set("shieldMassLeft", m_stats.shield_mass_left);

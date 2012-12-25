@@ -42,6 +42,8 @@ struct shipstats_t {
 
 class SerializableEquipSet: public EquipSet {
 public:
+	Serializer::Object Serialize() const;
+
 /* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
