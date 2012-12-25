@@ -156,6 +156,22 @@ public:
 		return (a + t*(b-a)).Normalized();
 	}
 
+	Serializer::Object Serialize() const {
+		Json::Value data(Json::arrayValue);
+		data.append(Serializer::DoubleToHexFloat(w));
+		data.append(Serializer::DoubleToHexFloat(x));
+		data.append(Serializer::DoubleToHexFloat(y));
+		data.append(Serializer::DoubleToHexFloat(z));
+		return Serializer::Object(data);
+	}
+	Quaternion(const Serializer::Object &so) {
+		const Json::Value &data(so.GetJson());
+		w = T(Serializer::HexFloatToDouble(data[0].asString()));
+		x = T(Serializer::HexFloatToDouble(data[1].asString()));
+		y = T(Serializer::HexFloatToDouble(data[2].asString()));
+		z = T(Serializer::HexFloatToDouble(data[3].asString()));
+	}
+
 	//void Print() const {
 	//	printf("%f,%f,%f,%f\n", w, x, y, z);
 	//}
