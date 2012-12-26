@@ -2,12 +2,14 @@
 #include "GunMount.h"
 #include "Body.h"
 #include "EquipType.h"
+#include "Projectile.h"
+#include "Sound.h"
 
-
-GunMount::GunMount(Ship *parent, const ShipType::GunMount *mount) :
+GunMount::GunMount(Ship *parent, const GunMountData &mount) :
 	m_parent(parent),
-	m_mount(mount),
-	m_weapontype(-1),
+	m_mount(&mount),
+	m_weapontype(Equip::NONE),
+	m_coolrate(0.1f),
 	m_firing(false),
 	m_temperature(0.f),
 	m_recharge(0.f)
@@ -23,19 +25,19 @@ void GunMount::Save(Serializer::Writer &wr)
 
 void GunMount::Load(Serializer::Reader &rd)
 {
-	m_firing = rd.Bool(m_firing);
-	m_temperature = rd.Float(m_temperature);
-	m_recharge = rd.Float(m_recharge);
+	m_firing = rd.Bool();
+	m_temperature = rd.Float();
+	m_recharge = rd.Float();
 }
 
-Turret::Turret(Ship *parent, const ShipType::Turret *turret) :
+Turret::Turret(Ship *parent, const TurretData &turret) :
 	GunMount(parent, turret),
-	m_turret(turret),
+	m_turret(&turret),
 	m_curvel(0.0, 0.0, 0.0),
 	m_curdir(turret.dir),
 	m_skill(0.5f),
-	m_target(0)
-	m_dotextent(asin(turret.extent));
+	m_target(0),
+	m_dotextent(asin(turret.extent))
 {
 }
 
@@ -57,23 +59,23 @@ void Turret::Load(Serializer::Reader &rd)
 
 void GunMount::Update(float timeStep)
 {
-	if (m_weapontype < 0) continue;
+	if (m_weapontype == Equip::NONE) return;
 	m_recharge -= timeStep;
 	m_temperature -= m_coolrate*timeStep;
 	if (m_temperature < 0.0f) m_temperature = 0;
 	if (m_recharge < 0.0f) m_recharge = 0;
 
-	if (!m_firing) continue;
-	if (m_recharge > 0.0f) continue;
-	if (m_temperature > 1.0) continue;
+	if (!m_firing) return;
+	if (m_recharge > 0.0f) return;
+	if (m_temperature > 1.0) return;
 
 	matrix4x4d m; m_parent->GetRotMatrix(m);
 	const vector3d dir = m.ApplyRotationOnly(GetDir());
-	const vector3d pos = m.ApplyRotationOnly(m_mount.pos) + m_parent->GetPosition();
+	const vector3d pos = m.ApplyRotationOnly(m_mount->pos) + m_parent->GetPosition();
 
-	const LaserType &lt = Equip::lasers[m_weapontype];
+	const LaserType &lt = Equip::lasers[Equip::types[m_weapontype].tableIndex];
 	m_temperature += 0.01f;			// XXX should be weapon dependent?
-	m_gunRecharge += lt.rechargeTime;
+	m_recharge += lt.rechargeTime;
 	vector3d baseVel = m_parent->GetVelocity();
 	vector3d dirVel = lt.speed * dir;
 
@@ -111,18 +113,17 @@ extern double calc_ivel(double dist, double vel, double acc);
 void Turret::Update(float timeStep)
 {
 	if (!m_target) return;
-	if (m_weapontype < 0) return;
+	if (m_weapontype == Equip::NONE) return;
 
-	matrix4x4d rot; m_ship->GetRotMatrix(rot);				// some world-space params
-	const ShipType &stype = m_ship->GetShipType();
+	matrix4x4d rot; m_parent->GetRotMatrix(rot);				// some world-space params
 	vector3d targpos = m_target->GetPositionRelTo(m_parent);
 	vector3d targvel = m_target->GetVelocityRelTo(m_parent);
 	vector3d targdir = targpos.NormalizedSafe();
 	vector3d heading = rot * m_curdir;
-	// Accel will be wrong for a frame on timestep changes, but it doesn't matter
 
-	vector3d targaccel = (targvel - m_lastVel) / timeStep;
-	vector3d leaddir = m_parent->AIGetLeadDir(m_target, targaccel, m_weapontype);
+// XXX: Put last acceleration value in body? It's quite useful...
+	//	vector3d targaccel = (targvel - m_lastVel) / timeStep;
+	vector3d leaddir = m_parent->AIGetLeadDir(m_target, vector3d(0.0), m_weapontype);
 
 	// turn towards target lead direction, add inaccuracy
 	// trigger recheck when angular velocity reaches zero or after certain time
@@ -135,13 +136,13 @@ void Turret::Update(float timeStep)
 
 		// lead inaccuracy based on diff between heading and leaddir
 		vector3d r(Pi::rng.Double()-0.5, Pi::rng.Double()-0.5, Pi::rng.Double()-0.5);
-		vector3d newoffset = r * (0.02 + 2.0*leaddiff + 2.0*headdiff)*Pi::rng.Double()*skillShoot;
+		vector3d newoffset = r * (0.02 + 2.0*leaddiff + 2.0*headdiff)*Pi::rng.Double()*m_skill;
 		m_leadOffset = (heading - leaddir);		// should be already...
 		m_leadDrift = (newoffset - m_leadOffset) / (m_leadTime - Pi::game->GetTime());
 
 		// Shoot only when close to target
 
-		double vissize = 1.3 * m_ship->GetBoundingRadius() / targpos.Length();
+		double vissize = 1.3 * m_target->GetBoundingRadius() / targpos.Length();
 		vissize += (0.05 + 0.5*leaddiff)*Pi::rng.Double()*m_skill;
 		if (vissize > headdiff) SetFiring(true);
 		else SetFiring(false);
@@ -157,12 +158,12 @@ void Turret::Update(float timeStep)
 	double dp = facedir.Dot(heading);
 	if (dp < 0.999999) {
 		double ang = acos(Clamp(dp, -1.0, 1.0));
-		iangspeed = leadAV + calc_ivel(ang, 0.0, m_turret.accel);
-		iangspeed = std::min(iangspeed, m_turret.maxspeed);
+		double iangspeed = leadAV + calc_ivel(ang, 0.0, m_turret->accel);
+		iangspeed = std::min(iangspeed, m_turret->maxspeed);
 		dav = iangspeed * heading.Cross(facedir).Normalized();
 	}
 
-	double frameAccel = m_turret.accel * timeStep;
+	double frameAccel = m_turret->accel * timeStep;
 	vector3d diffvel = (dav * rot - m_curvel);		// do everything else in ship space
 	if (diffvel.Length() > frameAccel) diffvel *= frameAccel / diffvel.Length();
 	m_curvel += diffvel;
@@ -173,12 +174,12 @@ void Turret::Update(float timeStep)
 
 	// clamp to turret extent
 
-	if (m_curdir.Dot(m_turret.dir) < m_turret.dotextent)
+	if (m_curdir.Dot(m_turret->dir) < m_dotextent)
 	{
-		vector3d raxis = m_turret.dir.Cross(m_curdir);
-		m_curdir = m_turret.dir;
-		m_curdir.ArbRotate(raxis, extent);
-		m_curvel -= m_curvel.Dot(m_turret.dir);
+		vector3d raxis = m_turret->dir.Cross(m_curdir);
+		m_curdir = m_turret->dir;
+		m_curdir.ArbRotate(raxis, m_turret->extent);
+		m_curvel -= m_turret->dir * m_curvel.Dot(m_turret->dir);
 	}
 
 	GunMount::Update(timeStep);

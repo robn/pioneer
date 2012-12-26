@@ -7,30 +7,32 @@
 
 class Body;
 class Ship;
-struct ShipType::GunMount;
-struct ShipType::Turret;
+struct GunMountData;
+struct TurretData;
+enum Equip::Type;
 
 class GunMount
 {
   public:
 	GunMount() {}
-	GunMount(Ship *parent, const ShipType::GunMount *mount);
+	GunMount(Ship *parent, const GunMountData &mount);
 
-	bool IsFiring() 
+	bool IsFiring() const { return m_firing; }
 	void SetFiring(bool firing) { m_firing = firing; }
 	virtual void Update(float timeStep);			// timestep process
 
-	void SetWeapon(int weapontype) { m_weapontype = weapontype; }
+	void SetWeapon(Equip::Type weapontype) { m_weapontype = weapontype; }
 	void SetCoolRate(float coolrate) { m_coolrate = coolrate; }
 
+	float GetTemperature() const { return m_temperature; }
 	virtual const vector3d &GetDir() const { return m_mount->dir; }
 
 	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);
 
   protected:
-	const ShipType::GunMount *m_mount;
-	int m_weapontype;		// index into Equip::lasers
+	const GunMountData *m_mount;
+	Equip::Type m_weapontype;
 	float m_coolrate;		// based on laser cooling booster stuff? buff for stations?
 // XXX forgot to do this bit
 
@@ -46,7 +48,7 @@ class Turret : public GunMount
 {
   public:
 	Turret() {}
-	Turret(Ship *parent, const ShipType::Turret *turret);
+	Turret(Ship *parent, const TurretData &turret);
 
 	virtual void Update(float timeStep);			// timestep process
 
@@ -54,14 +56,14 @@ class Turret : public GunMount
 	void SetTarget(Body *target) { m_target = target; m_leadTime = 0.0; }
 	void OnDeleted(const Body *body) { if (body == m_target) m_target = 0; }
 
-	virtual const vector3f &GetDir() const { return m_curdir; }
+	virtual const vector3d &GetDir() const { return m_curdir; }
 
 	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);
 
   private:
-	const ShipType::Turret *m_turret;
-	double dotextent;
+	const TurretData *m_turret;
+	double m_dotextent;
 	vector3d m_curdir;
 	vector3d m_curvel;
 	Body *m_target;

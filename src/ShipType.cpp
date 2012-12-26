@@ -10,9 +10,6 @@
 #include "utils.h"
 #include "Lang.h"
 
-const char *ShipType::gunmountNames[GUNMOUNT_MAX] = {
-	Lang::FRONT, Lang::REAR };
-
 std::map<ShipType::Id, ShipType> ShipType::types;
 
 std::vector<ShipType::Id> ShipType::player_ships;
@@ -163,7 +160,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 	lua_pushstring(L, "gun_mounts");
 	lua_gettable(L, -2);
 	if (lua_istable(L, -1)) {
-		int numLasers = lua_rawlen(L,-1);
+		unsigned int numLasers = lua_rawlen(L,-1);
 		s.equipSlotCapacity[Equip::SLOT_LASER] = numLasers;
 		s.gunMount.resize(numLasers);
 		for (unsigned int i=0; i<numLasers; i++) {
@@ -172,11 +169,11 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 			if (lua_istable(L, -1) && lua_rawlen(L,-1) == 4)	{
 				lua_pushinteger(L, 1);
 				lua_gettable(L, -2);
-				s.gunMount[i].pos = LuaVector::CheckFromLua(L, -1);
+				s.gunMount[i].pos = *LuaVector::CheckFromLua(L, -1);
 				lua_pop(L, 1);
 				lua_pushinteger(L, 2);
 				lua_gettable(L, -2);
-				s.gunMount[i].dir = LuaVector::CheckFromLua(L, -1);
+				s.gunMount[i].dir = *LuaVector::CheckFromLua(L, -1);
 				lua_pop(L, 1);
 				lua_pushinteger(L, 3);
 				lua_gettable(L, -2);
@@ -184,7 +181,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 				lua_pop(L, 1);
 				lua_pushinteger(L, 4);
 				lua_gettable(L, -2);
-				s.gunMount[i].tag = lua_tostring(L,-1);
+				s.gunMount[i].name = lua_tostring(L,-1);
 				lua_pop(L, 1);
 			}
 			else ok = false;
@@ -198,7 +195,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 	lua_pushstring(L, "turrets");
 	lua_gettable(L, -2);
 	if (lua_istable(L, -1)) {
-		int numTurrets = lua_rawlen(L,-1);
+		unsigned int numTurrets = lua_rawlen(L,-1);
 		s.equipSlotCapacity[Equip::SLOT_TURRET] = numTurrets;
 		s.turret.resize(numTurrets);
 		for (unsigned int i=0; i<numTurrets; i++) {
@@ -207,11 +204,11 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 			if (lua_istable(L, -1) && lua_rawlen(L,-1) == 7)	{
 				lua_pushinteger(L, 1);
 				lua_gettable(L, -2);
-				s.turret[i].pos = LuaVector::CheckFromLua(L, -1);
+				s.turret[i].pos = *LuaVector::CheckFromLua(L, -1);
 				lua_pop(L, 1);
 				lua_pushinteger(L, 2);
 				lua_gettable(L, -2);
-				s.turret[i].dir = LuaVector::CheckFromLua(L, -1);
+				s.turret[i].dir = *LuaVector::CheckFromLua(L, -1);
 				lua_pop(L, 1);
 				lua_pushinteger(L, 3);
 				lua_gettable(L, -2);
@@ -219,7 +216,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 				lua_pop(L, 1);
 				lua_pushinteger(L, 4);
 				lua_gettable(L, -2);
-				s.turret[i].tag = lua_tostring(L,-1);
+				s.turret[i].name = lua_tostring(L,-1);
 				lua_pop(L, 1);
 				lua_pushinteger(L, 5);
 				lua_gettable(L, -2);

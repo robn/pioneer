@@ -218,7 +218,10 @@ PickLaserMountForm::PickLaserMountForm(FormController *controller, StationShipEq
 
 	Equip::Slot slot = Equip::types[m_equipType].slot;
 
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
+	// XXX needs to offer turrets too. Different slot type?
+
+	const ShipType &stype = Pi::player->GetShipType();
+	for (unsigned int i=0; i<stype.gunMount.size(); i++) {
 		if (m_doFit && (Pi::player->m_equipment.Get(slot, i) != Equip::NONE)) continue;
 		if ((!m_doFit) && (Pi::player->m_equipment.Get(slot, i) != m_equipType)) continue;
 
@@ -228,7 +231,7 @@ PickLaserMountForm::PickLaserMountForm(FormController *controller, StationShipEq
 		Gui::Button *b = new Gui::SolidButton();
 		b->onClick.connect(sigc::bind(sigc::mem_fun(this, &PickLaserMountForm::PickMount), i));
 		buttonBox->PackEnd(b);
-		buttonBox->PackEnd(new Gui::Label(ShipType::gunmountNames[i]));
+		buttonBox->PackEnd(new Gui::Label(stype.gunMount[i].name));
 
 		layoutBox->PackEnd(buttonBox);
 	}

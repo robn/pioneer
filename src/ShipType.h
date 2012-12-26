@@ -10,6 +10,18 @@
 #include <vector>
 #include <map>
 
+struct GunMountData {			// fixed mount, front or rear
+	vector3d pos;
+	vector3d dir;			// not necessarily directly front or rear...
+	int size;				// maximum size of weapon to mount	
+	std::string name;
+};
+struct TurretData : public GunMountData {
+	double extent;			// maximum angle from dir in radians
+	double accel;
+	double maxspeed;			// max training speed & accel in radians
+};
+
 struct ShipType {
 	enum Thruster { // <enum scope='ShipType' name=ShipTypeThruster prefix=THRUSTER_>
 		THRUSTER_REVERSE,
@@ -20,16 +32,9 @@ struct ShipType {
 		THRUSTER_RIGHT,
 		THRUSTER_MAX // <enum skip>
 	};
-	struct GunMount {			// fixed mount, front or rear
-		vector3d pos;
-		vector3d dir;			// not necessarily directly front or rear...
-		int size;				// maximum size of weapon to mount
-		std::string tag;
-	};
-	struct Turret : public GunMount {
-		double extent;			// maximum angle from dir in radians
-		double accel;
-		double maxspeed;			// max training speed & accel in radians
+	enum DualLaserOrientation { // <enum scope='ShipType' name='DualLaserOrientation' prefix='DUAL_LASERS_'>
+		DUAL_LASERS_HORIZONTAL,
+		DUAL_LASERS_VERTICAL
 	};
 	enum Tag { // <enum scope='ShipType' name=ShipTypeTag prefix=TAG_>
 		TAG_NONE,
@@ -47,8 +52,8 @@ struct ShipType {
 	std::string lmrModelName;
 	float linThrust[THRUSTER_MAX];
 	float angThrust;
-	std::vector<GunMount> gunMount;
-	std::vector<Turret> turret;
+	std::vector<GunMountData> gunMount;
+	std::vector<TurretData> turret;
 	int equipSlotCapacity[Equip::SLOT_MAX];
 	int capacity; // tonnes
 	int hullMass;
@@ -75,7 +80,6 @@ struct ShipType {
 
 	static std::vector<Id> playable_atmospheric_ships;
 
-	static const char *gunmountNames[GUNMOUNT_MAX];
 	static void Init();
 	static const ShipType *Get(const char *name) {
 		std::map<Id, ShipType>::iterator t = types.find(name);

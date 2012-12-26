@@ -625,7 +625,8 @@ void WorldView::RefreshButtonStateAndVisibility()
 		m_hudFuelGauge->SetValue(Pi::player->GetFuel());
 	}
 
-	const float activeWeaponTemp = Pi::player->GetGunTemperature(GetActiveWeapon());
+	// XXX do this properly once turret view is done
+	const float activeWeaponTemp = Pi::player->GetGunMount(0).GetTemperature();
 	if (activeWeaponTemp > 0.0f) {
 		m_hudWeaponTemp->SetValue(activeWeaponTemp);
 		m_hudWeaponTemp->Show();

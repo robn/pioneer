@@ -87,8 +87,8 @@ void Ship::Save(Serializer::Writer &wr, Space *space)
 	wr.Int32(int(m_aiMessage));
 	wr.Float(m_thrusterFuel);
 
-	for (int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Save(wr);
-	for (int i=0; i<m_turret.size(); i++) m_turret[i].Save(wr);
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Save(wr);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Save(wr);
 
 	wr.Int32(static_cast<int>(m_controller->GetType()));
 	m_controller->Save(wr, space);
@@ -126,8 +126,8 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 	SetFuel(rd.Float());
 	m_stats.fuel_tank_mass_left = GetShipType().fuelTankMass * GetFuel();
 
-	for (int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Load(rd);
-	for (int i=0; i<m_turret.size(); i++) m_turret[i].Load(rd);
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Load(rd);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Load(rd);
 
 	m_controller = 0;
 	const ShipController::Type ctype = static_cast<ShipController::Type>(rd.Int32());
@@ -144,13 +144,13 @@ void Ship::InitGunMounts()
 {
 	const ShipType &stype = GetShipType();
 
-	m_gunMount.resize(stype.gunMount.size());
-	for (i=0; i<stype.gunMount.size(); i++)
-		m_gunMount[i] = GunMount(this, &stype.gunMount[i]);
+	m_gunMount.clear();
+	for (unsigned int i=0; i<stype.gunMount.size(); i++)
+		m_gunMount.push_back(GunMount(this, stype.gunMount[i]));
 
-	m_turret.resize(stype.turret.size());
-	for (i=0; i<stype.turret.size(); i++)
-		m_turret[i] = Turret(this, &stype.turret[i]);
+	m_turret.clear();
+	for (unsigned int i=0; i<stype.turret.size(); i++)
+		m_turret.push_back(Turret(this, stype.turret[i]));
 }
 
 void Ship::Init()
@@ -471,13 +471,11 @@ void Ship::UpdateEquipStats()
 		m_stats.hyperspace_range = m_stats.hyperspace_range_max = 0;
 	}
 
-	for (int i=0; i<m_gunMount.size(); i++) {
-		int ltype = Equip::types[m_equipment.Get(Equip::SLOT_LASER, i)].tableIndex;
-		m_gunMount[i].SetWeapon(ltype);
-	}	
-	for (int i=0; i<m_turret.size(); i++) {
-		int ltype = Equip::types[m_equipment.Get(Equip::SLOT_TURRET, i)].tableIndex;
-		m_turret[i].SetWeapon(ltype);
+	for (unsigned int i=0; i<m_gunMount.size(); i++) {
+		m_gunMount[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i));
+	}
+	for (unsigned int i=0; i<m_turret.size(); i++) {
+		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_TURRET, i));
 	}
 }
 
@@ -598,6 +596,14 @@ void Ship::ResetHyperspaceCountdown()
 {
 	m_hyperspace.countdown = 0;
 	m_hyperspace.now = false;
+}
+
+void Ship::SetFiring(bool front, bool firing)
+{
+	for (unsigned int i=0; i<m_gunMount.size(); i++) {
+		GunMount &gun = m_gunMount[i];
+		if (front == (gun.GetDir().z < 0.0)) gun.SetFiring(firing);
+	}
 }
 
 float Ship::GetECMRechargeTime()
@@ -842,12 +848,22 @@ void Ship::ApplyAccel(const float timeStep)
 	else if ((angVel+avdiff).LengthSqr() < aspd) SetAngVelocity(angVel += avdiff);
 }
 
+double Ship::GetHullTemperature() const
+{
+	double dragGs = GetAtmosForce().Length() / (GetMass() * 9.81);
+	if (m_equipment.Get(Equip::SLOT_ATMOSHIELD) == Equip::NONE) {
+		return dragGs / 5.0;
+	} else {
+		return dragGs / 300.0;
+	}
+}
+
 bool Ship::IsFiringLasers()
 {
-	for (int i=0; i<m_gunMount[i].size(); i++)
+	for (unsigned int i=0; i<m_gunMount.size(); i++)
 		if (m_gunMount[i].IsFiring()) return true;
 
-	for (int i=0; i<m_turret[i].size(); i++)
+	for (unsigned int i=0; i<m_turret.size(); i++)
 		if (m_turret[i].IsFiring()) return true;
 
 	return false;	
@@ -1023,8 +1039,8 @@ void Ship::StaticUpdate(const float timeStep)
 	 */
 	if (m_dockedWith) m_dockedWith->OrientDockedShip(this, m_dockedWithPort);
 
-	for (int i=0; i<m_gunMount[i].size(); i++) m_gunMount[i].Update(timeStep);
-	for (int i=0; i<m_turret[i].size(); i++) m_turret[i].Update(timeStep);
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Update(timeStep);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Update(timeStep);
 
 	if (m_ecmRecharge > 0.0f) {
 		m_ecmRecharge = std::max(0.0f, m_ecmRecharge - timeStep);
@@ -1111,13 +1127,6 @@ void Ship::SetDockedWith(SpaceStation *s, int port)
 		onDock.emit();
 	} else {
 		Undock();
-	}
-}
-
-void Ship::SetGunState(int idx, int state)
-{
-	if (m_equipment.Get(Equip::SLOT_LASER, idx) != Equip::NONE) {
-		m_gunState[idx] = state;
 	}
 }
 

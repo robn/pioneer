@@ -96,7 +96,7 @@ Projectile::Projectile(): Body()
 {
 	if (!s_sideMat) BuildModel();
 	m_orient = matrix4x4d::Identity();
-	m_type = 0;
+	m_type = 1;
 	m_age = 0;
 	m_parent = 0;
 	m_radius = 0;
@@ -310,11 +310,11 @@ void Projectile::Render(Graphics::Renderer *renderer, const Camera *camera, cons
 	renderer->SetDepthWrite(true);
 }
 
-void Projectile::Add(Body *parent, int type, const vector3d &pos, const vector3d &baseVel, const vector3d &dirVel)
+void Projectile::Add(Body *parent, Equip::Type type, const vector3d &pos, const vector3d &baseVel, const vector3d &dirVel)
 {
 	Projectile *p = new Projectile();
 	p->m_parent = parent;
-	p->m_type = type;
+	p->m_type = Equip::types[type].tableIndex;
 	p->SetFrame(parent->GetFrame());
 
 	parent->GetRotMatrix(p->m_orient);

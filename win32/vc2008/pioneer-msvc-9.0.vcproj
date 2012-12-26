@@ -2159,6 +2159,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\GunMount.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\GunMount.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\HyperspaceCloud.cpp"
 				>
 			</File>

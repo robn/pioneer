@@ -82,8 +82,9 @@ bool Ship::AITimeStep(float timeStep)
 
 		// just in case the AI left it on
 		ClearThrusterState();
-		for (int i=0; i<ShipType::GUNMOUNT_MAX; i++)
-			SetGunState(i,0);
+		for (unsigned int i=0; i<m_gunMount.size(); i++)
+			m_gunMount[i].SetFiring(false);
+		// XXX clear turret targets too?
 		return true;
 	}
 
@@ -383,12 +384,13 @@ double Ship::AIFaceDirection(const vector3d &dir, double av)
 
 
 // returns direction in ship's frame from this ship to target lead position
-vector3d Ship::AIGetLeadDir(const Body *target, const vector3d& targaccel, int lasertype)
+vector3d Ship::AIGetLeadDir(const Body *target, const vector3d& targaccel, Equip::Type type)
 {
 	vector3d targpos = target->GetPositionRelTo(this);
 	vector3d targvel = target->GetVelocityRelTo(this);
 	// todo: should adjust targpos for gunmount offset
 
+	int lasertype = Equip::types[type].tableIndex;		
 	double projspeed = Equip::lasers[lasertype].speed;
 
 	// first attempt

@@ -14,6 +14,7 @@
 #include "Serializer.h"
 #include "Camera.h"
 #include "scenegraph/SceneGraph.h"
+#include "GunMount.h"
 #include <list>
 
 class SpaceStation;
@@ -175,7 +176,7 @@ public:
 	bool AIFaceOrient(const vector3d &dir, const vector3d &updir);
 	double AIFaceDirection(const vector3d &dir, double av=0);
 	vector3d AIGetNextFramePos();
-	vector3d AIGetLeadDir(const Body *target, const vector3d& targaccel, int gunindex=0);
+	vector3d AIGetLeadDir(const Body *target, const vector3d& targaccel, Equip::Type type);
 	double AITravelTime(const vector3d &reldir, double targdist, const vector3d &relvel, double targspeed, bool flip);
 
 	// old stuff, deprecated
@@ -221,8 +222,9 @@ public:
 	float GetPercentHull() const;
 	void SetPercentHull(float);
 
-	const GunMount &GetGunMount(int idx) const { return m_gunMount[i]; }
-	const Turret &GetTurret(int idx) const { return m_turret[i]; }
+	const GunMount &GetGunMount(int idx) const { return m_gunMount[idx]; }
+	const Turret &GetTurret(int idx) const { return m_turret[idx]; }
+	void SetFiring(bool front, bool firing);		// set firing state of fixed mounts
 
 	enum FuelState { // <enum scope='Ship' name=ShipFuelStatus prefix=FUEL_>
 		FUEL_OK,
