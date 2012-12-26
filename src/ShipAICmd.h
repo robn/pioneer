@@ -30,6 +30,7 @@ public:
 	}
 
 	// Serialisation functions
+	virtual Serializer::Object Serialize() const;
 /* XXX SERIALIZER
 	static AICommand *Load(Serializer::Reader &rd);
 	AICommand(Serializer::Reader &rd, CmdName name);
@@ -56,6 +57,13 @@ public:
 	virtual void GetStatusText(char *str) {
 		if (m_child) m_child->GetStatusText(str);
 		else snprintf(str, 255, "Dock: target %s, state %i", m_target->GetLabel().c_str(), m_state);
+	}
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+		// XXX SERIALIZER target body index
+		so.Set("dockpos", m_dockpos.Serialize());
+		so.Set("dockupdir", m_dockupdir.Serialize());
+		return so;
 	}
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
@@ -121,6 +129,17 @@ public:
 		else snprintf(str, 255, "FlyTo: %s, dist %.1fkm, endvel %.1fkm/s, state %i",
 			m_targframe->GetLabel().c_str(), m_posoff.Length()/1000.0, m_endvel/1000.0, m_state);
 	}
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+		// XXX SERIALIZER target ship index
+		so.Set("dist", m_dist);
+		// XXX SERIALIZER target frame index
+		so.Set("posoff", m_posoff.Serialize());
+		so.Set("endvel", m_endvel);
+		so.Set("tangent", m_tangent);
+		so.Set("state", m_state);
+		return so;
+	}
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
 		if(m_child) { delete m_child; m_child = 0; }
@@ -181,6 +200,14 @@ public:
 		else snprintf(str, 255, "FlyAround: alt %.1fkm, vel %.1fkm/s, mode %i",
 			m_alt/1000.0, m_vel/1000.0, m_targmode);
 	}
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+		// XXX SERIALIZER obstructor body index
+		so.Set("vel", m_vel);
+		so.Set("alt", m_alt);
+		so.Set("targmode", m_targmode);
+		return so;
+	}
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
 		if (m_child) { delete m_child; m_child = 0; }
@@ -224,6 +251,11 @@ public:
 		m_lastVel = m_target->GetVelocity();
 	}
 
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+		// XXX SERIALIZER target body index
+		return so;
+	}
 	// don't actually need to save all this crap
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
@@ -261,6 +293,11 @@ public:
 		m_target = target;
 	}
 
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+		// XXX SERIALIZER target body index
+		return so;
+	}
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
         Space *space = Pi::game->GetSpace();
@@ -290,6 +327,7 @@ class AICmdHoldPosition : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
 	AICmdHoldPosition(Ship *ship) : AICommand(ship, CMD_HOLDPOSITION) { }
+
 /* XXX SERIALIZER
 	AICmdHoldPosition(Serializer::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
 */
@@ -304,6 +342,12 @@ public:
 		if (m_child) m_child->GetStatusText(str);
 		else snprintf(str, 255, "Formation: %s, dist %.1fkm",
 			m_target->GetLabel().c_str(), m_posoff.Length()/1000.0);
+	}
+	virtual Serializer::Object Serialize() const {
+		Serializer::Object so(AICommand::Serialize());
+        // XXX SERIALIZER target body index
+        so.Set("posoff", m_posoff.Serialize());
+		return so;
 	}
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {

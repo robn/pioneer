@@ -120,7 +120,8 @@ Serializer::Object Ship::Serialize() const {
 	so.Set("hullMassLeft", m_stats.hull_mass_left);
 	so.Set("shieldMassLeft", m_stats.shield_mass_left);
 
-	// XXX SERIALIZER AI
+	if (m_curAICmd)
+		so.Set("curAICmd", m_curAICmd->Serialize());
 
 	so.Set("aiMessage", static_cast<Uint32>(m_aiMessage)); // XXX SERIALIZER constants
 

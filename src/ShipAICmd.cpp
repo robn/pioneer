@@ -16,6 +16,14 @@
 static const double VICINITY_MIN = 15000.0;
 static const double VICINITY_MUL = 4.0;
 
+Serializer::Object AICommand::Serialize() const {
+    Serializer::Object so;
+	so.Set("cmdName", static_cast<Uint32>(m_cmdName)); // XXX SERIALIZER remove CmdName entirely, just use a string
+	// XXX SERIALIZER ship body index
+	if (m_child) so.Set("child", m_child->Serialize());
+    return so;
+}
+
 /* XXX SERIALIZER
 AICommand *AICommand::Load(Serializer::Reader &rd)
 {
