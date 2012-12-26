@@ -66,7 +66,8 @@ Serializer::Object HyperspaceCloud::Serialize() const {
 	so.Set("birthdate", m_birthdate);
 	so.Set("due", m_due);
 	so.Set("isArrival", m_isArrival);
-	// XXX SERIALIZER m_ship
+	if (m_ship)
+		so.Set("ship", m_ship->Serialize());
 	return so;
 }
 
