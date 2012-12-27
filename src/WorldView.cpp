@@ -229,6 +229,9 @@ void WorldView::InitObject()
 
 	Pi::player->GetPlayerController()->SetMouseForRearView(GetCamType() == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_REAR);
 	KeyBindings::toggleHudMode.onPress.connect(sigc::mem_fun(this, &WorldView::OnToggleLabels));
+
+	KeyBindings::turretCameraNext.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), false));
+	KeyBindings::turretCameraPrev.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), true));
 }
 
 WorldView::~WorldView()
@@ -281,6 +284,22 @@ void WorldView::SetCamType(enum CamType c)
 	UpdateCameraName();
 }
 
+void WorldView::CycleTurrets(bool reverse)
+{
+	if (Pi::IsConsoleActive()) return;
+	if (m_internalCamera->GetMode() != InternalCamera::MODE_TURRET) {
+		if (!Pi::player->GetShipType().turret.size()) return;
+		ChangeInternalCameraMode(InternalCamera::MODE_TURRET);
+		m_internalCamera->SetTurret(Pi::player, m_internalCamera->GetTurret());
+		UpdateCameraName();
+	} else {
+		int newturret = m_internalCamera->GetTurret() + (reverse ? -1 : 1);
+		m_internalCamera->SetTurret(Pi::player, newturret);
+		Pi::BoinkNoise();
+		UpdateCameraName();
+	}
+}
+
 void WorldView::ChangeInternalCameraMode(InternalCamera::Mode m)
 {
 	if (m_internalCamera->GetMode() == m) return;
@@ -288,7 +307,7 @@ void WorldView::ChangeInternalCameraMode(InternalCamera::Mode m)
 	Pi::BoinkNoise();
 	m_internalCamera->SetMode(m);
 	Pi::player->GetPlayerController()->SetMouseForRearView(m_camType == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_REAR);
-	UpdateCameraName();
+	if (m != InternalCamera::MODE_TURRET) UpdateCameraName();
 }
 
 void WorldView::UpdateCameraName()
@@ -785,6 +804,8 @@ void WorldView::Update()
 			else if (KeyBindings::rightCamera.IsActive())  ChangeInternalCameraMode(InternalCamera::MODE_RIGHT);
 			else if (KeyBindings::topCamera.IsActive())    ChangeInternalCameraMode(InternalCamera::MODE_TOP);
 			else if (KeyBindings::bottomCamera.IsActive()) ChangeInternalCameraMode(InternalCamera::MODE_BOTTOM);
+//			else if (KeyBindings::turretCameraNext.IsActive()) CycleTurrets(false);
+//			else if (KeyBindings::turretCameraPrev.IsActive()) CycleTurrets(true);
 		} else {
 			MoveableCamera *cam = static_cast<MoveableCamera*>(m_activeCamera);
 			if (KeyBindings::cameraRotateUp.IsActive()) cam->RotateUp(frameTime);
@@ -804,6 +825,9 @@ void WorldView::Update()
 		// note if we have to target the object in the crosshairs
 		targetObject = KeyBindings::targetObject.IsActive();
 	}
+
+	// Update turret camera position & name
+	if (GetCamType() == CAM_INTERNAL) m_internalCamera->UpdateTurretData(Pi::player);
 
 	if (m_showCameraNameTimeout) {
 		if (SDL_GetTicks() - m_showCameraNameTimeout > 20000) {

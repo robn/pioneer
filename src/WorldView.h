@@ -58,6 +58,7 @@ private:
 	void UpdateCommsOptions();
 
 	void ChangeInternalCameraMode(InternalCamera::Mode m);
+	void CycleTurrets(bool reverse=false);
 	void UpdateCameraName();
 
 	enum IndicatorSide {

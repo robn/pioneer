@@ -3,6 +3,7 @@
 
 #include "WorldViewCamera.h"
 #include "Ship.h"
+#include "GunMount.h"
 #include "Pi.h"
 #include "Game.h"
 #include "AnimationCurves.h"
@@ -18,17 +19,18 @@ InternalCamera::InternalCamera(const Ship *s, const vector2f &size, float fovY, 
 {
 	s->onFlavourChanged.connect(sigc::bind(sigc::mem_fun(this, &InternalCamera::OnShipFlavourChanged), s));
 	OnShipFlavourChanged(s);
-	SetBodyVisible(false);
-	SetMode(MODE_FRONT);
 }
 
 void InternalCamera::OnShipFlavourChanged(const Ship *s)
 {
+	m_turret = 0;
+	SetMode(MODE_FRONT);			// way easier than checking for turret presence
 	SetPosition(s->GetShipType().cameraOffset);
 }
 
 void InternalCamera::SetMode(Mode m)
 {
+	static const char defaultTurretName[] = "";
 	m_mode = m;
 	switch (m_mode) {
 		case MODE_FRONT:
@@ -55,17 +57,52 @@ void InternalCamera::SetMode(Mode m)
 			m_name = Lang::CAMERA_BOTTOM_VIEW;
 			SetOrientation(matrix4x4d::RotateXMatrix(M_PI/2));
 			break;
+		case MODE_TURRET:
+			m_name = defaultTurretName;		// might be used on deserialization...
+			SetBodyVisible(true);
+			break;
+	}
+	if (m != MODE_TURRET) {
+		SetBodyVisible(false);
 	}
 }
 
 void InternalCamera::Save(Serializer::Writer &wr)
 {
 	wr.Int32(m_mode);
+	wr.Int32(m_turret);
 }
 
 void InternalCamera::Load(Serializer::Reader &rd)
 {
 	SetMode(static_cast<Mode>(rd.Int32()));
+	m_turret = rd.Int32();
+}
+
+void InternalCamera::SetTurret(const Ship *s, int turret)
+{
+	assert(m_mode == MODE_TURRET);
+
+	const ShipType &stype = Pi::player->GetShipType();
+	if (!stype.turret.size()) return;		// no turrets
+
+	m_turret = turret % stype.turret.size();
+	m_name = stype.turret[m_turret].name.c_str();
+}
+
+void InternalCamera::UpdateTurretData(const Ship *s)
+{
+	if(m_mode != MODE_TURRET) return;
+
+	const ShipType &stype = s->GetShipType();
+	assert(stype.turret.size());			// shouldn't set turret view unless turrets exist
+
+	SetPosition(stype.turret[m_turret].pos);
+
+	vector3d zaxis = -s->GetTurret(m_turret).GetDir();
+	vector3d yaxis = zaxis.Cross(vector3d(0.0,1.0,0.0)).Cross(zaxis).NormalizedSafe();
+	vector3d xaxis = yaxis.Cross(zaxis);
+	SetOrientation(matrix4x4d::MakeInvRotMatrix(xaxis, yaxis, zaxis)); 
 }
 
 
