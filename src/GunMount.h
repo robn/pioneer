@@ -50,6 +50,7 @@ class Turret : public GunMount
 	Turret() {}
 	Turret(Ship *parent, const TurretData &turret);
 
+	vector3d FaceDirection(const vector3d &dir);	// returns extent-clamped direction
 	virtual void Update(float timeStep);			// timestep process
 
 	void SetSkill(float skill) { m_skill = skill; }
@@ -57,11 +58,14 @@ class Turret : public GunMount
 	void OnDeleted(const Body *body) { if (body == m_target) m_target = 0; }
 
 	virtual const vector3d &GetDir() const { return m_curdir; }
+	matrix4x4d GetOrient() const;
 
 	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);
 
   private:
+	double AutoTarget(float timeStep);
+
 	const TurretData *m_turret;
 	double m_dotextent;
 	vector3d m_curdir;
@@ -72,6 +76,9 @@ class Turret : public GunMount
 	double m_leadTime;			// time to next update target heading
 	vector3d m_leadOffset;
 	vector3d m_leadDrift;
+
+	bool m_manual;
+	vector3d m_targdir;
 };
 
 #endif // _GUNMOUNT_H

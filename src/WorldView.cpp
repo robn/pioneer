@@ -244,6 +244,8 @@ WorldView::~WorldView()
 	m_onPlayerChangeTargetCon.disconnect();
 	m_onChangeFlightControlStateCon.disconnect();
 	m_onMouseButtonDown.disconnect();
+//	KeyBindings::turretCameraNext.onPress.disconnect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), false));
+//	KeyBindings::turretCameraPrev.onPress.disconnect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), true));
 }
 
 void WorldView::Save(Serializer::Writer &wr)
@@ -291,13 +293,13 @@ void WorldView::CycleTurrets(bool reverse)
 		if (!Pi::player->GetShipType().turret.size()) return;
 		ChangeInternalCameraMode(InternalCamera::MODE_TURRET);
 		m_internalCamera->SetTurret(Pi::player, m_internalCamera->GetTurret());
-		UpdateCameraName();
 	} else {
 		int newturret = m_internalCamera->GetTurret() + (reverse ? -1 : 1);
 		m_internalCamera->SetTurret(Pi::player, newturret);
 		Pi::BoinkNoise();
-		UpdateCameraName();
 	}
+	UpdateCameraName();
+	Pi::player->GetPlayerController()->SetTurretControl(m_internalCamera->GetTurret());
 }
 
 void WorldView::ChangeInternalCameraMode(InternalCamera::Mode m)
@@ -307,6 +309,7 @@ void WorldView::ChangeInternalCameraMode(InternalCamera::Mode m)
 	Pi::BoinkNoise();
 	m_internalCamera->SetMode(m);
 	Pi::player->GetPlayerController()->SetMouseForRearView(m_camType == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_REAR);
+	Pi::player->GetPlayerController()->SetTurretControl(-1);
 	if (m != InternalCamera::MODE_TURRET) UpdateCameraName();
 }
 
@@ -1226,6 +1229,10 @@ void WorldView::UpdateProjectedObjects()
 	// orientation according to mouse
 	if (Pi::player->GetPlayerController()->IsMouseActive()) {
 		vector3d mouseDir = Pi::player->GetPlayerController()->GetMouseDir() * cam_rot;
+		if (GetCamType() == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_TURRET) {
+			matrix4x4d rot; Pi::player->GetRotMatrix(rot);
+			mouseDir = (rot * Pi::player->GetPlayerController()->GetMouseDir()) * cam_rot;
+		}
 		if (GetCamType() == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_REAR)
 			mouseDir = -mouseDir;
 		UpdateIndicator(m_mouseDirIndicator, (Pi::player->GetBoundingRadius() * 1.5) * mouseDir);

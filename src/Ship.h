@@ -222,6 +222,8 @@ public:
 	float GetPercentHull() const;
 	void SetPercentHull(float);
 
+	GunMount &GetGunMount(int idx) { return m_gunMount[idx]; }
+	Turret &GetTurret(int idx) { return m_turret[idx]; }
 	const GunMount &GetGunMount(int idx) const { return m_gunMount[idx]; }
 	const Turret &GetTurret(int idx) const { return m_turret[idx]; }
 	void SetFiring(bool front, bool firing);		// set firing state of fixed mounts

@@ -23,6 +23,7 @@ PlayerShipController::PlayerShipController() :
 	m_setSpeedTarget(0),
 	m_controlsLocked(false),
 	m_invertMouse(false),
+	m_turretControl(-1),
 	m_mouseActive(false),
 	m_mouseX(0.0),
 	m_mouseY(0.0),
@@ -159,7 +160,10 @@ void PlayerShipController::PollControls(const float timeStep, const bool manualR
 		SDL_GetRelativeMouseState (mouseMotion+0, mouseMotion+1);	// call to flush
 		if (Pi::MouseButtonState(SDL_BUTTON_RIGHT))
 		{
-			matrix4x4d rot; m_ship->GetRotMatrix(rot);
+			matrix4x4d rot; 
+			if (m_turretControl == -1) m_ship->GetRotMatrix(rot);
+			else rot = m_ship->GetTurret(m_turretControl).GetOrient();
+
 			if (!m_mouseActive) {
 				m_mouseDir = vector3d(-rot[8],-rot[9],-rot[10]);	// in world space
 				m_mouseX = m_mouseY = 0;
@@ -253,8 +257,11 @@ void PlayerShipController::PollControls(const float timeStep, const bool manualR
 
 			m_ship->AIModelCoordsMatchAngVel(wantAngVel, angThrustSoftness);
 		}
-		if (m_mouseActive) m_ship->AIFaceDirection(m_mouseDir);
-
+		if (m_mouseActive) {
+			if (m_turretControl != -1)
+				m_mouseDir = m_ship->GetTurret(m_turretControl).FaceDirection(m_mouseDir);
+			else m_ship->AIFaceDirection(m_mouseDir);
+		}
 	}
 }
 

@@ -37,7 +37,8 @@ Turret::Turret(Ship *parent, const TurretData &turret) :
 	m_curdir(turret.dir),
 	m_skill(0.5f),
 	m_target(0),
-	m_dotextent(asin(turret.extent))
+	m_dotextent(cos(turret.extent)),
+	m_manual(false)
 {
 }
 
@@ -110,11 +111,8 @@ void GunMount::Update(float timeStep)
 
 extern double calc_ivel(double dist, double vel, double acc);
 
-void Turret::Update(float timeStep)
+double Turret::AutoTarget(float timeStep)
 {
-	if (!m_target) return;
-	if (m_weapontype == Equip::NONE) return;
-
 	matrix4x4d rot; m_parent->GetRotMatrix(rot);				// some world-space params
 	vector3d targpos = m_target->GetPositionRelTo(m_parent);
 	vector3d targvel = m_target->GetVelocityRelTo(m_parent);
@@ -150,30 +148,55 @@ void Turret::Update(float timeStep)
 	}
 	m_leadOffset += m_leadDrift * timeStep;
 	double leadAV = (leaddir-targdir).Dot((leaddir-heading).NormalizedSafe());	// leaddir angvel
-	vector3d facedir = (leaddir + m_leadOffset).Normalized();
+	m_targdir = (leaddir + m_leadOffset).Normalized();
+	return leadAV;
+}
 
-	// now turn towards that heading
+// note: changes dir to clamp to turret extent
+// direction is in object space
+vector3d Turret::FaceDirection(const vector3d &dir)
+{
+	// clamp to extent
+	vector3d clampdir =	dir;	//vector3d(0.0, -1.0, -1.0).Normalized();	
+	if (clampdir.Dot(m_turret->dir) < m_dotextent)
+	{
+		vector3d raxis = m_turret->dir.Cross(clampdir);
+		clampdir = m_turret->dir;
+		clampdir.ArbRotate(raxis, m_turret->extent);
+	}
+	m_targdir = clampdir;
+	m_manual = true;
+	return clampdir;
+}
 
+void Turret::Update(float timeStep)
+{
+	if (!m_manual && (!m_target || m_weapontype == Equip::NONE)) return;
+
+	// if turret wasn't manually controlled, run the autotarget routine
+	double leadAV = 0.0;
+	if (!m_manual) leadAV = AutoTarget(timeStep);
+
+	// turn towards that heading, all in object space
 	vector3d dav(0.0, 0.0, 0.0);	// desired angular velocity
-	double dp = facedir.Dot(heading);
+	double dp = m_targdir.Dot(m_curdir);
 	if (dp < 0.999999) {
 		double ang = acos(Clamp(dp, -1.0, 1.0));
 		double iangspeed = leadAV + calc_ivel(ang, 0.0, m_turret->accel);
 		iangspeed = std::min(iangspeed, m_turret->maxspeed);
-		dav = iangspeed * heading.Cross(facedir).Normalized();
+		dav = iangspeed * m_curdir.Cross(m_targdir).Normalized();
 	}
 
 	double frameAccel = m_turret->accel * timeStep;
-	vector3d diffvel = (dav * rot - m_curvel);		// do everything else in ship space
+	vector3d diffvel = (dav - m_curvel);
 	if (diffvel.Length() > frameAccel) diffvel *= frameAccel / diffvel.Length();
 	m_curvel += diffvel;
 
-	double ang = m_curvel.Length();
+	double ang = m_curvel.Length() * timeStep;
 	// XXX make proper rotation matrix instead, saves some sqrts
 	if (ang > 1e-16) m_curdir.ArbRotate(m_curvel / ang, ang);
 
 	// clamp to turret extent
-
 	if (m_curdir.Dot(m_turret->dir) < m_dotextent)
 	{
 		vector3d raxis = m_turret->dir.Cross(m_curdir);
@@ -181,7 +204,23 @@ void Turret::Update(float timeStep)
 		m_curdir.ArbRotate(raxis, m_turret->extent);
 		m_curvel -= m_turret->dir * m_curvel.Dot(m_turret->dir);
 	}
+	m_manual = false;			// clear for next timestep
 
 	GunMount::Update(timeStep);
 }
 
+matrix4x4d Turret::GetOrient() const
+{
+	vector3d zaxis = -m_turret->dir;
+	vector3d yaxis = zaxis.Cross(vector3d(0.0,1.0,0.0)).Cross(zaxis).NormalizedSafe();
+	vector3d xaxis = yaxis.Cross(zaxis);
+	matrix4x4d base = matrix4x4d::MakeInvRotMatrix(xaxis, yaxis, zaxis);
+
+	double dp = m_curdir.Dot(m_turret->dir);
+	if (dp < 0.999999) {
+		double ang = acos(Clamp(dp, -1.0, 1.0));
+		vector3d axis = m_turret->dir.Cross(m_curdir).Normalized();
+		base = matrix4x4d::RotateMatrix(ang, axis.x, axis.y, axis.z) * base;
+	}
+	return base;
+}

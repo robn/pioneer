@@ -98,11 +98,7 @@ void InternalCamera::UpdateTurretData(const Ship *s)
 	assert(stype.turret.size());			// shouldn't set turret view unless turrets exist
 
 	SetPosition(stype.turret[m_turret].pos);
-
-	vector3d zaxis = -s->GetTurret(m_turret).GetDir();
-	vector3d yaxis = zaxis.Cross(vector3d(0.0,1.0,0.0)).Cross(zaxis).NormalizedSafe();
-	vector3d xaxis = yaxis.Cross(zaxis);
-	SetOrientation(matrix4x4d::MakeInvRotMatrix(xaxis, yaxis, zaxis)); 
+	SetOrientation(s->GetTurret(m_turret).GetOrient());
 }
 
 
