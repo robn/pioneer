@@ -196,7 +196,7 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 	lua_gettable(L, -2);
 	if (lua_istable(L, -1)) {
 		unsigned int numTurrets = lua_rawlen(L,-1);
-		s.equipSlotCapacity[Equip::SLOT_TURRET] = numTurrets;
+		s.equipSlotCapacity[Equip::SLOT_LASER] += numTurrets;
 		s.turret.resize(numTurrets);
 		for (unsigned int i=0; i<numTurrets; i++) {
 			lua_pushinteger(L, i+1);
@@ -235,7 +235,6 @@ int _define_ship(lua_State *L, ShipType::Tag tag, std::vector<ShipType::Id> *lis
 			lua_pop(L, 1);
 		}
 	}
-	else s.equipSlotCapacity[Equip::SLOT_TURRET] = 0;
 	lua_pop(L, 1);
 	LUA_DEBUG_END(L, 0);
 	if (!ok) return luaL_error(L, "Ship has malformed turret description");

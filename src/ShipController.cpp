@@ -149,6 +149,7 @@ void PlayerShipController::PollControls(const float timeStep, const bool manualR
 		m_ship->ClearThrusterState();
 		m_ship->SetFiring(true, false);
 		m_ship->SetFiring(false, false);
+		if (m_turretControl != -1) m_ship->GetTurret(m_turretControl).SetFiring(false);
 
 		vector3d wantAngVel(0.0);
 		double angThrustSoftness = 10.0;
@@ -223,9 +224,9 @@ void PlayerShipController::PollControls(const float timeStep, const bool manualR
 		if (KeyBindings::thrustRight.IsActive()) m_ship->SetThrusterState(0, linearThrustPower);
 
 		if (KeyBindings::fireLaser.IsActive() || (Pi::MouseButtonState(SDL_BUTTON_LEFT) && Pi::MouseButtonState(SDL_BUTTON_RIGHT))) {
-				//XXX worldview? madness, ask from ship instead			
-				// XXX need turret stuff here
-			m_ship->SetFiring(!Pi::worldView->GetActiveWeapon(), true);
+				//XXX worldview? madness, ask from ship instead
+			if (m_turretControl != -1) m_ship->GetTurret(m_turretControl).SetFiring(true);
+			else m_ship->SetFiring(!Pi::worldView->GetActiveWeapon(), true);
 		}
 
 		if (KeyBindings::yawLeft.IsActive()) wantAngVel.y += 1.0;

@@ -475,7 +475,7 @@ void Ship::UpdateEquipStats()
 		m_gunMount[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i));
 	}
 	for (unsigned int i=0; i<m_turret.size(); i++) {
-		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_TURRET, i));
+		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i+m_gunMount.size()));
 	}
 }
 

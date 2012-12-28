@@ -1296,9 +1296,25 @@ void WorldView::UpdateProjectedObjects()
 		// calculate firing solution and relative velocity along our z axis
 		int laser = -1;
 		if (GetCamType() == CAM_INTERNAL) {
+			const ShipType &stype = Pi::player->GetShipType();
 			switch (m_internalCamera->GetMode()) {
-				case InternalCamera::MODE_FRONT: laser = 0; break;
-				case InternalCamera::MODE_REAR:  laser = 1; break;
+				case InternalCamera::MODE_FRONT:
+					for(int i=0; i<int(stype.gunMount.size()); i++) {
+						if (stype.gunMount[i].dir.z > 0) continue;
+						if (!Pi::player->m_equipment.Get(Equip::SLOT_LASER, i)) continue;
+						laser = i; break;
+					}
+					break;
+				case InternalCamera::MODE_REAR:
+					for(int i=0; i<int(stype.gunMount.size()); i++) {
+						if (stype.gunMount[i].dir.z < 0) continue;
+						if (!Pi::player->m_equipment.Get(Equip::SLOT_LASER, i)) continue;
+						laser = i; break;
+					}
+					break;
+				case InternalCamera::MODE_TURRET:
+					laser = m_internalCamera->GetTurret() + int(stype.gunMount.size());
+					break;
 				default: break;
 			}
 		}
@@ -1568,6 +1584,7 @@ void WorldView::Draw()
 	if (GetCamType() == CAM_INTERNAL) {
 		switch (m_internalCamera->GetMode()) {
 			case InternalCamera::MODE_FRONT:
+			case InternalCamera::MODE_TURRET:
 				DrawCrosshair(Gui::Screen::GetWidth()/2.0f, Gui::Screen::GetHeight()/2.0f, HUD_CROSSHAIR_SIZE, white);
 				break;
 			case InternalCamera::MODE_REAR:

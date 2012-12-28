@@ -20,8 +20,9 @@ define_ship {
 	},
 	turrets = 
 	{
-		{ v(0,5,0), v(0,1,0), 5, 'Ventral', math.pi/2, math.pi/10, math.pi/2 },
-		{ v(0,-5,0), v(0,-1,0), 5, 'Dorsal', math.pi/2, math.pi/10, math.pi/2 },
+		--position, direction, size(unused), name, extent, accel, maxspeed
+		{ v(0,5,0), v(0,1,0), 5, 'Ventral', math.pi/2, math.pi/2, math.pi/2 },
+		{ v(0,-5,0), v(0,-1,0), 5, 'Dorsal', math.pi/2, math.pi/2, math.pi/2 },
 	},
 	max_atmoshield = 0,
 	max_cargo = 1220,
