@@ -14,8 +14,8 @@ define_ship {
 	camera_offset = v(-1,1.3,-54.5),
 	gun_mounts =
 	{
-		{ v(-1,-2,-46), v(0,0,-1), 5, 'Left front' },
-		{ v(1,-2,-46), v(0,0,-1), 5, 'Right front' },
+		{ v(-5,-2,-46), v(0,0,-1), 5, 'Left front' },
+		{ v(5,-2,-46), v(0,0,-1), 5, 'Right front' },
 		{ v(0,0,0), v(0,0,1), 5, 'Fixed rear' },
 	},
 	turrets = 
