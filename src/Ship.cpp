@@ -472,11 +472,15 @@ void Ship::UpdateEquipStats()
 		m_stats.hyperspace_range = m_stats.hyperspace_range_max = 0;
 	}
 
+	float coolFactor = 1.0f;
+	if (m_equipment.Get(Equip::SLOT_LASERCOOLER) != Equip::NONE)
+		coolFactor = float(Equip::types[ m_equipment.Get(Equip::SLOT_LASERCOOLER) ].pval);
+
 	for (unsigned int i=0; i<m_gunMount.size(); i++) {
-		m_gunMount[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i));
+		m_gunMount[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i), coolFactor);
 	}
 	for (unsigned int i=0; i<m_turret.size(); i++) {
-		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i+m_gunMount.size()));
+		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i+m_gunMount.size()), coolFactor);
 	}
 }
 
@@ -601,10 +605,20 @@ void Ship::ResetHyperspaceCountdown()
 
 void Ship::SetFiring(bool front, bool firing)
 {
-	for (unsigned int i=0; i<m_gunMount.size(); i++) {
+	for (int i=0; i<int(m_gunMount.size()); i++) {
 		GunMount &gun = m_gunMount[i];
 		if (front == (gun.GetDir().z < 0.0)) gun.SetFiring(firing);
 	}
+}
+
+const GunMount *Ship::GetPrimaryMount(bool front)
+{
+	for (int i=0; i<int(m_gunMount.size()); i++) {
+		if (front != (m_gunMount[i].GetDir().z < 0.0)) continue;
+		if (m_gunMount[i].GetWeapon() == Equip::NONE) continue;
+		return &m_gunMount[i];
+	}
+	return 0;			// no weapon found on that facing
 }
 
 float Ship::GetECMRechargeTime()

@@ -219,12 +219,15 @@ public:
 	float GetPercentHull() const;
 	void SetPercentHull(float);
 
-	GunMount &GetGunMount(int idx) { return m_gunMount[idx]; }
-	const GunMount &GetGunMount(int idx) const { return m_gunMount[idx]; }
+	int GetNumGunMounts() const { return int(m_gunMount.size()); }
+	GunMount *GetGunMount(int idx) { return &m_gunMount[idx]; }
+	const GunMount *GetGunMount(int idx) const { return &m_gunMount[idx]; }
+	const GunMount *GetPrimaryMount(bool front);	// get first occupied mount
 	void SetFiring(bool front, bool firing);		// set firing state of fixed mounts
 
-	Turret &GetTurret(int idx) { return m_turret[idx]; }
-	const Turret &GetTurret(int idx) const { return m_turret[idx]; }
+	int GetNumTurrets() const { return int(m_turret.size()); }
+	Turret *GetTurret(int idx) { return &m_turret[idx]; }
+	const Turret *GetTurret(int idx) const { return &m_turret[idx]; }
 
 	enum FuelState { // <enum scope='Ship' name=ShipFuelStatus prefix=FUEL_>
 		FUEL_OK,

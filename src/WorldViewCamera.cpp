@@ -98,7 +98,7 @@ void InternalCamera::UpdateTurretData(const Ship *s)
 	assert(stype.turret.size());			// shouldn't set turret view unless turrets exist
 
 	SetPosition(stype.turret[m_turret].pos);
-	SetOrientation(s->GetTurret(m_turret).GetOrient());
+	SetOrientation(s->GetTurret(m_turret)->GetOrient());
 }
 
 

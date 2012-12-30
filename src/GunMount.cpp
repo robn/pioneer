@@ -9,7 +9,7 @@ GunMount::GunMount(Ship *parent, const GunMountData &mount) :
 	m_parent(parent),
 	m_mount(&mount),
 	m_weapontype(Equip::NONE),
-	m_coolrate(0.1f),
+	m_coolrate(0.01f),
 	m_firing(false),
 	m_temperature(0.f),
 	m_recharge(0.f)
@@ -58,6 +58,12 @@ void Turret::Load(Serializer::Reader &rd)
 	m_skill = rd.Float();
 }
 
+void GunMount::SetWeapon(Equip::Type weapontype, float coolfactor)
+{
+	m_coolrate = 0.01f * coolfactor;
+	m_weapontype = weapontype;
+}
+
 void GunMount::Update(float timeStep)
 {
 	if (m_weapontype == Equip::NONE) return;
@@ -68,7 +74,7 @@ void GunMount::Update(float timeStep)
 
 	if (!m_firing) return;
 	if (m_recharge > 0.0f) return;
-	if (m_temperature > 1.0) return;
+	if (m_temperature > 1.0f) return;
 
 	matrix4x4d m; m_parent->GetRotMatrix(m);
 	const vector3d dir = m.ApplyRotationOnly(GetDir());
@@ -111,7 +117,51 @@ void GunMount::Update(float timeStep)
 
 extern double calc_ivel(double dist, double vel, double acc);
 
-double Turret::AutoTarget(float timeStep)
+// av is in object space
+void Turret::MatchAngVelInternal(const vector3d &av)
+{
+	double frameAccel = m_turret->accel * Pi::game->GetTimeStep();
+	vector3d diffvel = (av - m_curvel);
+	if (diffvel.Length() > frameAccel) diffvel *= frameAccel / diffvel.Length();
+	m_curvel += diffvel;
+}
+
+void Turret::FaceDirectionInternal(const vector3d &dir, double leadAV)
+{
+	vector3d dav(0.0, 0.0, 0.0);	// desired angular velocity
+	double dp = dir.Dot(m_curdir);
+	if (dp < 0.999999) {
+		double ang = acos(Clamp(dp, -1.0, 1.0));
+		double iangspeed = leadAV + calc_ivel(ang, 0.0, m_turret->accel);
+		iangspeed = std::min(iangspeed, m_turret->maxspeed);
+		dav = iangspeed * m_curdir.Cross(dir).Normalized();
+	}
+	MatchAngVelInternal(dav);
+}
+
+// returns dir clamp to turret extent
+// direction is in object space
+vector3d Turret::FaceDirection(const vector3d &dir)
+{
+	vector3d clampdir =	dir;
+	if (clampdir.Dot(m_turret->dir) < m_dotextent)			// clamp to extent
+	{
+		vector3d raxis = m_turret->dir.Cross(clampdir);
+		clampdir = m_turret->dir;
+		clampdir.ArbRotate(raxis, m_turret->extent);
+	}
+	m_manual = true;
+	FaceDirectionInternal(clampdir, 0.0);
+	return clampdir;
+}
+
+void Turret::MatchAngVel(const vector3d &av)
+{
+	m_manual = true;
+	MatchAngVelInternal(GetOrient() * av);
+}
+
+void Turret::AutoTarget(float timeStep)
 {
 	matrix4x4d rot; m_parent->GetRotMatrix(rot);				// some world-space params
 	vector3d targpos = m_target->GetPositionRelTo(m_parent);
@@ -148,25 +198,9 @@ double Turret::AutoTarget(float timeStep)
 	}
 	m_leadOffset += m_leadDrift * timeStep;
 	double leadAV = (leaddir-targdir).Dot((leaddir-heading).NormalizedSafe());	// leaddir angvel
-	m_targdir = (leaddir + m_leadOffset).Normalized();
-	return leadAV;
-}
+	vector3d facedir = (leaddir + m_leadOffset).Normalized();
 
-// note: changes dir to clamp to turret extent
-// direction is in object space
-vector3d Turret::FaceDirection(const vector3d &dir)
-{
-	// clamp to extent
-	vector3d clampdir =	dir;	//vector3d(0.0, -1.0, -1.0).Normalized();	
-	if (clampdir.Dot(m_turret->dir) < m_dotextent)
-	{
-		vector3d raxis = m_turret->dir.Cross(clampdir);
-		clampdir = m_turret->dir;
-		clampdir.ArbRotate(raxis, m_turret->extent);
-	}
-	m_targdir = clampdir;
-	m_manual = true;
-	return clampdir;
+	FaceDirectionInternal(facedir, leadAV);
 }
 
 void Turret::Update(float timeStep)
@@ -174,23 +208,7 @@ void Turret::Update(float timeStep)
 	if (!m_manual && (!m_target || m_weapontype == Equip::NONE)) return;
 
 	// if turret wasn't manually controlled, run the autotarget routine
-	double leadAV = 0.0;
-	if (!m_manual) leadAV = AutoTarget(timeStep);
-
-	// turn towards that heading, all in object space
-	vector3d dav(0.0, 0.0, 0.0);	// desired angular velocity
-	double dp = m_targdir.Dot(m_curdir);
-	if (dp < 0.999999) {
-		double ang = acos(Clamp(dp, -1.0, 1.0));
-		double iangspeed = leadAV + calc_ivel(ang, 0.0, m_turret->accel);
-		iangspeed = std::min(iangspeed, m_turret->maxspeed);
-		dav = iangspeed * m_curdir.Cross(m_targdir).Normalized();
-	}
-
-	double frameAccel = m_turret->accel * timeStep;
-	vector3d diffvel = (dav - m_curvel);
-	if (diffvel.Length() > frameAccel) diffvel *= frameAccel / diffvel.Length();
-	m_curvel += diffvel;
+	if (!m_manual) AutoTarget(timeStep);
 
 	double ang = m_curvel.Length() * timeStep;
 	// XXX make proper rotation matrix instead, saves some sqrts

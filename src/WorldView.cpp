@@ -228,10 +228,9 @@ void WorldView::InitObject()
 		Pi::onMouseButtonDown.connect(sigc::mem_fun(this, &WorldView::MouseButtonDown));
 
 	Pi::player->GetPlayerController()->SetMouseForRearView(GetCamType() == CAM_INTERNAL && m_internalCamera->GetMode() == InternalCamera::MODE_REAR);
-	KeyBindings::toggleHudMode.onPress.connect(sigc::mem_fun(this, &WorldView::OnToggleLabels));
-
-	KeyBindings::turretCameraNext.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), false));
-	KeyBindings::turretCameraPrev.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), true));
+	m_onToggleHudMode = KeyBindings::toggleHudMode.onPress.connect(sigc::mem_fun(this, &WorldView::OnToggleLabels));
+	m_onTurretCameraNext = KeyBindings::turretCameraNext.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), false));
+	m_onTurretCameraPrev = KeyBindings::turretCameraPrev.onPress.connect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), true));
 }
 
 WorldView::~WorldView()
@@ -244,8 +243,9 @@ WorldView::~WorldView()
 	m_onPlayerChangeTargetCon.disconnect();
 	m_onChangeFlightControlStateCon.disconnect();
 	m_onMouseButtonDown.disconnect();
-//	KeyBindings::turretCameraNext.onPress.disconnect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), false));
-//	KeyBindings::turretCameraPrev.onPress.disconnect(sigc::bind(sigc::mem_fun(this, &WorldView::CycleTurrets), true));
+	m_onToggleHudMode.disconnect();
+	m_onTurretCameraNext.disconnect();
+	m_onTurretCameraPrev.disconnect();
 }
 
 void WorldView::Save(Serializer::Writer &wr)
@@ -647,10 +647,20 @@ void WorldView::RefreshButtonStateAndVisibility()
 		m_hudFuelGauge->SetValue(Pi::player->GetFuel());
 	}
 
-	// XXX do this properly once turret view is done
-	const float activeWeaponTemp = Pi::player->GetGunMount(0).GetTemperature();
-	if (activeWeaponTemp > 0.0f) {
-		m_hudWeaponTemp->SetValue(activeWeaponTemp);
+	const GunMount *gunMount = 0;
+	if (GetCamType() == CAM_INTERNAL) {
+		switch (m_internalCamera->GetMode()) {
+			case InternalCamera::MODE_FRONT:
+				gunMount = Pi::player->GetPrimaryMount(true); break;
+			case InternalCamera::MODE_REAR:
+				gunMount = Pi::player->GetPrimaryMount(false); break;
+			case InternalCamera::MODE_TURRET:
+				gunMount = Pi::player->GetTurret(m_internalCamera->GetTurret()); break;
+			default: break;
+		}
+	}
+	if (gunMount && gunMount->GetTemperature() > 0.0f) {
+		m_hudWeaponTemp->SetValue(gunMount->GetTemperature());
 		m_hudWeaponTemp->Show();
 	} else {
 		m_hudWeaponTemp->Hide();
@@ -807,8 +817,6 @@ void WorldView::Update()
 			else if (KeyBindings::rightCamera.IsActive())  ChangeInternalCameraMode(InternalCamera::MODE_RIGHT);
 			else if (KeyBindings::topCamera.IsActive())    ChangeInternalCameraMode(InternalCamera::MODE_TOP);
 			else if (KeyBindings::bottomCamera.IsActive()) ChangeInternalCameraMode(InternalCamera::MODE_BOTTOM);
-//			else if (KeyBindings::turretCameraNext.IsActive()) CycleTurrets(false);
-//			else if (KeyBindings::turretCameraPrev.IsActive()) CycleTurrets(true);
 		} else {
 			MoveableCamera *cam = static_cast<MoveableCamera*>(m_activeCamera);
 			if (KeyBindings::cameraRotateUp.IsActive()) cam->RotateUp(frameTime);
@@ -1167,19 +1175,6 @@ Body* WorldView::PickBody(const double screenX, const double screenY) const
 	return 0;
 }
 
-int WorldView::GetActiveWeapon() const
-{
-	switch (GetCamType()) {
-		case CAM_INTERNAL:
-			return m_internalCamera->GetMode() == InternalCamera::MODE_REAR ? 1 : 0;
-
-		case CAM_EXTERNAL:
-		case CAM_SIDEREAL:
-		default:
-			return 0;
-	}
-}
-
 static inline bool project_to_screen(const vector3d &in, vector3d &out, const Graphics::Frustum &frustum, const int guiSize[2])
 {
 	if (!frustum.ProjectPoint(in, out)) return false;
@@ -1294,35 +1289,20 @@ void WorldView::UpdateProjectedObjects()
 		UpdateIndicator(m_combatTargetIndicator, targScreenPos);
 
 		// calculate firing solution and relative velocity along our z axis
-		int laser = -1;
+		const GunMount *gunMount = 0;
 		if (GetCamType() == CAM_INTERNAL) {
-			const ShipType &stype = Pi::player->GetShipType();
 			switch (m_internalCamera->GetMode()) {
 				case InternalCamera::MODE_FRONT:
-					for(int i=0; i<int(stype.gunMount.size()); i++) {
-						if (stype.gunMount[i].dir.z > 0) continue;
-						if (!Pi::player->m_equipment.Get(Equip::SLOT_LASER, i)) continue;
-						laser = i; break;
-					}
-					break;
+					gunMount = Pi::player->GetPrimaryMount(true); break;
 				case InternalCamera::MODE_REAR:
-					for(int i=0; i<int(stype.gunMount.size()); i++) {
-						if (stype.gunMount[i].dir.z < 0) continue;
-						if (!Pi::player->m_equipment.Get(Equip::SLOT_LASER, i)) continue;
-						laser = i; break;
-					}
-					break;
+					gunMount = Pi::player->GetPrimaryMount(false); break;
 				case InternalCamera::MODE_TURRET:
-					laser = m_internalCamera->GetTurret() + int(stype.gunMount.size());
-					break;
+					gunMount = Pi::player->GetTurret(m_internalCamera->GetTurret()); break;
 				default: break;
 			}
 		}
-		if (laser >= 0) {
-			laser = Pi::player->m_equipment.Get(Equip::SLOT_LASER, laser);
-			laser = Equip::types[laser].tableIndex;
-		}
-		if (laser >= 0) { // only display target lead position on views with lasers
+		if (gunMount) { 		// only display target lead position on views with lasers
+			int laser = Equip::types[gunMount->GetWeapon()].tableIndex;
 			double projspeed = Equip::lasers[laser].speed;
 
 			const vector3d targvel = enemy->GetVelocityRelTo(Pi::player) * cam_rot;

@@ -21,8 +21,8 @@ class GunMount
 	void SetFiring(bool firing) { m_firing = firing; }
 	virtual void Update(float timeStep);			// timestep process
 
-	void SetWeapon(Equip::Type weapontype) { m_weapontype = weapontype; }
-	void SetCoolRate(float coolrate) { m_coolrate = coolrate; }
+	void SetWeapon(Equip::Type weapontype, float coolfactor);
+	Equip::Type GetWeapon() const { return m_weapontype; }
 
 	float GetTemperature() const { return m_temperature; }
 	virtual const vector3d &GetDir() const { return m_mount->dir; }
@@ -33,8 +33,7 @@ class GunMount
   protected:
 	const GunMountData *m_mount;
 	Equip::Type m_weapontype;
-	float m_coolrate;		// based on laser cooling booster stuff? buff for stations?
-// XXX forgot to do this bit
+	float m_coolrate;
 
 	bool m_firing;			// needs saving
 	float m_temperature;	// needs saving
@@ -51,6 +50,7 @@ class Turret : public GunMount
 	Turret(Ship *parent, const TurretData &turret);
 
 	vector3d FaceDirection(const vector3d &dir);	// returns extent-clamped direction
+	void MatchAngVel(const vector3d &av);
 	virtual void Update(float timeStep);			// timestep process
 
 	void SetSkill(float skill) { m_skill = skill; }
@@ -64,7 +64,9 @@ class Turret : public GunMount
 	virtual void Load(Serializer::Reader &rd);
 
   private:
-	double AutoTarget(float timeStep);
+	void FaceDirectionInternal(const vector3d &dir, double av);
+	void MatchAngVelInternal(const vector3d &av);
+	void AutoTarget(float timeStep);
 
 	const TurretData *m_turret;
 	double m_dotextent;
@@ -78,7 +80,6 @@ class Turret : public GunMount
 	vector3d m_leadDrift;
 
 	bool m_manual;
-	vector3d m_targdir;
 };
 
 #endif // _GUNMOUNT_H
