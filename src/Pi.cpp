@@ -56,7 +56,7 @@
 #include "OS.h"
 #include "Planet.h"
 #include "Player.h"
-#include "Polit.h"
+#include "Projectile.h"
 #include "SDLWrappers.h"
 #include "SectorView.h"
 #include "Serializer.h"
@@ -302,6 +302,9 @@ void Pi::Init()
 		OS::Error("SDL initialization failed: %s\n", SDL_GetError());
 	}
 
+	// needed for the UI
+	SDL_EnableUNICODE(1);
+
 	// Do rest of SDL video initialization and create Renderer
 	Graphics::Settings videoSettings = {};
 	videoSettings.width = config->Int("ScrWidth");
@@ -444,14 +447,8 @@ void Pi::Init()
 	luaConsole = new LuaConsole(10);
 	KeyBindings::toggleLuaConsole.onPress.connect(sigc::ptr_fun(&Pi::ToggleLuaConsole));
 
-	KeyBindings::toggleManualRotation.onPress.connect(sigc::ptr_fun(&Pi::ToggleManualRotation));
-
 	gameMenuView = new GameMenuView();
 	config->Save();
-}
-
-void Pi::ToggleManualRotation() {
-	Pi::player->SetManualRotationState(!Pi::player->GetManualRotationState());
 }
 
 bool Pi::IsConsoleActive()
@@ -478,6 +475,7 @@ void Pi::ToggleLuaConsole()
 
 void Pi::Quit()
 {
+	Projectile::FreeModel();
 	delete Pi::gameMenuView;
 	delete Pi::luaConsole;
 	Sfx::Uninit();
@@ -545,7 +543,9 @@ void Pi::HandleEvents()
 							}
 							else {
 								Pi::game->RequestTimeAccel(Game::TIMEACCEL_1X);
-								SetView(worldView);
+								SetView(Pi::player->IsDead()
+										? static_cast<View*>(deathView)
+										: static_cast<View*>(worldView));
 							}
 						}
 					}
@@ -747,8 +747,6 @@ void Pi::InitGame()
 		std::fill(stick->axes.begin(), stick->axes.end(), 0.f);
 	}
 
-	Polit::Init();
-
 	if (!config->Int("DisableSound")) AmbientSounds::Init();
 
 	LuaInitGame();
@@ -827,6 +825,7 @@ void Pi::Start()
 	}
 
 	ui->RemoveInnerWidget();
+	ui->Layout(); // UI does important things on layout, like updating keyboard shortcuts
 
 	InitGame();
 	StartGame();
@@ -846,6 +845,8 @@ void Pi::EndGame()
 
 	if (!config->Int("DisableSound")) AmbientSounds::Uninit();
 	Sound::DestroyAllEvents();
+
+
 
 	assert(game);
 	delete game;
@@ -919,6 +920,7 @@ void Pi::MainLoop()
 				}
 			} else {
 				Pi::game->SetTimeAccel(Game::TIMEACCEL_1X);
+				Pi::deathView->Init();
 				Pi::SetView(Pi::deathView);
 				Pi::player->Disable();
 				time_player_died = Pi::game->GetTime();
