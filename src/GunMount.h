@@ -58,7 +58,7 @@ class Turret : public GunMount
 	void OnDeleted(const Body *body) { if (body == m_target) m_target = 0; }
 
 	virtual const vector3d &GetDir() const { return m_curdir; }
-	matrix4x4d GetOrient() const;
+	matrix3x3d GetOrient() const;
 
 	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);

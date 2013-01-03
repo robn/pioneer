@@ -1,4 +1,4 @@
-// Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "libs.h"
@@ -561,7 +561,7 @@ void Viewer::MainLoop()
 	Uint32 t = SDL_GetTicks();
 	int numFrames = 0, fps = 0, numTris = 0;
 	Uint32 lastFpsReadout = SDL_GetTicks();
-	g_campos = vector3f(0.0f, 0.0f, m_cmesh->GetBoundingRadius());
+	g_campos = vector3f(0.0f, 0.0f, m_cmesh->GetRadius());
 	g_camorient = matrix4x4f::Identity();
 	matrix4x4f modelRot = matrix4x4f::Identity();
 
@@ -655,7 +655,7 @@ void Viewer::MainLoop()
 					aabb.max.x-aabb.min.x,
 					aabb.max.y-aabb.min.y,
 					aabb.max.z-aabb.min.z,
-					aabb.GetBoundingRadius(),
+					aabb.GetRadius(),
 					m_model->GetDrawClipRadius(),
 					int(gridInterval));
 			m_trisReadout->SetText(buf);

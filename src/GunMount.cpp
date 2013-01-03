@@ -76,9 +76,9 @@ void GunMount::Update(float timeStep)
 	if (m_recharge > 0.0f) return;
 	if (m_temperature > 1.0f) return;
 
-	matrix4x4d m; m_parent->GetRotMatrix(m);
-	const vector3d dir = m.ApplyRotationOnly(GetDir());
-	const vector3d pos = m.ApplyRotationOnly(m_mount->pos) + m_parent->GetPosition();
+	const matrix3x3d &rot = m_parent->GetOrient();
+	const vector3d dir = rot * GetDir();
+	const vector3d pos = rot * m_mount->pos + m_parent->GetPosition();
 
 	const LaserType &lt = Equip::lasers[Equip::types[m_weapontype].tableIndex];
 	m_temperature += 0.01f;			// XXX should be weapon dependent?
@@ -163,7 +163,7 @@ void Turret::MatchAngVel(const vector3d &av)
 
 void Turret::AutoTarget(float timeStep)
 {
-	matrix4x4d rot; m_parent->GetRotMatrix(rot);				// some world-space params
+	const matrix3x3d &rot = m_parent->GetOrient();				// some world-space params
 	vector3d targpos = m_target->GetPositionRelTo(m_parent);
 	vector3d targvel = m_target->GetVelocityRelTo(m_parent);
 	vector3d targdir = targpos.NormalizedSafe();
@@ -190,7 +190,7 @@ void Turret::AutoTarget(float timeStep)
 
 		// Shoot only when close to target
 
-		double vissize = 1.3 * m_target->GetBoundingRadius() / targpos.Length();
+		double vissize = 1.3 * m_target->GetClipRadius() / targpos.Length();
 		vissize += (0.05 + 0.5*leaddiff)*Pi::rng.Double()*m_skill;
 		if (vissize > headdiff) SetFiring(true);
 		else SetFiring(false);
@@ -227,18 +227,18 @@ void Turret::Update(float timeStep)
 	GunMount::Update(timeStep);
 }
 
-matrix4x4d Turret::GetOrient() const
+matrix3x3d Turret::GetOrient() const
 {
 	vector3d zaxis = -m_turret->dir;
 	vector3d yaxis = zaxis.Cross(vector3d(0.0,1.0,0.0)).Cross(zaxis).NormalizedSafe();
 	vector3d xaxis = yaxis.Cross(zaxis);
-	matrix4x4d base = matrix4x4d::MakeInvRotMatrix(xaxis, yaxis, zaxis);
+	matrix3x3d base = matrix3x3d::FromVectors(xaxis, yaxis, zaxis);
 
 	double dp = m_curdir.Dot(m_turret->dir);
 	if (dp < 0.999999) {
 		double ang = acos(Clamp(dp, -1.0, 1.0));
 		vector3d axis = m_turret->dir.Cross(m_curdir).Normalized();
-		base = matrix4x4d::RotateMatrix(ang, axis.x, axis.y, axis.z) * base;
+		base = matrix3x3d::Rotate(ang, axis) * base;
 	}
 	return base;
 }
