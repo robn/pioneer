@@ -3,13 +3,14 @@
 
 #ifndef _GUNMOUNT_H
 #define _GUNMOUNT_H
+
+#include "ShipType.h"
+#include "EquipType.h"
+#include "Serializer.h"
 #include "vector3.h"
 
 class Body;
 class Ship;
-struct GunMountData;
-struct TurretData;
-enum Equip::Type;
 
 class GunMount
 {

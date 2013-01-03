@@ -4,15 +4,19 @@
 #include "EquipType.h"
 #include "Projectile.h"
 #include "Sound.h"
+#include "Ship.h"
+#include "Pi.h"
+#include "Polit.h"
+#include "Game.h"
 
 GunMount::GunMount(Ship *parent, const GunMountData &mount) :
-	m_parent(parent),
 	m_mount(&mount),
 	m_weapontype(Equip::NONE),
 	m_coolrate(0.01f),
 	m_firing(false),
 	m_temperature(0.f),
-	m_recharge(0.f)
+	m_recharge(0.f),
+	m_parent(parent)
 {
 }
 
@@ -33,11 +37,11 @@ void GunMount::Load(Serializer::Reader &rd)
 Turret::Turret(Ship *parent, const TurretData &turret) :
 	GunMount(parent, turret),
 	m_turret(&turret),
-	m_curvel(0.0, 0.0, 0.0),
-	m_curdir(turret.dir),
-	m_skill(0.5f),
-	m_target(0),
 	m_dotextent(cos(turret.extent)),
+	m_curdir(turret.dir),
+	m_curvel(0.0, 0.0, 0.0),
+	m_target(0),
+	m_skill(0.5f),
 	m_manual(false)
 {
 }
@@ -165,7 +169,7 @@ void Turret::AutoTarget(float timeStep)
 {
 	const matrix3x3d &rot = m_parent->GetOrient();				// some world-space params
 	vector3d targpos = m_target->GetPositionRelTo(m_parent);
-	vector3d targvel = m_target->GetVelocityRelTo(m_parent);
+	//vector3d targvel = m_target->GetVelocityRelTo(m_parent);
 	vector3d targdir = targpos.NormalizedSafe();
 	vector3d heading = rot * m_curdir;
 

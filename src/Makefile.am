@@ -53,6 +53,7 @@ noinst_HEADERS = \
 	IniConfig.h \
 	Intro.h \
 	GameConfig.h \
+	GunMount.h \
 	KeyBindings.h \
 	Lang.h \
 	LangStrings.inc.h \
@@ -197,6 +198,7 @@ pioneer_SOURCES	= \
 	Game.cpp \
 	GameMenuView.cpp \
 	GeoSphere.cpp \
+	GunMount.cpp \
 	HyperspaceCloud.cpp \
 	IniConfig.cpp \
 	Intro.cpp \

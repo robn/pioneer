@@ -7,6 +7,7 @@
 #include "Pi.h"
 #include "Game.h"
 #include "AnimationCurves.h"
+#include "Player.h"
 
 WorldViewCamera::WorldViewCamera(const Ship *s, const vector2f &size, float fovY, float near, float far) :
 	Camera(s, size.x, size.y, fovY, near, far)
