@@ -75,11 +75,6 @@ void Ship::Save(Serializer::Writer &wr, Space *space)
 	m_hyperspace.dest.Serialize(wr);
 	wr.Float(m_hyperspace.countdown);
 
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
-		wr.Int32(m_gunState[i]);
-		wr.Float(m_gunRecharge[i]);
-		wr.Float(m_gunTemperature[i]);
-	}
 	wr.Float(m_ecmRecharge);
 	m_shipFlavour.Save(wr);
 	wr.Int32(m_dockedWithPort);
@@ -92,6 +87,9 @@ void Ship::Save(Serializer::Writer &wr, Space *space)
 	wr.Int32(int(m_aiMessage));
 	wr.Double(m_thrusterFuel);
 	wr.Double(m_reserveFuel);
+
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Save(wr);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Save(wr);
 
 	wr.Int32(static_cast<int>(m_controller->GetType()));
 	m_controller->Save(wr, space);
@@ -114,11 +112,6 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 	m_hyperspace.dest = SystemPath::Unserialize(rd);
 	m_hyperspace.countdown = rd.Float();
 
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
-		m_gunState[i] = rd.Int32();
-		m_gunRecharge[i] = rd.Float();
-		m_gunTemperature[i] = rd.Float();
-	}
 	m_ecmRecharge = rd.Float();
 	m_shipFlavour.Load(rd);
 	m_type = &ShipType::types[m_shipFlavour.id];
@@ -137,6 +130,9 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 	m_reserveFuel = rd.Double();
 	UpdateStats(); // this is necessary, UpdateStats() in Ship::Init has wrong values of m_thrusterFuel after Load
 
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Load(rd);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Load(rd);
+
 	m_controller = 0;
 	const ShipController::Type ctype = static_cast<ShipController::Type>(rd.Int32());
 	if (ctype == ShipController::PLAYER)
@@ -146,6 +142,19 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 	m_controller->Load(rd);
 
 	m_equipment.onChange.connect(sigc::mem_fun(this, &Ship::OnEquipmentChange));
+}
+
+void Ship::InitGunMounts()
+{
+	const ShipType &stype = GetShipType();
+
+	m_gunMount.clear();
+	for (unsigned int i=0; i<stype.gunMount.size(); i++)
+		m_gunMount.push_back(GunMount(this, stype.gunMount[i]));
+
+	m_turret.clear();
+	for (unsigned int i=0; i<stype.turret.size(); i++)
+		m_turret.push_back(Turret(this, stype.turret[i]));
 }
 
 void Ship::Init()
@@ -166,6 +175,7 @@ void Ship::Init()
 	GetLmrObjParams().animValues[ANIM_WHEEL_STATE] = temp;
 
 	SetMassDistributionFromModel();
+	InitGunMounts();
 	UpdateStats();
 	m_stats.hull_mass_left = float(stype.hullMass);
 	m_stats.shield_mass_left = 0;
@@ -208,11 +218,6 @@ Ship::Ship(ShipType::Id shipId): DynamicBody(),
 	m_equipment.InitSlotSizes(shipId);
 	m_hyperspace.countdown = 0;
 	m_hyperspace.now = false;
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
-		m_gunState[i] = 0;
-		m_gunRecharge[i] = 0;
-		m_gunTemperature[i] = 0;
-	}
 	m_ecmRecharge = 0;
 	SetLabel(m_shipFlavour.regid);
 	m_curAICmd = 0;
@@ -475,6 +480,17 @@ void Ship::UpdateEquipStats()
 	} else {
 		m_stats.hyperspace_range = m_stats.hyperspace_range_max = 0;
 	}
+
+	float coolFactor = 1.0f;
+	if (m_equipment.Get(Equip::SLOT_LASERCOOLER) != Equip::NONE)
+		coolFactor = float(Equip::types[ m_equipment.Get(Equip::SLOT_LASERCOOLER) ].pval);
+
+	for (unsigned int i=0; i<m_gunMount.size(); i++) {
+		m_gunMount[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i), coolFactor);
+	}
+	for (unsigned int i=0; i<m_turret.size(); i++) {
+		m_turret[i].SetWeapon(m_equipment.Get(Equip::SLOT_LASER, i+m_gunMount.size()), coolFactor);
+	}
 }
 
 void Ship::UpdateFuelStats()
@@ -581,6 +597,24 @@ void Ship::ResetHyperspaceCountdown()
 {
 	m_hyperspace.countdown = 0;
 	m_hyperspace.now = false;
+}
+
+void Ship::SetFiring(bool front, bool firing)
+{
+	for (int i=0; i<int(m_gunMount.size()); i++) {
+		GunMount &gun = m_gunMount[i];
+		if (front == (gun.GetDir().z < 0.0)) gun.SetFiring(firing);
+	}
+}
+
+const GunMount *Ship::GetPrimaryMount(bool front)
+{
+	for (int i=0; i<int(m_gunMount.size()); i++) {
+		if (front != (m_gunMount[i].GetDir().z < 0.0)) continue;
+		if (m_gunMount[i].GetWeapon() == Equip::NONE) continue;
+		return &m_gunMount[i];
+	}
+	return 0;			// no weapon found on that facing
 }
 
 float Ship::GetECMRechargeTime()
@@ -795,50 +829,6 @@ void Ship::TimeAccelAdjust(const float timeStep)
 	SetVelocity(GetVelocity() + vdiff);
 }
 
-void Ship::FireWeapon(int num)
-{
-	const ShipType &stype = GetShipType();
-	if (m_flightState != FLYING) return;
-
-	const matrix3x3d &m = GetOrient();
-	const vector3d dir = m * vector3d(stype.gunMount[num].dir);
-	const vector3d pos = m * vector3d(stype.gunMount[num].pos) + GetPosition();
-
-	m_gunTemperature[num] += 0.01f;
-
-	Equip::Type t = m_equipment.Get(Equip::SLOT_LASER, num);
-	const LaserType &lt = Equip::lasers[Equip::types[t].tableIndex];
-	m_gunRecharge[num] = lt.rechargeTime;
-	vector3d baseVel = GetVelocity();
-	vector3d dirVel = lt.speed * dir.Normalized();
-
-	if (lt.flags & Equip::LASER_DUAL)
-	{
-		const ShipType::DualLaserOrientation orient = stype.gunMount[num].orient;
-		const vector3d orient_norm =
-				(orient == ShipType::DUAL_LASERS_VERTICAL) ? m.VectorX() : m.VectorY();
-		const vector3d sep = stype.gunMount[num].sep * dir.Cross(orient_norm).NormalizedSafe();
-
-		Projectile::Add(this, t, pos + sep, baseVel, dirVel);
-		Projectile::Add(this, t, pos - sep, baseVel, dirVel);
-	}
-	else
-		Projectile::Add(this, t, pos, baseVel, dirVel);
-
-	/*
-			// trace laser beam through frame to see who it hits
-			CollisionContact c;
-			GetFrame()->GetCollisionSpace()->TraceRay(pos, dir, 10000.0, &c, this->GetGeom());
-			if (c.userData1) {
-				Body *hit = static_cast<Body*>(c.userData1);
-				hit->OnDamage(this, damage);
-			}
-	*/
-
-	Polit::NotifyOfCrime(this, Polit::CRIME_WEAPON_DISCHARGE);
-	Sound::BodyMakeNoise(this, "Pulse_Laser", 1.0f);
-}
-
 double Ship::GetHullTemperature() const
 {
 	double dragGs = GetAtmosForce().Length() / (GetMass() * 9.81);
@@ -847,6 +837,17 @@ double Ship::GetHullTemperature() const
 	} else {
 		return dragGs / 300.0;
 	}
+}
+
+bool Ship::IsFiringLasers()
+{
+	for (unsigned int i=0; i<m_gunMount.size(); i++)
+		if (m_gunMount[i].IsFiring()) return true;
+
+	for (unsigned int i=0; i<m_turret.size(); i++)
+		if (m_turret[i].IsFiring()) return true;
+
+	return false;	
 }
 
 void Ship::UpdateAlertState()
@@ -874,15 +875,7 @@ void Ship::UpdateAlertState()
 
 		if (GetPositionRelTo(ship).LengthSqr() < 100000.0*100000.0) {
 			ship_is_near = true;
-
-			Uint32 gunstate = 0;
-			for (int j = 0; j < ShipType::GUNMOUNT_MAX; j++)
-				gunstate |= ship->m_gunState[j];
-
-			if (gunstate) {
-				ship_is_firing = true;
-				break;
-			}
+			ship_is_firing = ship->IsFiringLasers();
 		}
 	}
 
@@ -1012,23 +1005,8 @@ void Ship::StaticUpdate(const float timeStep)
 		m_launchLockTimeout -= timeStep;
 	if (m_launchLockTimeout < 0) m_launchLockTimeout = 0;
 
-	// lasers
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
-		m_gunRecharge[i] -= timeStep;
-		float rateCooling = 0.01f;
-		if (m_equipment.Get(Equip::SLOT_LASERCOOLER) != Equip::NONE)  {
-			rateCooling *= float(Equip::types[ m_equipment.Get(Equip::SLOT_LASERCOOLER) ].pval);
-		}
-		m_gunTemperature[i] -= rateCooling*timeStep;
-		if (m_gunTemperature[i] < 0.0f) m_gunTemperature[i] = 0;
-		if (m_gunRecharge[i] < 0.0f) m_gunRecharge[i] = 0;
-
-		if (!m_gunState[i]) continue;
-		if (m_gunRecharge[i] > 0.0f) continue;
-		if (m_gunTemperature[i] > 1.0) continue;
-
-		FireWeapon(i);
-	}
+	for (unsigned int i=0; i<m_gunMount.size(); i++) m_gunMount[i].Update(timeStep);
+	for (unsigned int i=0; i<m_turret.size(); i++) m_turret[i].Update(timeStep);
 
 	if (m_ecmRecharge > 0.0f) {
 		m_ecmRecharge = std::max(0.0f, m_ecmRecharge - timeStep);
@@ -1098,13 +1076,6 @@ void Ship::SetDockedWith(SpaceStation *s, int port)
 		onDock.emit();
 	} else {
 		Undock();
-	}
-}
-
-void Ship::SetGunState(int idx, int state)
-{
-	if (m_equipment.Get(Equip::SLOT_LASER, idx) != Equip::NONE) {
-		m_gunState[idx] = state;
 	}
 }
 

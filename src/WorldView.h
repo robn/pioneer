@@ -58,6 +58,7 @@ private:
 	void UpdateCommsOptions();
 
 	void ChangeInternalCameraMode(InternalCamera::Mode m);
+	void CycleTurrets(bool reverse=false);
 	void UpdateCameraName();
 
 	enum IndicatorSide {
@@ -144,6 +145,9 @@ private:
 	sigc::connection m_onPlayerChangeTargetCon;
 	sigc::connection m_onChangeFlightControlStateCon;
 	sigc::connection m_onMouseButtonDown;
+	sigc::connection m_onToggleHudMode;
+	sigc::connection m_onTurretCameraNext;
+	sigc::connection m_onTurretCameraPrev;
 
 	Gui::LabelSet *m_bodyLabels;
 	std::map<Body*,vector3d> m_projectedPos;

@@ -37,7 +37,8 @@ public:
 		MODE_LEFT,
 		MODE_RIGHT,
 		MODE_TOP,
-		MODE_BOTTOM
+		MODE_BOTTOM,
+		MODE_TURRET
 	};
 
 	InternalCamera(const Ship *s, const vector2f &size, float fovY, float nearClip, float farClip);
@@ -45,11 +46,15 @@ public:
 	const char *GetName() const { return m_name; }
 	void SetMode(Mode m);
 	Mode GetMode() const { return m_mode; }
+	void SetTurret(const Ship *s, int turret);
+	int GetTurret() const { return m_turret; } 
+	void UpdateTurretData(const Ship *s);
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
 private:
 	void OnShipFlavourChanged(const Ship *s);
 	Mode m_mode;
+	int m_turret;
 	const char *m_name;
 };
 

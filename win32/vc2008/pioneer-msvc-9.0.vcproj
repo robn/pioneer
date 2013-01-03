@@ -2135,10 +2135,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\GameLoaderSaver.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\GameMenuView.cpp"
 				>
 			</File>
@@ -2152,6 +2148,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\GeoSphere.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\GunMount.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\GunMount.h"
 				>
 			</File>
 			<File
