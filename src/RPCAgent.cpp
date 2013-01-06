@@ -1,4 +1,4 @@
-// Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "RPCAgent.h"
@@ -60,7 +60,7 @@ HTTPRPCAgent::~HTTPRPCAgent()
 	// signal the thread. empty queue will cause it to exit
 	SDL_CondBroadcast(m_requestQueueCond);
 
-	// first thing the queue does is check the queue, so we must
+	// first thing the thread does is check the queue, so we must
 	// not shut down until its done that. it will release the queue
 	// lock before it dies, so try to take it
 	SDL_LockMutex(m_requestQueueLock);
@@ -207,7 +207,7 @@ const std::string &HTTPRPCAgent::UserAgent()
 	size_t pos = 0;
 	while ((pos = userAgent.find(' ', pos)) != std::string::npos)
 		userAgent[pos] = '.';
-	
+
 	if (strlen(PIONEER_EXTRAVERSION))
 		userAgent += "." PIONEER_EXTRAVERSION;
 

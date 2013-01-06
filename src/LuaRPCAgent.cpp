@@ -1,4 +1,4 @@
-// Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "LuaRPCAgent.h"
@@ -37,7 +37,7 @@ static Json::Value _lua_to_json(lua_State *l, int idx)
 	switch (lua_type(l, data)) {
 		case LUA_TNIL:
 			return Json::Value();
-			
+
 		case LUA_TNUMBER:
 			return Json::Value(lua_tonumber(l, data));
 
@@ -198,7 +198,7 @@ static int l_rpcagent_call(lua_State *l)
 	}
 
 	CallbackPair *cp = new CallbackPair(l, successIndex, failIndex);
-		
+
 	Pi::rpcAgent->Call(method, data, sigc::ptr_fun(_success_callback), sigc::ptr_fun(_fail_callback), cp);
 
 	return 0;

@@ -1,4 +1,4 @@
-// Copyright © 2008-2012 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef RPCAGENT_H
@@ -29,12 +29,16 @@ protected:
 
 class NullRPCAgent : public RPCAgent {
 public:
-	virtual void Call(const std::string &method, const Json::Value &data, RPCAgent::SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback), RPCAgent::FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback), void *userdata = 0);
+	virtual void Call(
+		const std::string &method, const Json::Value &data,
+		RPCAgent::SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback),
+		RPCAgent::FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback),
+		void *userdata = 0);
 
 	virtual void ProcessResponses();
 
 private:
-	
+
 	struct Response {
 		Response(FailCallback _onFail, void *_userdata) :
 			onFail(_onFail), userdata(_userdata)
@@ -53,7 +57,11 @@ public:
 	HTTPRPCAgent(const std::string &baseUrl);
 	virtual ~HTTPRPCAgent();
 
-	virtual void Call(const std::string &method, const Json::Value &data, SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback), FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback), void *userdata = 0);
+	virtual void Call(
+		const std::string &method, const Json::Value &data,
+		SuccessCallback onSuccess = sigc::ptr_fun(&RPCAgent::IgnoreSuccessCallback),
+		FailCallback onFail = sigc::ptr_fun(&RPCAgent::IgnoreFailCallback),
+		void *userdata = 0);
 
 	virtual void ProcessResponses();
 
@@ -101,7 +109,7 @@ private:
 	static bool s_initialised;
 
 	const std::string m_baseUrl;
-	
+
 	SDL_Thread *m_thread;
 
 	CURL *m_curl;
