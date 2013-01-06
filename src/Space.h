@@ -64,6 +64,8 @@ public:
 
 	Background::Container& GetBackground() { return m_background; }
 
+	void DebugDumpFrames();
+
 private:
 	void GenBody(SystemBody *b, Frame *f);
 	// make sure SystemBody* is in Pi::currentSystem
@@ -107,8 +109,6 @@ private:
 	//the NotifyRemoved callback (#735)
 	bool m_processingFinalizationQueue;
 #endif
-
-	void DebugDumpFrames();
 };
 
 #endif /* _SPACE_H */
