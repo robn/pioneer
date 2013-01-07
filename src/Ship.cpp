@@ -954,6 +954,9 @@ void Ship::StaticUpdate(const float timeStep)
 	if (GetHullTemperature() > 1.0)
 		Explode();
 
+	if (IsType(Object::PLAYER))
+		printf("player mult: %f\n", GetHyperspaceRangeMultiplier());
+
 	UpdateAlertState();
 
 	/* FUEL SCOOPING!!!!!!!!! */

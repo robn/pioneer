@@ -154,6 +154,25 @@ void DynamicBody::CalcExternalForce()
 	}
 }
 
+double DynamicBody::GetHyperspaceRangeMultiplier() const
+{
+	vector3d g(0.0);
+	const Frame *f = GetFrame();
+	while (f) {
+		const Body *b = f->GetBody();
+		vector3d b1b2 = GetPositionRelTo(f);
+		const double m1m2 = GetMass() * b->GetMass();
+		const double invrsqr = 1.0 / b1b2.LengthSqr();
+		const double force = G*m1m2 * invrsqr;
+		g += -b1b2 * sqrt(invrsqr) * force;
+		f = f->GetParent();
+	}
+	const double m = g.LengthSqr();
+	if (is_zero_general(m))
+		return 1.0;
+	return 1.0/m;
+}
+
 void DynamicBody::TimeStepUpdate(const float timeStep)
 {
 	m_oldPos = GetPosition();

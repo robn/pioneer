@@ -29,6 +29,7 @@ public:
 	virtual double GetMass() const { return m_mass; }	// XXX don't override this
 	virtual void TimeStepUpdate(const float timeStep);
 	void CalcExternalForce();
+	double GetHyperspaceRangeMultiplier() const;
 	void UndoTimestep();
 
 	void SetMass(double);
