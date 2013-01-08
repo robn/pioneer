@@ -156,17 +156,30 @@ void DynamicBody::CalcExternalForce()
 
 double DynamicBody::GetHyperspaceRangeMultiplier() const
 {
+	return GetHyperspaceRangeMultiplier(GetFrame(), GetPosition());
+}
+
+double DynamicBody::GetHyperspaceRangeMultiplier(const Frame *origFrame, const vector3d &origPos) const
+{
+	const Frame *atFrame = origFrame;
+	vector3d atPos = origPos;
+
 	vector3d g(0.0);
-	const Frame *f = GetFrame();
-	while (f) {
-		const Body *b = f->GetBody();
-		vector3d b1b2 = GetPositionRelTo(f);
+	while (atFrame) {
+		const Body *b = atFrame->GetBody();
 		const double m1m2 = GetMass() * b->GetMass();
-		const double invrsqr = 1.0 / b1b2.LengthSqr();
+		const double invrsqr = 1.0 / atPos.LengthSqr();
 		const double force = G*m1m2 * invrsqr;
-		g += -b1b2 * sqrt(invrsqr) * force;
-		f = f->GetParent();
+		g += -atPos * sqrt(invrsqr) * force;
+
+		atFrame = atFrame->GetParent();
+		if (atFrame) {
+			vector3d fpos = origFrame->GetPositionRelTo(atFrame);
+			matrix3x3d forient = origFrame->GetOrientRelTo(atFrame);
+			atPos = forient * origPos + fpos;
+		}
 	}
+
 	const double m = g.LengthSqr();
 	if (is_zero_general(m))
 		return 1.0;

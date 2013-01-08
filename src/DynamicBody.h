@@ -29,7 +29,6 @@ public:
 	virtual double GetMass() const { return m_mass; }	// XXX don't override this
 	virtual void TimeStepUpdate(const float timeStep);
 	void CalcExternalForce();
-	double GetHyperspaceRangeMultiplier() const;
 	void UndoTimestep();
 
 	void SetMass(double);
@@ -46,6 +45,9 @@ public:
 	vector3d GetAtmosForce() const { return m_atmosForce; }
 	vector3d GetGravityForce() const { return m_gravityForce; }
 	virtual void UpdateInterpTransform(double alpha);
+
+	double GetHyperspaceRangeMultiplier() const;
+	double GetHyperspaceRangeMultiplier(const Frame *frame, const vector3d &pos) const;
 
 	virtual void PostLoadFixup(Space *space);
 protected:

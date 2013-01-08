@@ -955,7 +955,7 @@ void Ship::StaticUpdate(const float timeStep)
 		Explode();
 
 	if (IsType(Object::PLAYER))
-		printf("player mult: %f\n", GetHyperspaceRangeMultiplier());
+		printf("player mult: %f %f\n", GetHyperspaceRangeMultiplier(), GetHyperspaceRangeMultiplier(GetFrame(), GetPosition()));
 
 	UpdateAlertState();
 
