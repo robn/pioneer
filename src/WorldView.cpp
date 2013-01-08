@@ -1007,6 +1007,11 @@ static void autopilot_orbit(Body *b, double alt)
 	Pi::player->AIOrbit(b, alt);
 }
 
+static void hyperspace_jumpto(Body *b)
+{
+	printf("jump to %s\n", b->GetLabel().c_str());
+}
+
 static void player_target_hypercloud(HyperspaceCloud *cloud)
 {
 	Pi::sectorView->SetHyperspaceTarget(cloud->GetShip()->GetHyperspaceDest());
@@ -1076,6 +1081,12 @@ void WorldView::UpdateCommsOptions()
 				button->onClick.connect(sigc::bind(sigc::ptr_fun(autopilot_orbit), navtarget, 3.2));
 				ypos += 32;
 			}
+		}
+
+		if (navtarget) {
+			button = AddCommsOption(stringf("Hyperspace: Jump to vicinity of %target", formatarg("target", navtarget->GetLabel())), ypos, optnum++);
+			button->onClick.connect(sigc::bind(sigc::ptr_fun(&hyperspace_jumpto), navtarget));
+			ypos += 32;
 		}
 
 		const Equip::Type t = Pi::player->m_equipment.Get(Equip::SLOT_HYPERCLOUD);
