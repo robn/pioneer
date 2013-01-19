@@ -67,6 +67,7 @@
 #include "Label3D.h"
 #include "Pattern.h"
 #include "graphics/Material.h"
+#include "DeleteEmitter.h"
 #include <stdexcept>
 
 namespace Graphics { class Renderer; }
@@ -82,7 +83,7 @@ typedef std::vector<std::pair<std::string, RefCountedPtr<Graphics::Material> > >
 typedef std::vector<Animation*> AnimationContainer;
 typedef std::vector<MatrixTransform *> TagContainer;
 
-class Model : public ModelBase
+class Model : public ModelBase, public DeleteEmitter
 {
 public:
 	friend class Loader;
