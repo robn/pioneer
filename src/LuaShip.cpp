@@ -1128,6 +1128,17 @@ static int l_ship_attr_fuel(lua_State *l)
 	return 1;
 }
 
+static int l_ship_attr_model(lua_State *l)
+{
+	Ship *s = LuaShip::CheckFromLua(1);
+	SceneGraph::Model *m = dynamic_cast<SceneGraph::Model*>(s->GetModel());
+	if (m)
+		LuaObject<SceneGraph::Model>::PushToLua(m);
+	else
+		lua_pushnil(l);
+	return 1;
+}
+
 
 /*
  * Group: AI methods
@@ -1446,6 +1457,7 @@ template <> void LuaObject<Ship>::RegisterClass()
 		{ "flightState", l_ship_attr_flight_state },
 		{ "shipId",      l_ship_attr_ship_id },
 		{ "fuel",        l_ship_attr_fuel },
+		{ "model",       l_ship_attr_model },
 		{ 0, 0 }
 	};
 
