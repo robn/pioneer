@@ -46,6 +46,9 @@ public:
 	static int l_set_decal(lua_State *l)
 	{
 		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		if (!m->SupportsDecals())
+			return 0;
+
 		const std::string name(luaL_checkstring(l, 2));
 		int num = lua_tointeger(l, 3);
 
@@ -79,6 +82,20 @@ public:
 		return 0;
 	}
 
+	static int l_attr_supports_decals(lua_State *l)
+	{
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		lua_pushboolean(l, m->SupportsDecals());
+		return 1;
+	}
+
+	static int l_attr_supports_patterns(lua_State *l)
+	{
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		lua_pushboolean(l, m->SupportsPatterns());
+		return 1;
+	}
+
 };
 
 }
@@ -97,9 +114,11 @@ template <> void LuaObject<SceneGraph::Model>::RegisterClass()
 	};
 
 	static const luaL_Reg l_attrs[] = {
-		{ "colors",  LuaModel::l_attr_colors  },
-		{ "pattern", LuaModel::l_attr_pattern },
-		{ "decal",   LuaModel::l_attr_decal   },
+		{ "colors",           LuaModel::l_attr_colors  },
+		{ "pattern",          LuaModel::l_attr_pattern },
+		{ "decal",            LuaModel::l_attr_decal   },
+		{ "supportsDecals",   LuaModel::l_attr_supports_decals   },
+		{ "supportsPatterns", LuaModel::l_attr_supports_patterns },
 		{ 0, 0 }
 	};
 
