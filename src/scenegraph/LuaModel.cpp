@@ -40,6 +40,25 @@ public:
 
 	static int l_set_pattern(lua_State *l)
 	{
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		if (!m->SupportsPatterns())
+			return 0;
+
+		const std::string name(std::string(luaL_checkstring(l, 2))+".png");
+
+		const SceneGraph::PatternContainer &pats(m->GetPatterns());
+		int num = -1;
+		for(unsigned int i=0; i<pats.size(); i++)
+			if (pats[i].name == name) {
+				num = i;
+				break;
+			}
+
+		if (num < 0)
+			return 0;
+
+		m->SetPattern(num);
+
 		return 0;
 	}
 
