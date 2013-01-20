@@ -192,6 +192,13 @@ void Model::SetDecalTexture(Graphics::Texture *t, unsigned int index)
 		m_curDecals[index] = t;
 }
 
+void Model::ClearDecal(unsigned int index)
+{
+	index = std::min(index, MAX_DECAL_MATERIALS-1);
+	if (m_decalMaterials[index].Valid())
+		m_curDecals[index] = Graphics::TextureBuilder::GetTransparentTexture(m_renderer);
+}
+
 void Model::SetLabel(const std::string &text)
 {
 	LabelUpdateVisitor vis;

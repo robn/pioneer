@@ -109,6 +109,7 @@ public:
 	void SetPattern(unsigned int index);
 	void SetColors(const std::vector<Color4ub> &colors);
 	void SetDecalTexture(Graphics::Texture *t, unsigned int index = 0);
+	void ClearDecal(unsigned int index = 0);
 	void SetLabel(const std::string&);
 	void ClearDecals();
 
