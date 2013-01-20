@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "LuaObject.h"
 #include "Pi.h"
+#include "graphics/TextureBuilder.h"
+#include "StringF.h"
 
 namespace SceneGraph {
 
@@ -43,6 +45,13 @@ public:
 
 	static int l_set_decal(lua_State *l)
 	{
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		const std::string name(luaL_checkstring(l, 2));
+		int num = lua_tointeger(l, 3);
+
+		Graphics::Texture *t = Graphics::TextureBuilder(stringf("textures/decals/%0.png", name), Graphics::LINEAR_CLAMP, true, true, false).GetOrCreateTexture(Pi::renderer, "model");
+		m->SetDecalTexture(t, num);
+
 		return 0;
 	}
 
