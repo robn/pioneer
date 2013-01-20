@@ -114,6 +114,8 @@ public:
 	void SetLabel(const std::string&);
 	void ClearDecals();
 
+	const std::vector<Color4ub> &GetColors() const { return m_curColors; }
+
 	//for modelviewer, at least
 	bool SupportsDecals();
 	bool SupportsPatterns();
@@ -140,6 +142,7 @@ private:
 	TagContainer m_tags; //named attachment points
 
 	//per-instance flavour data
+	std::vector<Color4ub> m_curColors;
 	Graphics::Texture *m_curPattern;
 	Graphics::Texture *m_curDecals[MAX_DECAL_MATERIALS];
 };

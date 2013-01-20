@@ -182,7 +182,18 @@ void Model::SetPattern(unsigned int index)
 void Model::SetColors(const std::vector<Color4ub> &colors)
 {
 	assert(colors.size() == 3); //primary, seconday, trim
+	m_curColors = colors;
 	m_colorMap.Generate(GetRenderer(), colors.at(0), colors.at(1), colors.at(2));
+	for (MaterialContainer::const_iterator it = m_materials.begin();
+		it != m_materials.end();
+		++it)
+	{
+		//Set colortexture only on a material that uses patterns
+		//XXX hacky using the descriptor
+		if ((*it).second->GetDescriptor().usePatterns) {
+			(*it).second->texture4 = m_colorMap.GetTexture();
+		}
+	}
 }
 
 void Model::SetDecalTexture(Graphics::Texture *t, unsigned int index)
