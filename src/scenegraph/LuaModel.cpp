@@ -3,6 +3,7 @@
 
 #include "Model.h"
 #include "LuaObject.h"
+#include "Pi.h"
 
 namespace SceneGraph {
 
@@ -11,6 +12,20 @@ public:
 
 	static int l_set_colors(lua_State *l)
 	{
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		luaL_checktype(l, 2, LUA_TTABLE);
+		std::vector<Color4ub> colors;
+		lua_getfield(l, 2, "primary");
+		luaL_checktype(l, -1, LUA_TTABLE);
+		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		lua_getfield(l, 2, "secondary");
+		luaL_checktype(l, -1, LUA_TTABLE);
+		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		lua_getfield(l, 2, "trim");
+		luaL_checktype(l, -1, LUA_TTABLE);
+		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		lua_pop(l, 3);
+		m->SetColors(colors);
 		return 0;
 	}
 
@@ -26,7 +41,16 @@ public:
 
 	static int l_attr_colors(lua_State *l)
 	{
-		return 0;
+		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		const std::vector<Color4ub> &colors = m->GetColors();
+		lua_newtable(l);
+		colors[0].ToColor4f().ToLuaTable(l);
+		lua_setfield(l, -2, "primary");
+		colors[1].ToColor4f().ToLuaTable(l);
+		lua_setfield(l, -2, "secondary");
+		colors[2].ToColor4f().ToLuaTable(l);
+		lua_setfield(l, -2, "trim");
+		return 1;
 	}
 
 	static int l_attr_pattern(lua_State *l)
