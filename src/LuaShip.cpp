@@ -1010,11 +1010,7 @@ static int l_ship_hyperspace_to(lua_State *l)
  */
 static inline void _colour_to_table(lua_State *l, const char *name, const float rgba[4])
 {
-	lua_newtable(l);
-	pi_lua_settable(l, "r", rgba[0]);
-	pi_lua_settable(l, "g", rgba[1]);
-	pi_lua_settable(l, "b", rgba[2]);
-	pi_lua_settable(l, "a", rgba[3]);
+	Color4f(rgba[0], rgba[1], rgba[2], rgba[3]).ToLuaTable(l);
 	lua_setfield(l, -2, name);
 }
 
