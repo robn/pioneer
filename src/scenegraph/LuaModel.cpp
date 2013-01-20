@@ -13,19 +13,26 @@ public:
 	static int l_set_colors(lua_State *l)
 	{
 		SceneGraph::Model *m = LuaObject<SceneGraph::Model>::CheckFromLua(1);
+		std::vector<Color4ub> colors(m->GetColors());
+
 		luaL_checktype(l, 2, LUA_TTABLE);
-		std::vector<Color4ub> colors;
+
 		lua_getfield(l, 2, "primary");
-		luaL_checktype(l, -1, LUA_TTABLE);
-		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		if (lua_istable(l, -1))
+			colors[0] = Color4ub(Color4f::FromLuaTable(l, -1));
+
 		lua_getfield(l, 2, "secondary");
-		luaL_checktype(l, -1, LUA_TTABLE);
-		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		if (lua_istable(l, -1))
+			colors[1] = Color4ub(Color4f::FromLuaTable(l, -1));
+
 		lua_getfield(l, 2, "trim");
-		luaL_checktype(l, -1, LUA_TTABLE);
-		colors.push_back(Color4ub(Color4f::FromLuaTable(l, -1)));
+		if (lua_istable(l, -1))
+			colors[2] = Color4ub(Color4f::FromLuaTable(l, -1));
+
 		lua_pop(l, 3);
+
 		m->SetColors(colors);
+
 		return 0;
 	}
 
