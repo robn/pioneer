@@ -21,6 +21,14 @@ public:
 		return 1;
 	}
 
+	static int l_set_skin(lua_State *l) {
+		ModelSpinner *spinner = LuaObject<GameUI::ModelSpinner>::CheckFromLua(1);
+		SceneGraph::ModelSkin *skin = LuaObject<SceneGraph::ModelSkin>::CheckFromLua(2);
+		spinner->SetSkin(*skin);
+		lua_pushvalue(l, 1);
+		return 0;
+	}
+
 };
 
 }
@@ -34,7 +42,8 @@ template <> void LuaObject<GameUI::ModelSpinner>::RegisterClass()
 	static const char *l_parent = "UI.Widget";
 
 	static const luaL_Reg l_methods[] = {
-		{ "New", LuaModelSpinner::l_new },
+		{ "New",     LuaModelSpinner::l_new      },
+		{ "SetSkin", LuaModelSpinner::l_set_skin },
         { 0, 0 }
 	};
 

@@ -79,5 +79,10 @@ void ModelSpinner::HandleMouseMove(const UI::MouseMotionEvent &event)
 	}
 }
 
+void ModelSpinner::SetSkin(const SceneGraph::ModelSkin &skin)
+{
+	m_skin = skin;
+	m_skin.Apply(m_model.Get());
+}
 
 }

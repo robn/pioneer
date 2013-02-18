@@ -21,6 +21,8 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	void SetSkin(const SceneGraph::ModelSkin &skin);
+
 protected:
 	virtual void HandleMouseDown(const UI::MouseButtonEvent &event);
 	virtual void HandleMouseMove(const UI::MouseMotionEvent &event);
