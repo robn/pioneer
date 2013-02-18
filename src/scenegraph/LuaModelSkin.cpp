@@ -74,6 +74,17 @@ public:
 		return 1;
 	}
 
+	static int l_get_decal(lua_State *l)
+	{
+		ModelSkin *skin = LuaObject<ModelSkin>::CheckFromLua(1);
+		unsigned int index = 0;
+		if (lua_gettop(l) > 1)
+			index = luaL_checkinteger(l, 2);
+		const std::string &decal(skin->GetDecal(index));
+		lua_pushlstring(l, decal.c_str(), decal.size());
+		return 1;
+	}
+
 	static int l_clear_decals(lua_State *l)
 	{
 		ModelSkin *skin = LuaObject<ModelSkin>::CheckFromLua(1);
@@ -106,6 +117,7 @@ template <> void LuaObject<SceneGraph::ModelSkin>::RegisterClass()
 		{ "SetColors",       LuaModelSkin::l_set_colors        },
 		{ "SetRandomColors", LuaModelSkin::l_set_random_colors },
 		{ "SetDecal",        LuaModelSkin::l_set_decal         },
+		{ "GetDecal",        LuaModelSkin::l_get_decal         },
 		{ "ClearDecal",      LuaModelSkin::l_clear_decal       },
 		{ "ClearDecals",     LuaModelSkin::l_clear_decals      },
 		{ "SetLabel",        LuaModelSkin::l_set_label         },

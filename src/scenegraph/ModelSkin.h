@@ -31,6 +31,7 @@ public:
 	void SetDecal(const std::string &name, unsigned int index = 0);
 	void ClearDecal(unsigned int index = 0);
 	void ClearDecals();
+	const std::string &GetDecal(unsigned int index = 0) const;
 
 	void SetLabel(const std::string &label);
 

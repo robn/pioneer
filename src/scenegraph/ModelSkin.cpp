@@ -79,6 +79,12 @@ void ModelSkin::ClearDecals()
 		ClearDecal(i);
 }
 
+const std::string &ModelSkin::GetDecal(unsigned int index) const
+{
+	assert(index < MAX_DECAL_MATERIALS);
+	return m_decals[index];
+}
+
 void ModelSkin::SetLabel(const std::string &label)
 {
 	m_label = label;
