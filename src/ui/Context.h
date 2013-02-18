@@ -86,6 +86,7 @@ public:
 
 	// visual elements
 	UI::Image *Image(const std::string &filename, Uint32 sizeControlFlags = 0) { return new UI::Image(this, filename, sizeControlFlags); }
+	UI::Image *Image(Uint32 sizeControlFlags = 0) { return new UI::Image(this, sizeControlFlags); }
 	UI::Label *Label(const std::string &text) { return new UI::Label(this, text); }
 	UI::Icon *Icon(const std::string &iconName) { return new UI::Icon(this, iconName); }
 

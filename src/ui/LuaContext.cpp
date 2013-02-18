@@ -172,9 +172,15 @@ public:
 
 	static int l_image(lua_State *l) {
 		UI::Context *c = LuaObject<UI::Context>::CheckFromLua(1);
-		const std::string filename(luaL_checkstring(l, 2));
-		Uint32 sizeControlFlags = _unpack_flags(l, 3, "UISizeControl");
-		LuaObject<UI::Image>::PushToLua(c->Image(filename, sizeControlFlags));
+		if (lua_type(l, 2) == LUA_TTABLE) {
+			Uint32 sizeControlFlags = _unpack_flags(l, 2, "UISizeControl");
+			LuaObject<UI::Image>::PushToLua(c->Image(sizeControlFlags));
+		}
+		else {
+			const std::string filename(luaL_checkstring(l, 2));
+			Uint32 sizeControlFlags = _unpack_flags(l, 3, "UISizeControl");
+			LuaObject<UI::Image>::PushToLua(c->Image(filename, sizeControlFlags));
+		}
 		return 1;
 	}
 

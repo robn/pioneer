@@ -9,6 +9,32 @@ namespace UI {
 
 Image::Image(Context *context, const std::string &filename, Uint32 sizeControlFlags): Widget(context)
 {
+	LoadImage(filename);
+	SetSizeControlFlags(sizeControlFlags);
+}
+
+Image::Image(Context *context, Uint32 sizeControlFlags): Widget(context)
+{
+	m_initialSize = Point();
+	SetSizeControlFlags(sizeControlFlags);
+}
+
+void Image::SetImageFile(const std::string &filename)
+{
+	LoadImage(filename);
+	GetContext()->RequestLayout();
+}
+
+void Image::ClearImage()
+{
+	m_texture.Reset();
+	m_material.Reset();
+	m_initialSize = Point();
+	GetContext()->RequestLayout();
+}
+
+void Image::LoadImage(const std::string &filename)
+{
 	Graphics::TextureBuilder b = Graphics::TextureBuilder::UI(filename);
 	m_texture.Reset(b.GetOrCreateTexture(GetContext()->GetRenderer(), "ui"));
 
@@ -19,8 +45,6 @@ Image::Image(Context *context, const std::string &filename, Uint32 sizeControlFl
 	material_desc.textures = 1;
 	m_material.Reset(GetContext()->GetRenderer()->CreateMaterial(material_desc));
 	m_material->texture0 = m_texture.Get();
-
-	SetSizeControlFlags(sizeControlFlags);
 }
 
 Point Image::PreferredSize()
@@ -30,6 +54,8 @@ Point Image::PreferredSize()
 
 void Image::Draw()
 {
+	if (!m_texture) return;
+
 	const Point &offset = GetActiveOffset();
 	const Point &area = GetActiveArea();
 
