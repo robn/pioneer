@@ -673,6 +673,92 @@ local crewRoster = function ()
 	return CrewScreen
 end
 
+local customisation = function ()
+	local getDecalList = function ()
+		local ok, files, _ = pcall(FileSystem.ReadDirectory, "DATA", "textures/decals");
+		if not ok then return {} end
+		return build_array(map(function (k,v) return k,string.gsub(v, "(%w+).png", "%1") end, ipairs(files)))
+	end
+	local decalList = getDecalList()
+
+	local state = {
+		decalPos = (function () local cur = Game.player:GetSkin():GetDecal() for k,v in ipairs(decalList) do if v == cur then return k end end return 0 end)(),
+	}
+
+	local makeSkin = function ()
+		local skin = Game.player:GetSkin()
+		if state.decalPos ~= 0 then
+			skin:SetDecal(decalList[state.decalPos])
+		else
+			skin:ClearDecal()
+		end
+		return skin
+	end
+
+	local spinner = UI.Game.ModelSpinner.New(ui, ShipDef[Game.player.shipId].modelName, makeSkin())
+	local updateSpinner = function ()
+		spinner:SetSkin(makeSkin())
+		Game.player:SetSkin(makeSkin())
+	end
+
+	local decalWidget = function ()
+		local decal = ui:Image({"PRESERVE_ASPECT"})
+		local label = ui:Label("")
+
+		local update = function ()
+			if state.decalPos ~= 0 then
+				label:SetText(decalList[state.decalPos])
+				decal:SetImageFile("textures/decals/"..decalList[state.decalPos]..".png")
+			else
+				label:SetText(t("None"))
+				decal:ClearImage()
+			end
+		end
+		update()
+
+		local left = ui:Icon("ArrowLeft")
+		left.onClick:Connect(function ()
+			state.decalPos = state.decalPos - 1
+			if state.decalPos < 0 then state.decalPos = #decalList end
+			update()
+			updateSpinner()
+		end)
+
+		local right = ui:Icon("ArrowRight")
+		right.onClick:Connect(function ()
+			state.decalPos = state.decalPos + 1
+			if state.decalPos > #decalList then state.decalPos = 0 end
+			update()
+			updateSpinner()
+		end)
+
+		return
+			ui:VBox(5):PackEnd({
+				ui:Expand("BOTH", ui:Align("MIDDLE", decal)),
+				ui:HBox(5):PackEnd({
+					left,
+					ui:Expand("HORIZONTAL", ui:Align("MIDDLE", label)),
+					right,
+				})
+			})
+	end
+
+	return
+		ui:Grid(2,1)
+			:SetColumn(0, {
+				ui:Grid(2,2)
+					:SetColumn(0, {
+						ui:VBox(5):PackEnd({
+							ui:Label(t("Decal")):SetFont("HEADING_LARGE"),
+							decalWidget(),
+						}),
+					})
+			})
+			:SetColumn(1, {
+				spinner
+			})
+end
+
 local tabGroup
 ui.templates.InfoView = function (args)
 	if tabGroup then
@@ -687,6 +773,7 @@ ui.templates.InfoView = function (args)
 	tabGroup:AddTab({ id = "econTrade",       title = t("Economy & Trade"),      icon = "Cart",      template = econTrade,       })
 	tabGroup:AddTab({ id = "missions",        title = t("MISSIONS"),             icon = "Star",      template = missions,        })
 	tabGroup:AddTab({ id = "crew",            title = t("Crew Roster"),          icon = "Agenda",    template = crewRoster,      })
+	tabGroup:AddTab({ id = "customisation",   title = t("Ship Customisation"),   icon = "Puzzle",    template = customisation,   })
 	--tabGroup:AddTab({ id = "orbitalAnalysis", title = t("Orbital Analysis"),     icon = "Planet",    template = orbitalAnalysis, })
 
 	return tabGroup.widget
