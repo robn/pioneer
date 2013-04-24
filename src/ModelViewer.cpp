@@ -128,9 +128,6 @@ void ModelViewer::Run(const std::string &modelName)
 
 	ModManager::Init();
 
-	// needed for the UI
-	SDL_EnableUNICODE(1);
-
 	//video
 	Graphics::Settings videoSettings = {};
 	videoSettings.width = config->Int("ScrWidth");
@@ -719,8 +716,10 @@ void ModelViewer::PollEvents()
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			switch (event.button.button) {
+/* XXX SDL2 use SDL_MouseWheelEvent
 				case SDL_BUTTON_WHEELUP:   m_mouseWheelUp = true; break;
 				case SDL_BUTTON_WHEELDOWN: m_mouseWheelDown = true; break;
+*/
 				default: m_mouseButton[event.button.button] = true ; break;
 			}
 			break;
@@ -765,7 +764,7 @@ void ModelViewer::PollEvents()
 			case SDLK_KP_6: case SDLK_l:
 			case SDLK_KP_7: case SDLK_u:
 			case SDLK_KP_8: case SDLK_i:
-				ChangeCameraPreset(event.key.keysym.sym, event.key.keysym.mod);
+				ChangeCameraPreset(event.key.keysym.sym, SDL_Keymod(event.key.keysym.mod));
 				break;
 			case SDLK_p: //landing pad test
 				m_options.showLandingPad = !m_options.showLandingPad;
