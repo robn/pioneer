@@ -33,6 +33,7 @@ void Missile::ECMAttack(int power_val)
 	}
 }
 
+/* XXX SERIALIZER
 void Missile::PostLoadFixup(Space *space)
 {
 	Ship::PostLoadFixup(space);
@@ -54,6 +55,7 @@ void Missile::Load(Serializer::Reader &rd, Space *space)
 	m_power = rd.Int32();
 	m_armed = rd.Bool();
 }
+*/
 
 void Missile::TimeStepUpdate(const float timeStep)
 {

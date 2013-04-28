@@ -34,8 +34,10 @@ public:
 
 	void SetLabel(const std::string &label);
 
+/* XXX SERIALIZER
 	void Load(Serializer::Reader &rd);
 	void Save(Serializer::Writer &wr) const;
+*/
 
 private:
 	static const unsigned int MAX_DECAL_MATERIALS = 4;

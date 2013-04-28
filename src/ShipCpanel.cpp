@@ -28,6 +28,7 @@ ShipCpanel::ShipCpanel(Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::Get
 	InitObject();
 }
 
+/* XXX SERIALIZER
 ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
 {
 	m_scanner = new ScannerWidget(r, rd);
@@ -36,6 +37,7 @@ ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixe
 
 	m_camButton->SetActiveState(rd.Int32());
 }
+*/
 
 void ShipCpanel::InitObject()
 {
@@ -415,11 +417,13 @@ void ShipCpanel::TimeStepUpdate(float step)
 	m_scanner->TimeStepUpdate(step);
 }
 
+/* XXX SERIALIZER
 void ShipCpanel::Save(Serializer::Writer &wr)
 {
 	m_scanner->Save(wr);
 	wr.Int32(m_camButton->GetState());
 }
+*/
 
 void ShipCpanel::SetOverlayText(OverlayTextPos pos, const std::string &text)
 {

@@ -43,6 +43,7 @@ WorldView::WorldView(): View()
 	InitObject();
 }
 
+/* XXX SERIALIZER
 WorldView::WorldView(Serializer::Reader &rd): View()
 {
 	m_camType = CamType(rd.Int32());
@@ -51,6 +52,7 @@ WorldView::WorldView(Serializer::Reader &rd): View()
 	m_externalCameraController->Load(rd);
 	m_siderealCameraController->Load(rd);
 }
+*/
 
 static const float LOW_THRUST_LEVELS[] = { 0.75, 0.5, 0.25, 0.1, 0.05, 0.01 };
 
@@ -241,6 +243,7 @@ WorldView::~WorldView()
 	m_onMouseButtonDown.disconnect();
 }
 
+/* XXX SERIALIZER
 void WorldView::Save(Serializer::Writer &wr)
 {
 	wr.Int32(int(m_camType));
@@ -248,6 +251,7 @@ void WorldView::Save(Serializer::Writer &wr)
 	m_externalCameraController->Save(wr);
 	m_siderealCameraController->Save(wr);
 }
+*/
 
 void WorldView::SetCamType(enum CamType c)
 {

@@ -86,6 +86,7 @@ void Init()
 	s_playerPerBlocCrimeRecord.resize( numFactions );
 }
 
+/* XXX SERIALIZER
 void Serialize(Serializer::Writer &wr)
 {
 	s_criminalRecord.Serialize(wr);
@@ -109,6 +110,7 @@ void Unserialize(Serializer::Reader &rd)
 		s_playerPerBlocCrimeRecord[i].fine = rd.Int64();
 	}
 }
+*/
 
 /* The drawbacks of stuffing stuff into integers */
 static int GetCrimeIdxFromEnum(enum Crime crime)

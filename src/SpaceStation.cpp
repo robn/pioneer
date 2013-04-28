@@ -36,6 +36,7 @@ void SpaceStation::Uninit()
 	SpaceStationType::Uninit();
 }
 
+/* XXX SERIALIZER
 void SpaceStation::Save(Serializer::Writer &wr, Space *space)
 {
 	ModelBody::Save(wr, space);
@@ -153,6 +154,7 @@ void SpaceStation::PostLoadFixup(Space *space)
 		m_shipDocking[i].ship = static_cast<Ship*>(space->GetBodyByIndex(m_shipDocking[i].shipIndex));
 	}
 }
+*/
 
 SpaceStation::SpaceStation(const SystemBody *sbody): ModelBody()
 {

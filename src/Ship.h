@@ -42,8 +42,10 @@ struct shipstats_t {
 
 class SerializableEquipSet: public EquipSet {
 public:
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
+*/
 };
 
 class Ship: public DynamicBody {
@@ -203,7 +205,9 @@ public:
 
 	SerializableEquipSet m_equipment;			// shouldn't be public?...
 
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 
 	const ShipType *GetShipType() const { return m_type; }
 	void SetShipType(const ShipType::Id &shipId);
@@ -248,8 +252,10 @@ public:
 	mutable sigc::signal<void> onFlavourChanged;
 
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 	void RenderLaserfire();
 
 	bool AITimeStep(float timeStep); // Called by controller. Returns true if complete

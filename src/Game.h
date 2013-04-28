@@ -29,12 +29,16 @@ public:
 	Game(const SystemPath &path, const vector3d &pos);
 
 	// load game
+/* XXX SERIALIZER
 	Game(Serializer::Reader &rd);
+*/
 
 	~Game();
 
 	// save game
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr);
+*/
 
 	// various game states
 	bool IsNormalSpace() const { return m_state == STATE_NORMAL; }
@@ -82,7 +86,9 @@ public:
 
 private:
 	void CreateViews();
+/* XXX SERIALIZER
 	void LoadViews(Serializer::Reader &rd);
+*/
 	void DestroyViews();
 
 	void SwitchToHyperspace();

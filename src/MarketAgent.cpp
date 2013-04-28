@@ -7,6 +7,7 @@
 #include "Pi.h"
 #include "Lang.h"
 
+/* XXX SERIALIZER
 void MarketAgent::Load(Serializer::Reader &rd)
 {
 	m_money = rd.Int64();
@@ -16,6 +17,7 @@ void MarketAgent::Save(Serializer::Writer &wr) const
 {
 	wr.Int64(m_money);
 }
+*/
 
 bool MarketAgent::SellTo(MarketAgent *other, Equip::Type t, bool verbose)
 {

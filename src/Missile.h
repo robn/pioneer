@@ -18,7 +18,9 @@ public:
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);
 	virtual bool OnDamage(Object *attacker, float kgDamage);
 	virtual void NotifyRemoved(const Body* const removedBody);
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 	void ECMAttack(int power_val);
 	Body *GetOwner() const { return m_owner; }
 	bool IsArmed() const {return m_armed;}
@@ -26,8 +28,10 @@ public:
 	void Disarm();
 
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 private:
 	void Explode();
 

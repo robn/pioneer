@@ -22,6 +22,7 @@ public:
 	void Set(const SystemPath &path, T val) {
 		m_dict[path.SystemOnly()] = val;
 	}
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr) const {
 		wr.Int32(m_dict.size());
 		for (typename std::map<SystemPath, T>::const_iterator i = m_dict.begin(); i != m_dict.end(); ++i) {
@@ -38,6 +39,7 @@ public:
 			pd->m_dict[path] = val;
 		}
 	}
+*/
 private:
 	std::map<SystemPath, T> m_dict;
 };

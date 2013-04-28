@@ -59,6 +59,7 @@ void HyperspaceCloud::SetIsArrival(bool isArrival)
 	SetLabel(isArrival ? Lang::HYPERSPACE_ARRIVAL_CLOUD : Lang::HYPERSPACE_DEPARTURE_CLOUD);
 }
 
+/* XXX SERIALIZER
 void HyperspaceCloud::Save(Serializer::Writer &wr, Space *space)
 {
 	Body::Save(wr, space);
@@ -87,6 +88,7 @@ void HyperspaceCloud::PostLoadFixup(Space *space)
 	Body::PostLoadFixup(space);
 	if (m_ship) m_ship->PostLoadFixup(space);
 }
+*/
 
 void HyperspaceCloud::TimeStepUpdate(const float timeStep)
 {

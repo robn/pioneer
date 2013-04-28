@@ -24,14 +24,18 @@ class WorldView: public View {
 public:
 	friend class NavTunnelWidget;
 	WorldView();
+/* XXX SERIALIZER
 	WorldView(Serializer::Reader &reader);
+*/
 	virtual ~WorldView();
 	virtual void ShowAll();
 	virtual void Update();
 	virtual void Draw3D();
 	virtual void Draw();
 	static const double PICK_OBJECT_RECT_SIZE;
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr);
+*/
 	enum CamType {
 		CAM_INTERNAL,
 		CAM_EXTERNAL,

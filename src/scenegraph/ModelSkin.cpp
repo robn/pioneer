@@ -92,6 +92,7 @@ void ModelSkin::SetLabel(const std::string &label)
 	m_label = label;
 }
 
+/* XXX SERIALIZER
 void ModelSkin::Load(Serializer::Reader &rd)
 {
 	m_patternIndex = rd.Int32();
@@ -117,5 +118,6 @@ void ModelSkin::Save(Serializer::Writer &wr) const
 		wr.String(m_decals[i]);
 	wr.String(m_label);
 }
+*/
 
 }

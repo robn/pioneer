@@ -399,6 +399,7 @@ const char *LuaSerializer::unpickle(lua_State *l, const char *pos)
 	return pos;
 }
 
+/* XXX SERIALIZER
 void LuaSerializer::Serialize(Serializer::Writer &wr)
 {
 	lua_State *l = Lua::manager->GetLuaState();
@@ -490,6 +491,7 @@ void LuaSerializer::Unserialize(Serializer::Reader &rd)
 
 	LUA_DEBUG_END(l, 0);
 }
+*/
 
 int LuaSerializer::l_register(lua_State *l)
 {

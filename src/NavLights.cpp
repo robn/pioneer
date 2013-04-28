@@ -122,6 +122,7 @@ NavLights::~NavLights()
 {
 }
 
+/* XXX SERIALIZER
 void NavLights::Save(Serializer::Writer &wr)
 {
 	wr.Float(m_time);
@@ -142,6 +143,7 @@ void NavLights::Load(Serializer::Reader &rd)
 		it->billboard->SetMaterial(get_material(c));
 	}
 }
+*/
 
 void NavLights::Update(float time)
 {

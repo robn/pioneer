@@ -36,6 +36,7 @@ Body::~Body()
 {
 }
 
+/* XXX SERIALIZER
 void Body::Save(Serializer::Writer &wr, Space *space)
 {
 	wr.Int32(space->GetIndexForFrame(m_frame));
@@ -114,6 +115,7 @@ Body *Body::Unserialize(Serializer::Reader &_rd, Space *space)
 	b->Load(rd, space);
 	return b;
 }
+*/
 
 vector3d Body::GetPositionRelTo(const Frame *relTo) const
 {

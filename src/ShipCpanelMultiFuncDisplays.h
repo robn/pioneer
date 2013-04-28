@@ -60,7 +60,9 @@ private:
 class ScannerWidget: public IMultiFunc, public Gui::Widget {
 public:
 	ScannerWidget(Graphics::Renderer *r);
+/* XXX SERIALIZER
 	ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd);
+*/
 	virtual ~ScannerWidget();
 	void GetSizeRequested(float size[2]);
 	void ToggleMode();
@@ -69,7 +71,9 @@ public:
 
 	void TimeStepUpdate(float step);
 
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
+*/
 
 private:
 	void InitObject();

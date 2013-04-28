@@ -30,10 +30,12 @@ public:
 	}
 
 	// Serialisation functions
+/* XXX SERIALIZER
 	static AICommand *Load(Serializer::Reader &rd);
 	AICommand(Serializer::Reader &rd, CmdName name);
 	virtual void Save(Serializer::Writer &wr);
 	virtual void PostLoadFixup(Space *space);
+*/
 
 	// Signal functions
 	virtual void OnDeleted(const Body *body) { if (m_child) m_child->OnDeleted(body); }
@@ -55,6 +57,7 @@ public:
 		if (m_child) m_child->GetStatusText(str);
 		else snprintf(str, 255, "Dock: target %s, state %i", m_target->GetLabel().c_str(), m_state);
 	}
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
         Space *space = Pi::game->GetSpace();
 		AICommand::Save(wr);
@@ -71,6 +74,7 @@ public:
 		AICommand::PostLoadFixup(space);
 		m_target = static_cast<SpaceStation *>(space->GetBodyByIndex(m_targetIndex));
 	}
+*/
 	virtual void OnDeleted(const Body *body) {
 		AICommand::OnDeleted(body);
 		if (static_cast<Body *>(m_target) == body) m_target = 0;
@@ -117,6 +121,7 @@ public:
 		else snprintf(str, 255, "FlyTo: %s, dist %.1fkm, endvel %.1fkm/s, state %i",
 			m_targframe->GetLabel().c_str(), m_posoff.Length()/1000.0, m_endvel/1000.0, m_state);
 	}
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
 		if(m_child) { delete m_child; m_child = 0; }
 		AICommand::Save(wr);
@@ -143,6 +148,7 @@ public:
 		m_targframe = space->GetFrameByIndex(m_targframeIndex);
 		m_lockhead = true;
 	}
+*/
 	virtual void OnDeleted(const Body *body) {
 		AICommand::OnDeleted(body);
 		if (m_target == body) m_target = 0;
@@ -175,6 +181,7 @@ public:
 		else snprintf(str, 255, "FlyAround: alt %.1fkm, vel %.1fkm/s, mode %i",
 			m_alt/1000.0, m_vel/1000.0, m_targmode);
 	}
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
 		if (m_child) { delete m_child; m_child = 0; }
 		AICommand::Save(wr);
@@ -189,6 +196,7 @@ public:
 		AICommand::PostLoadFixup(space);
 		m_obstructor = space->GetBodyByIndex(m_obstructorIndex);
 	}
+*/
 	virtual void OnDeleted(const Body *body) {
 		AICommand::OnDeleted(body);
 		// check against obstructor?
@@ -217,6 +225,7 @@ public:
 	}
 
 	// don't actually need to save all this crap
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
         Space *space = Pi::game->GetSpace();
 		AICommand::Save(wr);
@@ -231,6 +240,7 @@ public:
 		m_leadTime = m_evadeTime = m_closeTime = 0.0;
 		m_lastVel = m_target->GetVelocity();
 	}
+*/
 
 	virtual void OnDeleted(const Body *body) {
 		if (static_cast<Body *>(m_target) == body) m_target = 0;
@@ -251,6 +261,7 @@ public:
 		m_target = target;
 	}
 
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
         Space *space = Pi::game->GetSpace();
 		AICommand::Save(wr);
@@ -263,6 +274,7 @@ public:
 		AICommand::PostLoadFixup(space);
 		m_target = space->GetBodyByIndex(m_targetIndex);
 	}
+*/
 
 	virtual void OnDeleted(const Body *body) {
 		if (static_cast<Body *>(m_target) == body) m_target = 0;
@@ -278,7 +290,9 @@ class AICmdHoldPosition : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
 	AICmdHoldPosition(Ship *ship) : AICommand(ship, CMD_HOLDPOSITION) { }
+/* XXX SERIALIZER
 	AICmdHoldPosition(Serializer::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
+*/
 };
 
 class AICmdFormation : public AICommand {
@@ -291,6 +305,7 @@ public:
 		else snprintf(str, 255, "Formation: %s, dist %.1fkm",
 			m_target->GetLabel().c_str(), m_posoff.Length()/1000.0);
 	}
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) {
 		if(m_child) { delete m_child; m_child = 0; }
 		AICommand::Save(wr);
@@ -305,6 +320,7 @@ public:
 		AICommand::PostLoadFixup(space);
 		m_target = static_cast<Ship*>(space->GetBodyByIndex(m_targetIndex));
 	}
+*/
 	virtual void OnDeleted(const Body *body) {
 		if (static_cast<Body *>(m_target) == body) m_target = 0;
 		AICommand::OnDeleted(body);

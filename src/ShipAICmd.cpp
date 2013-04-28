@@ -16,6 +16,7 @@
 static const double VICINITY_MIN = 15000.0;
 static const double VICINITY_MUL = 4.0;
 
+/* XXX SERIALIZER
 AICommand *AICommand::Load(Serializer::Reader &rd)
 {
 	CmdName name = CmdName(rd.Int32());
@@ -52,6 +53,7 @@ void AICommand::PostLoadFixup(Space *space)
 	m_ship = static_cast<Ship *>(space->GetBodyByIndex(m_shipIndex));
 	if (m_child) m_child->PostLoadFixup(space);
 }
+*/
 
 
 bool AICommand::ProcessChild()

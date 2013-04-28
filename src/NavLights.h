@@ -33,8 +33,10 @@ public:
 
 	NavLights(SceneGraph::Model*, float period = 2.f);
 	virtual ~NavLights();
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);
+*/
 
 	void SetEnabled(bool on) { m_enabled = on; }
 	void Update(float time);

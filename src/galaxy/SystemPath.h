@@ -100,6 +100,7 @@ public:
 		return SystemPath(sectorX, sectorY, sectorZ, systemIndex);
 	}
 
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr) const {
 		wr.Int32(sectorX);
 		wr.Int32(sectorY);
@@ -115,6 +116,7 @@ public:
 		Sint32 bi = Sint32(rd.Int32());
 		return SystemPath(x, y, z, si, bi);
 	}
+*/
 };
 
 #endif

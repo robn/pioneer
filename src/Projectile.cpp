@@ -114,6 +114,7 @@ Projectile::~Projectile()
 {
 }
 
+/* XXX SERIALIZER
 void Projectile::Save(Serializer::Writer &wr, Space *space)
 {
 	Body::Save(wr, space);
@@ -139,6 +140,7 @@ void Projectile::PostLoadFixup(Space *space)
 	Body::PostLoadFixup(space);
 	m_parent = space->GetBodyByIndex(m_parentIndex);
 }
+*/
 
 void Projectile::UpdateInterpTransform(double alpha)
 {

@@ -13,8 +13,10 @@ class LuaSerializer : public DeleteEmitter {
 	friend class LuaObject<LuaSerializer>;
 
 public:
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr);
 	void Unserialize(Serializer::Reader &rd);
+*/
 
 private:
 	static int l_register(lua_State *l);

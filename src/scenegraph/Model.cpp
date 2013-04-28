@@ -276,6 +276,7 @@ void Model::SetThrust(const vector3f &lin, const vector3f &ang)
 	m_renderData.angthrust[2] = ang.z;
 }
 
+/* XXX SERIALIZER
 class SaveVisitor : public NodeVisitor {
 public:
 	SaveVisitor(Serializer::Writer *wr_): wr(wr_) {}
@@ -323,5 +324,6 @@ void Model::Load(Serializer::Reader &rd)
 		(*i)->SetProgress(rd.Double());
 	UpdateAnimations();
 }
+*/
 
 }

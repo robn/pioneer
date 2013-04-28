@@ -109,7 +109,8 @@ private:
 };
 
 
-
+#if 0
+XXX SERIALIZER
 	class Writer {
 	public:
 		Writer() {}
@@ -175,6 +176,7 @@ private:
 		size_t m_pos;
 		int m_streamVersion;
 	};
+#endif
 
 
 }

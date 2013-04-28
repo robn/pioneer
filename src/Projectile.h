@@ -28,13 +28,17 @@ public:
 	void StaticUpdate(const float timeStep);
 	virtual void NotifyRemoved(const Body* const removedBody);
 	virtual void UpdateInterpTransform(double alpha);
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 
 	static void FreeModel();
 
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 private:
 	float GetDamage() const;
 	double GetRadius() const;

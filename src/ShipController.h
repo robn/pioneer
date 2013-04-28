@@ -35,9 +35,11 @@ public:
 	ShipController() { }
 	virtual ~ShipController() { }
 	virtual Type GetType() { return AI; }
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *s) { }
 	virtual void Load(Serializer::Reader &rd) { }
 	virtual void PostLoadFixup(Space *) { }
+*/
 	virtual void StaticUpdate(float timeStep);
 	virtual void SetFlightControlState(FlightControlState s) { }
 	Ship *m_ship;
@@ -50,8 +52,10 @@ public:
 	PlayerShipController();
 	~PlayerShipController();
 	virtual Type GetType() { return PLAYER; }
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr, Space *s);
 	void Load(Serializer::Reader &rd);
+*/
 	void PostLoadFixup(Space *s);
 	void StaticUpdate(float timeStep);
 	// Poll controls, set thruster states, gun states and target velocity

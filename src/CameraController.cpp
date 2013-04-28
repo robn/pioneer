@@ -63,6 +63,7 @@ void InternalCameraController::SetMode(Mode m)
 	}
 }
 
+/* XXX SERIALIZER
 void InternalCameraController::Save(Serializer::Writer &wr)
 {
 	wr.Int32(m_mode);
@@ -72,6 +73,7 @@ void InternalCameraController::Load(Serializer::Reader &rd)
 {
 	SetMode(static_cast<Mode>(rd.Int32()));
 }
+*/
 
 void InternalCameraController::Update()
 {
@@ -164,6 +166,7 @@ void ExternalCameraController::Update()
 	CameraController::Update();
 }
 
+/* XXX SERIALIZER
 void ExternalCameraController::Save(Serializer::Writer &wr)
 {
 	wr.Double(m_rotX);
@@ -178,6 +181,7 @@ void ExternalCameraController::Load(Serializer::Reader &rd)
 	m_dist = rd.Double();
 	m_distTo = m_dist;
 }
+*/
 
 
 SiderealCameraController::SiderealCameraController(Camera *camera, const Ship *ship) :
@@ -266,6 +270,7 @@ void SiderealCameraController::Update()
 	CameraController::Update();
 }
 
+/* XXX SERIALIZER
 void SiderealCameraController::Save(Serializer::Writer &wr)
 {
 	for (int i = 0; i < 9; i++) wr.Double(m_sidOrient[i]);
@@ -278,3 +283,4 @@ void SiderealCameraController::Load(Serializer::Reader &rd)
 	m_dist = rd.Double();
 	m_distTo = m_dist;
 }
+*/

@@ -28,6 +28,7 @@ Sfx::Sfx()
 	m_type = TYPE_NONE;
 }
 
+/* XXX SERIALIZER
 void Sfx::Save(Serializer::Writer &wr)
 {
 	wr.Vector3d(m_pos);
@@ -72,6 +73,7 @@ void Sfx::Unserialize(Serializer::Reader &rd, Frame *f)
 		}
 	}
 }
+*/
 
 void Sfx::SetPosition(const vector3d &p)
 {

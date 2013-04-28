@@ -35,6 +35,7 @@ ModelBody::~ModelBody()
 	delete m_model;
 }
 
+/* XXX SERIALIZER
 void ModelBody::Save(Serializer::Writer &wr, Space *space)
 {
 	Body::Save(wr, space);
@@ -52,6 +53,7 @@ void ModelBody::Load(Serializer::Reader &rd, Space *space)
 	SetModel(rd.String().c_str());
 	m_model->Load(rd);
 }
+*/
 
 void ModelBody::SetStatic(bool isStatic)
 {

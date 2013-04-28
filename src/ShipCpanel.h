@@ -19,7 +19,9 @@ namespace Graphics { class Renderer; }
 class ShipCpanel: public Gui::Fixed {
 public:
 	ShipCpanel(Graphics::Renderer *r);
+/* XXX SERIALIZER
     ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r);
+*/
 	virtual ~ShipCpanel();
 	virtual void Draw();
 	void Update();
@@ -28,7 +30,9 @@ public:
 
 	void TimeStepUpdate(float step);
 
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
+*/
 
 	enum OverlayTextPos {
 		OVERLAY_TOP_LEFT,

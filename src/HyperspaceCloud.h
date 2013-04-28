@@ -26,7 +26,9 @@ public:
 	virtual void SetVelocity(const vector3d &v) { m_vel = v; }
 	virtual vector3d GetVelocity() const { return m_vel; }
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 	virtual void TimeStepUpdate(const float timeStep);
 	Ship *GetShip() { return m_ship; }
 	Ship *EvictShip();
@@ -35,8 +37,10 @@ public:
 	bool IsArrival() const { return m_isArrival; }
 	virtual void UpdateInterpTransform(double alpha);
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 
 private:
 	void InitGraphics();

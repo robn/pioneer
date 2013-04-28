@@ -35,6 +35,7 @@ Planet::Planet(SystemBody *sbody): TerrainBody(sbody), m_ringVertices(RING_VERTE
 
 Planet::~Planet() {}
 
+/* XXX SERIALIZER
 void Planet::Load(Serializer::Reader &rd, Space *space)
 {
 	TerrainBody::Load(rd, space);
@@ -43,6 +44,7 @@ void Planet::Load(Serializer::Reader &rd, Space *space)
 	assert(sbody);
 	InitParams(sbody);
 }
+*/
 
 void Planet::InitParams(const SystemBody *sbody)
 {

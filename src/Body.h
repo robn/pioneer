@@ -22,9 +22,11 @@ public:
 	OBJDEF(Body, Object, BODY);
 	Body();
 	virtual ~Body();
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr, Space *space);
 	static Body *Unserialize(Serializer::Reader &rd, Space *space);
 	virtual void PostLoadFixup(Space *space) {};
+*/
 
 	virtual void SetPosition(const vector3d &p) { m_pos = p; }
 	vector3d GetPosition() const { return m_pos; }
@@ -101,8 +103,10 @@ public:
 			FLAG_DRAW_LAST = (1<<2) };		// causes the body drawn after other bodies in the z-sort
 
 protected:
+/* XXX SERIZLIER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 	unsigned int m_flags;
 
 	// Interpolated draw orientation-position

@@ -124,6 +124,7 @@ ScannerWidget::ScannerWidget(Graphics::Renderer *r) :
 	InitObject();
 }
 
+/* XXX SERIALIZER
 ScannerWidget::ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd) :
 	m_renderer(r)
 {
@@ -134,6 +135,7 @@ ScannerWidget::ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd) :
 
 	InitObject();
 }
+*/
 
 void ScannerWidget::InitObject()
 {
@@ -499,6 +501,7 @@ void ScannerWidget::TimeStepUpdate(float step)
 	m_scale = SCANNER_SCALE * (SCANNER_RANGE_MAX / m_currentRange);
 }
 
+/* XXX SERIALIZER
 void ScannerWidget::Save(Serializer::Writer &wr)
 {
 	wr.Int32(Sint32(m_mode));
@@ -506,6 +509,7 @@ void ScannerWidget::Save(Serializer::Writer &wr)
 	wr.Float(m_manualRange);
 	wr.Float(m_targetRange);
 }
+*/
 
 /////////////////////////////////
 

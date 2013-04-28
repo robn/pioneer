@@ -103,6 +103,7 @@ Game::~Game()
 	m_player.Reset();
 }
 
+/* XXX SERIALIZER
 Game::Game(Serializer::Reader &rd) :
 	m_timeAccel(TIMEACCEL_PAUSED),
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
@@ -232,6 +233,7 @@ void Game::Serialize(Serializer::Writer &wr)
 	for (Uint32 i = 0; i < strlen(s_saveEnd)+1; i++)
 		wr.Byte(s_saveEnd[i]);
 }
+*/
 
 void Game::TimeStep(float step)
 {
@@ -618,6 +620,7 @@ void Game::CreateViews()
 #endif
 }
 
+/* XXX SERIALIZER
 // XXX mostly a copy of CreateViews
 void Game::LoadViews(Serializer::Reader &rd)
 {
@@ -656,6 +659,7 @@ void Game::LoadViews(Serializer::Reader &rd)
 	Pi::worldView->SetRenderer(Pi::renderer);
 	Pi::deathView->SetRenderer(Pi::renderer);
 }
+*/
 
 void Game::DestroyViews()
 {
@@ -689,16 +693,20 @@ void Game::DestroyViews()
 
 Game *Game::LoadGame(const std::string &filename)
 {
+/* XXX SERIALIZER
 	printf("Game::LoadGame('%s')\n", filename.c_str());
 	FILE *f = FileSystem::userFiles.OpenReadStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();
 	Serializer::Reader rd(f);
 	fclose(f);
 	return new Game(rd);
+*/
+    return 0;
 }
 
 void Game::SaveGame(const std::string &filename, Game *game)
 {
+/* XXX SERIALIZER
 	assert(game);
 	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME)) {
 		throw CouldNotOpenFileException();
@@ -716,4 +724,5 @@ void Game::SaveGame(const std::string &filename, Game *game)
 	fclose(f);
 
 	if (nwritten != 1) throw CouldNotWriteToFileException();
+*/
 }

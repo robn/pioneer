@@ -66,6 +66,7 @@ SectorView::SectorView()
 	InitObject();
 }
 
+/* XXX SERIALIZER
 SectorView::SectorView(Serializer::Reader &rd)
 {
 	InitDefaults();
@@ -86,6 +87,7 @@ SectorView::SectorView(Serializer::Reader &rd)
 
 	InitObject();
 }
+*/
 
 void SectorView::InitDefaults()
 {
@@ -265,6 +267,7 @@ SectorView::~SectorView()
 	if (m_onKeyPressConnection.connected()) m_onKeyPressConnection.disconnect();
 }
 
+/* XXX SERIALIZER
 void SectorView::Save(Serializer::Writer &wr)
 {
 	wr.Float(m_pos.x);
@@ -281,6 +284,7 @@ void SectorView::Save(Serializer::Writer &wr)
 	wr.Bool(m_selectionFollowsMovement);
 	wr.Byte(m_detailBoxVisible);
 }
+*/
 
 void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 {

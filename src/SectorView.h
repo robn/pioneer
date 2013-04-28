@@ -18,7 +18,9 @@
 class SectorView: public View {
 public:
 	SectorView();
+/* XXX SERIALIZER
 	SectorView(Serializer::Reader &rd);
+*/
 	virtual ~SectorView();
 
 	virtual void Update();
@@ -35,7 +37,9 @@ public:
 	void GotoCurrentSystem() { GotoSystem(m_current); }
 	void GotoSelectedSystem() { GotoSystem(m_selected); }
 	void GotoHyperspaceTarget() { GotoSystem(m_hyperspaceTarget); }
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr);
+*/
 
 	sigc::signal<void> onHyperspaceTargetChanged;
 

@@ -31,7 +31,9 @@ public:
 #endif
 
 protected:
+/* XXX SERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 
 private:
 	void InitParams(const SystemBody*);

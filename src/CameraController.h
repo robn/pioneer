@@ -26,8 +26,10 @@ public:
 
 	virtual Type GetType() const = 0;
 	virtual const char *GetName() const { return ""; }
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr) { }
 	virtual void Load(Serializer::Reader &rd) { }
+*/
 	virtual bool IsExternal() const { return false; }
 
 	// camera position relative to the body
@@ -66,8 +68,10 @@ public:
 	const char *GetName() const { return m_name; }
 	void SetMode(Mode m);
 	Mode GetMode() const { return m_mode; }
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
+*/
 
 	virtual void Update();
 
@@ -122,8 +126,10 @@ public:
 		m_rotY = y;
 	}
 
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
+*/
 
 	void Update();
 
@@ -155,8 +161,10 @@ public:
 	void Reset();
 	bool IsExternal() const { return true; }
 
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr);
 	void Load(Serializer::Reader &rd);
+*/
 
 	void Update();
 

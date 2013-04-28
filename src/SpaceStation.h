@@ -72,7 +72,9 @@ public:
 	virtual const SystemBody *GetSystemBody() const { return m_sbody; }
 	void ReplaceShipOnSale(int idx, const ShipOnSale &with);
 	const std::vector<ShipOnSale> &GetShipsOnSale() const { return m_shipsOnSale; }
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 	virtual void NotifyRemoved(const Body* const removedBody);
 
 	// should call Ship::Undock and Ship::SetDockedWith instead
@@ -108,8 +110,10 @@ public:
 	virtual void UpdateInterpTransform(double alpha);
 
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 	/* MarketAgent stuff */
 	void Bought(Equip::Type t);
 	void Sold(Equip::Type t);

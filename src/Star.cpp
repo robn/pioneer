@@ -18,11 +18,13 @@ Star::Star(SystemBody *sbody): TerrainBody(sbody)
 	InitStar();
 }
 
+/* XXX SERIALIZER
 void Star::Load(Serializer::Reader &rd, Space *space)
 {
 	TerrainBody::Load(rd, space);		// to get sbody
 	InitStar();
 }
+*/
 
 void Star::InitStar()
 {

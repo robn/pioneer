@@ -18,7 +18,9 @@ public:
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 protected:
 	void InitStar();
+/* XXX SERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 };
 
 #endif /* _STAR_H */

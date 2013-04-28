@@ -26,6 +26,7 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 	Init(parent, label, flags);
 }
 
+/* XXX SERIALIZER
 void Frame::Serialize(Serializer::Writer &wr, Frame *f, Space *space)
 {
 	wr.Int32(f->m_flags);
@@ -71,6 +72,7 @@ void Frame::PostUnserializeFixup(Frame *f, Space *space)
 	for (ChildIterator it = f->BeginChildren(); it != f->EndChildren(); ++it)
 		PostUnserializeFixup(*it, space);
 }
+*/
 
 void Frame::Init(Frame *parent, const char *label, unsigned int flags)
 {

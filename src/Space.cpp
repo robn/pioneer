@@ -95,6 +95,7 @@ Space::Space(Game *game, const SystemPath &path)
 	//DebugDumpFrames();
 }
 
+/* XXX SERIALIZER
 Space::Space(Game *game, Serializer::Reader &rd)
 	: m_game(game)
 	, m_frameIndexValid(false)
@@ -123,6 +124,7 @@ Space::Space(Game *game, Serializer::Reader &rd)
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		(*i)->PostLoadFixup(this);
 }
+*/
 
 Space::~Space()
 {
@@ -132,6 +134,7 @@ Space::~Space()
 	UpdateBodies();
 }
 
+/* XXX SERIALIZER
 void Space::Serialize(Serializer::Writer &wr)
 {
 	RebuildFrameIndex();
@@ -148,6 +151,7 @@ void Space::Serialize(Serializer::Writer &wr)
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		(*i)->Serialize(wr, this);
 }
+*/
 
 Frame *Space::GetFrameByIndex(Uint32 idx) const
 {

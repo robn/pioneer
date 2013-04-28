@@ -2318,6 +2318,7 @@ StarSystem::~StarSystem()
 	clear_parent_and_child_pointers(rootBody.Get());
 }
 
+/* XXX SERIALIZER
 void StarSystem::Serialize(Serializer::Writer &wr, StarSystem *s)
 {
 	if (s) {
@@ -2343,6 +2344,7 @@ RefCountedPtr<StarSystem> StarSystem::Unserialize(Serializer::Reader &rd)
 		return RefCountedPtr<StarSystem>(0);
 	}
 }
+*/
 
 typedef std::map<SystemPath,StarSystem*> SystemCacheMap;
 static SystemCacheMap s_cachedSystems;

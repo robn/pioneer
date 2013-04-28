@@ -25,6 +25,7 @@ Player::Player(ShipType::Id shipId): Ship(shipId)
 	SetController(new PlayerShipController());
 }
 
+/* XXX SERIALIZER
 void Player::Save(Serializer::Writer &wr, Space *space)
 {
 	Ship::Save(wr, space);
@@ -37,6 +38,7 @@ void Player::Load(Serializer::Reader &rd, Space *space)
 	Ship::Load(rd, space);
 	MarketAgent::Load(rd);
 }
+*/
 
 //XXX perhaps remove this, the sound is very annoying
 bool Player::OnDamage(Object *attacker, float kgDamage)

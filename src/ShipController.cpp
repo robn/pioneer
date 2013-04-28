@@ -54,6 +54,7 @@ PlayerShipController::~PlayerShipController()
 	m_fireMissileKey.disconnect();
 }
 
+/* XXX SERIALIZER
 void PlayerShipController::Save(Serializer::Writer &wr, Space *space)
 {
 	wr.Int32(static_cast<int>(m_flightControlState));
@@ -83,6 +84,7 @@ void PlayerShipController::PostLoadFixup(Space *space)
 	m_navTarget = space->GetBodyByIndex(m_navTargetIndex);
 	m_setSpeedTarget = space->GetBodyByIndex(m_setSpeedTargetIndex);
 }
+*/
 
 void PlayerShipController::StaticUpdate(const float timeStep)
 {

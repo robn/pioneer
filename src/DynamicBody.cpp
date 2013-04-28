@@ -54,6 +54,7 @@ void DynamicBody::AddRelTorque(const vector3d &t)
 	m_torque += GetOrient() * t;
 }
 
+/* XXX SERIALIZER
 void DynamicBody::Save(Serializer::Writer &wr, Space *space)
 {
 	ModelBody::Save(wr, space);
@@ -86,6 +87,7 @@ void DynamicBody::PostLoadFixup(Space *space)
 	m_oldPos = GetPosition();
 //	CalcExternalForce();		// too dangerous
 }
+*/
 
 void DynamicBody::SetTorque(const vector3d &t)
 {

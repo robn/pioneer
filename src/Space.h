@@ -27,11 +27,15 @@ public:
 	Space(Game *game, const SystemPath &path);
 
 	// initialise from save file
+/* XXX SERIALIZER
 	Space(Game *game, Serializer::Reader &rd);
+*/
 
 	virtual ~Space();
 
+/* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr);
+*/
 
 	// frame/body/sbody indexing for save/load. valid after
 	// construction/Serialize(), invalidated by TimeStep(). they will assert

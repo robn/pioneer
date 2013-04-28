@@ -26,6 +26,8 @@
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
+#if 0
+XXX SERIALIZER
 void SerializableEquipSet::Save(Serializer::Writer &wr)
 {
 	wr.Int32(Equip::SLOT_MAX);
@@ -156,6 +158,7 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 
 	m_equipment.onChange.connect(sigc::mem_fun(this, &Ship::OnEquipmentChange));
 }
+#endif
 
 void Ship::Init()
 {
@@ -172,6 +175,7 @@ void Ship::Init()
 	m_landingGearAnimation = GetModel()->FindAnimation("gear_down");
 }
 
+/* XXX SERIALIZER
 void Ship::PostLoadFixup(Space *space)
 {
 	DynamicBody::PostLoadFixup(space);
@@ -179,6 +183,7 @@ void Ship::PostLoadFixup(Space *space)
 	if (m_curAICmd) m_curAICmd->PostLoadFixup(space);
 	m_controller->PostLoadFixup(space);
 }
+*/
 
 Ship::Ship(ShipType::Id shipId): DynamicBody(),
 	m_controller(0),

@@ -131,8 +131,10 @@ public:
 	//special for ship model use
 	void SetThrust(const vector3f &linear, const vector3f &angular);
 
+/* XXX SERIALIZER
 	void Save(Serializer::Writer &wr) const;
 	void Load(Serializer::Reader &rd);
+*/
 
 private:
 	Model(const Model&);

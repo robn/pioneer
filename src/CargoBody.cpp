@@ -11,6 +11,7 @@
 #include "collider/collider.h"
 #include "scenegraph/SceneGraph.h"
 
+/* XXX SERIALIZER
 void CargoBody::Save(Serializer::Writer &wr, Space *space)
 {
 	DynamicBody::Save(wr, space);
@@ -25,6 +26,7 @@ void CargoBody::Load(Serializer::Reader &rd, Space *space)
 	Init();
 	m_hitpoints = rd.Float();
 }
+*/
 
 void CargoBody::Init()
 {

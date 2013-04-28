@@ -11,6 +11,8 @@
 
 namespace Serializer {
 
+#if 0
+XXX SERIALIZER
 const std::string &Writer::GetData() { return m_str; }
 void Writer::Byte(Uint8 x) {
 	m_str.push_back(char(x));
@@ -222,5 +224,6 @@ Quaternionf Reader::RdQuaternionf()
 	q.z = Float();
 	return q;
 }
+#endif
 
 } /* end namespace Serializer */

@@ -47,12 +47,17 @@ public:
 	vector3d GetGravityForce() const { return m_gravityForce; }
 	virtual void UpdateInterpTransform(double alpha);
 
+/* XXX SERIALIZER
 	virtual void PostLoadFixup(Space *space);
+*/
 
 	Orbit ComputeOrbit() const;
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
+
 private:
 	vector3d m_oldPos;
 	vector3d m_oldAngDisplacement;

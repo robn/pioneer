@@ -45,8 +45,10 @@ public:
 	virtual void ResetHyperspaceCountdown();
 
 protected:
+/* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
+*/
 
 	virtual void OnEnterSystem();
 	virtual void OnEnterHyperspace();
