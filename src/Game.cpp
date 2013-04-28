@@ -165,9 +165,23 @@ Game::Game(Serializer::Reader &rd) :
 	for (Uint32 i = 0; i < strlen(s_saveEnd)+1; i++)
 		if (rd.Byte() != s_saveEnd[i]) throw SavedGameCorruptException();
 }
+*/
 
-void Game::Serialize(Serializer::Writer &wr)
+Serializer::Object Game::Serialize() const
 {
+	Serializer::Object so;
+
+	{
+	Serializer::Object meta;
+	meta.Set("saveVersion", s_saveVersion);
+	meta.Set("gameVersion", PIONEER_VERSION);
+	meta.Set("gameExtraVersion", PIONEER_EXTRAVERSION);
+	so.Set("meta", meta);
+	}
+
+	return so;
+
+/* XXX SERIALIZER
 	// leading signature
 	for (Uint32 i = 0; i < strlen(s_saveStart)+1; i++)
 		wr.Byte(s_saveStart[i]);
@@ -232,8 +246,8 @@ void Game::Serialize(Serializer::Writer &wr)
 	// trailing signature
 	for (Uint32 i = 0; i < strlen(s_saveEnd)+1; i++)
 		wr.Byte(s_saveEnd[i]);
-}
 */
+}
 
 void Game::TimeStep(float step)
 {
@@ -706,16 +720,14 @@ Game *Game::LoadGame(const std::string &filename)
 
 void Game::SaveGame(const std::string &filename, Game *game)
 {
-/* XXX SERIALIZER
 	assert(game);
 	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME)) {
 		throw CouldNotOpenFileException();
 	}
 
-	Serializer::Writer wr;
-	game->Serialize(wr);
-
-	const std::string data = wr.GetData();
+	Serializer::Object so = game->Serialize();
+ 
+	const std::string data = Json::FastWriter().write(so.GetJson());
 
 	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();
@@ -724,5 +736,4 @@ void Game::SaveGame(const std::string &filename, Game *game)
 	fclose(f);
 
 	if (nwritten != 1) throw CouldNotWriteToFileException();
-*/
 }

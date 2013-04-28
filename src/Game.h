@@ -38,9 +38,7 @@ public:
 	~Game();
 
 	// save game
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr);
-*/
+	Serializer::Object Serialize() const;
 
 	// various game states
 	bool IsNormalSpace() const { return m_state == STATE_NORMAL; }
