@@ -56,6 +56,9 @@ public:
 	SpaceStation(const SystemBody *);
 	SpaceStation() {}
 	virtual ~SpaceStation();
+
+	virtual Serializer::Object Serialize() const;
+
 	virtual vector3d GetAngVelocity() const { return vector3d(0,m_type->angVel,0); }
 	virtual bool OnCollision(Object *b, Uint32 flags, double relVel);
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
@@ -110,8 +113,6 @@ public:
 	virtual void UpdateInterpTransform(double alpha);
 
 protected:
-	virtual Serializer::Object Serialize() const;
-
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);

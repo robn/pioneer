@@ -38,7 +38,15 @@ void SpaceStation::Uninit()
 
 Serializer::Object SpaceStation::Serialize() const {
 	Serializer::Object so(ModelBody::Serialize());
-	// XXX SERIALIZER parent body index
+	so.Set("bodyClass", "SpaceStation");
+	// XXX SERIALIZER market
+	// XXX SERIALIZER equipment stocks
+	// XXX SERIALIZER shipyard
+	// XXX SERIALIZER docked ships
+	// XXX SERIALIZER bay groups
+	// XXX SERIALIZER sbody index
+	// XXX SERIALIZER police
+	// XXX SERIALIZER lights
 	return so;
 }
 
