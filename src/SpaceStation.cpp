@@ -36,6 +36,12 @@ void SpaceStation::Uninit()
 	SpaceStationType::Uninit();
 }
 
+Serializer::Object SpaceStation::Serialize() const {
+	Serializer::Object so(ModelBody::Serialize());
+	// XXX SERIALIZER parent body index
+	return so;
+}
+
 /* XXX SERIALIZER
 void SpaceStation::Save(Serializer::Writer &wr, Space *space)
 {

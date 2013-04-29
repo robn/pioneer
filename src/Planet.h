@@ -21,6 +21,8 @@ public:
 	Planet();
 	virtual ~Planet();
 
+	virtual Serializer::Object Serialize() const;
+
 	virtual void SubRender(Graphics::Renderer *r, const Camera *camera, const vector3d &camPos);
 
 	void GetAtmosphericState(double dist, double *outPressure, double *outDensity) const;

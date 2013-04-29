@@ -110,6 +110,8 @@ public:
 	virtual void UpdateInterpTransform(double alpha);
 
 protected:
+	virtual Serializer::Object Serialize() const;
+
 /* XXX SERIALIZER
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
