@@ -43,6 +43,13 @@ void TerrainBody::InitTerrainBody(SystemBody *sbody)
 	m_maxFeatureHeight = (m_geosphere->GetMaxFeatureHeight() + 1.0) * m_sbody->GetRadius();
 }
 
+Serializer::Object TerrainBody::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "TerrainBody");
+	// XXX SERIALIZER sbody index
+	return so;
+}
+
 /* XXX SERIALIZER
 void TerrainBody::Save(Serializer::Writer &wr, Space *space)
 {
