@@ -37,7 +37,16 @@ Body::~Body()
 }
 
 Serializer::Object Body::Serialize() const {
-	return Serializer::Object();
+	Serializer::Object so;
+	so.Set("bodyClass", "Body");
+	// XXX SERIALIZER body index
+	so.Set("label", m_label);
+	so.Set("dead", m_dead);
+	so.Set("pos", m_pos.Serialize());
+	so.Set("orient", m_orient.Serialize());
+	so.Set("physRadius", m_physRadius);
+	so.Set("clipRadius", m_clipRadius);
+	return so;
 }
 
 /* XXX SERIALIZER
