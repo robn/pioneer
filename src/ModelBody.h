@@ -19,6 +19,9 @@ public:
 	OBJDEF(ModelBody, Body, MODELBODY);
 	ModelBody();
 	virtual ~ModelBody();
+
+	virtual Serializer::Object Serialize() const;
+
 	void SetPosition(const vector3d &p);
 	void SetOrient(const matrix3x3d &r);
 	void TransformToModelCoords(const Frame *camFrame);

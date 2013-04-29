@@ -35,6 +35,16 @@ ModelBody::~ModelBody()
 	delete m_model;
 }
 
+Serializer::Object ModelBody::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "ModelBody");
+	so.Set("isStatic", m_isStatic);
+	so.Set("colliding", m_colliding);
+	so.Set("modelName", m_modelName);
+	// XXX SERIALIZER model
+	return so;
+}
+
 /* XXX SERIALIZER
 void ModelBody::Save(Serializer::Writer &wr, Space *space)
 {
