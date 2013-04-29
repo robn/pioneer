@@ -54,6 +54,20 @@ void DynamicBody::AddRelTorque(const vector3d &t)
 	m_torque += GetOrient() * t;
 }
 
+Serializer::Object DynamicBody::Serialize() const {
+	Serializer::Object so(Body::Serialize());
+	so.Set("bodyClass", "DynamicBody");
+	so.Set("force", m_force.Serialize());
+	so.Set("torque", m_torque.Serialize());
+	so.Set("vel", m_vel.Serialize());
+	so.Set("angVel", m_angVel.Serialize());
+	so.Set("mass", m_mass);
+	so.Set("massRadius", m_massRadius);
+	so.Set("angInertia", m_angInertia);
+	so.Set("isMoving", m_isMoving);
+	return so;
+}
+
 /* XXX SERIALIZER
 void DynamicBody::Save(Serializer::Writer &wr, Space *space)
 {

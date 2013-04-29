@@ -15,6 +15,9 @@ public:
 	OBJDEF(DynamicBody, ModelBody, DYNAMICBODY);
 	DynamicBody();
 	virtual ~DynamicBody();
+
+	virtual Serializer::Object Serialize() const;
+
 	virtual vector3d GetVelocity() const;
 	virtual void SetVelocity(const vector3d &v);
 	virtual void SetFrame(Frame *f);
