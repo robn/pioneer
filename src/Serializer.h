@@ -4,15 +4,9 @@
 #ifndef _SERIALIZE_H
 #define _SERIALIZE_H
 
-#include "utils.h"
-#include "Quaternion.h"
+#include <cstdio>
+#include "SDL_stdinc.h"
 #include "json/json.h"
-#include <vector>
-
-class Frame;
-class Body;
-class StarSystem;
-class SystemBody;
 
 struct SavedGameCorruptException {};
 struct SavedGameWrongVersionException {};

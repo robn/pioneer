@@ -6,6 +6,7 @@
 
 #include "EquipType.h"
 #include "Serializer.h"
+#include "fixed.h"
 
 class StarSystem;
 class SysPolit;

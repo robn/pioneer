@@ -9,6 +9,7 @@
  */
 #include "libs.h"
 #include "Serializer.h"
+#include "Body.h"
 
 class Ship;
 class Space;

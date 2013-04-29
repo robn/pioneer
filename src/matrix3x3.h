@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "vector3.h"
+#include "Serializer.h"
 
 template <typename T>
 class matrix3x3 {

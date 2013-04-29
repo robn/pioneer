@@ -6,6 +6,7 @@
 #include "NodeCopyCache.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureBuilder.h"
+#include "utils.h"
 
 namespace SceneGraph {
 

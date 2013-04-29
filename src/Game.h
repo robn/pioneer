@@ -8,6 +8,8 @@
 #include "galaxy/SystemPath.h"
 #include "Serializer.h"
 #include "gameconsts.h"
+#include "SmartPtr.h"
+#include <list>
 
 class HyperspaceCloud;
 class Player;

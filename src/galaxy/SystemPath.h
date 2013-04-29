@@ -6,7 +6,9 @@
 
 #include "Serializer.h"
 #include "LuaWrappable.h"
+#include "SDL_stdinc.h"
 #include <stdexcept>
+#include <cassert>
 
 class SystemPath : public LuaWrappable {
 public:
