@@ -733,7 +733,7 @@ void Pi::HandleEvents()
 									const std::string name = "_quicksave";
 									const std::string path = FileSystem::JoinPath(GetSaveDir(), name);
 									try {
-										Game::SaveGame(name, Pi::game);
+										Serializer::GameSerializer(Pi::game).Write(name);
 										Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO + path);
 									} catch (CouldNotOpenFileException) {
 										Pi::cpan->MsgLog()->Message("", stringf(Lang::COULD_NOT_OPEN_FILENAME, formatarg("path", path)));

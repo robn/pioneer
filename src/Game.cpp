@@ -719,23 +719,3 @@ Game *Game::LoadGame(const std::string &filename)
 */
     return 0;
 }
-
-void Game::SaveGame(const std::string &filename, Game *game)
-{
-	assert(game);
-	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME)) {
-		throw CouldNotOpenFileException();
-	}
-
-	Serializer::Object so = game->Serialize();
- 
-	const std::string data = Json::FastWriter().write(so.GetJson());
-
-	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
-	if (!f) throw CouldNotOpenFileException();
-
-	size_t nwritten = fwrite(data.data(), data.length(), 1, f);
-	fclose(f);
-
-	if (nwritten != 1) throw CouldNotWriteToFileException();
-}

@@ -643,7 +643,7 @@ void GameMenuView::OpenSaveDialog()
 	if (ok) {
 		const std::string path = FileSystem::JoinPath(Pi::GetSaveDir(), filename);
 		try {
-			Game::SaveGame(filename, Pi::game);
+			Serializer::GameSerializer(Pi::game).Write(filename);
 			Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO + path); // XXX stringf with an arg would be better
 		}
 		catch (CouldNotOpenFileException) {

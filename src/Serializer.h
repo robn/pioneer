@@ -13,6 +13,8 @@ struct SavedGameWrongVersionException {};
 struct CouldNotOpenFileException {};
 struct CouldNotWriteToFileException {};
 
+class Game;
+
 namespace Serializer {
 
 // helper methods for safely storing/retrieving doubles
@@ -100,6 +102,19 @@ public:
 
 private:
 	Json::Value m_json;
+};
+
+
+class GameSerializer {
+public:
+	GameSerializer(Game *game) : m_game(game) {}
+
+	// XXX should be const, but can't until all the serializers are const too
+	// Write throws exceptions on failure
+	void Write(const std::string &filename);
+
+private:
+	Game *m_game;
 };
 
 

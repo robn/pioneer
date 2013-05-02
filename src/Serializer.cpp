@@ -1,15 +1,30 @@
 // Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#include "galaxy/StarSystem.h"
 #include "Serializer.h"
+#include "FileSystem.h"
 #include "Pi.h"
-#include "Frame.h"
-#include "Space.h"
-#include "Ship.h"
-#include "HyperspaceCloud.h"
+#include "Game.h"
 
 namespace Serializer {
+
+void GameSerializer::Write(const std::string &filename)
+{
+	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME))
+		throw CouldNotOpenFileException();
+
+	Serializer::Object so = m_game->Serialize();
+ 
+	const std::string data = Json::FastWriter().write(so.GetJson());
+
+	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
+	if (!f) throw CouldNotOpenFileException();
+
+	size_t nwritten = fwrite(data.data(), data.length(), 1, f);
+	fclose(f);
+
+	if (nwritten != 1) throw CouldNotWriteToFileException();
+}
 
 #if 0
 XXX SERIALIZER
