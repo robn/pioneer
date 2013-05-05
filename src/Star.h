@@ -15,7 +15,7 @@ public:
 	Star();
 	virtual ~Star() {};
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 

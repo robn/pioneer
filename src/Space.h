@@ -34,7 +34,7 @@ public:
 	virtual ~Space();
 
 	// XXX SERIALIZER make const as soon as the indexes aren't needed any longer
-	Serializer::Object Serialize();
+	Serializer::Object Serialize(Serializer::GameSerializer *gs);
 
 	// frame/body/sbody indexing for save/load. valid after
 	// construction/Serialize(), invalidated by TimeStep(). they will assert
@@ -42,8 +42,6 @@ public:
 	Frame *GetFrameByIndex(Uint32 idx) const;
 	Body  *GetBodyByIndex(Uint32 idx) const;
 	SystemBody *GetSystemBodyByIndex(Uint32 idx) const;
-	Uint32 GetIndexForFrame(const Frame *frame) const;
-	Uint32 GetIndexForBody(const Body *body) const;
 	Uint32 GetIndexForSystemBody(const SystemBody *sbody) const;
 
 	RefCountedPtr<StarSystem> GetStarSystem() const { return m_starSystem; }
@@ -100,16 +98,11 @@ private:
 	std::list<Body*> m_removeBodies;
 	std::list<Body*> m_killBodies;
 
-	void RebuildFrameIndex();
-	void RebuildBodyIndex();
 	void RebuildSystemBodyIndex();
 
-	void AddFrameToIndex(Frame *frame);
 	void AddSystemBodyToIndex(SystemBody *sbody);
 
-	bool m_frameIndexValid, m_bodyIndexValid, m_sbodyIndexValid;
-	std::vector<Frame*> m_frameIndex;
-	std::vector<Body*>  m_bodyIndex;
+	bool m_sbodyIndexValid;
 	std::vector<SystemBody*> m_sbodyIndex;
 
 	//background (elements that are infinitely far away,

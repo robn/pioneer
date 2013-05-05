@@ -60,6 +60,7 @@
 // "Deserialize" function under that namespace. that data returned will be
 // given back to the module
 
+/* XXX SERIALIZER
 void LuaSerializer::pickle(lua_State *l, int idx, std::string &out, const char *key = 0)
 {
 	static char buf[256];
@@ -399,7 +400,6 @@ const char *LuaSerializer::unpickle(lua_State *l, const char *pos)
 	return pos;
 }
 
-/* XXX SERIALIZER
 void LuaSerializer::Serialize(Serializer::Writer &wr)
 {
 	lua_State *l = Lua::manager->GetLuaState();

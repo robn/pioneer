@@ -59,7 +59,7 @@ public:
 	Ship() {} //default constructor used before Load
 	virtual ~Ship();
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	void SetController(ShipController *c); //deletes existing
 	ShipController *GetController() const { return m_controller; }

@@ -25,8 +25,8 @@ Player::Player(ShipType::Id shipId): Ship(shipId)
 	SetController(new PlayerShipController());
 }
 
-Serializer::Object Player::Serialize() const {
-	Serializer::Object so(Ship::Serialize());
+Serializer::Object Player::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(Ship::Serialize(gs));
 	so.Set("bodyClass", "Player");
 	so.Set("marketAgent", MarketAgent::Serialize());
 	return so;

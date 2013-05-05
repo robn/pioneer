@@ -26,8 +26,8 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 	Init(parent, label, flags);
 }
 
-Serializer::Object Frame::Serialize() const {
-	Serializer::Object so;
+Serializer::Object Frame::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(gs->MakeRefObject(this));
 
 	so.Set("flags", m_flags);
 	so.Set("radius", m_radius);
@@ -35,12 +35,13 @@ Serializer::Object Frame::Serialize() const {
 	so.Set("pos", m_pos.Serialize());
 	so.Set("orient", m_orient.Serialize());
 	so.Set("angSpeed", m_angSpeed);
-	// XXX SERIALIZER sbody and body indices
+	so.Set("astroBodyRefId", gs->GetRefId(m_astroBody));
+	// XXX SERIALIZER sbody index
 
 	{
 	Json::Value children(Json::arrayValue);
 	for (ChildIterator i = BeginChildren(); i != EndChildren(); ++i)
-		children.append((*i)->Serialize().GetJson());
+		children.append((*i)->Serialize(gs).GetJson());
 	so.Set("children", Serializer::Object(children));
 	}
 

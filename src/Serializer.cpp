@@ -13,8 +13,8 @@ void GameSerializer::Write(const std::string &filename)
 	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME))
 		throw CouldNotOpenFileException();
 
-	Serializer::Object so = m_game->Serialize();
- 
+	Serializer::Object so = m_game->Serialize(this);
+
 	const std::string data = Json::FastWriter().write(so.GetJson());
 
 	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
@@ -24,6 +24,24 @@ void GameSerializer::Write(const std::string &filename)
 	fclose(f);
 
 	if (nwritten != 1) throw CouldNotWriteToFileException();
+}
+
+Serializer::Object GameSerializer::MakeRefObject(const ReferrableObject *o)
+{
+	Uint32 id = GetRefId(o);
+	Serializer::Object so;
+	so.Set("refId", id);
+	return so;
+}
+
+Uint32 GameSerializer::GetRefId(const ReferrableObject *o)
+{
+	if (!o) return 0;
+	std::map<const ReferrableObject*,Uint32>::iterator i = m_objects.find(o);
+	if (i != m_objects.end())
+		return (*i).second;
+	m_objects.insert(i, std::make_pair(o, ++m_nextId));
+	return m_nextId;
 }
 
 #if 0

@@ -114,14 +114,14 @@ Projectile::~Projectile()
 {
 }
 
-Serializer::Object Projectile::Serialize() const {
-	Serializer::Object so(Body::Serialize());
+Serializer::Object Projectile::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(Body::Serialize(gs));
 	so.Set("bodyClass", "Projectile");
 	so.Set("baseVel", m_baseVel.Serialize());
 	so.Set("dirVel", m_dirVel.Serialize());
 	so.Set("age", m_age);
 	so.Set("type", m_type);
-	// XXX SERIALIZER parent body index
+    so.Set("parentRefId", gs->GetRefId(m_parent));
 	return so;
 }
 

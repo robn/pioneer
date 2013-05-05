@@ -11,8 +11,8 @@
 #include "collider/collider.h"
 #include "scenegraph/SceneGraph.h"
 
-Serializer::Object CargoBody::Serialize() const {
-	Serializer::Object so(DynamicBody::Serialize());
+Serializer::Object CargoBody::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(DynamicBody::Serialize(gs));
 	so.Set("bodyClass", "CargoBody");
 	so.Set("type", static_cast<Sint32>(m_type)); // XXX SERIALIZER store constants
 	so.Set("hitpoints", m_hitpoints);

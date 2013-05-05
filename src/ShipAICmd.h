@@ -30,7 +30,7 @@ public:
 	}
 
 	// Serialisation functions
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 /* XXX SERIALIZER
 	static AICommand *Load(Serializer::Reader &rd);
 	AICommand(Serializer::Reader &rd, CmdName name);
@@ -58,9 +58,9 @@ public:
 		if (m_child) m_child->GetStatusText(str);
 		else snprintf(str, 255, "Dock: target %s, state %i", m_target->GetLabel().c_str(), m_state);
 	}
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-		// XXX SERIALIZER target body index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("targetRefId", gs->GetRefId(m_target));
 		so.Set("dockpos", m_dockpos.Serialize());
 		so.Set("dockupdir", m_dockupdir.Serialize());
 		return so;
@@ -129,11 +129,11 @@ public:
 		else snprintf(str, 255, "FlyTo: %s, dist %.1fkm, endvel %.1fkm/s, state %i",
 			m_targframe->GetLabel().c_str(), m_posoff.Length()/1000.0, m_endvel/1000.0, m_state);
 	}
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-		// XXX SERIALIZER target ship index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("targetRefId", gs->GetRefId(m_target));
 		so.Set("dist", m_dist);
-		// XXX SERIALIZER target frame index
+		so.Set("targframeRefId", gs->GetRefId(m_targframe));
 		so.Set("posoff", m_posoff.Serialize());
 		so.Set("endvel", m_endvel);
 		so.Set("tangent", m_tangent);
@@ -200,9 +200,9 @@ public:
 		else snprintf(str, 255, "FlyAround: alt %.1fkm, vel %.1fkm/s, mode %i",
 			m_alt/1000.0, m_vel/1000.0, m_targmode);
 	}
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-		// XXX SERIALIZER obstructor body index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("obstructorRefId", gs->GetRefId(m_obstructor));
 		so.Set("vel", m_vel);
 		so.Set("alt", m_alt);
 		so.Set("targmode", m_targmode);
@@ -251,9 +251,9 @@ public:
 		m_lastVel = m_target->GetVelocity();
 	}
 
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-		// XXX SERIALIZER target body index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
 	// don't actually need to save all this crap
@@ -293,9 +293,9 @@ public:
 		m_target = target;
 	}
 
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-		// XXX SERIALIZER target body index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
 /* XXX SERIALIZER
@@ -343,9 +343,9 @@ public:
 		else snprintf(str, 255, "Formation: %s, dist %.1fkm",
 			m_target->GetLabel().c_str(), m_posoff.Length()/1000.0);
 	}
-	virtual Serializer::Object Serialize() const {
-		Serializer::Object so(AICommand::Serialize());
-        // XXX SERIALIZER target body index
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
+		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("targetRefId", gs->GetRefId(m_target));
         so.Set("posoff", m_posoff.Serialize());
 		return so;
 	}

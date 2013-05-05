@@ -105,16 +105,27 @@ private:
 };
 
 
+class GameSerializer;
+
+class ReferrableObject {
+	virtual Serializer::Object Serialize(GameSerializer *) const = 0;
+};
+
 class GameSerializer {
 public:
-	GameSerializer(Game *game) : m_game(game) {}
+	GameSerializer(Game *game) : m_game(game), m_nextId(0) {}
 
 	// XXX should be const, but can't until all the serializers are const too
 	// Write throws exceptions on failure
 	void Write(const std::string &filename);
 
+	Serializer::Object MakeRefObject(const ReferrableObject *o);
+	Uint32 GetRefId(const ReferrableObject *o);
+
 private:
 	Game *m_game;
+	Uint32 m_nextId;
+	std::map<const ReferrableObject*,Uint32> m_objects;
 };
 
 

@@ -58,8 +58,6 @@ void Space::BodyNearFinder::GetBodiesMaybeNear(const vector3d &pos, double dist,
 
 Space::Space(Game *game)
 	: m_game(game)
-	, m_frameIndexValid(false)
-	, m_bodyIndexValid(false)
 	, m_sbodyIndexValid(false)
 	, m_background(Pi::renderer, UNIVERSE_SEED)
 	, m_bodyNearFinder(this)
@@ -73,8 +71,6 @@ Space::Space(Game *game)
 
 Space::Space(Game *game, const SystemPath &path)
 	: m_game(game)
-	, m_frameIndexValid(false)
-	, m_bodyIndexValid(false)
 	, m_sbodyIndexValid(false)
 	, m_background(Pi::renderer)
 	, m_bodyNearFinder(this)
@@ -134,40 +130,24 @@ Space::~Space()
 	UpdateBodies();
 }
 
-Serializer::Object Space::Serialize()
+Serializer::Object Space::Serialize(Serializer::GameSerializer *gs)
 {
 	// XXX SERIALIZER get rid of these
-	RebuildFrameIndex();
-	RebuildBodyIndex();
 	RebuildSystemBodyIndex();
 
 	Serializer::Object so;
 
 	so.Set("system", m_starSystem->Serialize());
-	so.Set("frames", m_rootFrame->Serialize());
+	so.Set("frames", m_rootFrame->Serialize(gs));
 
 	{
 	Json::Value bodies(Json::arrayValue);
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-		bodies.append((*i)->Serialize().GetJson());
+		bodies.append((*i)->Serialize(gs).GetJson());
 	so.Set("bodies", Serializer::Object(bodies));
 	}
 
 	return so;
-}
-
-Frame *Space::GetFrameByIndex(Uint32 idx) const
-{
-	assert(m_frameIndexValid);
-	assert(m_frameIndex.size() > idx);
-	return m_frameIndex[idx];
-}
-
-Body *Space::GetBodyByIndex(Uint32 idx) const
-{
-	assert(m_bodyIndexValid);
-	assert(m_bodyIndex.size() > idx);
-	return m_bodyIndex[idx];
 }
 
 SystemBody *Space::GetSystemBodyByIndex(Uint32 idx) const
@@ -175,24 +155,6 @@ SystemBody *Space::GetSystemBodyByIndex(Uint32 idx) const
 	assert(m_sbodyIndexValid);
 	assert(m_sbodyIndex.size() > idx);
 	return m_sbodyIndex[idx];
-}
-
-Uint32 Space::GetIndexForFrame(const Frame *frame) const
-{
-	assert(m_frameIndexValid);
-	for (Uint32 i = 0; i < m_frameIndex.size(); i++)
-		if (m_frameIndex[i] == frame) return i;
-	assert(0);
-	return Uint32(-1);
-}
-
-Uint32 Space::GetIndexForBody(const Body *body) const
-{
-	assert(m_bodyIndexValid);
-	for (Uint32 i = 0; i < m_bodyIndex.size(); i++)
-		if (m_bodyIndex[i] == body) return i;
-	assert(0);
-	return Uint32(-1);
 }
 
 Uint32 Space::GetIndexForSystemBody(const SystemBody *sbody) const
@@ -204,50 +166,12 @@ Uint32 Space::GetIndexForSystemBody(const SystemBody *sbody) const
 	return Uint32(-1);
 }
 
-void Space::AddFrameToIndex(Frame *frame)
-{
-	assert(frame);
-	m_frameIndex.push_back(frame);
-	for (Frame::ChildIterator it = frame->BeginChildren(); it != frame->EndChildren(); ++it)
-		AddFrameToIndex(*it);
-}
-
 void Space::AddSystemBodyToIndex(SystemBody *sbody)
 {
 	assert(sbody);
 	m_sbodyIndex.push_back(sbody);
 	for (Uint32 i = 0; i < sbody->children.size(); i++)
 		AddSystemBodyToIndex(sbody->children[i]);
-}
-
-void Space::RebuildFrameIndex()
-{
-	m_frameIndex.clear();
-	m_frameIndex.push_back(0);
-
-	if (m_rootFrame)
-		AddFrameToIndex(m_rootFrame.Get());
-
-	m_frameIndexValid = true;
-}
-
-void Space::RebuildBodyIndex()
-{
-	m_bodyIndex.clear();
-	m_bodyIndex.push_back(0);
-
-	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i) {
-		m_bodyIndex.push_back(*i);
-		// also index ships inside clouds
-		// XXX we should not have to know about this. move indexing grunt work
-		// down into the bodies?
-		if ((*i)->IsType(Object::HYPERSPACECLOUD)) {
-			Ship *s = static_cast<HyperspaceCloud*>(*i)->GetShip();
-			if (s) m_bodyIndex.push_back(s);
-		}
-	}
-
-	m_bodyIndexValid = true;
 }
 
 void Space::RebuildSystemBodyIndex()
@@ -751,7 +675,7 @@ void Space::CollideFrame(Frame *f)
 
 void Space::TimeStep(float step)
 {
-	m_frameIndexValid = m_bodyIndexValid = m_sbodyIndexValid = false;
+	m_sbodyIndexValid = false;
 
 	// XXX does not need to be done this often
 	CollideFrame(m_rootFrame.Get());

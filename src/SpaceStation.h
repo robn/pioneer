@@ -45,7 +45,7 @@ struct ShipOnSale {
 	std::string           regId;
 	SceneGraph::ModelSkin skin;
 
-	Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize() const;
 };
 
 class SpaceStation: public ModelBody, public MarketAgent {
@@ -59,7 +59,7 @@ public:
 	SpaceStation() {}
 	virtual ~SpaceStation();
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	virtual vector3d GetAngVelocity() const { return vector3d(0,m_type->angVel,0); }
 	virtual bool OnCollision(Object *b, Uint32 flags, double relVel);

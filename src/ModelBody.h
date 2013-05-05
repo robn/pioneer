@@ -20,7 +20,7 @@ public:
 	ModelBody();
 	virtual ~ModelBody();
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	void SetPosition(const vector3d &p);
 	void SetOrient(const matrix3x3d &r);

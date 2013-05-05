@@ -35,8 +35,8 @@ ModelBody::~ModelBody()
 	delete m_model;
 }
 
-Serializer::Object ModelBody::Serialize() const {
-	Serializer::Object so(Body::Serialize());
+Serializer::Object ModelBody::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(Body::Serialize(gs));
 	so.Set("bodyClass", "ModelBody");
 	so.Set("isStatic", m_isStatic);
 	so.Set("colliding", m_colliding);

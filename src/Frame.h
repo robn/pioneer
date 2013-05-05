@@ -18,16 +18,16 @@ class Space;
 
 // Frame of reference.
 
-class Frame {
+class Frame : public Serializer::ReferrableObject {
 public:
 	enum { FLAG_ROTATING=(1<<1), FLAG_HAS_ROT=(1<<2) };
 
 	Frame();
 	Frame(Frame *parent, const char *label);
 	Frame(Frame *parent, const char *label, unsigned int flags);
-	~Frame();
+	virtual ~Frame();
 
-	Serializer::Object Serialize() const;
+	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 /* XXX SERIALIZER
 	static void Serialize(Serializer::Writer &wr, Frame *f, Space *space);

@@ -18,8 +18,8 @@ Star::Star(SystemBody *sbody): TerrainBody(sbody)
 	InitStar();
 }
 
-Serializer::Object Star::Serialize() const {
-	Serializer::Object so(TerrainBody::Serialize());
+Serializer::Object Star::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(TerrainBody::Serialize(gs));
 	so.Set("bodyClass", "Star");
 	return so;
 }

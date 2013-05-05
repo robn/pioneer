@@ -44,8 +44,8 @@ Serializer::Object ShipOnSale::Serialize() const {
 	return so;
 }
 
-Serializer::Object SpaceStation::Serialize() const {
-	Serializer::Object so(ModelBody::Serialize());
+Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(ModelBody::Serialize(gs));
 	so.Set("bodyClass", "SpaceStation");
 	so.Set("marketAgent", MarketAgent::Serialize());
 
@@ -66,9 +66,9 @@ Serializer::Object SpaceStation::Serialize() const {
 
 	{
 	Json::Value shipDocking(Json::arrayValue);
-	for (int i = 0; i < MAX_DOCKING_PORTS; i++) {
+	for (uint32_t i = 0; i < m_shipDocking.size(); i++) {
 		Serializer::Object dock;
-		// XXX SERIALIZER ship body index
+		dock.Set("shipRefId", gs->GetRefId(m_shipDocking[i].ship));
 		dock.Set("stage", m_shipDocking[i].stage);
 		dock.Set("stagePos", m_shipDocking[i].stagePos);
 		dock.Set("fromPos", m_shipDocking[i].fromPos.Serialize());

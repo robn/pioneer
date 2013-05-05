@@ -77,8 +77,8 @@ void SerializableEquipSet::Load(Serializer::Reader &rd)
 }
 #endif
 
-Serializer::Object Ship::Serialize() const {
-	Serializer::Object so(DynamicBody::Serialize());
+Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(DynamicBody::Serialize(gs));
 	so.Set("bodyClass", "Ship");
 	so.Set("angThrusters", m_angThrusters.Serialize());
 	so.Set("thrusters", m_thrusters.Serialize());
@@ -113,7 +113,7 @@ Serializer::Object Ship::Serialize() const {
 	so.Set("shipType", m_type->id);
 
 	so.Set("dockedWithPort", m_dockedWithPort);
-	// XXX SERIALIZER docked with
+    so.Set("dockedWithRefId", gs->GetRefId(m_dockedWith));
 
 	so.Set("equipment", m_equipment.Serialize());
 
@@ -121,7 +121,7 @@ Serializer::Object Ship::Serialize() const {
 	so.Set("shieldMassLeft", m_stats.shield_mass_left);
 
 	if (m_curAICmd)
-		so.Set("curAICmd", m_curAICmd->Serialize());
+		so.Set("curAICmd", m_curAICmd->Serialize(gs));
 
 	so.Set("aiMessage", static_cast<Uint32>(m_aiMessage)); // XXX SERIALIZER constants
 

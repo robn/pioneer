@@ -36,10 +36,10 @@ Body::~Body()
 {
 }
 
-Serializer::Object Body::Serialize() const {
-	Serializer::Object so;
+Serializer::Object Body::Serialize(Serializer::GameSerializer *gs) const {
+	Serializer::Object so(gs->MakeRefObject(this));
 	so.Set("bodyClass", "Body");
-	// XXX SERIALIZER body index
+	so.Set("frameRefId", gs->GetRefId(m_frame));
 	so.Set("label", m_label);
 	so.Set("dead", m_dead);
 	so.Set("pos", m_pos.Serialize());

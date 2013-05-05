@@ -17,13 +17,13 @@ class Space;
 class Camera;
 namespace Graphics { class Renderer; }
 
-class Body: public Object, public PropertiedObject {
+class Body: public Object, public PropertiedObject, public Serializer::ReferrableObject {
 public:
 	OBJDEF(Body, Object, BODY);
 	Body();
 	virtual ~Body();
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 /* XXX SERIALIZER
 	void Serialize(Serializer::Writer &wr, Space *space);

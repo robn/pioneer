@@ -20,7 +20,7 @@ public:
 	Player(ShipType::Id shipId);
 	Player() { }; //default constructor used before Load
 
-	virtual Serializer::Object Serialize() const;
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	virtual void SetDockedWith(SpaceStation *, int port);
 	virtual bool OnDamage(Object *attacker, float kgDamage);

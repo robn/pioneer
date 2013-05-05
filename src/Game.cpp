@@ -167,7 +167,7 @@ Game::Game(Serializer::Reader &rd) :
 }
 */
 
-Serializer::Object Game::Serialize() const
+Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 {
 	Serializer::Object so;
 
@@ -180,7 +180,7 @@ Serializer::Object Game::Serialize() const
 	}
 
 	// space, all the bodies and things
-	so.Set("space", m_space->Serialize());
+	so.Set("space", m_space->Serialize(gs));
 
 	return so;
 
