@@ -36,14 +36,6 @@ public:
 	// XXX SERIALIZER make const as soon as the indexes aren't needed any longer
 	Serializer::Object Serialize(Serializer::GameSerializer *gs);
 
-	// frame/body/sbody indexing for save/load. valid after
-	// construction/Serialize(), invalidated by TimeStep(). they will assert
-	// if called while invalid
-	Frame *GetFrameByIndex(Uint32 idx) const;
-	Body  *GetBodyByIndex(Uint32 idx) const;
-	SystemBody *GetSystemBodyByIndex(Uint32 idx) const;
-	Uint32 GetIndexForSystemBody(const SystemBody *sbody) const;
-
 	RefCountedPtr<StarSystem> GetStarSystem() const { return m_starSystem; }
 
 	Frame *GetRootFrame() const { return m_rootFrame.Get(); }
@@ -97,13 +89,6 @@ private:
 	// bodies that were removed/killed this timestep and need pruning at the end
 	std::list<Body*> m_removeBodies;
 	std::list<Body*> m_killBodies;
-
-	void RebuildSystemBodyIndex();
-
-	void AddSystemBodyToIndex(SystemBody *sbody);
-
-	bool m_sbodyIndexValid;
-	std::vector<SystemBody*> m_sbodyIndex;
 
 	//background (elements that are infinitely far away,
 	//e.g. starfield and milky way)

@@ -96,6 +96,7 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("bbCreated", m_bbCreated);
 	so.Set("lastUpdatedShipyard", m_lastUpdatedShipyard);
 
+	so.Set("systemBodyPath", m_sbody->path.Serialize());
 	// XXX SERIALIZER sbody index
 
 	so.Set("numPoliceDocked", m_numPoliceDocked);

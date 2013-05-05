@@ -46,7 +46,7 @@ void TerrainBody::InitTerrainBody(SystemBody *sbody)
 Serializer::Object TerrainBody::Serialize(Serializer::GameSerializer *gs) const {
 	Serializer::Object so(Body::Serialize(gs));
 	so.Set("bodyClass", "TerrainBody");
-	// XXX SERIALIZER sbody index
+	so.Set("systemBodyPath", m_sbody->path.Serialize());
 	return so;
 }
 

@@ -58,7 +58,6 @@ void Space::BodyNearFinder::GetBodiesMaybeNear(const vector3d &pos, double dist,
 
 Space::Space(Game *game)
 	: m_game(game)
-	, m_sbodyIndexValid(false)
 	, m_background(Pi::renderer, UNIVERSE_SEED)
 	, m_bodyNearFinder(this)
 #ifndef NDEBUG
@@ -71,7 +70,6 @@ Space::Space(Game *game)
 
 Space::Space(Game *game, const SystemPath &path)
 	: m_game(game)
-	, m_sbodyIndexValid(false)
 	, m_background(Pi::renderer)
 	, m_bodyNearFinder(this)
 #ifndef NDEBUG
@@ -132,9 +130,6 @@ Space::~Space()
 
 Serializer::Object Space::Serialize(Serializer::GameSerializer *gs)
 {
-	// XXX SERIALIZER get rid of these
-	RebuildSystemBodyIndex();
-
 	Serializer::Object so;
 
 	so.Set("system", m_starSystem->Serialize());
@@ -148,41 +143,6 @@ Serializer::Object Space::Serialize(Serializer::GameSerializer *gs)
 	}
 
 	return so;
-}
-
-SystemBody *Space::GetSystemBodyByIndex(Uint32 idx) const
-{
-	assert(m_sbodyIndexValid);
-	assert(m_sbodyIndex.size() > idx);
-	return m_sbodyIndex[idx];
-}
-
-Uint32 Space::GetIndexForSystemBody(const SystemBody *sbody) const
-{
-	assert(m_sbodyIndexValid);
-	for (Uint32 i = 0; i < m_sbodyIndex.size(); i++)
-		if (m_sbodyIndex[i] == sbody) return i;
-	assert(0);
-	return Uint32(-1);
-}
-
-void Space::AddSystemBodyToIndex(SystemBody *sbody)
-{
-	assert(sbody);
-	m_sbodyIndex.push_back(sbody);
-	for (Uint32 i = 0; i < sbody->children.size(); i++)
-		AddSystemBodyToIndex(sbody->children[i]);
-}
-
-void Space::RebuildSystemBodyIndex()
-{
-	m_sbodyIndex.clear();
-	m_sbodyIndex.push_back(0);
-
-	if (m_starSystem)
-		AddSystemBodyToIndex(m_starSystem->rootBody.Get());
-
-	m_sbodyIndexValid = true;
 }
 
 void Space::AddBody(Body *b)
@@ -675,8 +635,6 @@ void Space::CollideFrame(Frame *f)
 
 void Space::TimeStep(float step)
 {
-	m_sbodyIndexValid = false;
-
 	// XXX does not need to be done this often
 	CollideFrame(m_rootFrame.Get());
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)

@@ -36,7 +36,7 @@ Serializer::Object Frame::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("orient", m_orient.Serialize());
 	so.Set("angSpeed", m_angSpeed);
 	so.Set("astroBodyRefId", gs->GetRefId(m_astroBody));
-	// XXX SERIALIZER sbody index
+	so.Set("systemBodyPath", m_sbody->path.Serialize());
 
 	{
 	Json::Value children(Json::arrayValue);
