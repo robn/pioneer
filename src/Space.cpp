@@ -128,7 +128,7 @@ Space::~Space()
 	UpdateBodies();
 }
 
-Serializer::Object Space::Serialize(Serializer::GameSerializer *gs)
+Serializer::Object Space::Serialize(Serializer::GameSerializer *gs) const
 {
 	Serializer::Object so;
 

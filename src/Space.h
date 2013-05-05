@@ -33,8 +33,7 @@ public:
 
 	virtual ~Space();
 
-	// XXX SERIALIZER make const as soon as the indexes aren't needed any longer
-	Serializer::Object Serialize(Serializer::GameSerializer *gs);
+	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
 	RefCountedPtr<StarSystem> GetStarSystem() const { return m_starSystem; }
 
