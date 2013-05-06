@@ -33,8 +33,10 @@ public:
 
 	NavLights(SceneGraph::Model*, float period = 2.f);
 	virtual ~NavLights();
+
+	virtual Serializer::Object Serialize() const;
+
 /* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr);
 	virtual void Load(Serializer::Reader &rd);
 */
 

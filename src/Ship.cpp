@@ -133,7 +133,7 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 
 	// XXX SERIALIZER controller
 
-	// XXX SERIALIZER navlights
+	so.Set("navLights", m_navLights->Serialize());
 
 	return so;
 }

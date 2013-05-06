@@ -101,7 +101,7 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 
 	so.Set("numPoliceDocked", m_numPoliceDocked);
 
-	// XXX SERIALIZER navlights
+    so.Set("navLights", m_navLights->Serialize());
 
 	return so;
 }

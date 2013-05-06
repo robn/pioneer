@@ -17,6 +17,7 @@ static RefCountedPtr<Graphics::Material> matBlue;
 static RefCountedPtr<Graphics::Material> matYellow;
 
 typedef std::vector<NavLights::LightBulb>::iterator LightIterator;
+typedef std::vector<NavLights::LightBulb>::const_iterator LightConstIterator;
 
 static RefCountedPtr<Graphics::Material> get_material(Uint8 c)
 {
@@ -122,16 +123,23 @@ NavLights::~NavLights()
 {
 }
 
-/* XXX SERIALIZER
-void NavLights::Save(Serializer::Writer &wr)
+Serializer::Object NavLights::Serialize() const
 {
-	wr.Float(m_time);
-	wr.Bool(m_enabled);
+	Serializer::Object so;
+	so.Set("time", m_time);
+	so.Set("enabled", m_enabled);
 
-	for (LightIterator it = m_lights.begin(); it != m_lights.end(); ++it)
-		wr.Byte(it->color);
+	{
+	Json::Value lights(Json::arrayValue);
+	for (LightConstIterator it = m_lights.begin(); it != m_lights.end(); ++it)
+		lights.append(Uint32(it->color));
+	so.Set("lights", lights);
+	}
+
+	return so;
 }
 
+/* XXX SERIALIZER
 void NavLights::Load(Serializer::Reader &rd)
 {
 	m_time    = rd.Float();
