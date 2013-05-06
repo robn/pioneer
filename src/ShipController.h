@@ -28,16 +28,12 @@ enum FlightControlState {
 class ShipController
 {
 public:
-	//needed for serialization
-	enum Type {
-		AI = 0,
-		PLAYER = 1
-	};
 	ShipController() { }
 	virtual ~ShipController() { }
-	virtual Type GetType() { return AI; }
+
+	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+
 /* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *s) { }
 	virtual void Load(Serializer::Reader &rd) { }
 	virtual void PostLoadFixup(Space *) { }
 */
@@ -52,12 +48,12 @@ class PlayerShipController : public ShipController
 public:
 	PlayerShipController();
 	~PlayerShipController();
-	virtual Type GetType() { return PLAYER; }
+
+	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 /* XXX SERIALIZER
-	void Save(Serializer::Writer &wr, Space *s);
 	void Load(Serializer::Reader &rd);
-*/
 	void PostLoadFixup(Space *s);
+*/
 	void StaticUpdate(float timeStep);
 	// Poll controls, set thruster states, gun states and target velocity
 	void PollControls(float timeStep, const bool force_rotation_damping);

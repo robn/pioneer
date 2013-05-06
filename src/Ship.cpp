@@ -131,7 +131,7 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 
 	so.Set("skin", m_skin.Serialize());
 
-	// XXX SERIALIZER controller
+	so.Set("controller", m_controller->Serialize(gs));
 
 	so.Set("navLights", m_navLights->Serialize());
 
