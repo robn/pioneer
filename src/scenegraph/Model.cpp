@@ -277,30 +277,41 @@ void Model::SetThrust(const vector3f &lin, const vector3f &ang)
 	m_renderData.angthrust[2] = ang.z;
 }
 
-/* XXX SERIALIZER
 class SaveVisitor : public NodeVisitor {
 public:
-	SaveVisitor(Serializer::Writer *wr_): wr(wr_) {}
+	SaveVisitor(): m_object(Json::arrayValue) {}
 
 	void ApplyMatrixTransform(MatrixTransform &node) {
 		const matrix4x4f &m = node.GetTransform();
 		for (int i = 0; i < 16; i++)
-			wr->Float(m[i]);
+			m_object.append(m.Serialize().GetJson());
 	}
 
+	Json::Value &GetObject() { return m_object; }
+
 private:
-	Serializer::Writer *wr;
+	Json::Value m_object;
 };
 
-void Model::Save(Serializer::Writer &wr) const
+Serializer::Object Model::Serialize() const
 {
-	SaveVisitor sv(&wr);
+	SaveVisitor sv;
 	m_root->Accept(sv);
 
+	Serializer::Object so;
+	so.Set("matrixTransforms", sv.GetObject());
+
+	{
+	Json::Value animationProgress(Json::arrayValue);
 	for (AnimationContainer::const_iterator i = m_animations.begin(); i != m_animations.end(); ++i)
-		wr.Double((*i)->GetProgress());
+		animationProgress.append((*i)->GetProgress());
+	so.Set("animationProgress", animationProgress);
+	}
+
+	return so;
 }
 
+/* XXX SERIALIZER
 class LoadVisitor : public NodeVisitor {
 public:
 	LoadVisitor(Serializer::Reader *rd_): rd(rd_) {}

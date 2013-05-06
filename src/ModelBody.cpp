@@ -41,20 +41,11 @@ Serializer::Object ModelBody::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("isStatic", m_isStatic);
 	so.Set("colliding", m_colliding);
 	so.Set("modelName", m_modelName);
-	// XXX SERIALIZER model
+	so.Set("model", m_model->Serialize());
 	return so;
 }
 
 /* XXX SERIALIZER
-void ModelBody::Save(Serializer::Writer &wr, Space *space)
-{
-	Body::Save(wr, space);
-	wr.Bool(m_isStatic);
-	wr.Bool(m_colliding);
-	wr.String(m_modelName);
-	m_model->Save(wr);
-}
-
 void ModelBody::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
