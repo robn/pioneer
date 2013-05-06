@@ -33,7 +33,7 @@ public:
 
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd) { }
 	virtual void PostLoadFixup(Space *) { }
 */
@@ -50,7 +50,7 @@ public:
 	~PlayerShipController();
 
 	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	void Load(Serializer::Reader &rd);
 	void PostLoadFixup(Space *s);
 */

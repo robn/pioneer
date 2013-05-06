@@ -33,7 +33,7 @@ public:
 #endif
 
 protected:
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 

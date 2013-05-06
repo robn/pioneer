@@ -28,7 +28,7 @@ public:
 	Game(const SystemPath &path, const vector3d &pos);
 
 	// load game
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	Game(Serializer::Reader &rd);
 */
 
@@ -83,7 +83,7 @@ public:
 
 private:
 	void CreateViews();
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	void LoadViews(Serializer::Reader &rd);
 */
 	void DestroyViews();

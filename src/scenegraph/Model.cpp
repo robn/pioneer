@@ -311,7 +311,7 @@ Serializer::Object Model::Serialize() const
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 class LoadVisitor : public NodeVisitor {
 public:
 	LoadVisitor(Serializer::Reader *rd_): rd(rd_) {}

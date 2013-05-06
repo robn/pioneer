@@ -19,14 +19,7 @@ Serializer::Object CargoBody::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
-void CargoBody::Save(Serializer::Writer &wr, Space *space)
-{
-	DynamicBody::Save(wr, space);
-	wr.Int32(static_cast<int>(m_type));
-	wr.Float(m_hitpoints);
-}
-
+/* XXX DESERIALIZER
 void CargoBody::Load(Serializer::Reader &rd, Space *space)
 {
 	DynamicBody::Load(rd, space);

@@ -30,15 +30,14 @@ public:
 	void StaticUpdate(const float timeStep);
 	virtual void NotifyRemoved(const Body* const removedBody);
 	virtual void UpdateInterpTransform(double alpha);
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void PostLoadFixup(Space *space);
 */
 
 	static void FreeModel();
 
 protected:
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 private:

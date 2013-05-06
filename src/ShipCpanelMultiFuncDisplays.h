@@ -60,7 +60,7 @@ private:
 class ScannerWidget: public IMultiFunc, public Gui::Widget {
 public:
 	ScannerWidget(Graphics::Renderer *r);
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd);
 */
 	virtual ~ScannerWidget();

@@ -71,18 +71,7 @@ Serializer::Object HyperspaceCloud::Serialize(Serializer::GameSerializer *gs) co
 	return so;
 }
 
-/* XXX SERIALIZER
-void HyperspaceCloud::Save(Serializer::Writer &wr, Space *space)
-{
-	Body::Save(wr, space);
-	wr.Vector3d(m_vel);
-	wr.Double(m_birthdate);
-	wr.Double(m_due);
-	wr.Bool(m_isArrival);
-	wr.Bool(m_ship != 0);
-	if (m_ship) m_ship->Serialize(wr, space);
-}
-
+/* XXX DESERIALIZER
 void HyperspaceCloud::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);

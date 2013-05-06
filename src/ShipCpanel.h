@@ -19,7 +19,7 @@ namespace Graphics { class Renderer; }
 class ShipCpanel: public Gui::Fixed {
 public:
 	ShipCpanel(Graphics::Renderer *r);
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
     ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r);
 */
 	virtual ~ShipCpanel();

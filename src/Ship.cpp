@@ -42,18 +42,7 @@ Serializer::Object SerializableEquipSet::Serialize() const
 }
 
 #if 0
-XXX SERIALIZER
-void SerializableEquipSet::Save(Serializer::Writer &wr)
-{
-	wr.Int32(Equip::SLOT_MAX);
-	for (int i=0; i<Equip::SLOT_MAX; i++) {
-		wr.Int32(equip[i].size());
-		for (unsigned int j=0; j<equip[i].size(); j++) {
-			wr.Int32(static_cast<int>(equip[i][j]));
-		}
-	}
-}
-
+XXX DESERIALIZER
 /*
  * Should have initialised with EquipSet(ShipType::Type) first
  */
@@ -139,48 +128,7 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 }
 
 #if 0
-void Ship::Save(Serializer::Writer &wr, Space *space)
-{
-	DynamicBody::Save(wr, space);
-	m_skin.Save(wr);
-	wr.Vector3d(m_angThrusters);
-	wr.Vector3d(m_thrusters);
-	wr.Int32(m_wheelTransition);
-	wr.Float(m_wheelState);
-	wr.Float(m_launchLockTimeout);
-	wr.Bool(m_testLanded);
-	wr.Int32(int(m_flightState));
-	wr.Int32(int(m_alertState));
-	wr.Double(m_lastFiringAlert);
-
-	// XXX make sure all hyperspace attrs and the cloud get saved
-	m_hyperspace.dest.Serialize(wr);
-	wr.Float(m_hyperspace.countdown);
-
-	for (int i=0; i<ShipType::GUNMOUNT_MAX; i++) {
-		wr.Int32(m_gunState[i]);
-		wr.Float(m_gunRecharge[i]);
-		wr.Float(m_gunTemperature[i]);
-	}
-	wr.Float(m_ecmRecharge);
-	wr.String(m_type->id);
-	wr.Int32(m_dockedWithPort);
-	wr.Int32(space->GetIndexForBody(m_dockedWith));
-	m_equipment.Save(wr);
-	wr.Float(m_stats.hull_mass_left);
-	wr.Float(m_stats.shield_mass_left);
-	if(m_curAICmd) { wr.Int32(1); m_curAICmd->Save(wr); }
-	else wr.Int32(0);
-	wr.Int32(int(m_aiMessage));
-	wr.Double(m_thrusterFuel);
-	wr.Double(m_reserveFuel);
-
-	wr.Int32(static_cast<int>(m_controller->GetType()));
-	m_controller->Save(wr, space);
-
-	m_navLights->Save(wr);
-}
-
+XXX DESERIALIZER
 void Ship::Load(Serializer::Reader &rd, Space *space)
 {
 	DynamicBody::Load(rd, space);
@@ -253,7 +201,7 @@ void Ship::Init()
 	m_landingGearAnimation = GetModel()->FindAnimation("gear_down");
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void Ship::PostLoadFixup(Space *space)
 {
 	DynamicBody::PostLoadFixup(space);

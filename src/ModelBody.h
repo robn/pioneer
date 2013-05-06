@@ -43,7 +43,7 @@ public:
 	void RenderModel(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform, const bool setLighting=true);
 
 protected:
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 

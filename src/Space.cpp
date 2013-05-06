@@ -89,7 +89,7 @@ Space::Space(Game *game, const SystemPath &path)
 	//DebugDumpFrames();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 Space::Space(Game *game, Serializer::Reader &rd)
 	: m_game(game)
 	, m_frameIndexValid(false)

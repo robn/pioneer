@@ -42,19 +42,11 @@ Serializer::Object Missile::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void Missile::PostLoadFixup(Space *space)
 {
 	Ship::PostLoadFixup(space);
 	m_owner = space->GetBodyByIndex(m_ownerIndex);
-}
-
-void Missile::Save(Serializer::Writer &wr, Space *space)
-{
-	Ship::Save(wr, space);
-	wr.Int32(space->GetIndexForBody(m_owner));
-	wr.Int32(m_power);
-	wr.Bool(m_armed);
 }
 
 void Missile::Load(Serializer::Reader &rd, Space *space)

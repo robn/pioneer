@@ -43,7 +43,7 @@ WorldView::WorldView(): View()
 	InitObject();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 WorldView::WorldView(Serializer::Reader &rd): View()
 {
 	m_camType = CamType(rd.Int32());

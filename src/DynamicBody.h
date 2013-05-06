@@ -50,14 +50,13 @@ public:
 	vector3d GetGravityForce() const { return m_gravityForce; }
 	virtual void UpdateInterpTransform(double alpha);
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void PostLoadFixup(Space *space);
 */
 
 	Orbit ComputeOrbit() const;
 protected:
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 

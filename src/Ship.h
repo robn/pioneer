@@ -44,8 +44,7 @@ class SerializableEquipSet: public EquipSet {
 public:
 	Serializer::Object Serialize() const;
 
-/* XXX SERIALIZER
-	void Save(Serializer::Writer &wr);
+/* XXX DESERIALIZER
 	void Load(Serializer::Reader &rd);
 */
 };
@@ -209,7 +208,7 @@ public:
 
 	SerializableEquipSet m_equipment;			// shouldn't be public?...
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void PostLoadFixup(Space *space);
 */
 
@@ -256,10 +255,6 @@ public:
 	mutable sigc::signal<void> onFlavourChanged;
 
 protected:
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *space);
-	virtual void Load(Serializer::Reader &rd, Space *space);
-*/
 	void RenderLaserfire();
 
 	bool AITimeStep(float timeStep); // Called by controller. Returns true if complete

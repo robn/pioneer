@@ -103,7 +103,7 @@ Game::~Game()
 	m_player.Reset();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 Game::Game(Serializer::Reader &rd) :
 	m_timeAccel(TIMEACCEL_PAUSED),
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
@@ -636,7 +636,7 @@ void Game::CreateViews()
 #endif
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 // XXX mostly a copy of CreateViews
 void Game::LoadViews(Serializer::Reader &rd)
 {
@@ -709,7 +709,7 @@ void Game::DestroyViews()
 
 Game *Game::LoadGame(const std::string &filename)
 {
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	printf("Game::LoadGame('%s')\n", filename.c_str());
 	FILE *f = FileSystem::userFiles.OpenReadStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();

@@ -77,7 +77,7 @@ public:
 	virtual const SystemBody *GetSystemBody() const { return m_sbody; }
 	void ReplaceShipOnSale(int idx, const ShipOnSale &with);
 	const std::vector<ShipOnSale> &GetShipsOnSale() const { return m_shipsOnSale; }
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void PostLoadFixup(Space *space);
 */
 	virtual void NotifyRemoved(const Body* const removedBody);
@@ -115,8 +115,7 @@ public:
 	virtual void UpdateInterpTransform(double alpha);
 
 protected:
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 	/* MarketAgent stuff */

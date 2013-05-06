@@ -45,7 +45,7 @@ Serializer::Object ModelBody::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void ModelBody::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);

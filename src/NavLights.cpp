@@ -139,7 +139,7 @@ Serializer::Object NavLights::Serialize() const
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void NavLights::Load(Serializer::Reader &rd)
 {
 	m_time    = rd.Float();

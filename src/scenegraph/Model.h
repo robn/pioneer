@@ -133,7 +133,7 @@ public:
 
 	Serializer::Object Serialize() const;
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	void Load(Serializer::Reader &rd);
 */
 

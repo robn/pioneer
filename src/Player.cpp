@@ -32,13 +32,7 @@ Serializer::Object Player::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
-void Player::Save(Serializer::Writer &wr, Space *space)
-{
-	Ship::Save(wr, space);
-	MarketAgent::Save(wr);
-}
-
+/* XXX DESERIALIZER
 void Player::Load(Serializer::Reader &rd, Space *space)
 {
 	Pi::player = this;

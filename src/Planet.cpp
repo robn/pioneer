@@ -41,7 +41,7 @@ Serializer::Object Planet::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void Planet::Load(Serializer::Reader &rd, Space *space)
 {
 	TerrainBody::Load(rd, space);

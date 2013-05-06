@@ -28,7 +28,7 @@ ShipCpanel::ShipCpanel(Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::Get
 	InitObject();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
 {
 	m_scanner = new ScannerWidget(r, rd);

@@ -34,9 +34,8 @@ public:
 protected:
 	virtual void Bought(Equip::Type t) = 0;
 	virtual void Sold(Equip::Type t) = 0;
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	void Load(Serializer::Reader &rd);
-	void Save(Serializer::Writer &wr) const;
 */
 private:
 	Sint64 m_money;

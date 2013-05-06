@@ -130,35 +130,7 @@ private:
 
 
 #if 0
-XXX SERIALIZER
-	class Writer {
-	public:
-		Writer() {}
-		const std::string &GetData();
-		void Byte(Uint8 x);
-		void Bool(bool x);
-		void Int16(Uint16 x);
-		void Int32(Uint32 x);
-		void Int64(Uint64 x);
-		void Float(float f);
-		void Double(double f);
-		void String(const char* s);
-		void String(const std::string &s);
-		void Vector3d(vector3d vec);
-		void WrQuaternionf(const Quaternionf &q);
-		void WrSection(const std::string &section_label, const std::string &section_data) {
-			String(section_label);
-			String(section_data);
-		}
-		/** Best not to use these except in templates */
-		void Auto(Sint32 x) { Int32(x); }
-		void Auto(Sint64 x) { Int64(x); }
-		void Auto(float x) { Float(x); }
-		void Auto(double x) { Double(x); }
-	private:
-		std::string m_str;
-	};
-
+XXX DESERIALIZER
 	class Reader {
 	public:
 		Reader();

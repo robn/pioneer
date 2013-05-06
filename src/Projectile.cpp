@@ -125,17 +125,7 @@ Serializer::Object Projectile::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
-void Projectile::Save(Serializer::Writer &wr, Space *space)
-{
-	Body::Save(wr, space);
-	wr.Vector3d(m_baseVel);
-	wr.Vector3d(m_dirVel);
-	wr.Float(m_age);
-	wr.Int32(m_type);
-	wr.Int32(space->GetIndexForBody(m_parent));
-}
-
+/* XXX DESERIALIZER
 void Projectile::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);

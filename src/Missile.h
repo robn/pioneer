@@ -21,7 +21,7 @@ public:
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);
 	virtual bool OnDamage(Object *attacker, float kgDamage);
 	virtual void NotifyRemoved(const Body* const removedBody);
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void PostLoadFixup(Space *space);
 */
 	void ECMAttack(int power_val);
@@ -31,8 +31,7 @@ public:
 	void Disarm();
 
 protected:
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 private:

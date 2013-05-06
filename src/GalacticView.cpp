@@ -58,17 +58,6 @@ GalacticView::~GalacticView()
 	m_onMouseButtonDown.disconnect();
 }
 
-/* XXX SERIALIZER
-void GalacticView::Save(Serializer::Writer &wr)
-{
-}
-
-void GalacticView::Load(Serializer::Reader &rd)
-{
-}
-*/
-
-
 struct galaclabel_t {
 	const char *label;
 	vector3d pos;

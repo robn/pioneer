@@ -46,22 +46,11 @@ Serializer::Object Body::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("orient", m_orient.Serialize());
 	so.Set("physRadius", m_physRadius);
 	so.Set("clipRadius", m_clipRadius);
+	// XXX SERIALIZER save properties
 	return so;
 }
 
-/* XXX SERIALIZER
-void Body::Save(Serializer::Writer &wr, Space *space)
-{
-	wr.Int32(space->GetIndexForFrame(m_frame));
-	wr.String(m_label);
-	wr.Bool(m_dead);
-
-	wr.Vector3d(m_pos);
-	for (int i=0; i<9; i++) wr.Double(m_orient[i]);
-	wr.Double(m_physRadius);
-	wr.Double(m_clipRadius);
-}
-
+/* XXX DESERIALIZER
 void Body::Load(Serializer::Reader &rd, Space *space)
 {
 	m_frame = space->GetFrameByIndex(rd.Int32());
@@ -73,28 +62,6 @@ void Body::Load(Serializer::Reader &rd, Space *space)
 	for (int i=0; i<9; i++) m_orient[i] = rd.Double();
 	m_physRadius = rd.Double();
 	m_clipRadius = rd.Double();
-}
-
-void Body::Serialize(Serializer::Writer &_wr, Space *space)
-{
-	Serializer::Writer wr;
-	wr.Int32(int(GetType()));
-	switch (GetType()) {
-		case Object::STAR:
-		case Object::PLANET:
-		case Object::SPACESTATION:
-		case Object::SHIP:
-		case Object::PLAYER:
-		case Object::MISSILE:
-		case Object::CARGOBODY:
-		case Object::PROJECTILE:
-		case Object::HYPERSPACECLOUD:
-			Save(wr, space);
-			break;
-		default:
-			assert(0);
-	}
-	_wr.WrSection("Body", wr.GetData());
 }
 
 Body *Body::Unserialize(Serializer::Reader &_rd, Space *space)

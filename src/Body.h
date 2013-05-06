@@ -25,8 +25,7 @@ public:
 
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	static Body *Unserialize(Serializer::Reader &rd, Space *space);
 	virtual void PostLoadFixup(Space *space) {};
 */
@@ -106,8 +105,7 @@ public:
 			FLAG_DRAW_LAST = (1<<2) };		// causes the body drawn after other bodies in the z-sort
 
 protected:
-/* XXX SERIZLIER
-	virtual void Save(Serializer::Writer &wr, Space *space);
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd, Space *space);
 */
 	unsigned int m_flags;

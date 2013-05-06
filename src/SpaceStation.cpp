@@ -97,7 +97,6 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("lastUpdatedShipyard", m_lastUpdatedShipyard);
 
 	so.Set("systemBodyPath", m_sbody->path.Serialize());
-	// XXX SERIALIZER sbody index
 
 	so.Set("numPoliceDocked", m_numPoliceDocked);
 
@@ -105,54 +104,7 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 
 	return so;
 }
-/* XXX SERIALIZER
-void SpaceStation::Save(Serializer::Writer &wr, Space *space)
-{
-	ModelBody::Save(wr, space);
-	MarketAgent::Save(wr);
-	wr.Int32(Equip::TYPE_MAX);
-	for (int i=0; i<Equip::TYPE_MAX; i++) {
-		wr.Int32(int(m_equipmentStock[i]));
-	}
-	// save shipyard
-	wr.Int32(m_shipsOnSale.size());
-	for (std::vector<ShipOnSale>::iterator i = m_shipsOnSale.begin();
-			i != m_shipsOnSale.end(); ++i) {
-		wr.String((*i).id);
-		wr.String((*i).regId);
-		(*i).skin.Save(wr);
-	}
-	wr.Int32(m_shipDocking.size());
-	for (uint32_t i=0; i<m_shipDocking.size(); i++) {
-		wr.Int32(space->GetIndexForBody(m_shipDocking[i].ship));
-		wr.Int32(m_shipDocking[i].stage);
-		wr.Float(float(m_shipDocking[i].stagePos));
-		wr.Vector3d(m_shipDocking[i].fromPos);
-		wr.WrQuaternionf(m_shipDocking[i].fromRot);
-	}
-	// store each of the bay groupings
-	wr.Int32(mBayGroups.size());
-	for (uint32_t i=0; i<mBayGroups.size(); i++) {
-		wr.Int32(mBayGroups[i].minShipSize);
-		wr.Int32(mBayGroups[i].maxShipSize);
-		wr.Bool(mBayGroups[i].inUse);
-		wr.Int32(mBayGroups[i].bayIDs.size());
-		for (uint32_t j=0; j<mBayGroups[i].bayIDs.size(); j++) {
-			wr.Int32(mBayGroups[i].bayIDs[j]);
-		}
-	}
-
-	wr.Bool(m_bbCreated);
-	wr.Double(m_lastUpdatedShipyard);
-	wr.Int32(space->GetIndexForSystemBody(m_sbody));
-	wr.Int32(m_numPoliceDocked);
-
-	wr.Double(m_doorAnimationStep);
-	wr.Double(m_doorAnimationState);
-
-	m_navLights->Save(wr);
-}
-
+/* XXX DESERIALIZER
 void SpaceStation::Load(Serializer::Reader &rd, Space *space)
 {
 	ModelBody::Load(rd, space);

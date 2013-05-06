@@ -24,7 +24,7 @@ class WorldView: public View {
 public:
 	friend class NavTunnelWidget;
 	WorldView();
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	WorldView(Serializer::Reader &reader);
 */
 	virtual ~WorldView();

@@ -50,13 +50,7 @@ Serializer::Object TerrainBody::Serialize(Serializer::GameSerializer *gs) const 
 	return so;
 }
 
-/* XXX SERIALIZER
-void TerrainBody::Save(Serializer::Writer &wr, Space *space)
-{
-	Body::Save(wr, space);
-	wr.Int32(space->GetIndexForSystemBody(m_sbody));
-}
-
+/* XXX DESERIALIZER
 void TerrainBody::Load(Serializer::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);

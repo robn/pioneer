@@ -27,7 +27,7 @@ public:
 	Space(Game *game, const SystemPath &path);
 
 	// initialise from save file
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	Space(Game *game, Serializer::Reader &rd);
 */
 

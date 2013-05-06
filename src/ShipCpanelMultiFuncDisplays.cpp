@@ -124,7 +124,7 @@ ScannerWidget::ScannerWidget(Graphics::Renderer *r) :
 	InitObject();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 ScannerWidget::ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd) :
 	m_renderer(r)
 {

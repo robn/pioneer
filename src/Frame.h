@@ -29,8 +29,7 @@ public:
 
 	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
 
-/* XXX SERIALIZER
-	static void Serialize(Serializer::Writer &wr, Frame *f, Space *space);
+/* XXX DESERIALIZER
 	static void PostUnserializeFixup(Frame *f, Space *space);
 	static Frame *Unserialize(Serializer::Reader &rd, Space *space, Frame *parent);
 */

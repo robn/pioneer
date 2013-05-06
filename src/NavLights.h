@@ -36,7 +36,7 @@ public:
 
 	virtual Serializer::Object Serialize() const;
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	virtual void Load(Serializer::Reader &rd);
 */
 

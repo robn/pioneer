@@ -66,7 +66,7 @@ SectorView::SectorView()
 	InitObject();
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 SectorView::SectorView(Serializer::Reader &rd)
 {
 	InitDefaults();

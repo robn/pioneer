@@ -24,7 +24,7 @@ Serializer::Object Star::Serialize(Serializer::GameSerializer *gs) const {
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void Star::Load(Serializer::Reader &rd, Space *space)
 {
 	TerrainBody::Load(rd, space);		// to get sbody

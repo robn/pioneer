@@ -46,27 +46,12 @@ Serializer::Object Frame::Serialize(Serializer::GameSerializer *gs) const {
 	}
 
 	// XXX SERIALIZER sfx
+	// Sfx::Serialize(wr, f);
 
 	return so;
 }
 
-/* XXX SERIALIZER
-void Frame::Serialize(Serializer::Writer &wr, Frame *f, Space *space)
-{
-	wr.Int32(f->m_flags);
-	wr.Double(f->m_radius);
-	wr.String(f->m_label);
-	wr.Vector3d(f->m_pos);
-	for (int i=0; i<9; i++) wr.Double(f->m_orient[i]);
-	wr.Double(f->m_angSpeed);
-	wr.Int32(space->GetIndexForSystemBody(f->m_sbody));
-	wr.Int32(space->GetIndexForBody(f->m_astroBody));
-	wr.Int32(f->m_children.size());
-	for (ChildIterator it = f->BeginChildren(); it != f->EndChildren(); ++it)
-		Serialize(wr, *it, space);
-	Sfx::Serialize(wr, f);
-}
-
+/* XXX DESERIALIZER
 Frame *Frame::Unserialize(Serializer::Reader &rd, Space *space, Frame *parent)
 {
 	Frame *f = new Frame();

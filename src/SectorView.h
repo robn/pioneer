@@ -18,7 +18,7 @@
 class SectorView: public View {
 public:
 	SectorView();
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	SectorView(Serializer::Reader &rd);
 */
 	virtual ~SectorView();

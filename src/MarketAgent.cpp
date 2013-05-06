@@ -13,15 +13,10 @@ Serializer::Object MarketAgent::Serialize() const {
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void MarketAgent::Load(Serializer::Reader &rd)
 {
 	m_money = rd.Int64();
-}
-
-void MarketAgent::Save(Serializer::Writer &wr) const
-{
-	wr.Int64(m_money);
 }
 */
 

@@ -68,20 +68,7 @@ Serializer::Object DynamicBody::Serialize(Serializer::GameSerializer *gs) const 
 	return so;
 }
 
-/* XXX SERIALIZER
-void DynamicBody::Save(Serializer::Writer &wr, Space *space)
-{
-	ModelBody::Save(wr, space);
-	wr.Vector3d(m_force);
-	wr.Vector3d(m_torque);
-	wr.Vector3d(m_vel);
-	wr.Vector3d(m_angVel);
-	wr.Double(m_mass);
-	wr.Double(m_massRadius);
-	wr.Double(m_angInertia);
-	wr.Bool(m_isMoving);
-}
-
+/* XXX DESERIALIZER
 void DynamicBody::Load(Serializer::Reader &rd, Space *space)
 {
 	ModelBody::Load(rd, space);

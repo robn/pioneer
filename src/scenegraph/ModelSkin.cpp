@@ -117,7 +117,7 @@ Serializer::Object ModelSkin::Serialize() const
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void ModelSkin::Load(Serializer::Reader &rd)
 {
 	m_patternIndex = rd.Int32();

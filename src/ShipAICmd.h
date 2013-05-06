@@ -31,10 +31,9 @@ public:
 
 	// Serialisation functions
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	static AICommand *Load(Serializer::Reader &rd);
 	AICommand(Serializer::Reader &rd, CmdName name);
-	virtual void Save(Serializer::Writer &wr);
 	virtual void PostLoadFixup(Space *space);
 */
 
@@ -65,14 +64,7 @@ public:
 		so.Set("dockupdir", m_dockupdir.Serialize());
 		return so;
 	}
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-        Space *space = Pi::game->GetSpace();
-		AICommand::Save(wr);
-		wr.Int32(space->GetIndexForBody(m_target));
-		wr.Vector3d(m_dockpos); wr.Vector3d(m_dockdir);
-		wr.Vector3d(m_dockupdir); wr.Int32(m_state);
-	}
+/* XXX DESERIALIZER
 	AICmdDock(Serializer::Reader &rd) : AICommand(rd, CMD_DOCK) {
 		m_targetIndex = rd.Int32();
 		m_dockpos = rd.Vector3d(); m_dockdir = rd.Vector3d();
@@ -140,18 +132,7 @@ public:
 		so.Set("state", m_state);
 		return so;
 	}
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-		if(m_child) { delete m_child; m_child = 0; }
-		AICommand::Save(wr);
-		wr.Int32(Pi::game->GetSpace()->GetIndexForBody(m_target));
-		wr.Double(m_dist);
-		wr.Int32(Pi::game->GetSpace()->GetIndexForFrame(m_targframe));
-		wr.Vector3d(m_posoff);
-		wr.Double(m_endvel);
-		wr.Bool(m_tangent);
-		wr.Int32(m_state);
-	}
+/* XXX DESERIALIZER
 	AICmdFlyTo(Serializer::Reader &rd) : AICommand(rd, CMD_FLYTO) {
 		m_targetIndex = rd.Int32();
 		m_dist = rd.Double();
@@ -208,13 +189,7 @@ public:
 		so.Set("targmode", m_targmode);
 		return so;
 	}
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-		if (m_child) { delete m_child; m_child = 0; }
-		AICommand::Save(wr);
-		wr.Int32(Pi::game->GetSpace()->GetIndexForBody(m_obstructor));
-		wr.Double(m_vel); wr.Double(m_alt); wr.Int32(m_targmode);
-	}
+/* XXX DESERIALIZER
 	AICmdFlyAround(Serializer::Reader &rd) : AICommand(rd, CMD_FLYAROUND) {
 		m_obstructorIndex = rd.Int32();
 		m_vel = rd.Double(); m_alt = rd.Double(); m_targmode = rd.Int32();
@@ -256,13 +231,7 @@ public:
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
-	// don't actually need to save all this crap
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-        Space *space = Pi::game->GetSpace();
-		AICommand::Save(wr);
-		wr.Int32(space->GetIndexForBody(m_target));
-	}
+/* XXX DESERIALIZER
 	AICmdKill(Serializer::Reader &rd) : AICommand(rd, CMD_KILL) {
 		m_targetIndex = rd.Int32();
 	}
@@ -298,12 +267,7 @@ public:
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-        Space *space = Pi::game->GetSpace();
-		AICommand::Save(wr);
-		wr.Int32(space->GetIndexForBody(m_target));
-	}
+/* XXX DESERIALIZER
 	AICmdKamikaze(Serializer::Reader &rd) : AICommand(rd, CMD_KAMIKAZE) {
 		m_targetIndex = rd.Int32();
 	}
@@ -328,7 +292,7 @@ public:
 	virtual bool TimeStepUpdate();
 	AICmdHoldPosition(Ship *ship) : AICommand(ship, CMD_HOLDPOSITION) { }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 	AICmdHoldPosition(Serializer::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
 */
 };
@@ -349,13 +313,7 @@ public:
         so.Set("posoff", m_posoff.Serialize());
 		return so;
 	}
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {
-		if(m_child) { delete m_child; m_child = 0; }
-		AICommand::Save(wr);
-		wr.Int32(Pi::game->GetSpace()->GetIndexForBody(m_target));
-		wr.Vector3d(m_posoff);
-	}
+/* XXX DESERIALIZER
 	AICmdFormation(Serializer::Reader &rd) : AICommand(rd, CMD_FORMATION) {
 		m_targetIndex = rd.Int32();
 		m_posoff = rd.Vector3d();

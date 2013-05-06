@@ -75,7 +75,7 @@ Serializer::Object PlayerShipController::Serialize(Serializer::GameSerializer *g
 	return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 void PlayerShipController::Load(Serializer::Reader &rd)
 {
 	m_flightControlState = static_cast<FlightControlState>(rd.Int32());

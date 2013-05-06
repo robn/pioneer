@@ -24,7 +24,7 @@ Serializer::Object AICommand::Serialize(Serializer::GameSerializer *gs) const {
     return so;
 }
 
-/* XXX SERIALIZER
+/* XXX DESERIALIZER
 AICommand *AICommand::Load(Serializer::Reader &rd)
 {
 	CmdName name = CmdName(rd.Int32());
@@ -38,15 +38,6 @@ AICommand *AICommand::Load(Serializer::Reader &rd)
 		case CMD_HOLDPOSITION: return new AICmdHoldPosition(rd);
 		case CMD_FORMATION: return new AICmdFormation(rd);
 	}
-}
-
-void AICommand::Save(Serializer::Writer &wr)
-{
-	Space *space = Pi::game->GetSpace();
-	wr.Int32(m_cmdName);
-	wr.Int32(space->GetIndexForBody(m_ship));
-	if (m_child) m_child->Save(wr);
-	else wr.Int32(CMD_NONE);
 }
 
 AICommand::AICommand(Serializer::Reader &rd, CmdName name)
