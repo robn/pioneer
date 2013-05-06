@@ -4,6 +4,8 @@
 #ifndef _COLOR_H
 #define _COLOR_H
 
+#include "Serializer.h"
+
 struct lua_State;
 
 struct Color4f {
@@ -21,6 +23,8 @@ struct Color4f {
 	static Color4f FromLuaTable(lua_State *l, int idx);
 
 	float GetLuminance() const;
+
+	Serializer::Object Serialize() const;
 
 	static const Color4f BLACK;
 	static const Color4f WHITE;
@@ -45,6 +49,8 @@ struct Color4ub {
 	Color4ub operator/(const float f) const { return Color4ub(r/f, g/f, b/f, a/f); }
 
 	Color4f ToColor4f() const { return Color4f(r/255.0f, g/255.0f, b/255.0f, a/255.0f); }
+
+	Serializer::Object Serialize() const;
 
 	static const Color4ub BLACK;
 	static const Color4ub WHITE;

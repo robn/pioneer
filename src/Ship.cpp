@@ -80,6 +80,7 @@ void SerializableEquipSet::Load(Serializer::Reader &rd)
 Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	Serializer::Object so(DynamicBody::Serialize(gs));
 	so.Set("bodyClass", "Ship");
+
 	so.Set("angThrusters", m_angThrusters.Serialize());
 	so.Set("thrusters", m_thrusters.Serialize());
 	so.Set("wheelTransition", m_wheelTransition);
@@ -127,6 +128,8 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 
 	so.Set("thrusterFuel", m_thrusterFuel);
 	so.Set("reserveFuel", m_reserveFuel);
+
+	so.Set("skin", m_skin.Serialize());
 
 	// XXX SERIALIZER controller
 

@@ -34,9 +34,10 @@ public:
 
 	void SetLabel(const std::string &label);
 
+	Serializer::Object Serialize() const;
+
 /* XXX SERIALIZER
 	void Load(Serializer::Reader &rd);
-	void Save(Serializer::Writer &wr) const;
 */
 
 private:

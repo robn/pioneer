@@ -40,7 +40,7 @@ Serializer::Object ShipOnSale::Serialize() const {
 	Serializer::Object so;
 	so.Set("id", id);
 	so.Set("regId", regId);
-	// XXX SERIALIZER model skin
+	so.Set("skin", skin.Serialize());
 	return so;
 }
 

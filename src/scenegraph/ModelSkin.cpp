@@ -92,6 +92,31 @@ void ModelSkin::SetLabel(const std::string &label)
 	m_label = label;
 }
 
+Serializer::Object ModelSkin::Serialize() const
+{
+	Serializer::Object so;
+
+	so.Set("patternIndex", m_patternIndex);
+
+	{
+	Json::Value colors(Json::arrayValue);
+	for (unsigned int i = 0; i < 3; i++)
+		colors.append(m_colors[i].Serialize().GetJson());
+	so.Set("colors", colors);
+	}
+
+	{
+	Json::Value decals(Json::arrayValue);
+	for (unsigned int i = 0; i < MAX_DECAL_MATERIALS; i++)
+		decals.append(m_decals[i]);
+	so.Set("decals", decals);
+	}
+
+	so.Set("label", m_label);
+
+	return so;
+}
+
 /* XXX SERIALIZER
 void ModelSkin::Load(Serializer::Reader &rd)
 {
@@ -104,19 +129,6 @@ void ModelSkin::Load(Serializer::Reader &rd)
 	for (unsigned int i = 0; i < MAX_DECAL_MATERIALS; i++)
 		m_decals[i] = rd.String();
 	m_label = rd.String();
-}
-
-void ModelSkin::Save(Serializer::Writer &wr) const
-{
-	wr.Int32(m_patternIndex);
-	for (unsigned int i = 0; i < 3; i++) {
-		wr.Byte(m_colors[i].r);
-		wr.Byte(m_colors[i].g);
-		wr.Byte(m_colors[i].b);
-	}
-	for (unsigned int i = 0; i < MAX_DECAL_MATERIALS; i++)
-		wr.String(m_decals[i]);
-	wr.String(m_label);
 }
 */
 
