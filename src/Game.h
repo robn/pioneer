@@ -81,6 +81,13 @@ public:
 	float GetTimeAccelRate() const { return s_timeAccelRates[m_timeAccel]; }
 	float GetTimeStep() const { return s_timeAccelRates[m_timeAccel]*(1.0f/PHYSICS_HZ); }
 
+	// XXX public so EnumStrings can see it
+	// XXX don't need to expose to Lua
+	enum State { // <enum scope='Game' name=GameState>
+		STATE_NORMAL,
+		STATE_HYPERSPACE,
+	};
+
 private:
 	void CreateViews();
 /* XXX DESERIALIZER
@@ -96,10 +103,6 @@ private:
 
 	ScopedPtr<Player> m_player;
 
-	enum State {
-		STATE_NORMAL,
-		STATE_HYPERSPACE,
-	};
 	State m_state;
 
 	bool m_wantHyperspace;

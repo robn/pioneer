@@ -6,6 +6,7 @@
 
 #include "enum_table.h"
 #include "EquipType.h"
+#include "Game.h"
 #include "LuaFileSystem.h"
 #include "Polit.h"
 #include "Ship.h"
@@ -118,6 +119,12 @@ const struct EnumItem ENUM_EquipType[] = {
 	{ "MININGCANNON_17MW", Equip::MININGCANNON_17MW },
 	{ "SMALL_PLASMA_ACCEL", Equip::SMALL_PLASMA_ACCEL },
 	{ "LARGE_PLASMA_ACCEL", Equip::LARGE_PLASMA_ACCEL },
+	{ 0, 0 },
+};
+
+const struct EnumItem ENUM_GameState[] = {
+	{ "STATE_NORMAL", Game::STATE_NORMAL },
+	{ "STATE_HYPERSPACE", Game::STATE_HYPERSPACE },
 	{ 0, 0 },
 };
 
@@ -407,6 +414,7 @@ const struct EnumItem ENUM_UIFont[] = {
 const struct EnumTable ENUM_TABLES[] = {
 	{ "EquipSlot", ENUM_EquipSlot },
 	{ "EquipType", ENUM_EquipType },
+	{ "GameState", ENUM_GameState },
 	{ "FileSystemRoot", ENUM_FileSystemRoot },
 	{ "PolitCrime", ENUM_PolitCrime },
 	{ "PolitEcon", ENUM_PolitEcon },

@@ -22,6 +22,7 @@
 #include "LuaEvent.h"
 #include "ObjectViewerView.h"
 #include "FileSystem.h"
+#include "EnumStrings.h"
 #include "graphics/Renderer.h"
 
 static const int  s_saveVersion   = 66;
@@ -181,6 +182,24 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 
 	// space, all the bodies and things
 	so.Set("space", m_space->Serialize(gs));
+
+	// game state and space transition state
+
+	// hyperspace clouds being brought over from the previous system
+	{
+	Json::Value hyperspaceClouds(Json::arrayValue);
+	for (std::list<HyperspaceCloud*>::const_iterator i = m_hyperspaceClouds.begin(); i != m_hyperspaceClouds.end(); ++i)
+		hyperspaceClouds.append((*i)->Serialize(gs).GetJson());
+	so.Set("hyperspaceClouds", hyperspaceClouds);
+	}
+
+	so.Set("time", m_time);
+	so.Set("state", EnumStrings::GetString("GameState", m_state));
+
+	so.Set("wantHyperspace", m_wantHyperspace);
+	so.Set("hyperspaceProgress", m_hyperspaceProgress);
+	so.Set("hyperspaceDuration", m_hyperspaceDuration);
+	so.Set("hyperspaceEndTime", m_hyperspaceEndTime);
 
 	return so;
 
