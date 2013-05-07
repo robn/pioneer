@@ -28,17 +28,20 @@
 
 Serializer::Object SerializableEquipSet::Serialize() const
 {
-	// XXX SERIALIZER constants through here
-
-	Json::Value slots(Json::arrayValue);
+	Serializer::Object slots;
 	for (int i=0; i<Equip::SLOT_MAX; i++) {
-		Json::Value slot(Json::arrayValue);
-		for (unsigned int j=0; j<equip[i].size(); j++)
-			slot.append(static_cast<Uint32>(equip[i][j]));
-		slots.append(slot);
+		if (equip[i].empty()) continue;
+		Serializer::Object slot;
+		for (unsigned int j=0; j<equip[i].size(); j++) {
+			const std::string &type = EnumStrings::GetString("EquipType", equip[i][j]);
+			Uint32 count;
+			slot.Get(type, count);
+			slot.Set(type, count+1);
+		}
+		slots.Set(EnumStrings::GetString("EquipSlot", i), slot);
 	}
 
-	return Serializer::Object(slots);
+	return slots;
 }
 
 #if 0
