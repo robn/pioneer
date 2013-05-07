@@ -9,6 +9,7 @@
 #include "LuaFileSystem.h"
 #include "Polit.h"
 #include "Ship.h"
+#include "ShipController.h"
 #include "ShipType.h"
 #include "galaxy/StarSystem.h"
 #include "gameui/Face.h"
@@ -202,6 +203,15 @@ const struct EnumItem ENUM_ShipFuelStatus[] = {
 	{ "OK", Ship::FUEL_OK },
 	{ "WARNING", Ship::FUEL_WARNING },
 	{ "EMPTY", Ship::FUEL_EMPTY },
+	{ 0, 0 },
+};
+
+const struct EnumItem ENUM_ShipControllerFlightControlState[] = {
+	{ "MANUAL", ShipController::CONTROL_MANUAL },
+	{ "FIXSPEED", ShipController::CONTROL_FIXSPEED },
+	{ "FIXHEADING_FORWARD", ShipController::CONTROL_FIXHEADING_FORWARD },
+	{ "FIXHEADING_BACKWARD", ShipController::CONTROL_FIXHEADING_BACKWARD },
+	{ "AUTOPILOT", ShipController::CONTROL_AUTOPILOT },
 	{ 0, 0 },
 };
 
@@ -406,6 +416,7 @@ const struct EnumTable ENUM_TABLES[] = {
 	{ "ShipAlertStatus", ENUM_ShipAlertStatus },
 	{ "ShipAIError", ENUM_ShipAIError },
 	{ "ShipFuelStatus", ENUM_ShipFuelStatus },
+	{ "ShipControllerFlightControlState", ENUM_ShipControllerFlightControlState },
 	{ "ShipTypeThruster", ENUM_ShipTypeThruster },
 	{ "DualLaserOrientation", ENUM_DualLaserOrientation },
 	{ "ShipTypeTag", ENUM_ShipTypeTag },

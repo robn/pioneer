@@ -14,7 +14,7 @@
 Serializer::Object CargoBody::Serialize(Serializer::GameSerializer *gs) const {
 	Serializer::Object so(DynamicBody::Serialize(gs));
 	so.Set("bodyClass", "CargoBody");
-	so.Set("type", static_cast<Sint32>(m_type)); // XXX SERIALIZER store constants
+	so.Set("cargoType", EnumStrings::GetString("EquipType", m_type));
 	so.Set("hitpoints", m_hitpoints);
 	return so;
 }

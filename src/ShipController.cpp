@@ -11,6 +11,7 @@
 #include "Space.h"
 #include "WorldView.h"
 #include "OS.h"
+#include "EnumStrings.h"
 
 void ShipController::StaticUpdate(float timeStep)
 {
@@ -65,7 +66,7 @@ Serializer::Object PlayerShipController::Serialize(Serializer::GameSerializer *g
 {
 	Serializer::Object so(ShipController::Serialize(gs));
 	so.Set("controllerType", "player");
-	so.Set("flightControlState", static_cast<Uint32>(m_flightControlState)); // XXX SERIALIZER constants
+	so.Set("flightControlState", EnumStrings::GetString("ShipControllerFlightControlState", m_flightControlState));
 	so.Set("setSpeed", m_setSpeed);
 	so.Set("lowThrustPower", m_lowThrustPower);
 	so.Set("rotationDamping", m_rotationDamping);

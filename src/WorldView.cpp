@@ -142,11 +142,11 @@ void WorldView::InitObject()
 	m_flightControlButton = new Gui::MultiStateImageButton();
 	m_flightControlButton->SetShortcut(SDLK_F5, KMOD_NONE);
 	// these states must match Player::FlightControlState (so that the enum values match)
-	m_flightControlButton->AddState(CONTROL_MANUAL, "icons/manual_control.png", Lang::MANUAL_CONTROL);
-	m_flightControlButton->AddState(CONTROL_FIXSPEED, "icons/manual_control.png", Lang::COMPUTER_SPEED_CONTROL);
-	m_flightControlButton->AddState(CONTROL_FIXHEADING_FORWARD, "icons/manual_control.png", Lang::COMPUTER_HEADING_CONTROL);
-	m_flightControlButton->AddState(CONTROL_FIXHEADING_BACKWARD, "icons/manual_control.png", Lang::COMPUTER_HEADING_CONTROL);
-	m_flightControlButton->AddState(CONTROL_AUTOPILOT, "icons/autopilot.png", Lang::AUTOPILOT_ON);
+	m_flightControlButton->AddState(ShipController::CONTROL_MANUAL, "icons/manual_control.png", Lang::MANUAL_CONTROL);
+	m_flightControlButton->AddState(ShipController::CONTROL_FIXSPEED, "icons/manual_control.png", Lang::COMPUTER_SPEED_CONTROL);
+	m_flightControlButton->AddState(ShipController::CONTROL_FIXHEADING_FORWARD, "icons/manual_control.png", Lang::COMPUTER_HEADING_CONTROL);
+	m_flightControlButton->AddState(ShipController::CONTROL_FIXHEADING_BACKWARD, "icons/manual_control.png", Lang::COMPUTER_HEADING_CONTROL);
+	m_flightControlButton->AddState(ShipController::CONTROL_AUTOPILOT, "icons/autopilot.png", Lang::AUTOPILOT_ON);
 	m_flightControlButton->onClick.connect(sigc::mem_fun(this, &WorldView::OnChangeFlightState));
 	m_flightControlButton->SetRenderDimensions(30.0f, 22.0f);
 	m_rightButtonBar->Add(m_flightControlButton, 2, 2);
@@ -327,21 +327,21 @@ void WorldView::OnChangeFlightState(Gui::MultiStateImageButton *b)
 	if (Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL)) {
 		// skip certain states
 		switch (newState) {
-			case CONTROL_FIXSPEED: newState = CONTROL_FIXHEADING_FORWARD; break;
-			case CONTROL_AUTOPILOT: newState = CONTROL_MANUAL; break;
+			case ShipController::CONTROL_FIXSPEED: newState = ShipController::CONTROL_FIXHEADING_FORWARD; break;
+			case ShipController::CONTROL_AUTOPILOT: newState = ShipController::CONTROL_MANUAL; break;
 			default: break;
 		}
 	} else {
 		// skip certain states
 		switch (newState) {
-			case CONTROL_FIXHEADING_FORWARD: // fallthrough
-			case CONTROL_FIXHEADING_BACKWARD: newState = CONTROL_MANUAL; break;
-			case CONTROL_AUTOPILOT: newState = CONTROL_MANUAL; break;
+			case ShipController::CONTROL_FIXHEADING_FORWARD: // fallthrough
+			case ShipController::CONTROL_FIXHEADING_BACKWARD: newState = ShipController::CONTROL_MANUAL; break;
+			case ShipController::CONTROL_AUTOPILOT: newState = ShipController::CONTROL_MANUAL; break;
 			default: break;
 		}
 	}
 	b->SetActiveState(newState);
-	Pi::player->GetPlayerController()->SetFlightControlState(static_cast<FlightControlState>(newState));
+	Pi::player->GetPlayerController()->SetFlightControlState(static_cast<ShipController::FlightControlState>(newState));
 }
 
 /* This is when the flight control state actually changes... */
@@ -469,12 +469,12 @@ void WorldView::RefreshButtonStateAndVisibility()
 
 		case Ship::FLYING:
 		default:
-			const FlightControlState fstate = Pi::player->GetPlayerController()->GetFlightControlState();
+			const ShipController::FlightControlState fstate = Pi::player->GetPlayerController()->GetFlightControlState();
 			switch (fstate) {
-				case CONTROL_MANUAL:
+				case ShipController::CONTROL_MANUAL:
 					m_flightStatus->SetText(Lang::MANUAL_CONTROL); break;
 
-				case CONTROL_FIXSPEED: {
+				case ShipController::CONTROL_FIXSPEED: {
 					std::string msg;
 					const double setspeed = Pi::player->GetPlayerController()->GetSetSpeed();
 					if (setspeed > 1000) {
@@ -486,14 +486,14 @@ void WorldView::RefreshButtonStateAndVisibility()
 					break;
 				}
 
-				case CONTROL_FIXHEADING_FORWARD:
+				case ShipController::CONTROL_FIXHEADING_FORWARD:
 					m_flightStatus->SetText(Lang::HEADING_LOCK_FORWARD);
 					break;
-				case CONTROL_FIXHEADING_BACKWARD:
+				case ShipController::CONTROL_FIXHEADING_BACKWARD:
 					m_flightStatus->SetText(Lang::HEADING_LOCK_BACKWARD);
 					break;
 
-				case CONTROL_AUTOPILOT:
+				case ShipController::CONTROL_AUTOPILOT:
 					m_flightStatus->SetText(Lang::AUTOPILOT);
 					break;
 
@@ -1021,7 +1021,7 @@ void WorldView::OnPlayerChangeTarget()
 
 static void autopilot_flyto(Body *b)
 {
-	Pi::player->GetPlayerController()->SetFlightControlState(CONTROL_AUTOPILOT);
+	Pi::player->GetPlayerController()->SetFlightControlState(ShipController::CONTROL_AUTOPILOT);
 	Pi::player->AIFlyTo(b);
 }
 static void autopilot_dock(Body *b)
@@ -1029,12 +1029,12 @@ static void autopilot_dock(Body *b)
 	if(Pi::player->GetFlightState() != Ship::FLYING)
 		return;
 
-	Pi::player->GetPlayerController()->SetFlightControlState(CONTROL_AUTOPILOT);
+	Pi::player->GetPlayerController()->SetFlightControlState(ShipController::CONTROL_AUTOPILOT);
 	Pi::player->AIDock(static_cast<SpaceStation*>(b));
 }
 static void autopilot_orbit(Body *b, double alt)
 {
-	Pi::player->GetPlayerController()->SetFlightControlState(CONTROL_AUTOPILOT);
+	Pi::player->GetPlayerController()->SetFlightControlState(ShipController::CONTROL_AUTOPILOT);
 	Pi::player->AIOrbit(b, alt);
 }
 

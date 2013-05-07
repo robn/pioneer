@@ -14,20 +14,20 @@
 class Ship;
 class Space;
 
-enum FlightControlState {
-	CONTROL_MANUAL,
-	CONTROL_FIXSPEED,
-	CONTROL_FIXHEADING_FORWARD,
-	CONTROL_FIXHEADING_BACKWARD,
-	CONTROL_AUTOPILOT,
-
-	CONTROL_STATE_COUNT
-};
-
 // only AI
 class ShipController
 {
 public:
+    enum FlightControlState { // <enum scope=ShipController name=ShipControllerFlightControlState prefix=CONTROL_>
+        CONTROL_MANUAL,
+        CONTROL_FIXSPEED,
+        CONTROL_FIXHEADING_FORWARD,
+        CONTROL_FIXHEADING_BACKWARD,
+        CONTROL_AUTOPILOT,
+
+        CONTROL_STATE_COUNT // <enum skip>
+    };
+
 	ShipController() { }
 	virtual ~ShipController() { }
 
