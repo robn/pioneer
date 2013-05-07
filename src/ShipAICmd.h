@@ -12,11 +12,8 @@
 
 class AICommand {
 public:
-	// This enum is solely to make the serialization work
-	enum CmdName { CMD_NONE, CMD_DOCK, CMD_FLYTO, CMD_FLYAROUND, CMD_KILL, CMD_KAMIKAZE, CMD_HOLDPOSITION, CMD_FORMATION };
-
-	AICommand(Ship *ship, CmdName name) {
-	   	m_ship = ship; m_cmdName = name;
+	AICommand(Ship *ship) {
+	   	m_ship = ship;
 		m_child = 0;
 		m_ship->AIMessage(Ship::AIERROR_NONE);
 	}
@@ -41,7 +38,6 @@ public:
 	virtual void OnDeleted(const Body *body) { if (m_child) m_child->OnDeleted(body); }
 
 protected:
-	CmdName m_cmdName;
 	Ship *m_ship;
 	AICommand *m_child;
 
@@ -59,6 +55,7 @@ public:
 	}
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "dock");
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		so.Set("dockpos", m_dockpos.Serialize());
 		so.Set("dockupdir", m_dockupdir.Serialize());
@@ -123,6 +120,7 @@ public:
 	}
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "flyTo");
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		so.Set("dist", m_dist);
 		so.Set("targframeRefId", gs->GetRefId(m_targframe));
@@ -183,6 +181,7 @@ public:
 	}
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "flyAround");
 		so.Set("obstructorRefId", gs->GetRefId(m_obstructor));
 		so.Set("vel", m_vel);
 		so.Set("alt", m_alt);
@@ -220,7 +219,7 @@ private:
 class AICmdKill : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
-	AICmdKill(Ship *ship, Ship *target) : AICommand (ship, CMD_KILL) {
+	AICmdKill(Ship *ship, Ship *target) : AICommand (ship) {
 		m_target = target;
 		m_leadTime = m_evadeTime = m_closeTime = 0.0;
 		m_lastVel = m_target->GetVelocity();
@@ -228,6 +227,7 @@ public:
 
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "kill");
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
@@ -258,12 +258,13 @@ private:
 class AICmdKamikaze : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
-	AICmdKamikaze(Ship *ship, Body *target) : AICommand (ship, CMD_KAMIKAZE) {
+	AICmdKamikaze(Ship *ship, Body *target) : AICommand (ship) {
 		m_target = target;
 	}
 
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "kamikaze");
 		so.Set("targetRefId", gs->GetRefId(m_target));
 		return so;
 	}
@@ -290,7 +291,7 @@ private:
 class AICmdHoldPosition : public AICommand {
 public:
 	virtual bool TimeStepUpdate();
-	AICmdHoldPosition(Ship *ship) : AICommand(ship, CMD_HOLDPOSITION) { }
+	AICmdHoldPosition(Ship *ship) : AICommand(ship) { }
 
 /* XXX DESERIALIZER
 	AICmdHoldPosition(Serializer::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
@@ -309,6 +310,7 @@ public:
 	}
 	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
 		Serializer::Object so(AICommand::Serialize(gs));
+		so.Set("cmdName", "formation");
 		so.Set("targetRefId", gs->GetRefId(m_target));
         so.Set("posoff", m_posoff.Serialize());
 		return so;

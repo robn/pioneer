@@ -18,7 +18,6 @@ static const double VICINITY_MUL = 4.0;
 
 Serializer::Object AICommand::Serialize(Serializer::GameSerializer *gs) const {
     Serializer::Object so;
-	so.Set("cmdName", static_cast<Uint32>(m_cmdName)); // XXX SERIALIZER remove CmdName entirely, just use a string
     so.Set("shipRefId", gs->GetRefId(m_ship));
 	if (m_child) so.Set("child", m_child->Serialize(gs));
     return so;
@@ -671,7 +670,7 @@ static bool CheckSuicide(Ship *ship, const vector3d &tandir)
 extern double calc_ivel(double dist, double vel, double acc);
 
 // Fly to vicinity of body
-AICmdFlyTo::AICmdFlyTo(Ship *ship, Body *target) : AICommand(ship, CMD_FLYTO)
+AICmdFlyTo::AICmdFlyTo(Ship *ship, Body *target) : AICommand(ship)
 {
 	m_frame = 0; m_state = -6; m_lockhead = true; m_endvel = 0; m_tangent = false;
 	if (!target->IsType(Object::TERRAINBODY)) m_dist = VICINITY_MIN;
@@ -689,7 +688,7 @@ AICmdFlyTo::AICmdFlyTo(Ship *ship, Body *target) : AICommand(ship, CMD_FLYTO)
 
 // Specified pos, endvel should be > 0
 AICmdFlyTo::AICmdFlyTo(Ship *ship, Frame *targframe, const vector3d &posoff, double endvel, bool tangent)
-	: AICommand(ship, CMD_FLYTO)
+	: AICommand(ship)
 {
 	m_targframe = targframe; m_target = 0;
 	m_posoff = posoff;
@@ -849,7 +848,7 @@ printf("Autopilot dist = %.1f, speed = %.1f, zthrust = %.2f, state = %i\n",
 }
 
 
-AICmdDock::AICmdDock(Ship *ship, SpaceStation *target) : AICommand(ship, CMD_DOCK)
+AICmdDock::AICmdDock(Ship *ship, SpaceStation *target) : AICommand(ship)
 {
 	m_target = target;
 	m_state = eDockGetDataStart;
@@ -995,14 +994,14 @@ void AICmdFlyAround::Setup(Body *obstructor, double alt, double vel, int mode)
 }
 
 AICmdFlyAround::AICmdFlyAround(Ship *ship, Body *obstructor, double relalt, int mode)
-	: AICommand (ship, CMD_FLYAROUND)
+	: AICommand (ship)
 {
 	double alt = relalt*MaxEffectRad(obstructor, ship);
 	Setup(obstructor, alt, 0.0, mode);
 }
 
 AICmdFlyAround::AICmdFlyAround(Ship *ship, Body *obstructor, double alt, double vel, int mode)
-	: AICommand (ship, CMD_FLYAROUND)
+	: AICommand (ship)
 {
 	Setup(obstructor, alt, vel, mode);
 }
@@ -1088,7 +1087,7 @@ bool AICmdFlyAround::TimeStepUpdate()
 }
 
 AICmdFormation::AICmdFormation(Ship *ship, Ship *target, const vector3d &posoff)
-	: AICommand(ship, CMD_FORMATION)
+	: AICommand(ship)
 {
 	m_target = target;
 	m_posoff = posoff;
