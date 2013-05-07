@@ -206,6 +206,8 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 
 	// views. must be saved in init order
 	so.Set("controlPanel", Pi::cpan->Serialize());
+	so.Set("sectorView", Pi::sectorView->Serialize());
+	so.Set("worldView", Pi::worldView->Serialize());
 
 	return so;
 

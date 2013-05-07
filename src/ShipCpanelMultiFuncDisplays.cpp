@@ -504,7 +504,7 @@ void ScannerWidget::TimeStepUpdate(float step)
 Serializer::Object ScannerWidget::Serialize() const
 {
 	Serializer::Object so;
-	so.Set("mode", static_cast<Uint32>(m_mode)); // XXX stringy constant?
+	so.Set("mode", static_cast<Uint32>(m_mode)); // XXX SERIALIZER stringy constant?
 	so.Set("currentRange", m_currentRange);
 	so.Set("manualRange", m_manualRange);
 	so.Set("targetRange", m_targetRange);

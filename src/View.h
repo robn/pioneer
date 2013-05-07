@@ -25,10 +25,6 @@ public:
 	virtual void Draw3D() = 0;
 	// for checking key states, mouse crud
 	virtual void Update() = 0;
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr) {}
-	virtual void Load(Serializer::Reader &rd) {}
-*/
 
 	void Attach();
 	void Detach();

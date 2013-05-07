@@ -37,9 +37,8 @@ public:
 	void GotoCurrentSystem() { GotoSystem(m_current); }
 	void GotoSelectedSystem() { GotoSystem(m_selected); }
 	void GotoHyperspaceTarget() { GotoSystem(m_hyperspaceTarget); }
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr);
-*/
+
+	Serializer::Object Serialize() const;
 
 	sigc::signal<void> onHyperspaceTargetChanged;
 

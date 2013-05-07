@@ -267,24 +267,22 @@ SectorView::~SectorView()
 	if (m_onKeyPressConnection.connected()) m_onKeyPressConnection.disconnect();
 }
 
-/* XXX SERIALIZER
-void SectorView::Save(Serializer::Writer &wr)
+Serializer::Object SectorView::Serialize() const
 {
-	wr.Float(m_pos.x);
-	wr.Float(m_pos.y);
-	wr.Float(m_pos.z);
-	wr.Float(m_rotX);
-	wr.Float(m_rotZ);
-	wr.Float(m_zoom);
-	wr.Bool(m_inSystem);
-	m_current.Serialize(wr);
-	m_selected.Serialize(wr);
-	m_hyperspaceTarget.Serialize(wr);
-	wr.Bool(m_matchTargetToSelection);
-	wr.Bool(m_selectionFollowsMovement);
-	wr.Byte(m_detailBoxVisible);
+	Serializer::Object so;
+	so.Set("pos", m_pos.Serialize());
+	so.Set("rotX", m_rotX);
+	so.Set("rotZ", m_rotZ);
+	so.Set("zoom", m_zoom);
+	so.Set("inSystem", m_inSystem);
+	so.Set("current", m_current.Serialize());
+	so.Set("selected", m_selected.Serialize());
+	so.Set("hyperspaceTarget", m_hyperspaceTarget.Serialize());
+	so.Set("matchTargetToSelection", m_matchTargetToSelection);
+	so.Set("selectionFollowsMovement", m_selectionFollowsMovement);
+	so.Set("detailBoxVisible", static_cast<Uint32>(m_detailBoxVisible));
+	return so;
 }
-*/
 
 void SectorView::OnSearchBoxKeyPress(const SDL_keysym *keysym)
 {
