@@ -30,9 +30,7 @@ public:
 
 	void TimeStepUpdate(float step);
 
-/* XXX SERIALIZER
-	void Save(Serializer::Writer &wr);
-*/
+	Serializer::Object Serialize() const;
 
 	enum OverlayTextPos {
 		OVERLAY_TOP_LEFT,

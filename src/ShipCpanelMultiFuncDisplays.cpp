@@ -501,15 +501,15 @@ void ScannerWidget::TimeStepUpdate(float step)
 	m_scale = SCANNER_SCALE * (SCANNER_RANGE_MAX / m_currentRange);
 }
 
-/* XXX SERIALIZER
-void ScannerWidget::Save(Serializer::Writer &wr)
+Serializer::Object ScannerWidget::Serialize() const
 {
-	wr.Int32(Sint32(m_mode));
-	wr.Float(m_currentRange);
-	wr.Float(m_manualRange);
-	wr.Float(m_targetRange);
+	Serializer::Object so;
+	so.Set("mode", static_cast<Uint32>(m_mode)); // XXX stringy constant?
+	so.Set("currentRange", m_currentRange);
+	so.Set("manualRange", m_manualRange);
+	so.Set("targetRange", m_targetRange);
+	return so;
 }
-*/
 
 /////////////////////////////////
 

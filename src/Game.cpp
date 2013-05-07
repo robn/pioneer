@@ -204,6 +204,9 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	// system political data (crime etc)
 	so.Set("polit", Polit::Serialize());
 
+	// views. must be saved in init order
+	so.Set("controlPanel", Pi::cpan->Serialize());
+
 	return so;
 
 /* XXX SERIALIZER

@@ -417,13 +417,13 @@ void ShipCpanel::TimeStepUpdate(float step)
 	m_scanner->TimeStepUpdate(step);
 }
 
-/* XXX SERIALIZER
-void ShipCpanel::Save(Serializer::Writer &wr)
+Serializer::Object ShipCpanel::Serialize() const
 {
-	m_scanner->Save(wr);
-	wr.Int32(m_camButton->GetState());
+	Serializer::Object so;
+	so.Set("scanner", m_scanner->Serialize());
+	so.Set("camButtonState", m_camButton->GetState());
+	return so;
 }
-*/
 
 void ShipCpanel::SetOverlayText(OverlayTextPos pos, const std::string &text)
 {

@@ -71,9 +71,7 @@ public:
 
 	void TimeStepUpdate(float step);
 
-/* XXX SERIALIZER
-	void Save(Serializer::Writer &wr);
-*/
+	Serializer::Object Serialize() const;
 
 private:
 	void InitObject();
