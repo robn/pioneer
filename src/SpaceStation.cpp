@@ -19,6 +19,7 @@
 #include "Ship.h"
 #include "Space.h"
 #include "StringF.h"
+#include "EnumStrings.h"
 #include "galaxy/StarSystem.h"
 #include "graphics/Graphics.h"
 #include <algorithm>
@@ -50,10 +51,9 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("marketAgent", MarketAgent::Serialize());
 
 	{
-	// XXX SERIALIZER constant keys
-	Json::Value equipmentStock(Json::arrayValue);
+	Serializer::Object equipmentStock;
 	for (int i = 0; i < Equip::TYPE_MAX; i++)
-		equipmentStock.append(static_cast<Uint32>(m_equipmentStock[i]));
+		equipmentStock.Set(EnumStrings::GetString("EquipType", i), static_cast<Uint32>(m_equipmentStock[i]));
 	so.Set("equipmentStock", equipmentStock);
 	}
 
