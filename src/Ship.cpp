@@ -79,8 +79,8 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("wheelState", m_wheelState),
 	so.Set("launchLockTimeout", m_launchLockTimeout);
 	so.Set("testLanded", m_testLanded);
-	so.Set("flightState", static_cast<Sint32>(m_flightState)); // XXX SERIALIZER store constants
-	so.Set("alertState", static_cast<Sint32>(m_alertState));
+	so.Set("flightState", EnumStrings::GetString("ShipFlightState", m_flightState));
+	so.Set("alertState", EnumStrings::GetString("ShipAlertStatus", m_alertState));
 	so.Set("lastFiringAlert", m_lastFiringAlert);
 
 	// XXX make sure all hyperspace attrs and the cloud get saved
@@ -116,7 +116,7 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	if (m_curAICmd)
 		so.Set("curAICmd", m_curAICmd->Serialize(gs));
 
-	so.Set("aiMessage", static_cast<Uint32>(m_aiMessage)); // XXX SERIALIZER constants
+	so.Set("aiMessage", EnumStrings::GetString("ShipAIError", m_aiMessage));
 
 	so.Set("thrusterFuel", m_thrusterFuel);
 	so.Set("reserveFuel", m_reserveFuel);
