@@ -201,6 +201,9 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("hyperspaceDuration", m_hyperspaceDuration);
 	so.Set("hyperspaceEndTime", m_hyperspaceEndTime);
 
+	// system political data (crime etc)
+	so.Set("polit", Polit::Serialize());
+
 	return so;
 
 /* XXX SERIALIZER

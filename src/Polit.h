@@ -56,8 +56,8 @@ namespace Polit {
 	void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, SysPolit &outSysPolit);
 	bool IsCommodityLegal(const StarSystem *s, const Equip::Type t);
 	void Init();
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr);
+    Serializer::Object Serialize();
+/* XXX DESERIALIZER
 	void Unserialize(Serializer::Reader &rd);
 */
 	void AddCrime(Sint64 crimeBitset, Sint64 addFine);

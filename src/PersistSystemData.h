@@ -22,14 +22,17 @@ public:
 	void Set(const SystemPath &path, T val) {
 		m_dict[path.SystemOnly()] = val;
 	}
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr) const {
-		wr.Int32(m_dict.size());
+	Serializer::Object Serialize() const {
+		Json::Value dict(Json::arrayValue);
 		for (typename std::map<SystemPath, T>::const_iterator i = m_dict.begin(); i != m_dict.end(); ++i) {
-			(*i).first.Serialize(wr);
-			wr.Auto((*i).second);
+			Serializer::Object entry;
+			entry.Set("path", (*i).first.Serialize());
+			entry.Set("value", (*i).second);
+			dict.append(entry.GetJson());
 		}
+		return dict;
 	}
+/* XXX DESERIALIZER
 	static void Unserialize(Serializer::Reader &rd, PersistSystemData<T> *pd) {
 		int num = rd.Int32();
 		while (num-- > 0) {
