@@ -63,12 +63,14 @@ void InternalCameraController::SetMode(Mode m)
 	}
 }
 
-/* XXX SERIALIZER
-void InternalCameraController::Save(Serializer::Writer &wr)
+Serializer::Object InternalCameraController::Serialize() const
 {
-	wr.Int32(m_mode);
+	Serializer::Object so(CameraController::Serialize());
+	so.Set("mode", static_cast<Uint32>(m_mode)); // XXX SERIALIZER stringy constant?
+	return so;
 }
 
+/* XXX DESERIALIZER
 void InternalCameraController::Load(Serializer::Reader &rd)
 {
 	SetMode(static_cast<Mode>(rd.Int32()));
@@ -166,14 +168,16 @@ void ExternalCameraController::Update()
 	CameraController::Update();
 }
 
-/* XXX SERIALIZER
-void ExternalCameraController::Save(Serializer::Writer &wr)
+Serializer::Object ExternalCameraController::Serialize() const
 {
-	wr.Double(m_rotX);
-	wr.Double(m_rotY);
-	wr.Double(m_dist);
+	Serializer::Object so(CameraController::Serialize());
+	so.Set("rotX", m_rotX);
+	so.Set("rotY", m_rotY);
+	so.Set("dist", m_dist);
+	return so;
 }
 
+/* XXX DESERIALIZER
 void ExternalCameraController::Load(Serializer::Reader &rd)
 {
 	m_rotX = rd.Double();
@@ -270,13 +274,15 @@ void SiderealCameraController::Update()
 	CameraController::Update();
 }
 
-/* XXX SERIALIZER
-void SiderealCameraController::Save(Serializer::Writer &wr)
+Serializer::Object SiderealCameraController::Serialize() const
 {
-	for (int i = 0; i < 9; i++) wr.Double(m_sidOrient[i]);
-	wr.Double(m_dist);
+	Serializer::Object so(CameraController::Serialize());
+	so.Set("sidOrient", m_sidOrient.Serialize());
+	so.Set("dist", m_dist);
+	return so;
 }
 
+/* XXX DESERIALIZER
 void SiderealCameraController::Load(Serializer::Reader &rd)
 {
 	for (int i = 0; i < 9; i++) m_sidOrient[i] = rd.Double();

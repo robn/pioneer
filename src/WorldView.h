@@ -33,9 +33,9 @@ public:
 	virtual void Draw3D();
 	virtual void Draw();
 	static const double PICK_OBJECT_RECT_SIZE;
-/* XXX SERIALIZER
-	virtual void Save(Serializer::Writer &wr);
-*/
+
+	Serializer::Object Serialize() const;
+
 	enum CamType {
 		CAM_INTERNAL,
 		CAM_EXTERNAL,

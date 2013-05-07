@@ -243,15 +243,15 @@ WorldView::~WorldView()
 	m_onMouseButtonDown.disconnect();
 }
 
-/* XXX SERIALIZER
-void WorldView::Save(Serializer::Writer &wr)
+Serializer::Object WorldView::Serialize() const
 {
-	wr.Int32(int(m_camType));
-	m_internalCameraController->Save(wr);
-	m_externalCameraController->Save(wr);
-	m_siderealCameraController->Save(wr);
+	Serializer::Object so;
+	so.Set("camType", static_cast<Uint32>(m_camType)); // XXX SERIALIZER stringy constant?
+	so.Set("internalCameraController", m_internalCameraController->Serialize());
+	so.Set("externalCameraController", m_externalCameraController->Serialize());
+	so.Set("siderealCameraController", m_siderealCameraController->Serialize());
+	return so;
 }
-*/
 
 void WorldView::SetCamType(enum CamType c)
 {
