@@ -45,8 +45,7 @@ Serializer::Object Frame::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("children", Serializer::Object(children));
 	}
 
-	// XXX SERIALIZER sfx
-	// Sfx::Serialize(wr, f);
+	so.Set("sfx", Sfx::Serialize(this));
 
 	return so;
 }

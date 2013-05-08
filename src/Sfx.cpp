@@ -28,39 +28,33 @@ Sfx::Sfx()
 	m_type = TYPE_NONE;
 }
 
-/* XXX SERIALIZER
-void Sfx::Save(Serializer::Writer &wr)
-{
-	wr.Vector3d(m_pos);
-	wr.Vector3d(m_vel);
-	wr.Float(m_age);
-	wr.Int32(m_type);
+Serializer::Object Sfx::Serialize(const Frame *f) {
+	Json::Value sfx(Json::arrayValue);
+
+	if (f->m_sfx) {
+		for (int i = 0; i < MAX_SFX_PER_FRAME; i++) {
+			const Sfx &cur = f->m_sfx[i];
+			if (cur.m_type != TYPE_NONE) {
+				Serializer::Object so;
+				so.Set("pos", cur.m_pos.Serialize());
+				so.Set("vel", cur.m_vel.Serialize());
+				so.Set("age", cur.m_age);
+				so.Set("type", static_cast<Uint32>(cur.m_type)); // XXX SERIALIZER stringy constant?
+				sfx.append(so.GetJson());
+			}
+		}
+	}
+
+	return Serializer::Object(sfx);
 }
 
+/* XXX DESERIALIZER
 void Sfx::Load(Serializer::Reader &rd)
 {
 	m_pos = rd.Vector3d();
 	m_vel = rd.Vector3d();
 	m_age = rd.Float();
 	m_type = static_cast<Sfx::TYPE>(rd.Int32());
-}
-
-void Sfx::Serialize(Serializer::Writer &wr, const Frame *f)
-{
-	// how many sfx turds are active in frame?
-	int numActive = 0;
-	if (f->m_sfx) {
-		for (int i=0; i<MAX_SFX_PER_FRAME; i++) {
-			if (f->m_sfx[i].m_type != TYPE_NONE) numActive++;
-		}
-	}
-	wr.Int32(numActive);
-
-	if (numActive) for (int i=0; i<MAX_SFX_PER_FRAME; i++) {
-		if (f->m_sfx[i].m_type != TYPE_NONE) {
-			f->m_sfx[i].Save(wr);
-		}
-	}
 }
 
 void Sfx::Unserialize(Serializer::Reader &rd, Frame *f)

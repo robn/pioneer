@@ -24,8 +24,9 @@ public:
 	static void AddThrustSmoke(const Body *b, TYPE, float speed, vector3d adjustpos);
 	static void TimeStepAll(const float timeStep, Frame *f);
 	static void RenderAll(Graphics::Renderer *r, Frame *f, const Frame *camFrame);
-/* XXX SERIALIZER
-	static void Serialize(Serializer::Writer &wr, const Frame *f);
+
+	static Serializer::Object Serialize(const Frame *f);
+/* XXX DESERIALIZER
 	static void Unserialize(Serializer::Reader &rd, Frame *f);
 */
 
@@ -47,10 +48,6 @@ private:
 
 	void Render(Graphics::Renderer *r, const matrix4x4d &transform);
 	void TimeStepUpdate(const float timeStep);
-/* XXX SERIALIZER
-	void Save(Serializer::Writer &wr);
-	void Load(Serializer::Reader &rd);
-*/
 
 	vector3d m_pos;
 	vector3d m_vel;
