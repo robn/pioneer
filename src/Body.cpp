@@ -46,7 +46,6 @@ Serializer::Object Body::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("orient", m_orient.Serialize());
 	so.Set("physRadius", m_physRadius);
 	so.Set("clipRadius", m_clipRadius);
-	// XXX SERIALIZER save properties
 	return so;
 }
 
