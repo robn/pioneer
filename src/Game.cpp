@@ -209,6 +209,9 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("sectorView", Pi::sectorView->Serialize());
 	so.Set("worldView", Pi::worldView->Serialize());
 
+	// lua
+	so.Set("lua", Pi::luaSerializer->Serialize(gs));
+
 	return so;
 
 /* XXX SERIALIZER

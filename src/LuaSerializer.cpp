@@ -60,14 +60,13 @@
 // "Deserialize" function under that namespace. that data returned will be
 // given back to the module
 
-/* XXX SERIALIZER
-void LuaSerializer::pickle(lua_State *l, int idx, std::string &out, const char *key = 0)
+Json::Value LuaSerializer::pickle(Serializer::GameSerializer *gs, lua_State *l, int idx, const std::string &name)
 {
-	static char buf[256];
-
 	LUA_DEBUG_START(l);
 
 	idx = lua_absindex(l, idx);
+
+	std::string objectClass;
 
 	if (lua_getmetatable(l, idx)) {
 		lua_getfield(l, -1, "class");
@@ -75,16 +74,13 @@ void LuaSerializer::pickle(lua_State *l, int idx, std::string &out, const char *
 			lua_pop(l, 2);
 
 		else {
-			const char *cl = lua_tostring(l, -1);
-			snprintf(buf, sizeof(buf), "o%s\n", cl);
+			objectClass = lua_tostring(l, -1);
 
-			lua_getglobal(l, cl);
+			lua_getglobal(l, objectClass.c_str());
+			if (!lua_isnil(l, -1))
+				lua_getfield(l, -1, "Serialize");
 			if (lua_isnil(l, -1))
-				luaL_error(l, "No Serialize method found for class '%s'\n", cl);
-
-			lua_getfield(l, -1, "Serialize");
-			if (lua_isnil(l, -1))
-				luaL_error(l, "No Serialize method found for class '%s'\n", cl);
+				luaL_error(l, "No Serialize method found for class '%s'\n", objectClass.c_str());
 
 			lua_pushvalue(l, idx);
 			pi_lua_protected_call(l, 1, 1);
@@ -96,40 +92,36 @@ void LuaSerializer::pickle(lua_State *l, int idx, std::string &out, const char *
 
 			if (lua_isnil(l, idx)) {
 				LUA_DEBUG_END(l, 0);
-				return;
+				return Json::Value();
 			}
-
-			out += buf;
 		}
 	}
+
+	Json::Value value(Json::nullValue);
 
 	switch (lua_type(l, idx)) {
 		case LUA_TNIL:
 			break;
 
 		case LUA_TNUMBER: {
-			snprintf(buf, sizeof(buf), "f%f\n", lua_tonumber(l, idx));
-			out += buf;
+			value = Json::Value(Json::objectValue);
+			value["type"] = "float";
+			value["data"] = Serializer::DoubleToHexFloat(lua_tonumber(l, idx));
 			break;
 		}
 
-		case LUA_TBOOLEAN: {
-			snprintf(buf, sizeof(buf), "b%d", lua_toboolean(l, idx) ? 1 : 0);
-			out += buf;
+		case LUA_TBOOLEAN:
+			value = Json::Value(!!lua_toboolean(l, idx));
 			break;
-		}
 
-		case LUA_TSTRING: {
-			lua_pushvalue(l, idx);
-			const char *str = lua_tostring(l, -1);
-			snprintf(buf, sizeof(buf), "s" SIZET_FMT "\n", strlen(str));
-			out += buf;
-			out += str;
-			lua_pop(l, 1);
+		case LUA_TSTRING:
+			value = Json::Value(lua_tostring(l, idx));
 			break;
-		}
 
 		case LUA_TTABLE: {
+			value = Json::Value(Json::objectValue);
+			value["type"] = "table";
+
 			lua_pushinteger(l, lua_Integer(lua_topointer(l, idx)));         // ptr
 
 			lua_getfield(l, LUA_REGISTRYINDEX, "PiSerializerTableRefs");    // ptr reftable
@@ -137,80 +129,91 @@ void LuaSerializer::pickle(lua_State *l, int idx, std::string &out, const char *
 			lua_rawget(l, -2);                                              // ptr reftable ???
 
 			if (!lua_isnil(l, -1)) {
-				out += "r";
-				pickle(l, -3, out, key);
-				lua_pop(l, 3);                                              // [empty]
+				// pointer to previously-seen table
+				// assuming that a pointer fits in 64 bits
+				value["ptr"] = Json::UInt64(lua_topointer(l, idx));
+				lua_pop(l, 3);
 			}
 
 			else {
-				out += "t";
 
 				lua_pushvalue(l, -3);                                       // ptr reftable nil ptr
 				lua_pushvalue(l, idx);                                      // ptr reftable nil ptr table
 				lua_rawset(l, -4);                                          // ptr reftable nil
-				pickle(l, -3, out, key);
 				lua_pop(l, 3);                                              // [empty]
+
+				// record ref for pointers
+				// assuming that a pointer fits in 64 bits
+				value["ref"] = Json::UInt64(lua_topointer(l, idx));
+
+				Json::Value data(Json::arrayValue);
 
 				lua_pushvalue(l, idx);
 				lua_pushnil(l);
 				while (lua_next(l, -2)) {
-					if (key) {
-						pickle(l, -2, out, key);
-						pickle(l, -1, out, key);
-					}
-					else {
-						lua_pushvalue(l, -2);
-						const char *k = lua_tostring(l, -1);
-						pickle(l, -3, out, k);
-						pickle(l, -2, out, k);
-						lua_pop(l, 1);
-					}
+					Json::Value item(Json::arrayValue);
+
+					item.append(pickle(gs, l, -2, name));
+					item.append(pickle(gs, l, -1, name));
+
+					data.append(item);
+
 					lua_pop(l, 1);
 				}
 				lua_pop(l, 1);
-				out += "n";
+
+				value["data"] = data;
 			}
 
 			break;
 		}
 
 		case LUA_TUSERDATA: {
-			out += "u";
-
 			LuaObjectBase *lo = static_cast<LuaObjectBase*>(lua_touserdata(l, idx));
 			void *o = lo->GetObject();
 			if (!o)
-				Error("Lua serializer '%s' tried to serialize an invalid object", key);
+				Error("Lua serializer '%s' tried to serialize an invalid object", name.c_str());
 
-			// XXX object wrappers should really have Serialize/Unserialize
-			// methods to deal with this
+			value = Json::Value(Json::objectValue);
+
 			if (lo->Isa("SystemPath")) {
-				SystemPath *sbp = static_cast<SystemPath*>(o);
-				snprintf(buf, sizeof(buf), "SystemPath\n%d\n%d\n%d\n%u\n%u\n",
-					sbp->sectorX, sbp->sectorY, sbp->sectorZ, sbp->systemIndex, sbp->bodyIndex);
-				out += buf;
-				break;
+				const SystemPath *sbp = static_cast<const SystemPath*>(o);
+				value["type"] = "userdata";
+				value["class"] = "SystemPath";
+				value["data"] = sbp->Serialize().GetJson();
 			}
 
-			if (lo->Isa("Body")) {
-				Body *b = static_cast<Body*>(o);
-				snprintf(buf, sizeof(buf), "Body\n%u\n", Pi::game->GetSpace()->GetIndexForBody(b));
-				out += buf;
-				break;
+			else if (lo->Isa("Body")) {
+				const Body *b = static_cast<const Body*>(o);
+				value["type"] = "userdata";
+				value["class"] = "Body";
+				value["data"] = gs->GetRefId(b);
 			}
 
-			Error("Lua serializer '%s' tried to serialize unsupported userdata value", key);
+			else
+				Error("Lua serializer '%s' tried to serialize unsupported userdata value", name.c_str());
+
 			break;
 		}
 
 		default:
-			Error("Lua serializer '%s' tried to serialize %s value", key, lua_typename(l, lua_type(l, idx)));
+			Error("Lua serializer '%s' tried to serialize %s value", name.c_str(), lua_typename(l, lua_type(l, idx)));
 			break;
 	}
 
 	LUA_DEBUG_END(l, 0);
+
+	if (objectClass.empty())
+		return value;
+
+	Json::Value wrap(Json::objectValue);
+	wrap["type"] = "object";
+	wrap["class"] = objectClass;
+	wrap["data"] = value;
+	return wrap;
 }
 
+/* XXX DESERIALIZER
 const char *LuaSerializer::unpickle(lua_State *l, const char *pos)
 {
 	LUA_DEBUG_START(l);
@@ -399,8 +402,9 @@ const char *LuaSerializer::unpickle(lua_State *l, const char *pos)
 
 	return pos;
 }
+*/
 
-void LuaSerializer::Serialize(Serializer::Writer &wr)
+Serializer::Object LuaSerializer::Serialize(Serializer::GameSerializer *gs) const
 {
 	lua_State *l = Lua::manager->GetLuaState();
 
@@ -433,10 +437,14 @@ void LuaSerializer::Serialize(Serializer::Writer &wr)
 	lua_newtable(l);
 	lua_setfield(l, LUA_REGISTRYINDEX, "PiSerializerTableRefs");
 
-	std::string pickled;
-	pickle(l, savetable, pickled);
+	Serializer::Object so;
 
-	wr.String(pickled);
+	lua_pushnil(l);
+	while (lua_next(l, savetable)) {
+		const std::string name(lua_tostring(l, -2));
+		so.Set(name, pickle(gs, l, -1, name));
+		lua_pop(l, 1);
+	}
 
 	lua_pop(l, 1);
 
@@ -444,8 +452,11 @@ void LuaSerializer::Serialize(Serializer::Writer &wr)
 	lua_setfield(l, LUA_REGISTRYINDEX, "PiSerializerTableRefs");
 
 	LUA_DEBUG_END(l, 0);
+
+	return so;
 }
 
+/* XXX DESERIALIZER
 void LuaSerializer::Unserialize(Serializer::Reader &rd)
 {
 	lua_State *l = Lua::manager->GetLuaState();

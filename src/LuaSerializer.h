@@ -13,16 +13,16 @@ class LuaSerializer : public DeleteEmitter {
 	friend class LuaObject<LuaSerializer>;
 
 public:
-/* XXX SERIALIZER
-	void Serialize(Serializer::Writer &wr);
+	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+/* XXX DESERIALIZER
 	void Unserialize(Serializer::Reader &rd);
 */
 
 private:
 	static int l_register(lua_State *l);
 
-/* XXX SERIALIZER
-	static void pickle(lua_State *l, int idx, std::string &out, const char *key);
+	static Json::Value pickle(Serializer::GameSerializer *gs, lua_State *l, int idx, const std::string &name);
+/* XXX DESERIALIZER
 	static const char *unpickle(lua_State *l, const char *pos);
 */
 };
