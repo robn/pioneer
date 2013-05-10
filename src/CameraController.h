@@ -55,7 +55,7 @@ private:
 
 class InternalCameraController : public CameraController {
 public:
-	enum Mode {
+	enum Mode { // <enum scope='InternalCameraController' name=InternalCameraControllerMode prefix=MODE_>
 		MODE_FRONT,
 		MODE_REAR,
 		MODE_LEFT,

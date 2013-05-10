@@ -36,7 +36,7 @@ public:
 
 	Serializer::Object Serialize() const;
 
-	enum CamType {
+	enum CamType { // <enum scope='WorldView' name=WorldViewCamType prefix=CAM_>
 		CAM_INTERNAL,
 		CAM_EXTERNAL,
 		CAM_SIDEREAL

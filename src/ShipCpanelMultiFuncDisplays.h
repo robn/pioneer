@@ -8,6 +8,7 @@
 #include "EquipType.h"
 #include "Serializer.h"
 #include "Object.h"
+#include "EnumStrings.h"
 
 class Body;
 namespace Graphics { class Renderer; }
@@ -73,6 +74,11 @@ public:
 
 	Serializer::Object Serialize() const;
 
+	enum ScannerMode { // <enum scope='ScannerWidget' name=ScannerMode prefix=SCANNER_MODE_>
+		SCANNER_MODE_AUTO,
+		SCANNER_MODE_MANUAL
+	};
+
 private:
 	void InitObject();
 
@@ -90,7 +96,6 @@ private:
 	};
 	std::list<Contact> m_contacts;
 
-	enum ScannerMode { SCANNER_MODE_AUTO, SCANNER_MODE_MANUAL };
 	ScannerMode m_mode;
 
 	float m_currentRange, m_manualRange, m_targetRange;

@@ -8,6 +8,7 @@
 #include "Pi.h"
 #include "Pi.h"
 #include "Space.h"
+#include "EnumStrings.h"
 #include "graphics/Drawables.h"
 #include "graphics/Graphics.h"
 #include "graphics/Material.h"
@@ -39,7 +40,7 @@ Serializer::Object Sfx::Serialize(const Frame *f) {
 				so.Set("pos", cur.m_pos.Serialize());
 				so.Set("vel", cur.m_vel.Serialize());
 				so.Set("age", cur.m_age);
-				so.Set("type", static_cast<Uint32>(cur.m_type)); // XXX SERIALIZER stringy constant?
+				so.Set("type", EnumStrings::GetString("SfxType", cur.m_type));
 				sfx.append(so.GetJson());
 			}
 		}
@@ -165,7 +166,7 @@ Sfx *Sfx::AllocSfxInFrame(Frame *f)
 	return 0;
 }
 
-void Sfx::Add(const Body *b, TYPE t)
+void Sfx::Add(const Body *b, Type t)
 {
 	Sfx *sfx = AllocSfxInFrame(b->GetFrame());
 	if (!sfx) return;
@@ -179,7 +180,7 @@ void Sfx::Add(const Body *b, TYPE t)
 			Pi::rng.Double()-0.5);
 }
 
-void Sfx::AddThrustSmoke(const Body *b, TYPE t, const float speed, vector3d adjustpos)
+void Sfx::AddThrustSmoke(const Body *b, Type t, const float speed, vector3d adjustpos)
 {
 	Sfx *sfx = AllocSfxInFrame(b->GetFrame());
 	if (!sfx) return;

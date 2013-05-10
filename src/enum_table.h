@@ -10,6 +10,7 @@
 struct EnumItem { const char *name; int value; };
 struct EnumTable { const char *name; const EnumItem *first; };
 
+extern const struct EnumItem ENUM_InternalCameraControllerMode[];
 extern const struct EnumItem ENUM_EquipSlot[];
 extern const struct EnumItem ENUM_EquipType[];
 extern const struct EnumItem ENUM_GameState[];
@@ -23,9 +24,11 @@ extern const struct EnumItem ENUM_ShipAlertStatus[];
 extern const struct EnumItem ENUM_ShipAIError[];
 extern const struct EnumItem ENUM_ShipFuelStatus[];
 extern const struct EnumItem ENUM_ShipControllerFlightControlState[];
+extern const struct EnumItem ENUM_ScannerMode[];
 extern const struct EnumItem ENUM_ShipTypeThruster[];
 extern const struct EnumItem ENUM_DualLaserOrientation[];
 extern const struct EnumItem ENUM_ShipTypeTag[];
+extern const struct EnumItem ENUM_WorldViewCamType[];
 extern const struct EnumItem ENUM_EconType[];
 extern const struct EnumItem ENUM_BodyType[];
 extern const struct EnumItem ENUM_BodySuperType[];

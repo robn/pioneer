@@ -6,6 +6,7 @@
 #include "AnimationCurves.h"
 #include "Pi.h"
 #include "Game.h"
+#include "EnumStrings.h"
 
 CameraController::CameraController(Camera *camera, const Ship *ship) :
 	m_camera(camera),
@@ -66,7 +67,7 @@ void InternalCameraController::SetMode(Mode m)
 Serializer::Object InternalCameraController::Serialize() const
 {
 	Serializer::Object so(CameraController::Serialize());
-	so.Set("mode", static_cast<Uint32>(m_mode)); // XXX SERIALIZER stringy constant?
+	so.Set("mode", EnumStrings::GetString("InternalCameraControllerMode", m_mode));
 	return so;
 }
 

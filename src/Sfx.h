@@ -18,10 +18,15 @@ namespace Graphics {
 
 class Sfx {
 public:
-	enum TYPE { TYPE_NONE, TYPE_EXPLOSION, TYPE_DAMAGE, TYPE_SMOKE };
+	enum Type { // <enum scope='Sfx' name=SfxType prefix=TYPE_>
+		TYPE_NONE,
+		TYPE_EXPLOSION,
+		TYPE_DAMAGE,
+		TYPE_SMOKE
+	};
 
-	static void Add(const Body *, TYPE);
-	static void AddThrustSmoke(const Body *b, TYPE, float speed, vector3d adjustpos);
+	static void Add(const Body *, Type);
+	static void AddThrustSmoke(const Body *b, Type, float speed, vector3d adjustpos);
 	static void TimeStepAll(const float timeStep, Frame *f);
 	static void RenderAll(Graphics::Renderer *r, Frame *f, const Frame *camFrame);
 
@@ -53,7 +58,7 @@ private:
 	vector3d m_vel;
 	float m_age;
 	float m_speed;
-	enum TYPE m_type;
+	enum Type m_type;
 };
 
 #endif /* _SFX_H */

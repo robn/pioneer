@@ -20,6 +20,7 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "EnumStrings.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 #include "graphics/Frustum.h"
@@ -246,7 +247,7 @@ WorldView::~WorldView()
 Serializer::Object WorldView::Serialize() const
 {
 	Serializer::Object so;
-	so.Set("camType", static_cast<Uint32>(m_camType)); // XXX SERIALIZER stringy constant?
+	so.Set("camType", EnumStrings::GetString("WorldViewCamType", m_camType));
 	so.Set("internalCameraController", m_internalCameraController->Serialize());
 	so.Set("externalCameraController", m_externalCameraController->Serialize());
 	so.Set("siderealCameraController", m_siderealCameraController->Serialize());
