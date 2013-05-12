@@ -284,7 +284,7 @@ public:
 	void ApplyMatrixTransform(MatrixTransform &node) {
 		const matrix4x4f &m = node.GetTransform();
 		for (int i = 0; i < 16; i++)
-			m_object.append(m.Serialize().GetJson());
+			m_object.append(m.Save().GetJson());
 	}
 
 	Json::Value &GetObject() { return m_object; }
@@ -293,12 +293,12 @@ private:
 	Json::Value m_object;
 };
 
-Serializer::Object Model::Serialize() const
+SaveLoad::Object Model::Save() const
 {
 	SaveVisitor sv;
 	m_root->Accept(sv);
 
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("matrixTransforms", sv.GetObject());
 
 	{
@@ -314,7 +314,7 @@ Serializer::Object Model::Serialize() const
 /* XXX DESERIALIZER
 class LoadVisitor : public NodeVisitor {
 public:
-	LoadVisitor(Serializer::Reader *rd_): rd(rd_) {}
+	LoadVisitor(SaveLoad::Reader *rd_): rd(rd_) {}
 
 	void ApplyMatrixTransform(MatrixTransform &node) {
 		matrix4x4f m;
@@ -324,10 +324,10 @@ public:
 	}
 
 private:
-	Serializer::Reader *rd;
+	SaveLoad::Reader *rd;
 };
 
-void Model::Load(Serializer::Reader &rd)
+void Model::Load(SaveLoad::Reader &rd)
 {
 	LoadVisitor lv(&rd);
 	m_root->Accept(lv);

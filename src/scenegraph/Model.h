@@ -67,7 +67,7 @@
 #include "Pattern.h"
 #include "CollMesh.h"
 #include "graphics/Material.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include <stdexcept>
 
 namespace Graphics { class Renderer; }
@@ -131,10 +131,10 @@ public:
 	//special for ship model use
 	void SetThrust(const vector3f &linear, const vector3f &angular);
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 
 private:

@@ -5,7 +5,7 @@
 #include "DynamicBody.h"
 #include "Space.h"
 #include "Frame.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Planet.h"
 #include "Pi.h"
 
@@ -54,13 +54,13 @@ void DynamicBody::AddRelTorque(const vector3d &t)
 	m_torque += GetOrient() * t;
 }
 
-Serializer::Object DynamicBody::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(ModelBody::Serialize(gs));
+SaveLoad::Object DynamicBody::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(ModelBody::Save(sc));
 	so.Set("bodyClass", "DynamicBody");
-	so.Set("force", m_force.Serialize());
-	so.Set("torque", m_torque.Serialize());
-	so.Set("vel", m_vel.Serialize());
-	so.Set("angVel", m_angVel.Serialize());
+	so.Set("force", m_force.Save());
+	so.Set("torque", m_torque.Save());
+	so.Set("vel", m_vel.Save());
+	so.Set("angVel", m_angVel.Save());
 	so.Set("mass", m_mass);
 	so.Set("massRadius", m_massRadius);
 	so.Set("angInertia", m_angInertia);
@@ -69,7 +69,7 @@ Serializer::Object DynamicBody::Serialize(Serializer::GameSerializer *gs) const 
 }
 
 /* XXX DESERIALIZER
-void DynamicBody::Load(Serializer::Reader &rd, Space *space)
+void DynamicBody::Load(SaveLoad::Reader &rd, Space *space)
 {
 	ModelBody::Load(rd, space);
 	m_force = rd.Vector3d();

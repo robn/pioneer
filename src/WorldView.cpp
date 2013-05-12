@@ -8,7 +8,7 @@
 #include "Planet.h"
 #include "galaxy/Sector.h"
 #include "SectorView.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "ShipCpanel.h"
 #include "Sound.h"
 #include "Space.h"
@@ -45,7 +45,7 @@ WorldView::WorldView(): View()
 }
 
 /* XXX DESERIALIZER
-WorldView::WorldView(Serializer::Reader &rd): View()
+WorldView::WorldView(SaveLoad::Reader &rd): View()
 {
 	m_camType = CamType(rd.Int32());
 	InitObject();
@@ -244,13 +244,13 @@ WorldView::~WorldView()
 	m_onMouseButtonDown.disconnect();
 }
 
-Serializer::Object WorldView::Serialize() const
+SaveLoad::Object WorldView::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("camType", EnumStrings::GetString("WorldViewCamType", m_camType));
-	so.Set("internalCameraController", m_internalCameraController->Serialize());
-	so.Set("externalCameraController", m_externalCameraController->Serialize());
-	so.Set("siderealCameraController", m_siderealCameraController->Serialize());
+	so.Set("internalCameraController", m_internalCameraController->Save());
+	so.Set("externalCameraController", m_externalCameraController->Save());
+	so.Set("siderealCameraController", m_siderealCameraController->Save());
 	return so;
 }
 

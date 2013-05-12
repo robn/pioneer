@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "vector3.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 template <typename T>
 class matrix3x3 {
@@ -141,16 +141,16 @@ class matrix3x3 {
 		printf ("\n");
 	}
 
-	Serializer::Object Serialize() const {
+	SaveLoad::Object Save() const {
 		Json::Value data(Json::arrayValue);
 		for (int i = 0; i < 9; i++)
-			data.append(Serializer::DoubleToHexFloat(cell[i]));
-		return Serializer::Object(data);
+			data.append(SaveLoad::DoubleToHexFloat(cell[i]));
+		return SaveLoad::Object(data);
 	}
-	matrix3x3(const Serializer::Object &so) {
+	matrix3x3(const SaveLoad::Object &so) {
 		const Json::Value &data(so.GetJson());
 		for (int i = 0; i < 9; i++)
-			cell[i] = T(Serializer::HexFloatToDouble(data[i].asString()));
+			cell[i] = T(SaveLoad::HexFloatToDouble(data[i].asString()));
 	}
 };
 

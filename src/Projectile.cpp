@@ -7,7 +7,7 @@
 #include "Frame.h"
 #include "galaxy/StarSystem.h"
 #include "Space.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "collider/collider.h"
 #include "CargoBody.h"
 #include "Planet.h"
@@ -114,19 +114,19 @@ Projectile::~Projectile()
 {
 }
 
-Serializer::Object Projectile::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Body::Serialize(gs));
+SaveLoad::Object Projectile::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Body::Save(sc));
 	so.Set("bodyClass", "Projectile");
-	so.Set("baseVel", m_baseVel.Serialize());
-	so.Set("dirVel", m_dirVel.Serialize());
+	so.Set("baseVel", m_baseVel.Save());
+	so.Set("dirVel", m_dirVel.Save());
 	so.Set("age", m_age);
 	so.Set("type", m_type);
-    so.Set("parentRefId", gs->GetRefId(m_parent));
+    so.Set("parentRefId", sc->GetRefId(m_parent));
 	return so;
 }
 
 /* XXX DESERIALIZER
-void Projectile::Load(Serializer::Reader &rd, Space *space)
+void Projectile::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
 	m_baseVel = rd.Vector3d();

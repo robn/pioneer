@@ -8,7 +8,7 @@
 #include "perlin.h"
 #include "Pi.h"
 #include "Player.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Ship.h"
 #include "Space.h"
 #include "graphics/Graphics.h"
@@ -59,20 +59,20 @@ void HyperspaceCloud::SetIsArrival(bool isArrival)
 	SetLabel(isArrival ? Lang::HYPERSPACE_ARRIVAL_CLOUD : Lang::HYPERSPACE_DEPARTURE_CLOUD);
 }
 
-Serializer::Object HyperspaceCloud::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Body::Serialize(gs));
+SaveLoad::Object HyperspaceCloud::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Body::Save(sc));
 	so.Set("bodyClass", "HyperspaceCloud");
-	so.Set("vel", m_vel.Serialize());
+	so.Set("vel", m_vel.Save());
 	so.Set("birthdate", m_birthdate);
 	so.Set("due", m_due);
 	so.Set("isArrival", m_isArrival);
 	if (m_ship)
-		so.Set("ship", m_ship->Serialize(gs));
+		so.Set("ship", m_ship->Save(sc));
 	return so;
 }
 
 /* XXX DESERIALIZER
-void HyperspaceCloud::Load(Serializer::Reader &rd, Space *space)
+void HyperspaceCloud::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
 	m_vel = rd.Vector3d();

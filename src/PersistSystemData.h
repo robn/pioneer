@@ -4,7 +4,7 @@
 #ifndef _PERSISTSYSTEMDATA_H
 #define _PERSISTSYSTEMDATA_H
 
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "galaxy/SystemPath.h"
 #include <map>
 
@@ -22,18 +22,18 @@ public:
 	void Set(const SystemPath &path, T val) {
 		m_dict[path.SystemOnly()] = val;
 	}
-	Serializer::Object Serialize() const {
+	SaveLoad::Object Save() const {
 		Json::Value dict(Json::arrayValue);
 		for (typename std::map<SystemPath, T>::const_iterator i = m_dict.begin(); i != m_dict.end(); ++i) {
-			Serializer::Object entry;
-			entry.Set("path", (*i).first.Serialize());
+			SaveLoad::Object entry;
+			entry.Set("path", (*i).first.Save());
 			entry.Set("value", (*i).second);
 			dict.append(entry.GetJson());
 		}
 		return dict;
 	}
 /* XXX DESERIALIZER
-	static void Unserialize(Serializer::Reader &rd, PersistSystemData<T> *pd) {
+	static void Unserialize(SaveLoad::Reader &rd, PersistSystemData<T> *pd) {
 		int num = rd.Int32();
 		while (num-- > 0) {
 			SystemPath path = SystemPath::Unserialize(rd);

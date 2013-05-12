@@ -15,13 +15,13 @@ public:
 	Star();
 	virtual ~Star() {};
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 	void InitStar();
 

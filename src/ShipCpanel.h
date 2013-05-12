@@ -8,7 +8,7 @@
 #include "gui/Gui.h"
 #include "ShipCpanelMultiFuncDisplays.h"
 #include "Ship.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Game.h"
 #include "WorldView.h"
 
@@ -20,7 +20,7 @@ class ShipCpanel: public Gui::Fixed {
 public:
 	ShipCpanel(Graphics::Renderer *r);
 /* XXX DESERIALIZER
-    ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r);
+    ShipCpanel(SaveLoad::Reader &rd, Graphics::Renderer *r);
 */
 	virtual ~ShipCpanel();
 	virtual void Draw();
@@ -30,7 +30,7 @@ public:
 
 	void TimeStepUpdate(float step);
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 	enum OverlayTextPos {
 		OVERLAY_TOP_LEFT,

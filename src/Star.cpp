@@ -18,14 +18,14 @@ Star::Star(SystemBody *sbody): TerrainBody(sbody)
 	InitStar();
 }
 
-Serializer::Object Star::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(TerrainBody::Serialize(gs));
+SaveLoad::Object Star::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(TerrainBody::Save(sc));
 	so.Set("bodyClass", "Star");
 	return so;
 }
 
 /* XXX DESERIALIZER
-void Star::Load(Serializer::Reader &rd, Space *space)
+void Star::Load(SaveLoad::Reader &rd, Space *space)
 {
 	TerrainBody::Load(rd, space);		// to get sbody
 	InitStar();

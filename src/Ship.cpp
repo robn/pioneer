@@ -26,12 +26,12 @@
 
 #define TONS_HULL_PER_SHIELD 10.0f
 
-Serializer::Object SerializableEquipSet::Serialize() const
+SaveLoad::Object SerializableEquipSet::Save() const
 {
-	Serializer::Object slots;
+	SaveLoad::Object slots;
 	for (int i=0; i<Equip::SLOT_MAX; i++) {
 		if (equip[i].empty()) continue;
-		Serializer::Object slot;
+		SaveLoad::Object slot;
 		for (unsigned int j=0; j<equip[i].size(); j++) {
 			const std::string &type = EnumStrings::GetString("EquipType", equip[i][j]);
 			Uint32 count;
@@ -49,7 +49,7 @@ XXX DESERIALIZER
 /*
  * Should have initialised with EquipSet(ShipType::Type) first
  */
-void SerializableEquipSet::Load(Serializer::Reader &rd)
+void SerializableEquipSet::Load(SaveLoad::Reader &rd)
 {
 	const int numSlots = rd.Int32();
 	assert(numSlots <= Equip::SLOT_MAX);
@@ -69,12 +69,12 @@ void SerializableEquipSet::Load(Serializer::Reader &rd)
 }
 #endif
 
-Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(DynamicBody::Serialize(gs));
+SaveLoad::Object Ship::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(DynamicBody::Save(sc));
 	so.Set("bodyClass", "Ship");
 
-	so.Set("angThrusters", m_angThrusters.Serialize());
-	so.Set("thrusters", m_thrusters.Serialize());
+	so.Set("angThrusters", m_angThrusters.Save());
+	so.Set("thrusters", m_thrusters.Save());
 	so.Set("wheelTransition", m_wheelTransition);
 	so.Set("wheelState", m_wheelState),
 	so.Set("launchLockTimeout", m_launchLockTimeout);
@@ -84,7 +84,7 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("lastFiringAlert", m_lastFiringAlert);
 
 	// XXX make sure all hyperspace attrs and the cloud get saved
-	so.Set("hyperspaceDest", m_hyperspace.dest.Serialize());
+	so.Set("hyperspaceDest", m_hyperspace.dest.Save());
 	so.Set("hyperspaceCountdown", m_hyperspace.countdown);
 
 	{
@@ -92,13 +92,13 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	// XXX m_gun* should be a separate class
 	Json::Value gunmounts(Json::arrayValue);
 	for (int i = 0; i < ShipType::GUNMOUNT_MAX; i++) {
-		Serializer::Object gun;
+		SaveLoad::Object gun;
 		gun.Set("gunState", m_gunState[i]);
 		gun.Set("gunRecharge", m_gunRecharge[i]);
 		gun.Set("gunTemperature", m_gunTemperature[i]);
 		gunmounts.append(gun.GetJson());
 	}
-	so.Set("gunmounts", Serializer::Object(gunmounts));
+	so.Set("gunmounts", SaveLoad::Object(gunmounts));
 	}
 
 	so.Set("ecmRecharge", m_ecmRecharge);
@@ -106,33 +106,33 @@ Serializer::Object Ship::Serialize(Serializer::GameSerializer *gs) const {
 	so.Set("shipType", m_type->id);
 
 	so.Set("dockedWithPort", m_dockedWithPort);
-    so.Set("dockedWithRefId", gs->GetRefId(m_dockedWith));
+    so.Set("dockedWithRefId", sc->GetRefId(m_dockedWith));
 
-	so.Set("equipment", m_equipment.Serialize());
+	so.Set("equipment", m_equipment.Save());
 
 	so.Set("hullMassLeft", m_stats.hull_mass_left);
 	so.Set("shieldMassLeft", m_stats.shield_mass_left);
 
 	if (m_curAICmd)
-		so.Set("curAICmd", m_curAICmd->Serialize(gs));
+		so.Set("curAICmd", m_curAICmd->Save(sc));
 
 	so.Set("aiMessage", EnumStrings::GetString("ShipAIError", m_aiMessage));
 
 	so.Set("thrusterFuel", m_thrusterFuel);
 	so.Set("reserveFuel", m_reserveFuel);
 
-	so.Set("skin", m_skin.Serialize());
+	so.Set("skin", m_skin.Save());
 
-	so.Set("controller", m_controller->Serialize(gs));
+	so.Set("controller", m_controller->Save(sc));
 
-	so.Set("navLights", m_navLights->Serialize());
+	so.Set("navLights", m_navLights->Save());
 
 	return so;
 }
 
 #if 0
 XXX DESERIALIZER
-void Ship::Load(Serializer::Reader &rd, Space *space)
+void Ship::Load(SaveLoad::Reader &rd, Space *space)
 {
 	DynamicBody::Load(rd, space);
 	m_skin.Load(rd);

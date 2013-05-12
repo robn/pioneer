@@ -5,7 +5,7 @@
 #define _POLIT_H
 
 #include "EquipType.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "fixed.h"
 
 class StarSystem;
@@ -56,9 +56,9 @@ namespace Polit {
 	void GetSysPolitStarSystem(const StarSystem *s, const fixed human_infestedness, SysPolit &outSysPolit);
 	bool IsCommodityLegal(const StarSystem *s, const Equip::Type t);
 	void Init();
-    Serializer::Object Serialize();
+    SaveLoad::Object Save();
 /* XXX DESERIALIZER
-	void Unserialize(Serializer::Reader &rd);
+	void Unserialize(SaveLoad::Reader &rd);
 */
 	void AddCrime(Sint64 crimeBitset, Sint64 addFine);
 	void GetCrime(Sint64 *crimeBitset, Sint64 *fine);

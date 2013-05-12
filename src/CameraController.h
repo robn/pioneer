@@ -7,7 +7,7 @@
 #include "vector3.h"
 #include "matrix4x4.h"
 #include "Lang.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 class Ship;
 class Camera;
@@ -27,10 +27,10 @@ public:
 	virtual Type GetType() const = 0;
 	virtual const char *GetName() const { return ""; }
 
-	virtual Serializer::Object Serialize() const { return Serializer::Object(); }
+	virtual SaveLoad::Object Save() const { return SaveLoad::Object(); }
 
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd) { }
+	virtual void Load(SaveLoad::Reader &rd) { }
 */
 	virtual bool IsExternal() const { return false; }
 
@@ -71,10 +71,10 @@ public:
 	void SetMode(Mode m);
 	Mode GetMode() const { return m_mode; }
 
-	virtual Serializer::Object Serialize() const;
+	virtual SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 
 	virtual void Update();
@@ -130,10 +130,10 @@ public:
 		m_rotY = y;
 	}
 
-	virtual Serializer::Object Serialize() const;
+	virtual SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 
 	void Update();
@@ -166,10 +166,10 @@ public:
 	void Reset();
 	bool IsExternal() const { return true; }
 
-	virtual Serializer::Object Serialize() const;
+	virtual SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 
 	void Update();

@@ -29,7 +29,7 @@ ShipCpanel::ShipCpanel(Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::Get
 }
 
 /* XXX DESERIALIZER
-ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
+ShipCpanel::ShipCpanel(SaveLoad::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
 {
 	m_scanner = new ScannerWidget(r, rd);
 
@@ -417,10 +417,10 @@ void ShipCpanel::TimeStepUpdate(float step)
 	m_scanner->TimeStepUpdate(step);
 }
 
-Serializer::Object ShipCpanel::Serialize() const
+SaveLoad::Object ShipCpanel::Save() const
 {
-	Serializer::Object so;
-	so.Set("scanner", m_scanner->Serialize());
+	SaveLoad::Object so;
+	so.Set("scanner", m_scanner->Save());
 	so.Set("camButtonState", m_camButton->GetState());
 	return so;
 }

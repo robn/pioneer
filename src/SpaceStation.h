@@ -10,7 +10,7 @@
 #include "ModelBody.h"
 #include "NavLights.h"
 #include "Quaternion.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "ShipType.h"
 #include "SpaceStationType.h"
 #include "scenegraph/ModelSkin.h"
@@ -45,7 +45,7 @@ struct ShipOnSale {
 	std::string           regId;
 	SceneGraph::ModelSkin skin;
 
-	virtual Serializer::Object Serialize() const;
+	virtual SaveLoad::Object Save() const;
 };
 
 class SpaceStation: public ModelBody, public MarketAgent {
@@ -59,7 +59,7 @@ public:
 	SpaceStation() {}
 	virtual ~SpaceStation();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual vector3d GetAngVelocity() const { return vector3d(0,m_type->angVel,0); }
 	virtual bool OnCollision(Object *b, Uint32 flags, double relVel);
@@ -116,7 +116,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 	/* MarketAgent stuff */
 	void Bought(Equip::Type t);

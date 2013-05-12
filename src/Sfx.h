@@ -5,7 +5,7 @@
 #define _SFX_H
 
 #include "Body.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 class Frame;
 namespace Graphics {
@@ -30,9 +30,9 @@ public:
 	static void TimeStepAll(const float timeStep, Frame *f);
 	static void RenderAll(Graphics::Renderer *r, Frame *f, const Frame *camFrame);
 
-	static Serializer::Object Serialize(const Frame *f);
+	static SaveLoad::Object Save(const Frame *f);
 /* XXX DESERIALIZER
-	static void Unserialize(Serializer::Reader &rd, Frame *f);
+	static void Unserialize(SaveLoad::Reader &rd, Frame *f);
 */
 
 	Sfx();

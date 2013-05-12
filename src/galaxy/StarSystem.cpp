@@ -5,7 +5,7 @@
 #include "Sector.h"
 #include "Factions.h"
 
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Pi.h"
 #include "LuaNameGen.h"
 #include "enum_table.h"
@@ -2318,16 +2318,16 @@ StarSystem::~StarSystem()
 	clear_parent_and_child_pointers(rootBody.Get());
 }
 
-Serializer::Object StarSystem::Serialize() const {
+SaveLoad::Object StarSystem::Save() const {
 	Json::Value data(Json::arrayValue);
 	data.append(m_path.sectorX);
 	data.append(m_path.sectorY);
 	data.append(m_path.sectorZ);
 	data.append(m_path.systemIndex);
-	return Serializer::Object(data);
+	return SaveLoad::Object(data);
 }
 
-RefCountedPtr<StarSystem> StarSystem::Unserialize(const Serializer::Object &so)
+RefCountedPtr<StarSystem> StarSystem::Unserialize(const SaveLoad::Object &so)
 {
 	const Json::Value &data(so.GetJson());
 	Sint32 sec_x = data[0].asInt();

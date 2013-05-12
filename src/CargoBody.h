@@ -16,7 +16,7 @@ public:
 	CargoBody(Equip::Type t);
 	CargoBody() {}
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	Equip::Type GetCargoType() const { return m_type; }
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
@@ -24,7 +24,7 @@ public:
 	virtual bool OnDamage(Object *attacker, float kgDamage);
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 private:
 	void Init();

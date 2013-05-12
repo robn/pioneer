@@ -5,7 +5,7 @@
 #define SCENEGRAPH_MODELSKIN_H
 
 #include "Color.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Random.h"
 #include "LuaWrappable.h"
 #include <string>
@@ -34,10 +34,10 @@ public:
 
 	void SetLabel(const std::string &label);
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 
 private:

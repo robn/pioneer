@@ -20,7 +20,7 @@ public:
 	Player(ShipType::Id shipId);
 	Player() { }; //default constructor used before Load
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual void SetDockedWith(SpaceStation *, int port);
 	virtual bool OnDamage(Object *attacker, float kgDamage);
@@ -49,7 +49,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 
 	virtual void OnEnterSystem();

@@ -105,7 +105,7 @@ Game::~Game()
 }
 
 /* XXX DESERIALIZER
-Game::Game(Serializer::Reader &rd) :
+Game::Game(SaveLoad::Reader &rd) :
 	m_timeAccel(TIMEACCEL_PAUSED),
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
 	m_forceTimeAccel(false)
@@ -122,7 +122,7 @@ Game::Game(Serializer::Reader &rd) :
 		throw SavedGameWrongVersionException();
 	}
 
-	Serializer::Reader section;
+	SaveLoad::Reader section;
 
 	// space, all the bodies and things
 	section = rd.RdSection("Space");
@@ -159,7 +159,7 @@ Game::Game(Serializer::Reader &rd) :
 
 	// lua
 	section = rd.RdSection("LuaModules");
-	Pi::luaSerializer->Unserialize(section);
+	Pi::luaSaveLoad->Unserialize(section);
 
 
 	// signature check
@@ -168,12 +168,12 @@ Game::Game(Serializer::Reader &rd) :
 }
 */
 
-Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
+SaveLoad::Object Game::Save(SaveLoad::SaveContext *sc) const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 
 	{
-	Serializer::Object meta;
+	SaveLoad::Object meta;
 	meta.Set("saveVersion", s_saveVersion);
 	meta.Set("gameVersion", PIONEER_VERSION);
 	meta.Set("gameExtraVersion", PIONEER_EXTRAVERSION);
@@ -181,7 +181,7 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	}
 
 	// space, all the bodies and things
-	so.Set("space", m_space->Serialize(gs));
+	so.Set("space", m_space->Save(sc));
 
 	// game state and space transition state
 
@@ -189,7 +189,7 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	{
 	Json::Value hyperspaceClouds(Json::arrayValue);
 	for (std::list<HyperspaceCloud*>::const_iterator i = m_hyperspaceClouds.begin(); i != m_hyperspaceClouds.end(); ++i)
-		hyperspaceClouds.append((*i)->Serialize(gs).GetJson());
+		hyperspaceClouds.append((*i)->Save(sc).GetJson());
 	so.Set("hyperspaceClouds", hyperspaceClouds);
 	}
 
@@ -202,15 +202,15 @@ Serializer::Object Game::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("hyperspaceEndTime", m_hyperspaceEndTime);
 
 	// system political data (crime etc)
-	so.Set("polit", Polit::Serialize());
+	so.Set("polit", Polit::Save());
 
 	// views. must be saved in init order
-	so.Set("controlPanel", Pi::cpan->Serialize());
-	so.Set("sectorView", Pi::sectorView->Serialize());
-	so.Set("worldView", Pi::worldView->Serialize());
+	so.Set("controlPanel", Pi::cpan->Save());
+	so.Set("sectorView", Pi::sectorView->Save());
+	so.Set("worldView", Pi::worldView->Save());
 
 	// lua
-	so.Set("lua", Pi::luaSerializer->Serialize(gs));
+	so.Set("lua", Pi::luaSaveLoad->Save(sc));
 
 	return so;
 }
@@ -602,7 +602,7 @@ void Game::CreateViews()
 
 /* XXX DESERIALIZER
 // XXX mostly a copy of CreateViews
-void Game::LoadViews(Serializer::Reader &rd)
+void Game::LoadViews(SaveLoad::Reader &rd)
 {
 	Pi::SetView(0);
 
@@ -610,7 +610,7 @@ void Game::LoadViews(Serializer::Reader &rd)
 	Pi::game = this;
 	Pi::player = m_player.Get();
 
-	Serializer::Reader section = rd.RdSection("ShipCpanel");
+	SaveLoad::Reader section = rd.RdSection("ShipCpanel");
 	Pi::cpan = new ShipCpanel(section, Pi::renderer);
 
 	section = rd.RdSection("SectorView");
@@ -677,7 +677,7 @@ Game *Game::LoadGame(const std::string &filename)
 	printf("Game::LoadGame('%s')\n", filename.c_str());
 	FILE *f = FileSystem::userFiles.OpenReadStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();
-	Serializer::Reader rd(f);
+	SaveLoad::Reader rd(f);
 	fclose(f);
 	return new Game(rd);
 */

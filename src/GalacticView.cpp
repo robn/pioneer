@@ -7,7 +7,7 @@
 #include "GalacticView.h"
 #include "SystemInfoView.h"
 #include "Player.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "SectorView.h"
 #include "galaxy/Sector.h"
 #include "galaxy/Galaxy.h"

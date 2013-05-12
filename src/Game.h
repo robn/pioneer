@@ -6,7 +6,7 @@
 
 #include "vector3.h"
 #include "galaxy/SystemPath.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "gameconsts.h"
 #include "SmartPtr.h"
 #include <list>
@@ -29,13 +29,13 @@ public:
 
 	// load game
 /* XXX DESERIALIZER
-	Game(Serializer::Reader &rd);
+	Game(SaveLoad::Reader &rd);
 */
 
 	~Game();
 
 	// save game
-	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	// various game states
 	bool IsNormalSpace() const { return m_state == STATE_NORMAL; }
@@ -91,7 +91,7 @@ public:
 private:
 	void CreateViews();
 /* XXX DESERIALIZER
-	void LoadViews(Serializer::Reader &rd);
+	void LoadViews(SaveLoad::Reader &rd);
 */
 	void DestroyViews();
 

@@ -15,7 +15,7 @@ public:
 	Missile() {}
 	virtual ~Missile() {}
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	void TimeStepUpdate(const float timeStep);
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);
@@ -32,7 +32,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 private:
 	void Explode();

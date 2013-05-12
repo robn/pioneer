@@ -65,9 +65,9 @@ Color4f Color4f::FromLuaTable(lua_State *l, int idx)
 	return Color4f(r, g, b, a);
 }
 
-Serializer::Object Color4f::Serialize() const
+SaveLoad::Object Color4f::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("r", r);
 	so.Set("g", g);
 	so.Set("b", b);
@@ -75,9 +75,9 @@ Serializer::Object Color4f::Serialize() const
 	return so;
 }
 
-Serializer::Object Color4ub::Serialize() const
+SaveLoad::Object Color4ub::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("r", Uint32(r));
 	so.Set("g", Uint32(g));
 	so.Set("b", Uint32(b));

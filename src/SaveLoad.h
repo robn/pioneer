@@ -1,8 +1,8 @@
 // Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#ifndef _SERIALIZE_H
-#define _SERIALIZE_H
+#ifndef SAVELOAD_H
+#define SAVELOAD_H
 
 #include <cstdio>
 #include "SDL_stdinc.h"
@@ -15,7 +15,7 @@ struct CouldNotWriteToFileException {};
 
 class Game;
 
-namespace Serializer {
+namespace SaveLoad {
 
 // helper methods for safely storing/retrieving doubles
 inline char *DoubleToHexFloat(double v) {
@@ -32,31 +32,33 @@ inline double HexFloatToDouble(const std::string &str) {
 	return HexFloatToDouble(str.c_str());
 }
 
-// serialization object. holds the complete serialized state of one game
-// object.
+// SaveLoad object. holds the complete state of one game object the convention
+// for game objects that expect to be saved is that they will have a
+// constructor that accepts a SaveLoad::Object as its only argument and a Save
+// method that returns one. this convention is not currently enforced, but is
+// highly recommended
 //
-// the convention for game objects that expect to be serialized is that they
-// will have a constructor that accepts a Serializer::Object as its only
-// argument and a Serialize method that returns one. this convention is not
-// currently enforced, but is highly recommended
-//
-// most of the time a Serialize method will use the default Object constructor
-// and the Set methods to store values in a basic dictionary. to store other
-// objects, call their Serialize methods
+// most of the time a Save method will use the default Object constructor and
+// the Set methods to store values in a basic dictionary. to store other
+// objects, call their Save methods and include the result
 //
 // certain special-case objects (usually those masquerading as primitive types
 // eg vector3) may want to use a non-dictionary style to store themselves. in
-// that case, they can create a raw Json::Value object and wrap an Object()
+// that case, they can create a raw Json::Value object and wrap an Object
 // around it, and later in construction can use the GetJson method to get it
 // back. in this case, the behaviour of the Set/Get methods are undefined. if
 // you're not sure if you need this variant, you probably don't.
 //
 // if the object you're trying to create is part of a class hierarchy that has
 // parent classes that need to be deserialized as well, the convention is to
-// store the parent object's serialization object in a field in the current
-// object, and at construction pass use GetObject to pass it the the parent it
-// in an initialiser
+// call the parent class' Save method, and then add your own data to it. (this
+// of course means that there could be key conflicts, but that likely means you
+// have a naming or other design problem somewhere in your hierarchy). during
+// construction, oass the object up to the parent constructor in an
+// initiialiser.
 //
+// the Body classes demonstrate the "right" way to do all this
+
 class Object {
 public:
 	// standard constructor
@@ -105,21 +107,21 @@ private:
 };
 
 
-class GameSerializer;
+class SaveContext;
 
 class ReferrableObject {
-	virtual Serializer::Object Serialize(GameSerializer *) const = 0;
+	virtual SaveLoad::Object Save(SaveContext *) const = 0;
 };
 
-class GameSerializer {
+class SaveContext {
 public:
-	GameSerializer(Game *game) : m_game(game), m_nextId(0) {}
+	SaveContext(Game *game) : m_game(game), m_nextId(0) {}
 
 	// XXX should be const, but can't until all the serializers are const too
 	// Write throws exceptions on failure
 	void Write(const std::string &filename);
 
-	Serializer::Object MakeRefObject(const ReferrableObject *o);
+	SaveLoad::Object MakeRefObject(const ReferrableObject *o);
 	Uint32 GetRefId(const ReferrableObject *o);
 
 private:

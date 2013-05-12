@@ -2,7 +2,7 @@
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Missile.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Space.h"
 #include "Sfx.h"
 #include "ShipType.h"
@@ -33,10 +33,10 @@ void Missile::ECMAttack(int power_val)
 	}
 }
 
-Serializer::Object Missile::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Ship::Serialize(gs));
+SaveLoad::Object Missile::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Ship::Save(sc));
 	so.Set("bodyClass", "Missile");
-    so.Set("ownerRefId", gs->GetRefId(m_owner));
+    so.Set("ownerRefId", sc->GetRefId(m_owner));
 	so.Set("power", m_power);
 	so.Set("armed", m_armed);
 	return so;
@@ -49,7 +49,7 @@ void Missile::PostLoadFixup(Space *space)
 	m_owner = space->GetBodyByIndex(m_ownerIndex);
 }
 
-void Missile::Load(Serializer::Reader &rd, Space *space)
+void Missile::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Ship::Load(rd, space);
 	m_ownerIndex = rd.Int32();

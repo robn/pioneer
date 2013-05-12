@@ -20,7 +20,7 @@ public:
 	ModelBody();
 	virtual ~ModelBody();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	void SetPosition(const vector3d &p);
 	void SetOrient(const matrix3x3d &r);
@@ -44,7 +44,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 
 	void SetLighting(Graphics::Renderer *r, const Camera *camera, std::vector<Graphics::Light> &oldLights, Color &oldAmbient);

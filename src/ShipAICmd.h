@@ -6,7 +6,7 @@
 
 #include "Ship.h"
 #include "SpaceStation.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Pi.h"
 #include "Game.h"
 
@@ -27,10 +27,10 @@ public:
 	}
 
 	// Serialisation functions
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 /* XXX DESERIALIZER
-	static AICommand *Load(Serializer::Reader &rd);
-	AICommand(Serializer::Reader &rd, CmdName name);
+	static AICommand *Load(SaveLoad::Reader &rd);
+	AICommand(SaveLoad::Reader &rd, CmdName name);
 	virtual void PostLoadFixup(Space *space);
 */
 
@@ -53,16 +53,16 @@ public:
 		if (m_child) m_child->GetStatusText(str);
 		else snprintf(str, 255, "Dock: target %s, state %i", m_target->GetLabel().c_str(), m_state);
 	}
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "dock");
-		so.Set("targetRefId", gs->GetRefId(m_target));
-		so.Set("dockpos", m_dockpos.Serialize());
-		so.Set("dockupdir", m_dockupdir.Serialize());
+		so.Set("targetRefId", sc->GetRefId(m_target));
+		so.Set("dockpos", m_dockpos.Save());
+		so.Set("dockupdir", m_dockupdir.Save());
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdDock(Serializer::Reader &rd) : AICommand(rd, CMD_DOCK) {
+	AICmdDock(SaveLoad::Reader &rd) : AICommand(rd, CMD_DOCK) {
 		m_targetIndex = rd.Int32();
 		m_dockpos = rd.Vector3d(); m_dockdir = rd.Vector3d();
 		m_dockupdir = rd.Vector3d(); m_state = EDockingStates(rd.Int32());
@@ -118,20 +118,20 @@ public:
 		else snprintf(str, 255, "FlyTo: %s, dist %.1fkm, endvel %.1fkm/s, state %i",
 			m_targframe->GetLabel().c_str(), m_posoff.Length()/1000.0, m_endvel/1000.0, m_state);
 	}
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "flyTo");
-		so.Set("targetRefId", gs->GetRefId(m_target));
+		so.Set("targetRefId", sc->GetRefId(m_target));
 		so.Set("dist", m_dist);
-		so.Set("targframeRefId", gs->GetRefId(m_targframe));
-		so.Set("posoff", m_posoff.Serialize());
+		so.Set("targframeRefId", sc->GetRefId(m_targframe));
+		so.Set("posoff", m_posoff.Save());
 		so.Set("endvel", m_endvel);
 		so.Set("tangent", m_tangent);
 		so.Set("state", m_state);
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdFlyTo(Serializer::Reader &rd) : AICommand(rd, CMD_FLYTO) {
+	AICmdFlyTo(SaveLoad::Reader &rd) : AICommand(rd, CMD_FLYTO) {
 		m_targetIndex = rd.Int32();
 		m_dist = rd.Double();
 		m_targframeIndex = rd.Int32();
@@ -179,17 +179,17 @@ public:
 		else snprintf(str, 255, "FlyAround: alt %.1fkm, vel %.1fkm/s, mode %i",
 			m_alt/1000.0, m_vel/1000.0, m_targmode);
 	}
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "flyAround");
-		so.Set("obstructorRefId", gs->GetRefId(m_obstructor));
+		so.Set("obstructorRefId", sc->GetRefId(m_obstructor));
 		so.Set("vel", m_vel);
 		so.Set("alt", m_alt);
 		so.Set("targmode", m_targmode);
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdFlyAround(Serializer::Reader &rd) : AICommand(rd, CMD_FLYAROUND) {
+	AICmdFlyAround(SaveLoad::Reader &rd) : AICommand(rd, CMD_FLYAROUND) {
 		m_obstructorIndex = rd.Int32();
 		m_vel = rd.Double(); m_alt = rd.Double(); m_targmode = rd.Int32();
 	}
@@ -225,14 +225,14 @@ public:
 		m_lastVel = m_target->GetVelocity();
 	}
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "kill");
-		so.Set("targetRefId", gs->GetRefId(m_target));
+		so.Set("targetRefId", sc->GetRefId(m_target));
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdKill(Serializer::Reader &rd) : AICommand(rd, CMD_KILL) {
+	AICmdKill(SaveLoad::Reader &rd) : AICommand(rd, CMD_KILL) {
 		m_targetIndex = rd.Int32();
 	}
 	virtual void PostLoadFixup(Space *space) {
@@ -262,14 +262,14 @@ public:
 		m_target = target;
 	}
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "kamikaze");
-		so.Set("targetRefId", gs->GetRefId(m_target));
+		so.Set("targetRefId", sc->GetRefId(m_target));
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdKamikaze(Serializer::Reader &rd) : AICommand(rd, CMD_KAMIKAZE) {
+	AICmdKamikaze(SaveLoad::Reader &rd) : AICommand(rd, CMD_KAMIKAZE) {
 		m_targetIndex = rd.Int32();
 	}
 	virtual void PostLoadFixup(Space *space) {
@@ -294,7 +294,7 @@ public:
 	AICmdHoldPosition(Ship *ship) : AICommand(ship) { }
 
 /* XXX DESERIALIZER
-	AICmdHoldPosition(Serializer::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
+	AICmdHoldPosition(SaveLoad::Reader &rd) : AICommand(rd, CMD_HOLDPOSITION) { }
 */
 };
 
@@ -308,15 +308,15 @@ public:
 		else snprintf(str, 255, "Formation: %s, dist %.1fkm",
 			m_target->GetLabel().c_str(), m_posoff.Length()/1000.0);
 	}
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const {
-		Serializer::Object so(AICommand::Serialize(gs));
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const {
+		SaveLoad::Object so(AICommand::Save(sc));
 		so.Set("cmdName", "formation");
-		so.Set("targetRefId", gs->GetRefId(m_target));
-        so.Set("posoff", m_posoff.Serialize());
+		so.Set("targetRefId", sc->GetRefId(m_target));
+        so.Set("posoff", m_posoff.Save());
 		return so;
 	}
 /* XXX DESERIALIZER
-	AICmdFormation(Serializer::Reader &rd) : AICommand(rd, CMD_FORMATION) {
+	AICmdFormation(SaveLoad::Reader &rd) : AICommand(rd, CMD_FORMATION) {
 		m_targetIndex = rd.Int32();
 		m_posoff = rd.Vector3d();
 	}

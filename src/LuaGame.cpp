@@ -143,7 +143,7 @@ static int l_game_save_game(lua_State *l)
 	const std::string path = FileSystem::JoinPathBelow(Pi::GetSaveDir(), filename);
 
 	try {
-		Serializer::GameSerializer(Pi::game).Write(filename);
+		SaveLoad::SaveContext(Pi::game).Write(filename);
 		lua_pushlstring(l, path.c_str(), path.size());
 		return 1;
 	}

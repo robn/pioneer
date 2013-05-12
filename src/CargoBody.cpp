@@ -4,15 +4,15 @@
 #include "CargoBody.h"
 #include "Game.h"
 #include "Pi.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Sfx.h"
 #include "Space.h"
 #include "EnumStrings.h"
 #include "collider/collider.h"
 #include "scenegraph/SceneGraph.h"
 
-Serializer::Object CargoBody::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(DynamicBody::Serialize(gs));
+SaveLoad::Object CargoBody::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(DynamicBody::Save(sc));
 	so.Set("bodyClass", "CargoBody");
 	so.Set("cargoType", EnumStrings::GetString("EquipType", m_type));
 	so.Set("hitpoints", m_hitpoints);
@@ -20,7 +20,7 @@ Serializer::Object CargoBody::Serialize(Serializer::GameSerializer *gs) const {
 }
 
 /* XXX DESERIALIZER
-void CargoBody::Load(Serializer::Reader &rd, Space *space)
+void CargoBody::Load(SaveLoad::Reader &rd, Space *space)
 {
 	DynamicBody::Load(rd, space);
 	m_type = static_cast<Equip::Type>(rd.Int32());

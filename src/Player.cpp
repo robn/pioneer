@@ -8,7 +8,7 @@
 #include "Lang.h"
 #include "Pi.h"
 #include "SectorView.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "ShipCpanel.h"
 #include "Sound.h"
 #include "SpaceStation.h"
@@ -25,15 +25,15 @@ Player::Player(ShipType::Id shipId): Ship(shipId)
 	SetController(new PlayerShipController());
 }
 
-Serializer::Object Player::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Ship::Serialize(gs));
+SaveLoad::Object Player::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Ship::Save(sc));
 	so.Set("bodyClass", "Player");
-	so.Set("marketAgent", MarketAgent::Serialize());
+	so.Set("marketAgent", MarketAgent::Save());
 	return so;
 }
 
 /* XXX DESERIALIZER
-void Player::Load(Serializer::Reader &rd, Space *space)
+void Player::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Pi::player = this;
 	Ship::Load(rd, space);

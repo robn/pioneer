@@ -8,7 +8,7 @@
 #include "matrix4x4.h"
 #include "ModelCache.h"
 #include "Pi.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Space.h"
 #include "WorldView.h"
 #include "Camera.h"
@@ -35,18 +35,18 @@ ModelBody::~ModelBody()
 	delete m_model;
 }
 
-Serializer::Object ModelBody::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Body::Serialize(gs));
+SaveLoad::Object ModelBody::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Body::Save(sc));
 	so.Set("bodyClass", "ModelBody");
 	so.Set("isStatic", m_isStatic);
 	so.Set("colliding", m_colliding);
 	so.Set("modelName", m_modelName);
-	so.Set("model", m_model->Serialize());
+	so.Set("model", m_model->Save());
 	return so;
 }
 
 /* XXX DESERIALIZER
-void ModelBody::Load(Serializer::Reader &rd, Space *space)
+void ModelBody::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
 	m_isStatic = rd.Bool();

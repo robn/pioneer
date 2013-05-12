@@ -123,9 +123,9 @@ NavLights::~NavLights()
 {
 }
 
-Serializer::Object NavLights::Serialize() const
+SaveLoad::Object NavLights::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("time", m_time);
 	so.Set("enabled", m_enabled);
 
@@ -140,7 +140,7 @@ Serializer::Object NavLights::Serialize() const
 }
 
 /* XXX DESERIALIZER
-void NavLights::Load(Serializer::Reader &rd)
+void NavLights::Load(SaveLoad::Reader &rd)
 {
 	m_time    = rd.Float();
 	m_enabled = rd.Bool();

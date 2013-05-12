@@ -16,7 +16,7 @@ public:
 	DynamicBody();
 	virtual ~DynamicBody();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual vector3d GetVelocity() const;
 	virtual void SetVelocity(const vector3d &v);
@@ -57,7 +57,7 @@ public:
 	Orbit ComputeOrbit() const;
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 
 private:

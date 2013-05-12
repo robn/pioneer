@@ -9,7 +9,7 @@
 #include "Pi.h"
 #include "Player.h"
 #include "SectorView.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "ShipCpanel.h"
 #include "StringF.h"
 #include "SystemInfoView.h"
@@ -67,7 +67,7 @@ SectorView::SectorView()
 }
 
 /* XXX DESERIALIZER
-SectorView::SectorView(Serializer::Reader &rd)
+SectorView::SectorView(SaveLoad::Reader &rd)
 {
 	InitDefaults();
 
@@ -267,17 +267,17 @@ SectorView::~SectorView()
 	if (m_onKeyPressConnection.connected()) m_onKeyPressConnection.disconnect();
 }
 
-Serializer::Object SectorView::Serialize() const
+SaveLoad::Object SectorView::Save() const
 {
-	Serializer::Object so;
-	so.Set("pos", m_pos.Serialize());
+	SaveLoad::Object so;
+	so.Set("pos", m_pos.Save());
 	so.Set("rotX", m_rotX);
 	so.Set("rotZ", m_rotZ);
 	so.Set("zoom", m_zoom);
 	so.Set("inSystem", m_inSystem);
-	so.Set("current", m_current.Serialize());
-	so.Set("selected", m_selected.Serialize());
-	so.Set("hyperspaceTarget", m_hyperspaceTarget.Serialize());
+	so.Set("current", m_current.Save());
+	so.Set("selected", m_selected.Save());
+	so.Set("hyperspaceTarget", m_hyperspaceTarget.Save());
 	so.Set("matchTargetToSelection", m_matchTargetToSelection);
 	so.Set("selectionFollowsMovement", m_selectionFollowsMovement);
 	so.Set("detailBoxVisible", static_cast<Uint32>(m_detailBoxVisible));

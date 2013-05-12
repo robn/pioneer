@@ -7,7 +7,7 @@
 #include <list>
 #include "Object.h"
 #include "vector3.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "RefCounted.h"
 #include "galaxy/StarSystem.h"
 #include "Background.h"
@@ -28,12 +28,12 @@ public:
 
 	// initialise from save file
 /* XXX DESERIALIZER
-	Space(Game *game, Serializer::Reader &rd);
+	Space(Game *game, SaveLoad::Reader &rd);
 */
 
 	virtual ~Space();
 
-	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	RefCountedPtr<StarSystem> GetStarSystem() const { return m_starSystem; }
 

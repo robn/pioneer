@@ -36,21 +36,21 @@ Body::~Body()
 {
 }
 
-Serializer::Object Body::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(gs->MakeRefObject(this));
+SaveLoad::Object Body::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(sc->MakeRefObject(this));
 	so.Set("bodyClass", "Body");
-	so.Set("frameRefId", gs->GetRefId(m_frame));
+	so.Set("frameRefId", sc->GetRefId(m_frame));
 	so.Set("label", m_label);
 	so.Set("dead", m_dead);
-	so.Set("pos", m_pos.Serialize());
-	so.Set("orient", m_orient.Serialize());
+	so.Set("pos", m_pos.Save());
+	so.Set("orient", m_orient.Save());
 	so.Set("physRadius", m_physRadius);
 	so.Set("clipRadius", m_clipRadius);
 	return so;
 }
 
 /* XXX DESERIALIZER
-void Body::Load(Serializer::Reader &rd, Space *space)
+void Body::Load(SaveLoad::Reader &rd, Space *space)
 {
 	m_frame = space->GetFrameByIndex(rd.Int32());
 	m_label = rd.String();
@@ -63,9 +63,9 @@ void Body::Load(Serializer::Reader &rd, Space *space)
 	m_clipRadius = rd.Double();
 }
 
-Body *Body::Unserialize(Serializer::Reader &_rd, Space *space)
+Body *Body::Unserialize(SaveLoad::Reader &_rd, Space *space)
 {
-	Serializer::Reader rd = _rd.RdSection("Body");
+	SaveLoad::Reader rd = _rd.RdSection("Body");
 	Body *b = 0;
 	Object::Type type = Object::Type(rd.Int32());
 	switch (type) {

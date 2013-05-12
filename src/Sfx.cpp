@@ -29,16 +29,16 @@ Sfx::Sfx()
 	m_type = TYPE_NONE;
 }
 
-Serializer::Object Sfx::Serialize(const Frame *f) {
+SaveLoad::Object Sfx::Save(const Frame *f) {
 	Json::Value sfx(Json::arrayValue);
 
 	if (f->m_sfx) {
 		for (int i = 0; i < MAX_SFX_PER_FRAME; i++) {
 			const Sfx &cur = f->m_sfx[i];
 			if (cur.m_type != TYPE_NONE) {
-				Serializer::Object so;
-				so.Set("pos", cur.m_pos.Serialize());
-				so.Set("vel", cur.m_vel.Serialize());
+				SaveLoad::Object so;
+				so.Set("pos", cur.m_pos.Save());
+				so.Set("vel", cur.m_vel.Save());
 				so.Set("age", cur.m_age);
 				so.Set("type", EnumStrings::GetString("SfxType", cur.m_type));
 				sfx.append(so.GetJson());
@@ -46,11 +46,11 @@ Serializer::Object Sfx::Serialize(const Frame *f) {
 		}
 	}
 
-	return Serializer::Object(sfx);
+	return SaveLoad::Object(sfx);
 }
 
 /* XXX DESERIALIZER
-void Sfx::Load(Serializer::Reader &rd)
+void Sfx::Load(SaveLoad::Reader &rd)
 {
 	m_pos = rd.Vector3d();
 	m_vel = rd.Vector3d();
@@ -58,7 +58,7 @@ void Sfx::Load(Serializer::Reader &rd)
 	m_type = static_cast<Sfx::TYPE>(rd.Int32());
 }
 
-void Sfx::Unserialize(Serializer::Reader &rd, Frame *f)
+void Sfx::Unserialize(SaveLoad::Reader &rd, Frame *f)
 {
 	int numActive = rd.Int32();
 	if (numActive) {

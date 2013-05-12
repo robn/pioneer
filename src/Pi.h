@@ -117,7 +117,7 @@ public:
 	static sigc::signal<void> onPlayerChangeEquipment;
 	static sigc::signal<void, const SpaceStation*> onDockingClearanceExpired;
 
-	static LuaSerializer *luaSerializer;
+	static LuaSerializer *luaSaveLoad;
 	static LuaTimer *luaTimer;
 
 	static LuaNameGen *luaNameGen;

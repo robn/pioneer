@@ -86,16 +86,16 @@ void Init()
 	s_playerPerBlocCrimeRecord.resize( numFactions );
 }
 
-Serializer::Object Serialize()
+SaveLoad::Object Save()
 {
-	Serializer::Object so;
-	so.Set("criminalRecord", s_criminalRecord.Serialize());
-	so.Set("outstandingFine", s_outstandingFine.Serialize());
+	SaveLoad::Object so;
+	so.Set("criminalRecord", s_criminalRecord.Save());
+	so.Set("outstandingFine", s_outstandingFine.Save());
 
 	{
 	Json::Value playerPerBlocCrimeRecord(Json::arrayValue);
 	for (Uint32 i=0; i < s_playerPerBlocCrimeRecord.size(); i++) {
-		Serializer::Object crime;
+		SaveLoad::Object crime;
 		crime.Set("record", s_playerPerBlocCrimeRecord[i].record);
 		crime.Set("fine", s_playerPerBlocCrimeRecord[i].fine);
 		playerPerBlocCrimeRecord.append(crime.GetJson());
@@ -107,7 +107,7 @@ Serializer::Object Serialize()
 }
 
 /* XXX DESERIALIZER
-void Unserialize(Serializer::Reader &rd)
+void Unserialize(SaveLoad::Reader &rd)
 {
 	Init();
 	PersistSystemData<Sint64>::Unserialize(rd, &s_criminalRecord);

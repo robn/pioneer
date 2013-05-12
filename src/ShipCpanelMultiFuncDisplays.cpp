@@ -125,7 +125,7 @@ ScannerWidget::ScannerWidget(Graphics::Renderer *r) :
 }
 
 /* XXX DESERIALIZER
-ScannerWidget::ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd) :
+ScannerWidget::ScannerWidget(Graphics::Renderer *r, SaveLoad::Reader &rd) :
 	m_renderer(r)
 {
 	m_mode = ScannerMode(rd.Int32());
@@ -501,9 +501,9 @@ void ScannerWidget::TimeStepUpdate(float step)
 	m_scale = SCANNER_SCALE * (SCANNER_RANGE_MAX / m_currentRange);
 }
 
-Serializer::Object ScannerWidget::Serialize() const
+SaveLoad::Object ScannerWidget::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("mode", EnumStrings::GetString("ScannerMode", m_mode));
 	so.Set("currentRange", m_currentRange);
 	so.Set("manualRange", m_manualRange);

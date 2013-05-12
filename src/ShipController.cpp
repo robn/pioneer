@@ -55,29 +55,29 @@ PlayerShipController::~PlayerShipController()
 	m_fireMissileKey.disconnect();
 }
 
-Serializer::Object ShipController::Serialize(Serializer::GameSerializer *gs) const
+SaveLoad::Object ShipController::Save(SaveLoad::SaveContext *sc) const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("controllerType", "ai");
 	return so;
 }
 
-Serializer::Object PlayerShipController::Serialize(Serializer::GameSerializer *gs) const
+SaveLoad::Object PlayerShipController::Save(SaveLoad::SaveContext *sc) const
 {
-	Serializer::Object so(ShipController::Serialize(gs));
+	SaveLoad::Object so(ShipController::Save(sc));
 	so.Set("controllerType", "player");
 	so.Set("flightControlState", EnumStrings::GetString("ShipControllerFlightControlState", m_flightControlState));
 	so.Set("setSpeed", m_setSpeed);
 	so.Set("lowThrustPower", m_lowThrustPower);
 	so.Set("rotationDamping", m_rotationDamping);
-	so.Set("combatTargetRefId", gs->GetRefId(m_combatTarget));
-	so.Set("navTargetRefId", gs->GetRefId(m_navTarget));
-	so.Set("setSpeedTargetRefId", gs->GetRefId(m_setSpeedTarget));
+	so.Set("combatTargetRefId", sc->GetRefId(m_combatTarget));
+	so.Set("navTargetRefId", sc->GetRefId(m_navTarget));
+	so.Set("setSpeedTargetRefId", sc->GetRefId(m_setSpeedTarget));
 	return so;
 }
 
 /* XXX DESERIALIZER
-void PlayerShipController::Load(Serializer::Reader &rd)
+void PlayerShipController::Load(SaveLoad::Reader &rd)
 {
 	m_flightControlState = static_cast<FlightControlState>(rd.Int32());
 	m_setSpeed = rd.Double();

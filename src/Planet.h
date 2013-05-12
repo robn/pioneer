@@ -21,7 +21,7 @@ public:
 	Planet();
 	virtual ~Planet();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual void SubRender(Graphics::Renderer *r, const Camera *camera, const vector3d &camPos);
 
@@ -34,7 +34,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 
 private:

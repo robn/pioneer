@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "FloatComparison.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 // Need this pragma due to operator[] implementation.
 #pragma pack(4)
@@ -119,18 +119,18 @@ public:
 		*this = t;
 	}
 
-	Serializer::Object Serialize() const {
+	SaveLoad::Object Save() const {
 		Json::Value data(Json::arrayValue);
-		data.append(Serializer::DoubleToHexFloat(x));
-		data.append(Serializer::DoubleToHexFloat(y));
-		data.append(Serializer::DoubleToHexFloat(z));
-		return Serializer::Object(data);
+		data.append(SaveLoad::DoubleToHexFloat(x));
+		data.append(SaveLoad::DoubleToHexFloat(y));
+		data.append(SaveLoad::DoubleToHexFloat(z));
+		return SaveLoad::Object(data);
 	}
-	vector3(const Serializer::Object &so) {
+	vector3(const SaveLoad::Object &so) {
 		const Json::Value &data(so.GetJson());
-		x = T(Serializer::HexFloatToDouble(data[0].asString()));
-		y = T(Serializer::HexFloatToDouble(data[1].asString()));
-		z = T(Serializer::HexFloatToDouble(data[2].asString()));
+		x = T(SaveLoad::HexFloatToDouble(data[0].asString()));
+		y = T(SaveLoad::HexFloatToDouble(data[1].asString()));
+		z = T(SaveLoad::HexFloatToDouble(data[2].asString()));
 	}
 };
 

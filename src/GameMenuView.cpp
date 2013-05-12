@@ -3,7 +3,7 @@
 
 #include "GameMenuView.h"
 #include "Pi.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "WorldView.h"
 #include "ShipCpanel.h"
 #include "Sound.h"
@@ -643,7 +643,7 @@ void GameMenuView::OpenSaveDialog()
 	if (ok) {
 		const std::string path = FileSystem::JoinPath(Pi::GetSaveDir(), filename);
 		try {
-			Serializer::GameSerializer(Pi::game).Write(filename);
+			SaveLoad::SaveContext(Pi::game).Write(filename);
 			Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO + path); // XXX stringf with an arg would be better
 		}
 		catch (CouldNotOpenFileException) {

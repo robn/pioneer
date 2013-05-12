@@ -10,7 +10,7 @@
 #include "EquipSet.h"
 #include "galaxy/SystemPath.h"
 #include "NavLights.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "ShipType.h"
 #include "scenegraph/SceneGraph.h"
 #include "scenegraph/ModelSkin.h"
@@ -42,10 +42,10 @@ struct shipstats_t {
 
 class SerializableEquipSet: public EquipSet {
 public:
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 };
 
@@ -58,7 +58,7 @@ public:
 	Ship() {} //default constructor used before Load
 	virtual ~Ship();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	void SetController(ShipController *c); //deletes existing
 	ShipController *GetController() const { return m_controller; }

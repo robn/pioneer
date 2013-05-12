@@ -43,15 +43,15 @@ void TerrainBody::InitTerrainBody(SystemBody *sbody)
 	m_maxFeatureHeight = (m_geosphere->GetMaxFeatureHeight() + 1.0) * m_sbody->GetRadius();
 }
 
-Serializer::Object TerrainBody::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(Body::Serialize(gs));
+SaveLoad::Object TerrainBody::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(Body::Save(sc));
 	so.Set("bodyClass", "TerrainBody");
-	so.Set("systemBodyPath", m_sbody->path.Serialize());
+	so.Set("systemBodyPath", m_sbody->path.Save());
 	return so;
 }
 
 /* XXX DESERIALIZER
-void TerrainBody::Load(Serializer::Reader &rd, Space *space)
+void TerrainBody::Load(SaveLoad::Reader &rd, Space *space)
 {
 	Body::Load(rd, space);
 	SystemBody *sbody = space->GetSystemBodyByIndex(rd.Int32());

@@ -7,7 +7,7 @@
  * Blinking navigation lights for ships and stations
  */
 #include "libs.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 namespace Graphics { class Renderer; }
 namespace SceneGraph { class Model; class Billboard; }
@@ -34,10 +34,10 @@ public:
 	NavLights(SceneGraph::Model*, float period = 2.f);
 	virtual ~NavLights();
 
-	virtual Serializer::Object Serialize() const;
+	virtual SaveLoad::Object Save() const;
 
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd);
+	virtual void Load(SaveLoad::Reader &rd);
 */
 
 	void SetEnabled(bool on) { m_enabled = on; }

@@ -6,13 +6,13 @@
 
 #include "libs.h"
 #include "ShipType.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 
 class MarketAgent {
 public:
 	MarketAgent(): m_money(0) {}
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 	void SetMoney(Sint64 m) { m_money = m; }
 	Sint64 GetMoney() const { return m_money; }
@@ -35,7 +35,7 @@ protected:
 	virtual void Bought(Equip::Type t) = 0;
 	virtual void Sold(Equip::Type t) = 0;
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 */
 private:
 	Sint64 m_money;

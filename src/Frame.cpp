@@ -26,32 +26,32 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 	Init(parent, label, flags);
 }
 
-Serializer::Object Frame::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(gs->MakeRefObject(this));
+SaveLoad::Object Frame::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(sc->MakeRefObject(this));
 
 	so.Set("flags", m_flags);
 	so.Set("radius", m_radius);
 	so.Set("label", m_label);
-	so.Set("pos", m_pos.Serialize());
-	so.Set("orient", m_orient.Serialize());
+	so.Set("pos", m_pos.Save());
+	so.Set("orient", m_orient.Save());
 	so.Set("angSpeed", m_angSpeed);
-	so.Set("astroBodyRefId", gs->GetRefId(m_astroBody));
-	so.Set("systemBodyPath", m_sbody->path.Serialize());
+	so.Set("astroBodyRefId", sc->GetRefId(m_astroBody));
+	so.Set("systemBodyPath", m_sbody->path.Save());
 
 	{
 	Json::Value children(Json::arrayValue);
 	for (ChildIterator i = BeginChildren(); i != EndChildren(); ++i)
-		children.append((*i)->Serialize(gs).GetJson());
-	so.Set("children", Serializer::Object(children));
+		children.append((*i)->Save(sc).GetJson());
+	so.Set("children", SaveLoad::Object(children));
 	}
 
-	so.Set("sfx", Sfx::Serialize(this));
+	so.Set("sfx", Sfx::Save(this));
 
 	return so;
 }
 
 /* XXX DESERIALIZER
-Frame *Frame::Unserialize(Serializer::Reader &rd, Space *space, Frame *parent)
+Frame *Frame::Unserialize(SaveLoad::Reader &rd, Space *space, Frame *parent)
 {
 	Frame *f = new Frame();
 	f->m_parent = parent;

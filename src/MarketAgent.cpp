@@ -2,19 +2,19 @@
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "MarketAgent.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Player.h"
 #include "Pi.h"
 #include "Lang.h"
 
-Serializer::Object MarketAgent::Serialize() const {
-	Serializer::Object so;
+SaveLoad::Object MarketAgent::Save() const {
+	SaveLoad::Object so;
 	so.Set("money", m_money);
 	return so;
 }
 
 /* XXX DESERIALIZER
-void MarketAgent::Load(Serializer::Reader &rd)
+void MarketAgent::Load(SaveLoad::Reader &rd)
 {
 	m_money = rd.Int64();
 }

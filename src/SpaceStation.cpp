@@ -15,7 +15,7 @@
 #include "Player.h"
 #include "Polit.h"
 #include "Polit.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Ship.h"
 #include "Space.h"
 #include "StringF.h"
@@ -37,21 +37,21 @@ void SpaceStation::Uninit()
 	SpaceStationType::Uninit();
 }
 
-Serializer::Object ShipOnSale::Serialize() const {
-	Serializer::Object so;
+SaveLoad::Object ShipOnSale::Save() const {
+	SaveLoad::Object so;
 	so.Set("id", id);
 	so.Set("regId", regId);
-	so.Set("skin", skin.Serialize());
+	so.Set("skin", skin.Save());
 	return so;
 }
 
-Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const {
-	Serializer::Object so(ModelBody::Serialize(gs));
+SaveLoad::Object SpaceStation::Save(SaveLoad::SaveContext *sc) const {
+	SaveLoad::Object so(ModelBody::Save(sc));
 	so.Set("bodyClass", "SpaceStation");
-	so.Set("marketAgent", MarketAgent::Serialize());
+	so.Set("marketAgent", MarketAgent::Save());
 
 	{
-	Serializer::Object equipmentStock;
+	SaveLoad::Object equipmentStock;
 	for (int i = 0; i < Equip::TYPE_MAX; i++)
 		equipmentStock.Set(EnumStrings::GetString("EquipType", i), static_cast<Uint32>(m_equipmentStock[i]));
 	so.Set("equipmentStock", equipmentStock);
@@ -60,19 +60,19 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	{
 	Json::Value shipsOnSale(Json::arrayValue);
 	for (std::vector<ShipOnSale>::const_iterator i = m_shipsOnSale.begin(); i != m_shipsOnSale.end(); ++i)
-		shipsOnSale.append((*i).Serialize().GetJson());
+		shipsOnSale.append((*i).Save().GetJson());
 	so.Set("shipsOnSale", shipsOnSale);
 	}
 
 	{
 	Json::Value shipDocking(Json::arrayValue);
 	for (uint32_t i = 0; i < m_shipDocking.size(); i++) {
-		Serializer::Object dock;
-		dock.Set("shipRefId", gs->GetRefId(m_shipDocking[i].ship));
+		SaveLoad::Object dock;
+		dock.Set("shipRefId", sc->GetRefId(m_shipDocking[i].ship));
 		dock.Set("stage", m_shipDocking[i].stage);
 		dock.Set("stagePos", m_shipDocking[i].stagePos);
-		dock.Set("fromPos", m_shipDocking[i].fromPos.Serialize());
-		dock.Set("fromRot", m_shipDocking[i].fromRot.Serialize());
+		dock.Set("fromPos", m_shipDocking[i].fromPos.Save());
+		dock.Set("fromRot", m_shipDocking[i].fromRot.Save());
 		shipDocking.append(dock.GetJson());
 	}
 	so.Set("shipDocking", shipDocking);
@@ -81,7 +81,7 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	{
 	Json::Value bayGroups(Json::arrayValue);
 	for (uint32_t i = 0; i < mBayGroups.size(); i++) {
-		Serializer::Object group;
+		SaveLoad::Object group;
 		group.Set("minShipSize", mBayGroups[i].minShipSize);
 		group.Set("maxShipSize", mBayGroups[i].maxShipSize);
 		group.Set("inUse", mBayGroups[i].inUse);
@@ -96,16 +96,16 @@ Serializer::Object SpaceStation::Serialize(Serializer::GameSerializer *gs) const
 	so.Set("bbCreated", m_bbCreated);
 	so.Set("lastUpdatedShipyard", m_lastUpdatedShipyard);
 
-	so.Set("systemBodyPath", m_sbody->path.Serialize());
+	so.Set("systemBodyPath", m_sbody->path.Save());
 
 	so.Set("numPoliceDocked", m_numPoliceDocked);
 
-    so.Set("navLights", m_navLights->Serialize());
+    so.Set("navLights", m_navLights->Save());
 
 	return so;
 }
 /* XXX DESERIALIZER
-void SpaceStation::Load(Serializer::Reader &rd, Space *space)
+void SpaceStation::Load(SaveLoad::Reader &rd, Space *space)
 {
 	ModelBody::Load(rd, space);
 	MarketAgent::Load(rd);

@@ -19,7 +19,7 @@ class SectorView: public View {
 public:
 	SectorView();
 /* XXX DESERIALIZER
-	SectorView(Serializer::Reader &rd);
+	SectorView(SaveLoad::Reader &rd);
 */
 	virtual ~SectorView();
 
@@ -38,7 +38,7 @@ public:
 	void GotoSelectedSystem() { GotoSystem(m_selected); }
 	void GotoHyperspaceTarget() { GotoSystem(m_hyperspaceTarget); }
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 	sigc::signal<void> onHyperspaceTargetChanged;
 

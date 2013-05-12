@@ -5,7 +5,7 @@
 #define _VIEW_H
 
 #include "libs.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "gui/Gui.h"
 
 namespace Graphics { class Renderer; }

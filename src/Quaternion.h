@@ -156,20 +156,20 @@ public:
 		return (a + t*(b-a)).Normalized();
 	}
 
-	Serializer::Object Serialize() const {
+	SaveLoad::Object Save() const {
 		Json::Value data(Json::arrayValue);
-		data.append(Serializer::DoubleToHexFloat(w));
-		data.append(Serializer::DoubleToHexFloat(x));
-		data.append(Serializer::DoubleToHexFloat(y));
-		data.append(Serializer::DoubleToHexFloat(z));
-		return Serializer::Object(data);
+		data.append(SaveLoad::DoubleToHexFloat(w));
+		data.append(SaveLoad::DoubleToHexFloat(x));
+		data.append(SaveLoad::DoubleToHexFloat(y));
+		data.append(SaveLoad::DoubleToHexFloat(z));
+		return SaveLoad::Object(data);
 	}
-	Quaternion(const Serializer::Object &so) {
+	Quaternion(const SaveLoad::Object &so) {
 		const Json::Value &data(so.GetJson());
-		w = T(Serializer::HexFloatToDouble(data[0].asString()));
-		x = T(Serializer::HexFloatToDouble(data[1].asString()));
-		y = T(Serializer::HexFloatToDouble(data[2].asString()));
-		z = T(Serializer::HexFloatToDouble(data[3].asString()));
+		w = T(SaveLoad::HexFloatToDouble(data[0].asString()));
+		x = T(SaveLoad::HexFloatToDouble(data[1].asString()));
+		y = T(SaveLoad::HexFloatToDouble(data[2].asString()));
+		z = T(SaveLoad::HexFloatToDouble(data[3].asString()));
 	}
 
 	//void Print() const {

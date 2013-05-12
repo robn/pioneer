@@ -8,7 +8,7 @@
 #include "gui/Gui.h"
 #include "gui/GuiWidget.h"
 #include "View.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Background.h"
 #include "EquipType.h"
 #include "CameraController.h"
@@ -25,7 +25,7 @@ public:
 	friend class NavTunnelWidget;
 	WorldView();
 /* XXX DESERIALIZER
-	WorldView(Serializer::Reader &reader);
+	WorldView(SaveLoad::Reader &reader);
 */
 	virtual ~WorldView();
 	virtual void ShowAll();
@@ -34,7 +34,7 @@ public:
 	virtual void Draw();
 	static const double PICK_OBJECT_RECT_SIZE;
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 	enum CamType { // <enum scope='WorldView' name=WorldViewCamType prefix=CAM_>
 		CAM_INTERNAL,

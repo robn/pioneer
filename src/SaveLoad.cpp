@@ -1,19 +1,19 @@
 // Copyright © 2008-2013 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "FileSystem.h"
 #include "Pi.h"
 #include "Game.h"
 
-namespace Serializer {
+namespace SaveLoad {
 
-void GameSerializer::Write(const std::string &filename)
+void SaveContext::Write(const std::string &filename)
 {
 	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME))
 		throw CouldNotOpenFileException();
 
-	Serializer::Object so = m_game->Serialize(this);
+	SaveLoad::Object so = m_game->Save(this);
 
 	const std::string data = Json::FastWriter().write(so.GetJson());
 
@@ -26,15 +26,15 @@ void GameSerializer::Write(const std::string &filename)
 	if (nwritten != 1) throw CouldNotWriteToFileException();
 }
 
-Serializer::Object GameSerializer::MakeRefObject(const ReferrableObject *o)
+SaveLoad::Object SaveContext::MakeRefObject(const ReferrableObject *o)
 {
 	Uint32 id = GetRefId(o);
-	Serializer::Object so;
+	SaveLoad::Object so;
 	so.Set("refId", id);
 	return so;
 }
 
-Uint32 GameSerializer::GetRefId(const ReferrableObject *o)
+Uint32 SaveContext::GetRefId(const ReferrableObject *o)
 {
 	if (!o) return 0;
 	std::map<const ReferrableObject*,Uint32>::iterator i = m_objects.find(o);
@@ -161,4 +161,4 @@ Quaternionf Reader::RdQuaternionf()
 }
 #endif
 
-} /* end namespace Serializer */
+} /* end namespace SaveLoad */

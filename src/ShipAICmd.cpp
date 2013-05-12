@@ -16,15 +16,15 @@
 static const double VICINITY_MIN = 15000.0;
 static const double VICINITY_MUL = 4.0;
 
-Serializer::Object AICommand::Serialize(Serializer::GameSerializer *gs) const {
-    Serializer::Object so;
-    so.Set("shipRefId", gs->GetRefId(m_ship));
-	if (m_child) so.Set("child", m_child->Serialize(gs));
+SaveLoad::Object AICommand::Save(SaveLoad::SaveContext *sc) const {
+    SaveLoad::Object so;
+    so.Set("shipRefId", sc->GetRefId(m_ship));
+	if (m_child) so.Set("child", m_child->Save(sc));
     return so;
 }
 
 /* XXX DESERIALIZER
-AICommand *AICommand::Load(Serializer::Reader &rd)
+AICommand *AICommand::Load(SaveLoad::Reader &rd)
 {
 	CmdName name = CmdName(rd.Int32());
 	switch (name) {
@@ -39,7 +39,7 @@ AICommand *AICommand::Load(Serializer::Reader &rd)
 	}
 }
 
-AICommand::AICommand(Serializer::Reader &rd, CmdName name)
+AICommand::AICommand(SaveLoad::Reader &rd, CmdName name)
 {
 	m_cmdName = name;
 	m_shipIndex = rd.Int32();

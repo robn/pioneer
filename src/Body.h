@@ -8,7 +8,7 @@
 #include "matrix4x4.h"
 #include "Object.h"
 #include "Frame.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "PropertiedObject.h"
 #include <string>
 
@@ -17,16 +17,16 @@ class Space;
 class Camera;
 namespace Graphics { class Renderer; }
 
-class Body: public Object, public PropertiedObject, public Serializer::ReferrableObject {
+class Body: public Object, public PropertiedObject, public SaveLoad::ReferrableObject {
 public:
 	OBJDEF(Body, Object, BODY);
 	Body();
 	virtual ~Body();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 /* XXX DESERIALIZER
-	static Body *Unserialize(Serializer::Reader &rd, Space *space);
+	static Body *Unserialize(SaveLoad::Reader &rd, Space *space);
 	virtual void PostLoadFixup(Space *space) {};
 */
 
@@ -106,7 +106,7 @@ public:
 
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 	unsigned int m_flags;
 

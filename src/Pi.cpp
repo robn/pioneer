@@ -47,7 +47,7 @@
 #include "Projectile.h"
 #include "SDLWrappers.h"
 #include "SectorView.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Sfx.h"
 #include "ShipCpanel.h"
 #include "ShipType.h"
@@ -90,7 +90,7 @@ sigc::signal<void> Pi::onPlayerChangeTarget;
 sigc::signal<void> Pi::onPlayerChangeFlightControlState;
 sigc::signal<void> Pi::onPlayerChangeEquipment;
 sigc::signal<void, const SpaceStation*> Pi::onDockingClearanceExpired;
-LuaSerializer *Pi::luaSerializer;
+LuaSerializer *Pi::luaSaveLoad;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
 int Pi::keyModState;
@@ -174,7 +174,7 @@ static void LuaInit()
 
 	LuaObject<LuaChatForm>::RegisterClass();
 
-	Pi::luaSerializer = new LuaSerializer();
+	Pi::luaSaveLoad = new LuaSerializer();
 	Pi::luaTimer = new LuaTimer();
 
 	LuaObject<LuaSerializer>::RegisterClass();
@@ -211,7 +211,7 @@ static void LuaInit()
 static void LuaUninit() {
 	delete Pi::luaNameGen;
 
-	delete Pi::luaSerializer;
+	delete Pi::luaSaveLoad;
 	delete Pi::luaTimer;
 
 	Lua::Uninit();
@@ -733,7 +733,7 @@ void Pi::HandleEvents()
 									const std::string name = "_quicksave";
 									const std::string path = FileSystem::JoinPath(GetSaveDir(), name);
 									try {
-										Serializer::GameSerializer(Pi::game).Write(name);
+										SaveLoad::SaveContext(Pi::game).Write(name);
 										Pi::cpan->MsgLog()->Message("", Lang::GAME_SAVED_TO + path);
 									} catch (CouldNotOpenFileException) {
 										Pi::cpan->MsgLog()->Message("", stringf(Lang::COULD_NOT_OPEN_FILENAME, formatarg("path", path)));

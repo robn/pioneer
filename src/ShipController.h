@@ -8,7 +8,7 @@
  * Controls thrusters, autopilot according to player input or AI
  */
 #include "libs.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Body.h"
 
 class Ship;
@@ -31,10 +31,10 @@ public:
 	ShipController() { }
 	virtual ~ShipController() { }
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd) { }
+	virtual void Load(SaveLoad::Reader &rd) { }
 	virtual void PostLoadFixup(Space *) { }
 */
 	virtual void StaticUpdate(float timeStep);
@@ -49,9 +49,9 @@ public:
 	PlayerShipController();
 	~PlayerShipController();
 
-	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 /* XXX DESERIALIZER
-	void Load(Serializer::Reader &rd);
+	void Load(SaveLoad::Reader &rd);
 	void PostLoadFixup(Space *s);
 */
 	void StaticUpdate(float timeStep);

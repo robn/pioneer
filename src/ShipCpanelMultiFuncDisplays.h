@@ -6,7 +6,7 @@
 
 #include "gui/Gui.h"
 #include "EquipType.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "Object.h"
 #include "EnumStrings.h"
 
@@ -62,7 +62,7 @@ class ScannerWidget: public IMultiFunc, public Gui::Widget {
 public:
 	ScannerWidget(Graphics::Renderer *r);
 /* XXX DESERIALIZER
-	ScannerWidget(Graphics::Renderer *r, Serializer::Reader &rd);
+	ScannerWidget(Graphics::Renderer *r, SaveLoad::Reader &rd);
 */
 	virtual ~ScannerWidget();
 	void GetSizeRequested(float size[2]);
@@ -72,7 +72,7 @@ public:
 
 	void TimeStepUpdate(float step);
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 
 	enum ScannerMode { // <enum scope='ScannerWidget' name=ScannerMode prefix=SCANNER_MODE_>
 		SCANNER_MODE_AUTO,

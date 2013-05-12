@@ -4,7 +4,7 @@
 #ifndef _SYSTEMPATH_H
 #define _SYSTEMPATH_H
 
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "LuaWrappable.h"
 #include "SDL_stdinc.h"
 #include <stdexcept>
@@ -102,16 +102,16 @@ public:
 		return SystemPath(sectorX, sectorY, sectorZ, systemIndex);
 	}
 
-	Serializer::Object Serialize() const {
+	SaveLoad::Object Save() const {
 		Json::Value data(Json::arrayValue);
 		data.append(sectorX);
 		data.append(sectorY);
 		data.append(sectorZ);
 		data.append(systemIndex);
 		data.append(bodyIndex);
-		return Serializer::Object(data);
+		return SaveLoad::Object(data);
 	}
-	SystemPath(const Serializer::Object &so) {
+	SystemPath(const SaveLoad::Object &so) {
 		const Json::Value &data(so.GetJson());
 		sectorX = data[0].asInt();
 		sectorY = data[1].asInt();

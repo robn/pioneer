@@ -60,7 +60,7 @@
 // "Deserialize" function under that namespace. that data returned will be
 // given back to the module
 
-Json::Value LuaSerializer::pickle(Serializer::GameSerializer *gs, lua_State *l, int idx, const std::string &name)
+Json::Value LuaSerializer::pickle(SaveLoad::SaveContext *sc, lua_State *l, int idx, const std::string &name)
 {
 	LUA_DEBUG_START(l);
 
@@ -106,7 +106,7 @@ Json::Value LuaSerializer::pickle(Serializer::GameSerializer *gs, lua_State *l, 
 		case LUA_TNUMBER: {
 			value = Json::Value(Json::objectValue);
 			value["type"] = "float";
-			value["data"] = Serializer::DoubleToHexFloat(lua_tonumber(l, idx));
+			value["data"] = SaveLoad::DoubleToHexFloat(lua_tonumber(l, idx));
 			break;
 		}
 
@@ -153,8 +153,8 @@ Json::Value LuaSerializer::pickle(Serializer::GameSerializer *gs, lua_State *l, 
 				while (lua_next(l, -2)) {
 					Json::Value item(Json::arrayValue);
 
-					item.append(pickle(gs, l, -2, name));
-					item.append(pickle(gs, l, -1, name));
+					item.append(pickle(sc, l, -2, name));
+					item.append(pickle(sc, l, -1, name));
 
 					data.append(item);
 
@@ -180,14 +180,14 @@ Json::Value LuaSerializer::pickle(Serializer::GameSerializer *gs, lua_State *l, 
 				const SystemPath *sbp = static_cast<const SystemPath*>(o);
 				value["type"] = "userdata";
 				value["class"] = "SystemPath";
-				value["data"] = sbp->Serialize().GetJson();
+				value["data"] = sbp->Save().GetJson();
 			}
 
 			else if (lo->Isa("Body")) {
 				const Body *b = static_cast<const Body*>(o);
 				value["type"] = "userdata";
 				value["class"] = "Body";
-				value["data"] = gs->GetRefId(b);
+				value["data"] = sc->GetRefId(b);
 			}
 
 			else
@@ -404,7 +404,7 @@ const char *LuaSerializer::unpickle(lua_State *l, const char *pos)
 }
 */
 
-Serializer::Object LuaSerializer::Serialize(Serializer::GameSerializer *gs) const
+SaveLoad::Object LuaSerializer::Save(SaveLoad::SaveContext *sc) const
 {
 	lua_State *l = Lua::manager->GetLuaState();
 
@@ -437,12 +437,12 @@ Serializer::Object LuaSerializer::Serialize(Serializer::GameSerializer *gs) cons
 	lua_newtable(l);
 	lua_setfield(l, LUA_REGISTRYINDEX, "PiSerializerTableRefs");
 
-	Serializer::Object so;
+	SaveLoad::Object so;
 
 	lua_pushnil(l);
 	while (lua_next(l, savetable)) {
 		const std::string name(lua_tostring(l, -2));
-		so.Set(name, pickle(gs, l, -1, name));
+		so.Set(name, pickle(sc, l, -1, name));
 		lua_pop(l, 1);
 	}
 
@@ -457,7 +457,7 @@ Serializer::Object LuaSerializer::Serialize(Serializer::GameSerializer *gs) cons
 }
 
 /* XXX DESERIALIZER
-void LuaSerializer::Unserialize(Serializer::Reader &rd)
+void LuaSerializer::Unserialize(SaveLoad::Reader &rd)
 {
 	lua_State *l = Lua::manager->GetLuaState();
 

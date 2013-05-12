@@ -5,7 +5,7 @@
 #define _FRAME_H
 
 #include "libs.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include <string>
 #include <list>
 
@@ -18,7 +18,7 @@ class Space;
 
 // Frame of reference.
 
-class Frame : public Serializer::ReferrableObject {
+class Frame : public SaveLoad::ReferrableObject {
 public:
 	enum { FLAG_ROTATING=(1<<1), FLAG_HAS_ROT=(1<<2) };
 
@@ -27,11 +27,11 @@ public:
 	Frame(Frame *parent, const char *label, unsigned int flags);
 	virtual ~Frame();
 
-	Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 /* XXX DESERIALIZER
 	static void PostUnserializeFixup(Frame *f, Space *space);
-	static Frame *Unserialize(Serializer::Reader &rd, Space *space, Frame *parent);
+	static Frame *Unserialize(SaveLoad::Reader &rd, Space *space, Frame *parent);
 */
 	const std::string &GetLabel() const { return m_label; }
 	void SetLabel(const char *label) { m_label = label; }

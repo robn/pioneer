@@ -13,7 +13,7 @@
 #include "Player.h"
 #include "galaxy/StarSystem.h"
 #include "SpaceStation.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include "collider/collider.h"
 #include "Missile.h"
 #include "HyperspaceCloud.h"
@@ -90,7 +90,7 @@ Space::Space(Game *game, const SystemPath &path)
 }
 
 /* XXX DESERIALIZER
-Space::Space(Game *game, Serializer::Reader &rd)
+Space::Space(Game *game, SaveLoad::Reader &rd)
 	: m_game(game)
 	, m_frameIndexValid(false)
 	, m_bodyIndexValid(false)
@@ -105,7 +105,7 @@ Space::Space(Game *game, Serializer::Reader &rd)
 	m_background.Refresh(m_starSystem->GetSeed());
 	RebuildSystemBodyIndex();
 
-	Serializer::Reader section = rd.RdSection("Frames");
+	SaveLoad::Reader section = rd.RdSection("Frames");
 	m_rootFrame.Reset(Frame::Unserialize(section, this, 0));
 	RebuildFrameIndex();
 
@@ -128,18 +128,18 @@ Space::~Space()
 	UpdateBodies();
 }
 
-Serializer::Object Space::Serialize(Serializer::GameSerializer *gs) const
+SaveLoad::Object Space::Save(SaveLoad::SaveContext *sc) const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 
-	so.Set("system", m_starSystem->Serialize());
-	so.Set("frames", m_rootFrame->Serialize(gs));
+	so.Set("system", m_starSystem->Save());
+	so.Set("frames", m_rootFrame->Save(sc));
 
 	{
 	Json::Value bodies(Json::arrayValue);
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-		bodies.append((*i)->Serialize(gs).GetJson());
-	so.Set("bodies", Serializer::Object(bodies));
+		bodies.append((*i)->Save(sc).GetJson());
+	so.Set("bodies", SaveLoad::Object(bodies));
 	}
 
 	return so;

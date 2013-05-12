@@ -7,7 +7,7 @@
 #include "libs.h"
 #include "EquipType.h"
 #include "Polit.h"
-#include "Serializer.h"
+#include "SaveLoad.h"
 #include <vector>
 #include <string>
 #include "RefCounted.h"
@@ -222,9 +222,9 @@ public:
 	SystemPath GetPathOf(const SystemBody *sbody) const;
 	SystemBody *GetBodyByPath(const SystemPath &path) const;
 
-	Serializer::Object Serialize() const;
+	SaveLoad::Object Save() const;
 	// XXX Should be a constructor, but StarSystem isn't really set up for that yet
-	static RefCountedPtr<StarSystem> Unserialize(const Serializer::Object &so);
+	static RefCountedPtr<StarSystem> Unserialize(const SaveLoad::Object &so);
 
 	void Dump();
 	const SystemPath &GetPath() const { return m_path; }

@@ -115,7 +115,7 @@ noinst_HEADERS = \
 	RefCounted.h \
 	SDLWrappers.h \
 	SectorView.h \
-	Serializer.h \
+	SaveLoad.h \
 	StationAdvertForm.h \
 	StationBulletinBoardForm.h \
 	StationCommodityMarketForm.h \
@@ -263,7 +263,7 @@ pioneer_SOURCES	= \
 	PropertyMap.cpp \
 	SDLWrappers.cpp \
 	SectorView.cpp \
-	Serializer.cpp \
+	SaveLoad.cpp \
 	StationAdvertForm.cpp \
 	StationBulletinBoardForm.cpp \
 	StationCommodityMarketForm.cpp \

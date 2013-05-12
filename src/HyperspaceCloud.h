@@ -24,7 +24,7 @@ public:
 	HyperspaceCloud();
 	virtual ~HyperspaceCloud();
 
-	virtual Serializer::Object Serialize(Serializer::GameSerializer *gs) const;
+	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
 	virtual void SetVelocity(const vector3d &v) { m_vel = v; }
 	virtual vector3d GetVelocity() const { return m_vel; }
@@ -41,7 +41,7 @@ public:
 	virtual void UpdateInterpTransform(double alpha);
 protected:
 /* XXX DESERIALIZER
-	virtual void Load(Serializer::Reader &rd, Space *space);
+	virtual void Load(SaveLoad::Reader &rd, Space *space);
 */
 
 private:

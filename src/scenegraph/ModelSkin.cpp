@@ -92,16 +92,16 @@ void ModelSkin::SetLabel(const std::string &label)
 	m_label = label;
 }
 
-Serializer::Object ModelSkin::Serialize() const
+SaveLoad::Object ModelSkin::Save() const
 {
-	Serializer::Object so;
+	SaveLoad::Object so;
 
 	so.Set("patternIndex", m_patternIndex);
 
 	{
 	Json::Value colors(Json::arrayValue);
 	for (unsigned int i = 0; i < 3; i++)
-		colors.append(m_colors[i].Serialize().GetJson());
+		colors.append(m_colors[i].Save().GetJson());
 	so.Set("colors", colors);
 	}
 
@@ -118,7 +118,7 @@ Serializer::Object ModelSkin::Serialize() const
 }
 
 /* XXX DESERIALIZER
-void ModelSkin::Load(Serializer::Reader &rd)
+void ModelSkin::Load(SaveLoad::Reader &rd)
 {
 	m_patternIndex = rd.Int32();
 	for (unsigned int i = 0; i < 3; i++) {
