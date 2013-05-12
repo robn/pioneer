@@ -44,6 +44,18 @@ Uint32 SaveContext::GetRefId(const ReferrableObject *o)
 	return m_nextId;
 }
 
+Game *LoadContext::Read(const std::string &filename)
+{
+	RefCountedPtr<FileSystem::FileData> fd = FileSystem::userFiles.ReadFile(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
+
+	Json::Value data;
+	if (!Json::Reader().parse(fd->GetData(), fd->GetData()+fd->GetSize(), data)) throw SavedGameCorruptException();
+
+	return new Game(SaveLoad::Object(data), this);
+}
+
+
+
 #if 0
 Reader::Reader(): m_data(""), m_pos(0) {
 }

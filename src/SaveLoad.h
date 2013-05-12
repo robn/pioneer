@@ -130,6 +130,14 @@ private:
 };
 
 
+class LoadContext {
+public:
+	LoadContext() {}
+
+	Game *Read(const std::string &filename);
+};
+
+
 #if 0
 XXX DESERIALIZER
 	class Reader {

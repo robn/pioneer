@@ -90,7 +90,7 @@ static int l_game_load_game(lua_State *l)
 	const std::string filename(luaL_checkstring(l, 1));
 
 	try {
-		Pi::game = Game::LoadGame(filename);
+		Pi::game = SaveLoad::LoadContext().Read(filename);
 	}
 	catch (SavedGameCorruptException) {
 		luaL_error(l, Lang::GAME_LOAD_CORRUPT);

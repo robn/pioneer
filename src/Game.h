@@ -28,9 +28,7 @@ public:
 	Game(const SystemPath &path, const vector3d &pos);
 
 	// load game
-/* XXX DESERIALIZER
-	Game(SaveLoad::Reader &rd);
-*/
+	Game(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 	~Game();
 

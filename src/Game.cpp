@@ -104,24 +104,29 @@ Game::~Game()
 	m_player.Reset();
 }
 
-/* XXX DESERIALIZER
-Game::Game(SaveLoad::Reader &rd) :
+Game::Game(const SaveLoad::Object &so, SaveLoad::LoadContext *lc) :
 	m_timeAccel(TIMEACCEL_PAUSED),
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
 	m_forceTimeAccel(false)
 {
-	// signature check
-	for (Uint32 i = 0; i < strlen(s_saveStart)+1; i++)
-		if (rd.Byte() != s_saveStart[i]) throw SavedGameCorruptException();
 
-	// version check
-	rd.SetStreamVersion(rd.Int32());
-	fprintf(stderr, "savefile version: %d\n", rd.StreamVersion());
-	if (rd.StreamVersion() != s_saveVersion) {
-		fprintf(stderr, "can't load savefile, expected version: %d\n", s_saveVersion);
+	{
+	SaveLoad::Object meta;
+	so.Get("meta", meta);
+
+	int saveVersion;
+	std::string gameVersion, gameExtraVersion;
+
+	meta.Get("saveVersion", saveVersion);
+
+	if (saveVersion != s_saveVersion) {
+		// XXX attempt savefile upgrade
+		fprintf(stderr, "can't load savefile, expected version %d, got version %d\n", s_saveVersion, saveVersion);
 		throw SavedGameWrongVersionException();
 	}
+	}
 
+/* XXX DESERIALIZER
 	SaveLoad::Reader section;
 
 	// space, all the bodies and things
@@ -165,8 +170,8 @@ Game::Game(SaveLoad::Reader &rd) :
 	// signature check
 	for (Uint32 i = 0; i < strlen(s_saveEnd)+1; i++)
 		if (rd.Byte() != s_saveEnd[i]) throw SavedGameCorruptException();
-}
 */
+}
 
 SaveLoad::Object Game::Save(SaveLoad::SaveContext *sc) const
 {
@@ -669,17 +674,4 @@ void Game::DestroyViews()
 	Pi::worldView = 0;
 	Pi::sectorView = 0;
 	Pi::cpan = 0;
-}
-
-Game *Game::LoadGame(const std::string &filename)
-{
-/* XXX DESERIALIZER
-	printf("Game::LoadGame('%s')\n", filename.c_str());
-	FILE *f = FileSystem::userFiles.OpenReadStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
-	if (!f) throw CouldNotOpenFileException();
-	SaveLoad::Reader rd(f);
-	fclose(f);
-	return new Game(rd);
-*/
-    return 0;
 }

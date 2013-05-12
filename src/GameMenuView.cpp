@@ -663,7 +663,7 @@ void GameMenuView::OpenLoadDialog()
 		// XXX one day we'll be able to load a new game without tearing down the old one
 		Pi::EndGame();
 		try {
-			Game *newGame = Game::LoadGame(filename);
+			Game *newGame = SaveLoad::LoadContext().Read(filename);
 			Pi::game = newGame;
 			Pi::InitGame();
 			Pi::StartGame();
