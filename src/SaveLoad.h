@@ -117,7 +117,6 @@ class SaveContext {
 public:
 	SaveContext(Game *game) : m_game(game), m_nextId(0) {}
 
-	// XXX should be const, but can't until all the serializers are const too
 	// Write throws exceptions on failure
 	void Write(const std::string &filename);
 
