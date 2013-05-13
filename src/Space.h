@@ -27,9 +27,7 @@ public:
 	Space(Game *game, const SystemPath &path);
 
 	// initialise from save file
-/* XXX DESERIALIZER
-	Space(Game *game, SaveLoad::Reader &rd);
-*/
+	Space(Game *game, const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 	virtual ~Space();
 

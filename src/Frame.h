@@ -25,14 +25,11 @@ public:
 	Frame();
 	Frame(Frame *parent, const char *label);
 	Frame(Frame *parent, const char *label, unsigned int flags);
+	Frame(Frame *parent, const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 	virtual ~Frame();
 
 	SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
 
-/* XXX DESERIALIZER
-	static void PostUnserializeFixup(Frame *f, Space *space);
-	static Frame *Unserialize(SaveLoad::Reader &rd, Space *space, Frame *parent);
-*/
 	const std::string &GetLabel() const { return m_label; }
 	void SetLabel(const char *label) { m_label = label; }
 

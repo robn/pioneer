@@ -26,6 +26,42 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 	Init(parent, label, flags);
 }
 
+Frame::Frame(Frame *parent, const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
+{
+	Frame *f = new Frame();
+	f->m_parent = parent;
+
+	SaveLoad::Object data;
+
+	so.Get("flags", m_flags);
+	so.Get("radius", m_radius);
+	so.Get("label", m_label);
+
+	so.Get("pos", data); m_pos = vector3d(data);
+	so.Get("orient", data); m_orient = matrix3x3d(data);
+
+	so.Get("angSpeed", m_angSpeed);
+
+	// XXX DESERIALIZER so.Set("astroBodyRefId", sc->GetRefId(m_astroBody));
+
+	/* XXX DESERIALIZER probably StarSystem::GetCached(path)->GetBodyByPath(path)
+	so.Get("systemBodyPath", data); m_sbody
+	so.Set("systemBodyPath", m_sbody->path.Save());
+	*/
+
+	so.Get("children", data);
+	{
+	const Json::Value children(data.GetJson());
+	for (Json::Value::const_iterator i = children.begin(); i != children.end(); ++i)
+		m_children.push_back(new Frame(this, SaveLoad::Object(*i), lc));
+	}
+
+	/* XXX DESERIALIZER probably right
+	so.Get("sfx", data);
+	Sfx::Load(this, data);
+	*/
+}
+
 SaveLoad::Object Frame::Save(SaveLoad::SaveContext *sc) const {
 	SaveLoad::Object so(sc->MakeRefObject(this));
 

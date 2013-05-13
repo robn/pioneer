@@ -89,18 +89,34 @@ Space::Space(Game *game, const SystemPath &path)
 	//DebugDumpFrames();
 }
 
-/* XXX DESERIALIZER
-Space::Space(Game *game, SaveLoad::Reader &rd)
+Space::Space(Game *game, const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
 	: m_game(game)
-	, m_frameIndexValid(false)
-	, m_bodyIndexValid(false)
-	, m_sbodyIndexValid(false)
 	, m_background(Pi::renderer)
 	, m_bodyNearFinder(this)
 #ifndef NDEBUG
 	, m_processingFinalizationQueue(false)
 #endif
 {
+	SaveLoad::Object data;
+	so.Get("system", data);
+	m_starSystem = StarSystem::GetCached(SystemPath(data));
+	
+	so.Get("frames", data);
+	m_rootFrame.Reset(new Frame(0, data, lc));
+
+	/* XXX DESERIALIZER this is probably right
+	so.Get("bodies", data);
+	{
+	Json::Value bodies(data.GetJson());
+	for (Json::Value::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
+		m_bodies.push_back(Body::Load(SaveLoad::Object(*i), lc));
+	}
+	}
+	*/
+
+	// XXX DESERIALIZER post-load fixup?
+
+/* XXX DESERIALIZER
 	m_starSystem = StarSystem::Unserialize(rd);
 	m_background.Refresh(m_starSystem->GetSeed());
 	RebuildSystemBodyIndex();
@@ -117,8 +133,8 @@ Space::Space(Game *game, SaveLoad::Reader &rd)
 	Frame::PostUnserializeFixup(m_rootFrame.Get(), this);
 	for (BodyIterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		(*i)->PostLoadFixup(this);
-}
 */
+}
 
 Space::~Space()
 {

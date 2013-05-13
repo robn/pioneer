@@ -126,6 +126,11 @@ Game::Game(const SaveLoad::Object &so, SaveLoad::LoadContext *lc) :
 	}
 	}
 
+	SaveLoad::Object data;
+
+	so.Get("space", data);
+	m_space.Reset(new Space(this, data, lc));
+
 /* XXX DESERIALIZER
 	SaveLoad::Reader section;
 
