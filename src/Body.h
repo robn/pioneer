@@ -17,7 +17,7 @@ class Space;
 class Camera;
 namespace Graphics { class Renderer; }
 
-class Body: public Object, public PropertiedObject, public SaveLoad::ReferrableObject {
+class Body: public Object, public PropertiedObject, public SaveLoad::RefObject {
 public:
 	OBJDEF(Body, Object, BODY);
 	Body();

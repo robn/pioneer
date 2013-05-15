@@ -18,7 +18,7 @@ class Space;
 
 // Frame of reference.
 
-class Frame : public SaveLoad::ReferrableObject {
+class Frame : public SaveLoad::RefObject {
 public:
 	enum { FLAG_ROTATING=(1<<1), FLAG_HAS_ROT=(1<<2) };
 

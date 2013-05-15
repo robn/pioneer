@@ -42,7 +42,7 @@ Frame::Frame(Frame *parent, const SaveLoad::Object &so, SaveLoad::LoadContext *l
 
 	so.Get("angSpeed", m_angSpeed);
 
-	// XXX DESERIALIZER so.Set("astroBodyRefId", sc->GetRefId(m_astroBody));
+	lc->Fixup(so, "astroBodyRefId", &m_astroBody);
 
 	/* XXX DESERIALIZER probably StarSystem::GetCached(path)->GetBodyByPath(path)
 	so.Get("systemBodyPath", data); m_sbody
@@ -63,7 +63,7 @@ Frame::Frame(Frame *parent, const SaveLoad::Object &so, SaveLoad::LoadContext *l
 }
 
 SaveLoad::Object Frame::Save(SaveLoad::SaveContext *sc) const {
-	SaveLoad::Object so(sc->MakeRefObject(this));
+	SaveLoad::Object so(SaveLoad::RefObject::Save(sc));
 
 	so.Set("flags", m_flags);
 	so.Set("radius", m_radius);

@@ -108,25 +108,54 @@ private:
 
 
 class SaveContext;
+class LoadContext;
 
-class ReferrableObject {
-	virtual SaveLoad::Object Save(SaveContext *) const = 0;
+class RefObject {
+protected:
+	RefObject() {}
+	RefObject(const SaveLoad::Object &so, LoadContext *lc);
+	virtual SaveLoad::Object Save(SaveContext *sc) const;
 };
+
+// class to track cross-object references
+// during save, put objects in, get numeric identifiers out
+// during load, record objects and their ids when you see them. later when you
+// find an id, put it in and get the corresponding object out
+class RefTracker {
+public:
+	RefTracker() : m_nextId(1) {}
+
+	// return a unique identifier for this object. if it hasn't been seen
+	// before, returns a fresh id, otherwise returns the same one as last time
+	// passing a null will always return 0
+	Uint32 GetRefId(const RefObject *o);
+
+	// record an object with a specific id. pretty much like GetId, except you
+	// set the id. if the object or id is already used, does nothing
+	void AddRefId(const RefObject *o, Uint32 refId);
+
+	// get the object for the given id. returns null if its not found
+	RefObject *GetRefObject(Uint32 refId);
+
+private:
+	Uint32 m_nextId;
+	std::map<const RefObject*,Uint32> m_idForObject;
+	std::map<Uint32,const RefObject*> m_objectForId;
+};
+
 
 class SaveContext {
 public:
-	SaveContext(Game *game) : m_game(game), m_nextId(0) {}
+	SaveContext(Game *game) : m_game(game) {}
 
 	// Write throws exceptions on failure
 	void Write(const std::string &filename);
 
-	SaveLoad::Object MakeRefObject(const ReferrableObject *o);
-	Uint32 GetRefId(const ReferrableObject *o);
+	Uint32 GetRefId(const RefObject *o) { return m_rt.GetRefId(o); }
 
 private:
 	Game *m_game;
-	Uint32 m_nextId;
-	std::map<const ReferrableObject*,Uint32> m_objects;
+	RefTracker m_rt;
 };
 
 
@@ -135,6 +164,27 @@ public:
 	LoadContext() {}
 
 	Game *Read(const std::string &filename);
+
+	template <typename T> void Fixup(const SaveLoad::Object &so, const std::string &key, T **loc) {
+		Uint32 refId;
+		so.Get(key, refId);
+		Fixup(refId, loc);
+	}
+
+	template <typename T> void Fixup(Uint32 refId, T **loc) {
+		m_fixups[refId] = reinterpret_cast<void**>(loc);
+#ifdef DEBUG
+		*loc = reinterpret_cast<T*>(0x5a5a5a5a);
+#endif
+	}
+
+	void AddRefId(const RefObject *o, Uint32 refId) { m_rt.AddRefId(o, refId); }
+
+private:
+	RefTracker m_rt;
+
+	void ApplyFixups();
+	std::map<Uint32,void**> m_fixups;
 };
 
 

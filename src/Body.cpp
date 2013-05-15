@@ -37,7 +37,7 @@ Body::~Body()
 }
 
 SaveLoad::Object Body::Save(SaveLoad::SaveContext *sc) const {
-	SaveLoad::Object so(sc->MakeRefObject(this));
+	SaveLoad::Object so(SaveLoad::RefObject::Save(sc));
 	so.Set("bodyClass", "Body");
 	so.Set("frameRefId", sc->GetRefId(m_frame));
 	so.Set("label", m_label);

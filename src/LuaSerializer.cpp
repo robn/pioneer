@@ -184,7 +184,7 @@ Json::Value LuaSerializer::pickle(SaveLoad::SaveContext *sc, lua_State *l, int i
 			}
 
 			else if (lo->Isa("Body")) {
-				const Body *b = static_cast<const Body*>(o);
+				Body *b = static_cast<Body*>(o);
 				value["type"] = "userdata";
 				value["class"] = "Body";
 				value["data"] = sc->GetRefId(b);

@@ -8,6 +8,53 @@
 
 namespace SaveLoad {
 
+RefObject::RefObject(const SaveLoad::Object &so, LoadContext *lc)
+{
+	Uint32 refId;
+	so.Get("refId", refId);
+	assert(refId);
+	lc->AddRefId(this, refId);
+}
+
+SaveLoad::Object RefObject::Save(SaveContext *sc) const
+{
+	Uint32 refId = sc->GetRefId(this);
+	SaveLoad::Object so;
+	so.Set("refId", refId);
+	return so;
+}
+
+
+Uint32 RefTracker::GetRefId(const RefObject *o)
+{
+	if (!o) return 0;
+	std::map<const RefObject*,Uint32>::iterator i = m_idForObject.find(o);
+	if (i != m_idForObject.end())
+		return (*i).second;
+	Uint32 refId = m_nextId;
+	AddRefId(o, refId);
+	return refId;
+}
+
+void RefTracker::AddRefId(const RefObject *o, Uint32 refId)
+{
+	m_idForObject.insert(std::make_pair(o, refId));
+	m_objectForId.insert(std::make_pair(refId, o));
+	if (m_nextId <= refId) m_nextId = refId+1;
+}
+
+RefObject *RefTracker::GetRefObject(Uint32 refId)
+{
+	if (!refId) return 0;
+	std::map<Uint32,const RefObject*>::iterator i = m_objectForId.find(refId);
+	if (i != m_objectForId.end())
+        // const cast because the caller almost certainly will want to use it
+		return const_cast<RefObject*>((*i).second);
+	assert(!refId); // non-zero refId should always have a valid object
+	return 0;
+}
+
+
 void SaveContext::Write(const std::string &filename)
 {
 	if (!FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME))
@@ -26,23 +73,6 @@ void SaveContext::Write(const std::string &filename)
 	if (nwritten != 1) throw CouldNotWriteToFileException();
 }
 
-SaveLoad::Object SaveContext::MakeRefObject(const ReferrableObject *o)
-{
-	Uint32 id = GetRefId(o);
-	SaveLoad::Object so;
-	so.Set("refId", id);
-	return so;
-}
-
-Uint32 SaveContext::GetRefId(const ReferrableObject *o)
-{
-	if (!o) return 0;
-	std::map<const ReferrableObject*,Uint32>::iterator i = m_objects.find(o);
-	if (i != m_objects.end())
-		return (*i).second;
-	m_objects.insert(i, std::make_pair(o, ++m_nextId));
-	return m_nextId;
-}
 
 Game *LoadContext::Read(const std::string &filename)
 {
@@ -51,7 +81,16 @@ Game *LoadContext::Read(const std::string &filename)
 	Json::Value data;
 	if (!Json::Reader().parse(fd->GetData(), fd->GetData()+fd->GetSize(), data)) throw SavedGameCorruptException();
 
-	return new Game(SaveLoad::Object(data), this);
+	Game *game = new Game(SaveLoad::Object(data), this);
+	ApplyFixups();
+
+	return game;
+}
+
+void LoadContext::ApplyFixups()
+{
+	for (std::map<Uint32,void**>::iterator i = m_fixups.begin(); i != m_fixups.end(); ++i)
+		*((*i).second) = m_rt.GetRefObject((*i).first);
 }
 
 
