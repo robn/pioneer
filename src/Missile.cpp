@@ -42,6 +42,8 @@ SaveLoad::Object Missile::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+Missile::Missile(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Ship(so, lc)
+{
 /* XXX DESERIALIZER
 void Missile::PostLoadFixup(Space *space)
 {
@@ -57,6 +59,7 @@ void Missile::Load(SaveLoad::Reader &rd, Space *space)
 	m_armed = rd.Bool();
 }
 */
+}
 
 void Missile::TimeStepUpdate(const float timeStep)
 {

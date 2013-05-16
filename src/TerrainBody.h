@@ -17,6 +17,7 @@ public:
 	OBJDEF(TerrainBody, Body, TERRAINBODY);
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	TerrainBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 	virtual void SubRender(Graphics::Renderer *r, const Camera *camera, const vector3d &camPos) {}

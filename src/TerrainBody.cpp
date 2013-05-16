@@ -50,6 +50,8 @@ SaveLoad::Object TerrainBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+TerrainBody::TerrainBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+{
 /* XXX DESERIALIZER
 void TerrainBody::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -58,6 +60,7 @@ void TerrainBody::Load(SaveLoad::Reader &rd, Space *space)
 	InitTerrainBody(sbody);
 }
 */
+}
 
 void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform)
 {

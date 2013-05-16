@@ -21,6 +21,7 @@ public:
 	Player() { }; //default constructor used before Load
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Player(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	virtual void SetDockedWith(SpaceStation *, int port);
 	virtual bool OnDamage(Object *attacker, float kgDamage);

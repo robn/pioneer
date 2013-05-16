@@ -49,9 +49,9 @@ SaveLoad::Object Body::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-/* XXX DESERIALIZER
-void Body::Load(SaveLoad::Reader &rd, Space *space)
+Body::Body(const SaveLoad::Object &so, SaveLoad::LoadContext *lc) : PropertiedObject(Lua::manager), SaveLoad::RefObject(so, lc)
 {
+/* XXX DESERIALIZER
 	m_frame = space->GetFrameByIndex(rd.Int32());
 	m_label = rd.String();
 	Properties().Set("label", m_label);
@@ -61,40 +61,37 @@ void Body::Load(SaveLoad::Reader &rd, Space *space)
 	for (int i=0; i<9; i++) m_orient[i] = rd.Double();
 	m_physRadius = rd.Double();
 	m_clipRadius = rd.Double();
+*/
 }
 
-Body *Body::Unserialize(SaveLoad::Reader &_rd, Space *space)
+Body *Body::Load(const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
 {
-	SaveLoad::Reader rd = _rd.RdSection("Body");
-	Body *b = 0;
-	Object::Type type = Object::Type(rd.Int32());
-	switch (type) {
-		case Object::STAR:
-			b = new Star(); break;
-		case Object::PLANET:
-			b = new Planet();
-			break;
-		case Object::SPACESTATION:
-			b = new SpaceStation(); break;
-		case Object::SHIP:
-			b = new Ship(); break;
-		case Object::PLAYER:
-			b = new Player(); break;
-		case Object::MISSILE:
-			b = new Missile(); break;
-		case Object::PROJECTILE:
-			b = new Projectile(); break;
-		case Object::CARGOBODY:
-			b = new CargoBody(); break;
-		case Object::HYPERSPACECLOUD:
-			b = new HyperspaceCloud(); break;
-		default:
-			assert(0);
-	}
-	b->Load(rd, space);
-	return b;
+	std::string cl;
+	so.Get("bodyClass", cl);
+
+	if (cl == "Star")
+		return new Star(so, lc);
+	if (cl == "Planet")
+		return new Planet(so, lc);
+	if (cl == "SpaceStation")
+		return new SpaceStation(so, lc);
+	if (cl == "Ship")
+		return new Ship(so, lc);
+	if (cl == "Player")
+		return new Player(so, lc);
+	if (cl == "Missile")
+		return new Missile(so, lc);
+	if (cl == "Projectile")
+		return new Projectile(so, lc);
+	if (cl == "CargoBody")
+		return new CargoBody(so, lc);
+	if (cl == "HyperspaceCloud")
+		return new HyperspaceCloud(so, lc);
+
+	// we don't get here
+	assert(0);
+	return 0;
 }
-*/
 
 vector3d Body::GetPositionRelTo(const Frame *relTo) const
 {

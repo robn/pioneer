@@ -68,6 +68,8 @@ SaveLoad::Object DynamicBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+DynamicBody::DynamicBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): ModelBody(so, lc)
+{
 /* XXX DESERIALIZER
 void DynamicBody::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -89,6 +91,7 @@ void DynamicBody::PostLoadFixup(Space *space)
 //	CalcExternalForce();		// too dangerous
 }
 */
+}
 
 void DynamicBody::SetTorque(const vector3d &t)
 {

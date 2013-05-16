@@ -25,6 +25,7 @@ public:
 	virtual ~HyperspaceCloud();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	HyperspaceCloud(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	virtual void SetVelocity(const vector3d &v) { m_vel = v; }
 	virtual vector3d GetVelocity() const { return m_vel; }

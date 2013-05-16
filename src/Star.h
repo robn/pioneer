@@ -16,6 +16,7 @@ public:
 	virtual ~Star() {};
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Star(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform);
 

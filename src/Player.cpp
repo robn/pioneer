@@ -32,14 +32,14 @@ SaveLoad::Object Player::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-/* XXX DESERIALIZER
-void Player::Load(SaveLoad::Reader &rd, Space *space)
+Player::Player(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Ship(so, lc)
 {
+/* XXX DESERIALIZER
 	Pi::player = this;
 	Ship::Load(rd, space);
 	MarketAgent::Load(rd);
-}
 */
+}
 
 //XXX perhaps remove this, the sound is very annoying
 bool Player::OnDamage(Object *attacker, float kgDamage)

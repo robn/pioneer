@@ -130,10 +130,9 @@ SaveLoad::Object Ship::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-#if 0
-XXX DESERIALIZER
-void Ship::Load(SaveLoad::Reader &rd, Space *space)
+Ship::Ship(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): DynamicBody(so, lc)
 {
+/* XXX DESERIALIZER
 	DynamicBody::Load(rd, space);
 	m_skin.Load(rd);
 	m_skin.Apply(GetModel());
@@ -187,7 +186,15 @@ void Ship::Load(SaveLoad::Reader &rd, Space *space)
 
 	m_equipment.onChange.connect(sigc::mem_fun(this, &Ship::OnEquipmentChange));
 }
-#endif
+
+void Ship::PostLoadFixup(Space *space)
+{
+	DynamicBody::PostLoadFixup(space);
+	m_dockedWith = reinterpret_cast<SpaceStation*>(space->GetBodyByIndex(m_dockedWithIndex));
+	if (m_curAICmd) m_curAICmd->PostLoadFixup(space);
+	m_controller->PostLoadFixup(space);
+*/
+}
 
 void Ship::Init()
 {
@@ -203,16 +210,6 @@ void Ship::Init()
 
 	m_landingGearAnimation = GetModel()->FindAnimation("gear_down");
 }
-
-/* XXX DESERIALIZER
-void Ship::PostLoadFixup(Space *space)
-{
-	DynamicBody::PostLoadFixup(space);
-	m_dockedWith = reinterpret_cast<SpaceStation*>(space->GetBodyByIndex(m_dockedWithIndex));
-	if (m_curAICmd) m_curAICmd->PostLoadFixup(space);
-	m_controller->PostLoadFixup(space);
-}
-*/
 
 Ship::Ship(ShipType::Id shipId): DynamicBody(),
 	m_controller(0),

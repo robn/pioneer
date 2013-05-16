@@ -125,6 +125,8 @@ SaveLoad::Object Projectile::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+Projectile::Projectile(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+{
 /* XXX DESERIALIZER
 void Projectile::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -142,6 +144,7 @@ void Projectile::PostLoadFixup(Space *space)
 	m_parent = space->GetBodyByIndex(m_parentIndex);
 }
 */
+}
 
 void Projectile::UpdateInterpTransform(double alpha)
 {

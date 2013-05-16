@@ -16,6 +16,7 @@ public:
 	virtual ~Missile() {}
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Missile(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	void TimeStepUpdate(const float timeStep);
 	virtual bool OnCollision(Object *o, Uint32 flags, double relVel);

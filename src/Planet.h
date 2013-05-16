@@ -22,6 +22,7 @@ public:
 	virtual ~Planet();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Planet(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	virtual void SubRender(Graphics::Renderer *r, const Camera *camera, const vector3d &camPos);
 

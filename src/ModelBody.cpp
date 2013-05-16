@@ -45,6 +45,8 @@ SaveLoad::Object ModelBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+ModelBody::ModelBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+{
 /* XXX DESERIALIZER
 void ModelBody::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -55,6 +57,7 @@ void ModelBody::Load(SaveLoad::Reader &rd, Space *space)
 	m_model->Load(rd);
 }
 */
+}
 
 void ModelBody::SetStatic(bool isStatic)
 {

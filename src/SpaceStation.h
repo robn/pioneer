@@ -60,6 +60,7 @@ public:
 	virtual ~SpaceStation();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	SpaceStation(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	virtual vector3d GetAngVelocity() const { return vector3d(0,m_type->angVel,0); }
 	virtual bool OnCollision(Object *b, Uint32 flags, double relVel);

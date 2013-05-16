@@ -71,6 +71,8 @@ SaveLoad::Object HyperspaceCloud::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+HyperspaceCloud::HyperspaceCloud(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+{
 /* XXX DESERIALIZER
 void HyperspaceCloud::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -90,6 +92,7 @@ void HyperspaceCloud::PostLoadFixup(Space *space)
 	if (m_ship) m_ship->PostLoadFixup(space);
 }
 */
+}
 
 void HyperspaceCloud::TimeStepUpdate(const float timeStep)
 {

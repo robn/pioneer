@@ -104,9 +104,10 @@ SaveLoad::Object SpaceStation::Save(SaveLoad::SaveContext *sc) const {
 
 	return so;
 }
-/* XXX DESERIALIZER
-void SpaceStation::Load(SaveLoad::Reader &rd, Space *space)
+
+SpaceStation::SpaceStation(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): ModelBody(so, lc)
 {
+/* XXX DESERIALIZER
 	ModelBody::Load(rd, space);
 	MarketAgent::Load(rd);
 	int num = rd.Int32();
@@ -174,8 +175,8 @@ void SpaceStation::PostLoadFixup(Space *space)
 	for (uint32_t i=0; i<m_shipDocking.size(); i++) {
 		m_shipDocking[i].ship = static_cast<Ship*>(space->GetBodyByIndex(m_shipDocking[i].shipIndex));
 	}
-}
 */
+}
 
 SpaceStation::SpaceStation(const SystemBody *sbody): ModelBody()
 {

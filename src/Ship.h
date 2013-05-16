@@ -59,6 +59,7 @@ public:
 	virtual ~Ship();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Ship(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	void SetController(ShipController *c); //deletes existing
 	ShipController *GetController() const { return m_controller; }

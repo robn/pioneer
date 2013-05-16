@@ -100,19 +100,17 @@ Space::Space(Game *game, const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
 	SaveLoad::Object data;
 	so.Get("system", data);
 	m_starSystem = StarSystem::GetCached(SystemPath(data));
-	
+
 	so.Get("frames", data);
 	m_rootFrame.Reset(new Frame(0, data, lc));
 
-	/* XXX DESERIALIZER this is probably right
 	so.Get("bodies", data);
 	{
 	Json::Value bodies(data.GetJson());
-	for (Json::Value::const_iterator i = bodies.begin(); i != bodies.end(); ++i) {
+	for (Json::Value::iterator i = bodies.begin(); i != bodies.end(); ++i) {
 		m_bodies.push_back(Body::Load(SaveLoad::Object(*i), lc));
 	}
 	}
-	*/
 
 	// XXX DESERIALIZER post-load fixup?
 

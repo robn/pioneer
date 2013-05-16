@@ -24,6 +24,9 @@ public:
 	virtual ~Body();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Body(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
+
+	static Body *Load(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 /* XXX DESERIALIZER
 	static Body *Unserialize(SaveLoad::Reader &rd, Space *space);

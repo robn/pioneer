@@ -17,6 +17,7 @@ public:
 	virtual ~DynamicBody();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	DynamicBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 	virtual vector3d GetVelocity() const;
 	virtual void SetVelocity(const vector3d &v);

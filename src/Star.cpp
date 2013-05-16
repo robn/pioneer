@@ -24,13 +24,12 @@ SaveLoad::Object Star::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-/* XXX DESERIALIZER
-void Star::Load(SaveLoad::Reader &rd, Space *space)
+Star::Star(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): TerrainBody(so, lc)
 {
-	TerrainBody::Load(rd, space);		// to get sbody
+/* XXX DESERIALIZER
 	InitStar();
-}
 */
+}
 
 void Star::InitStar()
 {

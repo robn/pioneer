@@ -21,6 +21,7 @@ public:
 	virtual ~ModelBody();
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	ModelBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc);
 
 	void SetPosition(const vector3d &p);
 	void SetOrient(const matrix3x3d &r);

@@ -41,16 +41,15 @@ SaveLoad::Object Planet::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-/* XXX DESERIALIZER
-void Planet::Load(SaveLoad::Reader &rd, Space *space)
+Planet::Planet(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): TerrainBody(so, lc), m_ringVertices(RING_VERTEX_ATTRIBS)
 {
-	TerrainBody::Load(rd, space);
-
+/* XXX DESERIALIZER
 	const SystemBody *sbody = GetSystemBody();
 	assert(sbody);
 	InitParams(sbody);
-}
 */
+
+}
 
 void Planet::InitParams(const SystemBody *sbody)
 {

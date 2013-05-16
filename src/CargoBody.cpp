@@ -19,6 +19,8 @@ SaveLoad::Object CargoBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
+CargoBody::CargoBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): DynamicBody(so, lc)
+{
 /* XXX DESERIALIZER
 void CargoBody::Load(SaveLoad::Reader &rd, Space *space)
 {
@@ -28,6 +30,7 @@ void CargoBody::Load(SaveLoad::Reader &rd, Space *space)
 	m_hitpoints = rd.Float();
 }
 */
+}
 
 void CargoBody::Init()
 {

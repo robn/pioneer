@@ -20,6 +20,7 @@ public:
 	OBJDEF(Projectile, Body, PROJECTILE);
 
 	virtual SaveLoad::Object Save(SaveLoad::SaveContext *sc) const;
+	Projectile(const SaveLoad::Object &so, SaveLoad::LoadContext *sc);
 
 	static void Add(Body *parent, Equip::Type type, const vector3d &pos, const vector3d &baseVel, const vector3d &dirVel);
 
