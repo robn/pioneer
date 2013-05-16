@@ -71,7 +71,10 @@ public:
 	const Json::Value &GetJson() const { return m_json; }
 
 	// convert entire object to string
-	std::string ToString();
+	std::string ToString() const;
+
+	// dump to stdout
+	void Dump() const;
 
 	// setters for primitive types. only valid if the standard constructor was used
 	void Set(const std::string &k, bool v)               { m_json[k] = v; }

@@ -8,6 +8,17 @@
 
 namespace SaveLoad {
 
+std::string Object::ToString() const
+{
+	return Json::FastWriter().write(m_json);
+}
+
+void Object::Dump() const
+{
+	printf("%s\n", ToString().c_str());
+}
+
+
 RefObject::RefObject(const SaveLoad::Object &so, LoadContext *lc)
 {
 	Uint32 refId;
@@ -62,7 +73,7 @@ void SaveContext::Write(const std::string &filename)
 
 	SaveLoad::Object so = m_game->Save(this);
 
-	const std::string data = Json::FastWriter().write(so.GetJson());
+	const std::string data = so.ToString();
 
 	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();
