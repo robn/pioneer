@@ -127,23 +127,15 @@ SaveLoad::Object Projectile::Save(SaveLoad::SaveContext *sc) const {
 
 Projectile::Projectile(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
 {
-/* XXX DESERIALIZER
-void Projectile::Load(SaveLoad::Reader &rd, Space *space)
-{
-	Body::Load(rd, space);
-	m_baseVel = rd.Vector3d();
-	m_dirVel = rd.Vector3d();
-	m_age = rd.Float();
-	m_type = rd.Int32();
-	m_parentIndex = rd.Int32();
-}
+	SaveLoad::Object data;
 
-void Projectile::PostLoadFixup(Space *space)
-{
-	Body::PostLoadFixup(space);
-	m_parent = space->GetBodyByIndex(m_parentIndex);
-}
-*/
+	so.Get("baseVel", data); m_dirVel = vector3d(data);
+	so.Get("dirVel",  data); m_dirVel = vector3d(data);
+
+	so.Get("age",  m_age);
+	so.Get("type", m_type);
+
+	lc->Fixup(so, "parentRefId", &m_parent);
 }
 
 void Projectile::UpdateInterpTransform(double alpha)

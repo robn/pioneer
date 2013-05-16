@@ -21,15 +21,13 @@ SaveLoad::Object CargoBody::Save(SaveLoad::SaveContext *sc) const {
 
 CargoBody::CargoBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): DynamicBody(so, lc)
 {
-/* XXX DESERIALIZER
-void CargoBody::Load(SaveLoad::Reader &rd, Space *space)
-{
-	DynamicBody::Load(rd, space);
-	m_type = static_cast<Equip::Type>(rd.Int32());
+	std::string cargoType;
+	so.Get("cargoType", cargoType);
+	m_type = static_cast<Equip::Type>(EnumStrings::GetValue("EquipType", cargoType.c_str()));
+
+	so.Get("hitpoints", m_hitpoints);
+
 	Init();
-	m_hitpoints = rd.Float();
-}
-*/
 }
 
 void CargoBody::Init()

@@ -26,9 +26,7 @@ SaveLoad::Object Star::Save(SaveLoad::SaveContext *sc) const {
 
 Star::Star(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): TerrainBody(so, lc)
 {
-/* XXX DESERIALIZER
 	InitStar();
-*/
 }
 
 void Star::InitStar()

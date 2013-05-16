@@ -47,16 +47,15 @@ SaveLoad::Object ModelBody::Save(SaveLoad::SaveContext *sc) const {
 
 ModelBody::ModelBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
 {
-/* XXX DESERIALIZER
-void ModelBody::Load(SaveLoad::Reader &rd, Space *space)
-{
-	Body::Load(rd, space);
-	m_isStatic = rd.Bool();
-	m_colliding = rd.Bool();
-	SetModel(rd.String().c_str());
-	m_model->Load(rd);
-}
-*/
+	so.Get("isStatic", m_isStatic);
+	so.Get("colliding", m_colliding);
+
+	std::string modelName;
+	so.Get("modelName", modelName);
+	SetModel(modelName.c_str());
+
+	// XXX DESERIALIZER
+	//m_model->Load(rd);
 }
 
 void ModelBody::SetStatic(bool isStatic)

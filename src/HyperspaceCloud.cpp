@@ -73,26 +73,31 @@ SaveLoad::Object HyperspaceCloud::Save(SaveLoad::SaveContext *sc) const {
 
 HyperspaceCloud::HyperspaceCloud(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
 {
-/* XXX DESERIALIZER
-void HyperspaceCloud::Load(SaveLoad::Reader &rd, Space *space)
-{
-	Body::Load(rd, space);
-	m_vel = rd.Vector3d();
-	m_birthdate = rd.Double();
-	m_due = rd.Double();
-	m_isArrival = rd.Bool();
-	if (rd.Bool()) {
-		m_ship = reinterpret_cast<Ship*>(Body::Unserialize(rd, space));
-	}
+	SaveLoad::Object data;
+
+	so.Get("vel", data); m_vel = vector3d(data);
+
+	so.Get("birthdate", m_birthdate);
+	so.Get("due",       m_due);
+	so.Get("isArrival", m_isArrival);
+
+	// XXX need a better way to test for existence
+	so.Get("ship", data);
+	if (data.GetJson().type() != Json::nullValue)
+		m_ship = new Ship(data, lc);
+
+	SetPhysRadius(0.0);
+	SetClipRadius(1200.0);
+	InitGraphics();
 }
 
+/* XXX SERIALIZER
 void HyperspaceCloud::PostLoadFixup(Space *space)
 {
 	Body::PostLoadFixup(space);
 	if (m_ship) m_ship->PostLoadFixup(space);
 }
 */
-}
 
 void HyperspaceCloud::TimeStepUpdate(const float timeStep)
 {

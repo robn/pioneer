@@ -70,20 +70,22 @@ SaveLoad::Object DynamicBody::Save(SaveLoad::SaveContext *sc) const {
 
 DynamicBody::DynamicBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): ModelBody(so, lc)
 {
-/* XXX DESERIALIZER
-void DynamicBody::Load(SaveLoad::Reader &rd, Space *space)
-{
-	ModelBody::Load(rd, space);
-	m_force = rd.Vector3d();
-	m_torque = rd.Vector3d();
-	m_vel = rd.Vector3d();
-	m_angVel = rd.Vector3d();
-	m_mass = rd.Double();
-	m_massRadius = rd.Double();
-	m_angInertia = rd.Double();
-	m_isMoving = rd.Bool();
+	SaveLoad::Object data;
+
+	so.Get("force",  data); m_force  = vector3d(data);
+	so.Get("torque", data); m_torque = vector3d(data);
+	so.Get("vel",    data); m_vel    = vector3d(data);
+	so.Get("angVel", data); m_angVel = vector3d(data);
+
+	so.Get("mass",       m_mass);
+	so.Get("massRadius", m_massRadius);
+	so.Get("angInertia", m_angInertia);
+	so.Get("isMoving",   m_isMoving);
+
+	// XXX DESERIALIZER initialise other fields
 }
 
+/* XXX DESERIALIZER
 void DynamicBody::PostLoadFixup(Space *space)
 {
 	Body::PostLoadFixup(space);
@@ -91,7 +93,6 @@ void DynamicBody::PostLoadFixup(Space *space)
 //	CalcExternalForce();		// too dangerous
 }
 */
-}
 
 void DynamicBody::SetTorque(const vector3d &t)
 {

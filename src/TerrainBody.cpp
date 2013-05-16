@@ -50,16 +50,17 @@ SaveLoad::Object TerrainBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-TerrainBody::TerrainBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+TerrainBody::TerrainBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc),
+	m_sbody(0),
+	m_mass(0),
+	m_geosphere(0)
 {
-/* XXX DESERIALIZER
-void TerrainBody::Load(SaveLoad::Reader &rd, Space *space)
-{
-	Body::Load(rd, space);
-	SystemBody *sbody = space->GetSystemBodyByIndex(rd.Int32());
+	SaveLoad::Object data;
+	so.Get("systemBodyPath", data);
+	const SystemPath path(data);
+
+	SystemBody *sbody = StarSystem::GetCached(path)->GetBodyByPath(path);
 	InitTerrainBody(sbody);
-}
-*/
 }
 
 void TerrainBody::Render(Graphics::Renderer *renderer, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform)

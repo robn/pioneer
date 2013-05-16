@@ -34,11 +34,10 @@ SaveLoad::Object Player::Save(SaveLoad::SaveContext *sc) const {
 
 Player::Player(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Ship(so, lc)
 {
-/* XXX DESERIALIZER
-	Pi::player = this;
-	Ship::Load(rd, space);
-	MarketAgent::Load(rd);
-*/
+	Pi::player = this; // XXX hack :(
+
+	// XXX DESERIALIZER
+	// MarketAgent::Load(rd);
 }
 
 //XXX perhaps remove this, the sound is very annoying

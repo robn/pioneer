@@ -44,21 +44,10 @@ SaveLoad::Object Missile::Save(SaveLoad::SaveContext *sc) const {
 
 Missile::Missile(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Ship(so, lc)
 {
-/* XXX DESERIALIZER
-void Missile::PostLoadFixup(Space *space)
-{
-	Ship::PostLoadFixup(space);
-	m_owner = space->GetBodyByIndex(m_ownerIndex);
-}
+	lc->Fixup(so, "ownerRefId", &m_owner);
 
-void Missile::Load(SaveLoad::Reader &rd, Space *space)
-{
-	Ship::Load(rd, space);
-	m_ownerIndex = rd.Int32();
-	m_power = rd.Int32();
-	m_armed = rd.Bool();
-}
-*/
+	so.Get("power", m_power);
+	so.Get("armed", m_armed);
 }
 
 void Missile::TimeStepUpdate(const float timeStep)

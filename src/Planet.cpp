@@ -43,12 +43,9 @@ SaveLoad::Object Planet::Save(SaveLoad::SaveContext *sc) const {
 
 Planet::Planet(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): TerrainBody(so, lc), m_ringVertices(RING_VERTEX_ATTRIBS)
 {
-/* XXX DESERIALIZER
 	const SystemBody *sbody = GetSystemBody();
 	assert(sbody);
 	InitParams(sbody);
-*/
-
 }
 
 void Planet::InitParams(const SystemBody *sbody)
