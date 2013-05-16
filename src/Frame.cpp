@@ -28,15 +28,15 @@ Frame::Frame(Frame *parent, const char *label, unsigned int flags)
 
 Frame::Frame(Frame *parent, const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
 {
-	Frame *f = new Frame();
-	f->m_parent = parent;
+	Uint32 flags;
+	std::string label;
+	so.Get("flags", flags);
+	so.Get("label", label);
+	Init(parent, label.c_str(), flags);
 
 	SaveLoad::Object data;
 
-	so.Get("flags", m_flags);
 	so.Get("radius", m_radius);
-	so.Get("label", m_label);
-
 	so.Get("pos", data); m_pos = vector3d(data);
 	so.Get("orient", data); m_orient = matrix3x3d(data);
 
@@ -66,8 +66,9 @@ SaveLoad::Object Frame::Save(SaveLoad::SaveContext *sc) const {
 	SaveLoad::Object so(SaveLoad::RefObject::Save(sc));
 
 	so.Set("flags", m_flags);
-	so.Set("radius", m_radius);
 	so.Set("label", m_label);
+
+	so.Set("radius", m_radius);
 	so.Set("pos", m_pos.Save());
 	so.Set("orient", m_orient.Save());
 	so.Set("angSpeed", m_angSpeed);

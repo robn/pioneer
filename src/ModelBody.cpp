@@ -45,7 +45,9 @@ SaveLoad::Object ModelBody::Save(SaveLoad::SaveContext *sc) const {
 	return so;
 }
 
-ModelBody::ModelBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc)
+ModelBody::ModelBody(const SaveLoad::Object &so, SaveLoad::LoadContext *lc): Body(so, lc),
+	m_geom(0),
+	m_model(0)
 {
 	so.Get("isStatic", m_isStatic);
 	so.Get("colliding", m_colliding);
