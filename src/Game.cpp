@@ -128,17 +128,15 @@ Game::Game(const SaveLoad::Object &so, SaveLoad::LoadContext *lc) :
 
 	SaveLoad::Object data;
 
+	// space, all the bodies and things
 	so.Get("space", data);
 	m_space.Reset(new Space(this, data, lc));
 
+	// game state and space transition state
+	m_player.Reset(static_cast<Player*>(lc->GetRefObject(so, "playerRefId")));
+
 /* XXX DESERIALIZER
-	SaveLoad::Reader section;
-
-	// space, all the bodies and things
-	section = rd.RdSection("Space");
-	m_space.Reset(new Space(this, section));
-
-
+ *
 	// game state and space transition state
 	section = rd.RdSection("Game");
 
@@ -194,6 +192,7 @@ SaveLoad::Object Game::Save(SaveLoad::SaveContext *sc) const
 	so.Set("space", m_space->Save(sc));
 
 	// game state and space transition state
+	so.Set("playerRefId", sc->GetRefId(m_player.Get()));
 
 	// hyperspace clouds being brought over from the previous system
 	{

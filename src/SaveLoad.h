@@ -183,6 +183,13 @@ public:
 
 	void AddRefId(const RefObject *o, Uint32 refId) { m_rt.AddRefId(o, refId); }
 
+	RefObject *GetRefObject(const SaveLoad::Object &so, const std::string &key) {
+		Uint32 refId;
+		so.Get(key, refId);
+		return GetRefObject(refId);
+	}
+	RefObject *GetRefObject(Uint32 refId) { return m_rt.GetRefObject(refId); }
+
 private:
 	RefTracker m_rt;
 
