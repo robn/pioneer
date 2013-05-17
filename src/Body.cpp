@@ -51,17 +51,19 @@ SaveLoad::Object Body::Save(SaveLoad::SaveContext *sc) const {
 
 Body::Body(const SaveLoad::Object &so, SaveLoad::LoadContext *lc) : PropertiedObject(Lua::manager), SaveLoad::RefObject(so, lc)
 {
-/* XXX DESERIALIZER
-	m_frame = space->GetFrameByIndex(rd.Int32());
-	m_label = rd.String();
-	Properties().Set("label", m_label);
-	m_dead = rd.Bool();
+	lc->Fixup(so, "frameRefId", &m_frame);
 
-	m_pos = rd.Vector3d();
-	for (int i=0; i<9; i++) m_orient[i] = rd.Double();
-	m_physRadius = rd.Double();
-	m_clipRadius = rd.Double();
-*/
+	so.Get("label", m_label);
+	so.Get("dead", m_dead);
+
+	SaveLoad::Object data;
+	so.Get("pos",    data); m_pos    = vector3d(data);
+	so.Get("orient", data); m_orient = matrix3x3d(data);
+
+	so.Get("physRadius", m_physRadius);
+	so.Get("clipRadius", m_clipRadius);
+
+	Properties().Set("label", m_label);
 }
 
 Body *Body::Load(const SaveLoad::Object &so, SaveLoad::LoadContext *lc)
