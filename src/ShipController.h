@@ -79,6 +79,8 @@ public:
 	void SetNavTarget(Body* const target, bool setSpeedTo = false);
 
 	sigc::signal<void> onRotationDampingChanged;
+	sigc::signal<void> onTargetChanged; // navigation or combat
+	sigc::signal<void> onFlightControlStateChanged;
 
 private:
 	bool IsAnyAngularThrusterKeyDown();

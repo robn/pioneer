@@ -214,13 +214,11 @@ Body *Player::GetSetSpeedTarget() const
 void Player::SetCombatTarget(Body* const target, bool setSpeedTo)
 {
 	static_cast<PlayerShipController*>(m_controller)->SetCombatTarget(target, setSpeedTo);
-	Pi::onPlayerChangeTarget.emit();
 }
 
 void Player::SetNavTarget(Body* const target, bool setSpeedTo)
 {
 	static_cast<PlayerShipController*>(m_controller)->SetNavTarget(target, setSpeedTo);
-	Pi::onPlayerChangeTarget.emit();
 }
 //temporary targeting stuff ends
 

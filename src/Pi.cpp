@@ -86,9 +86,6 @@ sigc::signal<void, SDL_keysym*> Pi::onKeyPress;
 sigc::signal<void, SDL_keysym*> Pi::onKeyRelease;
 sigc::signal<void, int, int, int> Pi::onMouseButtonUp;
 sigc::signal<void, int, int, int> Pi::onMouseButtonDown;
-sigc::signal<void> Pi::onPlayerChangeTarget;
-sigc::signal<void> Pi::onPlayerChangeFlightControlState;
-sigc::signal<void> Pi::onPlayerChangeEquipment;
 sigc::signal<void, const SpaceStation*> Pi::onDockingClearanceExpired;
 LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
@@ -847,20 +844,13 @@ static void OnPlayerDockOrUndock()
 	Pi::game->SetTimeAccel(Game::TIMEACCEL_1X);
 }
 
-static void OnPlayerChangeEquipment(Equip::Type e)
-{
-	Pi::onPlayerChangeEquipment.emit();
-}
-
 void Pi::StartGame()
 {
 	Pi::player->onDock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
 	Pi::player->onUndock.connect(sigc::ptr_fun(&OnPlayerDockOrUndock));
-	Pi::player->m_equipment.onChange.connect(sigc::ptr_fun(&OnPlayerChangeEquipment));
 	cpan->ShowAll();
 	DrawGUI = true;
 	cpan->SetAlertState(Ship::ALERT_NONE);
-	OnPlayerChangeEquipment(Equip::NONE);
 	SetView(worldView);
 
 	// fire event before the first frame

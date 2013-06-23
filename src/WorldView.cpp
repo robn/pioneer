@@ -224,9 +224,9 @@ void WorldView::InitObject()
 		Pi::sectorView->onHyperspaceTargetChanged.connect(sigc::mem_fun(this, &WorldView::OnHyperspaceTargetChanged));
 
 	m_onPlayerChangeTargetCon =
-		Pi::onPlayerChangeTarget.connect(sigc::mem_fun(this, &WorldView::OnPlayerChangeTarget));
+		Pi::player->GetPlayerController()->onTargetChanged.connect(sigc::mem_fun(this, &WorldView::OnPlayerChangeTarget));
 	m_onChangeFlightControlStateCon =
-		Pi::onPlayerChangeFlightControlState.connect(sigc::mem_fun(this, &WorldView::OnPlayerChangeFlightControlState));
+		Pi::player->GetPlayerController()->onFlightControlStateChanged.connect(sigc::mem_fun(this, &WorldView::OnPlayerChangeFlightControlState));
 	m_onMouseButtonDown =
 		Pi::onMouseButtonDown.connect(sigc::mem_fun(this, &WorldView::MouseButtonDown));
 

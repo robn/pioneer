@@ -511,8 +511,8 @@ void ScannerWidget::Save(Serializer::Writer &wr)
 
 UseEquipWidget::UseEquipWidget(): Gui::Fixed(400,100)
 {
-	m_onPlayerEquipChangedCon = Pi::onPlayerChangeEquipment.connect(sigc::mem_fun(this, &UseEquipWidget::UpdateEquip));
-	UpdateEquip();
+	m_onPlayerEquipChangedCon = Pi::player->m_equipment.onChange.connect(sigc::mem_fun(this, &UseEquipWidget::UpdateEquip));
+	UpdateEquip(Equip::NONE);
 }
 
 UseEquipWidget::~UseEquipWidget()
@@ -545,7 +545,7 @@ void UseEquipWidget::FireMissile(int idx)
 	lua_settop(l, pristine_stack);
 }
 
-void UseEquipWidget::UpdateEquip()
+void UseEquipWidget::UpdateEquip(Equip::Type e)
 {
 	DeleteAllChildren();
 	lua_State *l = Lua::manager->GetLuaState();

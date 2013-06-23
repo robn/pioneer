@@ -306,7 +306,7 @@ void PlayerShipController::SetFlightControlState(FlightControlState s)
 			m_setSpeed = m_setSpeedTarget ? m_ship->GetVelocityRelTo(m_setSpeedTarget).Length() : m_ship->GetVelocity().Length();
 		}
 		//XXX global stuff
-		Pi::onPlayerChangeFlightControlState.emit();
+		onFlightControlStateChanged.emit();
 	}
 }
 
@@ -368,6 +368,7 @@ void PlayerShipController::SetCombatTarget(Body* const target, bool setSpeedTo)
 	else if (m_setSpeedTarget == m_combatTarget)
 		m_setSpeedTarget = 0;
 	m_combatTarget = target;
+	onTargetChanged.emit();
 }
 
 void PlayerShipController::SetNavTarget(Body* const target, bool setSpeedTo)
@@ -377,4 +378,5 @@ void PlayerShipController::SetNavTarget(Body* const target, bool setSpeedTo)
 	else if (m_setSpeedTarget == m_navTarget)
 		m_setSpeedTarget = 0;
 	m_navTarget = target;
+	onTargetChanged.emit();
 }

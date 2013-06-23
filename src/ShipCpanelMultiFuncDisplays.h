@@ -115,7 +115,7 @@ public:
 	void GetSizeRequested(float size[2]);
 	virtual void Update() {}
 private:
-	void UpdateEquip();
+	void UpdateEquip(Equip::Type e);
 	void UseRadarMapper();
 	void UseHypercloudAnalyzer();
 	enum { MAX_MISSILE_SLOTS = 8 };
