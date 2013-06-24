@@ -103,16 +103,22 @@ void Player::SetAlertState(Ship::AlertState as)
 	Ship::SetAlertState(as);
 }
 
+// XXX I don't like this calls down into the controller so much better would be
+// for NotifyRemoved to actually be a signal on either the body or on Space and
+// interested things register for it. then PlayerShipController could get
+// notified directlty
 void Player::NotifyRemoved(const Body* const removedBody)
 {
-	if (GetNavTarget() == removedBody)
-		SetNavTarget(0);
+	PlayerShipController *psc = GetPlayerController();
 
-	else if (GetCombatTarget() == removedBody) {
-		SetCombatTarget(0);
+	if (psc->GetNavTarget() == removedBody)
+		psc->SetNavTarget(0);
 
-		if (!GetNavTarget() && removedBody->IsType(Object::SHIP))
-			SetNavTarget(static_cast<const Ship*>(removedBody)->GetHyperspaceCloud());
+	else if (psc->GetCombatTarget() == removedBody) {
+		psc->SetCombatTarget(0);
+
+		if (!psc->GetNavTarget() && removedBody->IsType(Object::SHIP))
+			psc->SetNavTarget(static_cast<const Ship*>(removedBody)->GetHyperspaceCloud());
 	}
 
 	Ship::NotifyRemoved(removedBody);
@@ -174,8 +180,8 @@ Sint64 Player::GetPrice(Equip::Type t) const
 void Player::OnEnterHyperspace()
 {
 	s_soundHyperdrive.Play("Hyperdrive_Jump");
-	SetNavTarget(0);
-	SetCombatTarget(0);
+	GetPlayerController()->SetNavTarget(0);
+	GetPlayerController()->SetCombatTarget(0);
 
 	Pi::worldView->HideTargetActions(); // hide the comms menu
 	m_controller->SetFlightControlState(CONTROL_MANUAL); //could set CONTROL_HYPERDRIVE
@@ -190,37 +196,10 @@ void Player::OnEnterSystem()
 	Pi::sectorView->ResetHyperspaceTarget();
 }
 
-//temporary targeting stuff
 PlayerShipController *Player::GetPlayerController() const
 {
 	return static_cast<PlayerShipController*>(GetController());
 }
-
-Body *Player::GetCombatTarget() const
-{
-	return static_cast<PlayerShipController*>(m_controller)->GetCombatTarget();
-}
-
-Body *Player::GetNavTarget() const
-{
-	return static_cast<PlayerShipController*>(m_controller)->GetNavTarget();
-}
-
-Body *Player::GetSetSpeedTarget() const
-{
-	return static_cast<PlayerShipController*>(m_controller)->GetSetSpeedTarget();
-}
-
-void Player::SetCombatTarget(Body* const target, bool setSpeedTo)
-{
-	static_cast<PlayerShipController*>(m_controller)->SetCombatTarget(target, setSpeedTo);
-}
-
-void Player::SetNavTarget(Body* const target, bool setSpeedTo)
-{
-	static_cast<PlayerShipController*>(m_controller)->SetNavTarget(target, setSpeedTo);
-}
-//temporary targeting stuff ends
 
 Ship::HyperjumpStatus Player::StartHyperspaceCountdown(const SystemPath &dest)
 {

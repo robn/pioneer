@@ -580,7 +580,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 			std::string str;
 			double _vel = 0;
 			const char *rel_to = 0;
-			const Body *set_speed_target = Pi::player->GetSetSpeedTarget();
+			const Body *set_speed_target = Pi::player->GetPlayerController()->GetSetSpeedTarget();
 			if (set_speed_target) {
 				rel_to = set_speed_target->GetLabel().c_str();
 				_vel = Pi::player->GetVelocityRelTo(set_speed_target).Length();
@@ -596,7 +596,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 			Pi::cpan->SetOverlayText(ShipCpanel::OVERLAY_TOP_LEFT, str);
 		}
 
-		if (Body *navtarget = Pi::player->GetNavTarget()) {
+		if (Body *navtarget = Pi::player->GetPlayerController()->GetNavTarget()) {
 			double dist = Pi::player->GetPositionRelTo(navtarget).Length();
 			Pi::cpan->SetOverlayText(ShipCpanel::OVERLAY_TOP_RIGHT, stringf(Lang::N_DISTANCE_TO_TARGET,
 				formatarg("distance", format_distance(dist))));
@@ -673,7 +673,8 @@ void WorldView::RefreshButtonStateAndVisibility()
 		m_hudShieldIntegrity->Hide();
 	}
 
-	Body *b = Pi::player->GetCombatTarget() ? Pi::player->GetCombatTarget() : Pi::player->GetNavTarget();
+	PlayerShipController *psc = Pi::player->GetPlayerController();
+	Body *b = psc->GetCombatTarget() ? psc->GetCombatTarget() : psc->GetNavTarget();
 	if (b) {
 		if (b->IsType(Object::SHIP) && Pi::player->m_equipment.Get(Equip::SLOT_RADARMAPPER) == Equip::RADAR_MAPPER) {
 			assert(b->IsType(Object::SHIP));
@@ -895,7 +896,7 @@ Gui::Button *WorldView::AddCommsOption(std::string msg, int ypos, int optnum)
 
 void WorldView::OnClickCommsNavOption(Body *target)
 {
-	Pi::player->SetNavTarget(target);
+	Pi::player->GetPlayerController()->SetNavTarget(target);
 	m_showTargetActionsTimeout = SDL_GetTicks();
 	HideLowThrustPowerOptions();
 }
@@ -1010,7 +1011,7 @@ void WorldView::OnHyperspaceTargetChanged()
 
 void WorldView::OnPlayerChangeTarget()
 {
-	Body *b = Pi::player->GetNavTarget();
+	Body *b = Pi::player->GetPlayerController()->GetNavTarget();
 	if (b) {
 		Sound::PlaySfx("OK");
 		Ship *s = b->IsType(Object::HYPERSPACECLOUD) ? static_cast<HyperspaceCloud*>(b)->GetShip() : 0;
@@ -1057,8 +1058,8 @@ void WorldView::UpdateCommsOptions()
 		BuildCommsNavOptions();
 	}
 
-	Body * const navtarget = Pi::player->GetNavTarget();
-	Body * const comtarget = Pi::player->GetCombatTarget();
+	Body * const navtarget = Pi::player->GetPlayerController()->GetNavTarget();
+	Body * const comtarget = Pi::player->GetPlayerController()->GetCombatTarget();
 	Gui::Button *button;
 	int ypos = 0;
 	int optnum = 1;
@@ -1139,17 +1140,19 @@ void WorldView::SelectBody(Body *target, bool reselectIsDeselect)
 	if (!target || target == Pi::player) return;		// don't select self
 	if (target->IsType(Object::PROJECTILE)) return;
 
+	PlayerShipController *psc = Pi::player->GetPlayerController();
+
 	if (target->IsType(Object::SHIP)) {
-		if (Pi::player->GetCombatTarget() == target) {
-			if (reselectIsDeselect) Pi::player->SetCombatTarget(0);
+		if (psc->GetCombatTarget() == target) {
+			if (reselectIsDeselect) psc->SetCombatTarget(0);
 		} else {
-			Pi::player->SetCombatTarget(target, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
+			psc->SetCombatTarget(target, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
 		}
 	} else {
-		if (Pi::player->GetNavTarget() == target) {
-			if (reselectIsDeselect) Pi::player->SetNavTarget(0);
+		if (psc->GetNavTarget() == target) {
+			if (reselectIsDeselect) psc->SetNavTarget(0);
 		} else {
-			Pi::player->SetNavTarget(target, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
+			psc->SetNavTarget(target, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
 		}
 	}
 }
@@ -1241,7 +1244,7 @@ void WorldView::UpdateProjectedObjects()
 		HideIndicator(m_mouseDirIndicator);
 
 	// navtarget info
-	if (Body *navtarget = Pi::player->GetNavTarget()) {
+	if (Body *navtarget = Pi::player->GetPlayerController()->GetNavTarget()) {
 		// if navtarget and body frame are the same,
 		// then we hide the frame-relative velocity indicator
 		// (which would be hidden underneath anyway)
@@ -1279,11 +1282,13 @@ void WorldView::UpdateProjectedObjects()
 		HideIndicator(m_navVelIndicator);
 	}
 
+	PlayerShipController *psc = Pi::player->GetPlayerController();
+
 	// later we might want non-ship enemies (e.g., for assaults on military bases)
-	assert(!Pi::player->GetCombatTarget() || Pi::player->GetCombatTarget()->IsType(Object::SHIP));
+	assert(!psc->GetCombatTarget() || psc->GetCombatTarget()->IsType(Object::SHIP));
 
 	// update combat HUD
-	Ship *enemy = static_cast<Ship *>(Pi::player->GetCombatTarget());
+	Ship *enemy = static_cast<Ship *>(psc->GetCombatTarget());
 	if (enemy) {
 		char buf[128];
 		const vector3d targpos = enemy->GetInterpPositionRelTo(Pi::player) * cam_rot;
@@ -1744,7 +1749,7 @@ NavTunnelWidget::NavTunnelWidget(WorldView *worldview) :
 void NavTunnelWidget::Draw() {
 	if (!Pi::IsNavTunnelDisplayed()) return;
 
-	Body *navtarget = Pi::player->GetNavTarget();
+	Body *navtarget = Pi::player->GetPlayerController()->GetNavTarget();
 	if (navtarget) {
 		const vector3d navpos = navtarget->GetPositionRelTo(Pi::player);
 		const matrix3x3d &rotmat = Pi::player->GetOrient();

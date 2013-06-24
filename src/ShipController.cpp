@@ -331,7 +331,7 @@ void PlayerShipController::ToggleRotationDamping()
 
 void PlayerShipController::FireMissile()
 {
-	if (!Pi::player->GetCombatTarget())
+	if (!GetCombatTarget())
 		return;
 
 	lua_State *l = Lua::manager->GetLuaState();
@@ -341,7 +341,7 @@ void PlayerShipController::FireMissile()
 	lua_gettable(l, -2);
 	lua_pushvalue(l, -2);
 	lua_pushstring(l, "any");
-	LuaObject<Ship>::PushToLua(static_cast<Ship*>(Pi::player->GetCombatTarget()));
+	LuaObject<Ship>::PushToLua(static_cast<Ship*>(GetCombatTarget()));
 	lua_call(l, 3, 1);
 	lua_settop(l, pristine_stack);
 }

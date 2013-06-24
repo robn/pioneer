@@ -189,7 +189,7 @@ void SystemView::OnClickObject(const SystemBody *b)
 		if (Pi::game->GetSpace()->GetStarSystem()->GetPath() == m_system->GetPath()) {
 			Body* body = Pi::game->GetSpace()->FindBodyForPath(&path);
 			if (body != 0)
-				Pi::player->SetNavTarget(body);
+				Pi::player->GetPlayerController()->SetNavTarget(body);
 		}
 	}
 }
@@ -363,7 +363,7 @@ void SystemView::Draw3D()
 	else if (m_system->rootBody) {
 		PutBody(m_system->rootBody.Get(), pos, trans);
 		if (Pi::game->GetSpace()->GetStarSystem() == m_system) {
-			const Body *navTarget = Pi::player->GetNavTarget();
+			const Body *navTarget = Pi::player->GetPlayerController()->GetNavTarget();
 			const SystemBody *navTargetSystemBody = navTarget ? navTarget->GetSystemBody() : 0;
 			if (navTargetSystemBody)
 				PutSelectionBox(navTargetSystemBody, pos, Color(0.0, 1.0, 0.0, 1.0));

@@ -673,9 +673,9 @@ void Pi::HandleEvents()
 									missile->SetPosition(Pi::player->GetPosition()+50.0*dir);
 									missile->SetVelocity(Pi::player->GetVelocity());
 									game->GetSpace()->AddBody(missile);
-									missile->AIKamikaze(Pi::player->GetCombatTarget());
+									missile->AIKamikaze(Pi::player->GetPlayerController()->GetCombatTarget());
 								} else if (KeyState(SDLK_LSHIFT)) {
-									SpaceStation *s = static_cast<SpaceStation*>(Pi::player->GetNavTarget());
+									SpaceStation *s = static_cast<SpaceStation*>(Pi::player->GetPlayerController()->GetNavTarget());
 									if (s) {
 										int port = s->GetFreeDockingPort();
 										if (port != -1) {

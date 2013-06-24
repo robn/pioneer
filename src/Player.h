@@ -34,12 +34,6 @@ public:
 	Sint64 GetPrice(Equip::Type t) const;
 
 	PlayerShipController *GetPlayerController() const;
-	//XXX temporary things to avoid causing too many changes right now
-	Body *GetCombatTarget() const;
-	Body *GetNavTarget() const;
-	Body *GetSetSpeedTarget() const;
-	void SetCombatTarget(Body* const target, bool setSpeedTo = false);
-	void SetNavTarget(Body* const target, bool setSpeedTo = false);
 
 	virtual Ship::HyperjumpStatus StartHyperspaceCountdown(const SystemPath &dest);
 	virtual void ResetHyperspaceCountdown();

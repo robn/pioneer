@@ -161,7 +161,7 @@ static int l_player_add_crime(lua_State *l)
 static int l_get_nav_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
-	LuaObject<Body>::PushToLua(p->GetNavTarget());
+	LuaObject<Body>::PushToLua(p->GetPlayerController()->GetNavTarget());
 	return 1;
 }
 
@@ -189,7 +189,7 @@ static int l_set_nav_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
 	Body *target = LuaObject<Body>::CheckFromLua(2);
-    p->SetNavTarget(target);
+    p->GetPlayerController()->SetNavTarget(target);
     return 0;
 }
 
@@ -216,7 +216,7 @@ static int l_set_nav_target(lua_State *l)
 static int l_get_combat_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
-	LuaObject<Body>::PushToLua(p->GetCombatTarget());
+	LuaObject<Body>::PushToLua(p->GetPlayerController()->GetCombatTarget());
 	return 1;
 }
 
@@ -244,7 +244,7 @@ static int l_set_combat_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
 	Body *target = LuaObject<Body>::CheckFromLua(2);
-    p->SetCombatTarget(target);
+    p->GetPlayerController()->SetCombatTarget(target);
     return 0;
 }
 
