@@ -48,12 +48,6 @@ bool Player::OnDamage(Object *attacker, float kgDamage)
 	return r;
 }
 
-//XXX handle killcounts in lua
-void Player::SetDockedWith(SpaceStation *s, int port)
-{
-	Ship::SetDockedWith(s, port);
-}
-
 //XXX all ships should make this sound
 bool Player::SetWheelState(bool down)
 {
