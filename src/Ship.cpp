@@ -1107,6 +1107,10 @@ bool Ship::SetWheelState(bool down)
 	int newWheelTransition = (down ? 1 : -1);
 	if (newWheelTransition == m_wheelTransition) return false;
 	m_wheelTransition = newWheelTransition;
+	if (down)
+		Pi::game->Events().onShipGearDown.emit(this);
+	else
+		Pi::game->Events().onShipGearUp.emit(this);
 	return true;
 }
 

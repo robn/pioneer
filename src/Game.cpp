@@ -34,7 +34,8 @@ Game::Game(const SystemPath &path) :
 	m_wantHyperspace(false),
 	m_timeAccel(TIMEACCEL_1X),
 	m_requestedTimeAccel(TIMEACCEL_1X),
-	m_forceTimeAccel(false)
+	m_forceTimeAccel(false),
+	m_sound(this)
 {
 	m_space.Reset(new Space(this, path));
 	SpaceStation *station = static_cast<SpaceStation*>(m_space->FindBodyForPath(&path));
@@ -58,7 +59,8 @@ Game::Game(const SystemPath &path, const vector3d &pos) :
 	m_wantHyperspace(false),
 	m_timeAccel(TIMEACCEL_1X),
 	m_requestedTimeAccel(TIMEACCEL_1X),
-	m_forceTimeAccel(false)
+	m_forceTimeAccel(false),
+	m_sound(this)
 {
 	m_space.Reset(new Space(this, path));
 	Body *b = m_space->FindBodyForPath(&path);
@@ -106,7 +108,8 @@ Game::~Game()
 Game::Game(Serializer::Reader &rd) :
 	m_timeAccel(TIMEACCEL_PAUSED),
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
-	m_forceTimeAccel(false)
+	m_forceTimeAccel(false),
+	m_sound(this)
 {
 	// signature check
 	for (Uint32 i = 0; i < strlen(s_saveStart)+1; i++)

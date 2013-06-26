@@ -11,6 +11,8 @@ class Ship;
 class GameEvents {
 public:
 
+	sigc::signal<void,Ship*> onShipGearDown;
+	sigc::signal<void,Ship*> onShipGearUp;
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "galaxy/SystemPath.h"
 #include "Serializer.h"
 #include "GameEvents.h"
+#include "GameSound.h"
 #include "gameconsts.h"
 
 class HyperspaceCloud;
@@ -115,6 +116,8 @@ private:
 	bool m_forceTimeAccel;
 
 	GameEvents m_events;
+
+	GameSound m_sound;
 
 	static const float s_timeAccelRates[];
 };

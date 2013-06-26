@@ -51,6 +51,7 @@ noinst_HEADERS = \
 	Game.h \
 	GameMenuView.h \
 	GameEvents.h \
+	GameSound.h \
 	GeoSphere.h \
 	HyperspaceCloud.h \
 	IniConfig.h \
@@ -193,6 +194,7 @@ pioneer_SOURCES	= \
 	GalacticView.cpp \
 	Game.cpp \
 	GameMenuView.cpp \
+	GameSound.cpp \
 	GeoPatch.cpp \
 	GeoPatchContext.cpp \
 	GeoPatchID.cpp \

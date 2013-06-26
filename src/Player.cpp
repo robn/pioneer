@@ -55,16 +55,6 @@ void Player::SetDockedWith(SpaceStation *s, int port)
 }
 
 //XXX all ships should make this sound
-bool Player::SetWheelState(bool down)
-{
-	bool did = Ship::SetWheelState(down);
-	if (did) {
-		s_soundUndercarriage.Play(down ? "UC_out" : "UC_in", 1.0f, 1.0f, 0);
-	}
-	return did;
-}
-
-//XXX all ships should make this sound
 Missile * Player::SpawnMissile(ShipType::Id missile_type, int power)
 {
 	Missile * m = Ship::SpawnMissile(missile_type, power);
