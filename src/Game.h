@@ -7,6 +7,7 @@
 #include "vector3.h"
 #include "galaxy/SystemPath.h"
 #include "Serializer.h"
+#include "GameEvents.h"
 #include "gameconsts.h"
 
 class HyperspaceCloud;
@@ -80,6 +81,8 @@ public:
 	float GetTimeAccelRate() const { return s_timeAccelRates[m_timeAccel]; }
 	float GetTimeStep() const { return s_timeAccelRates[m_timeAccel]*(1.0f/PHYSICS_HZ); }
 
+	GameEvents &Events() { return m_events; }
+
 private:
 	void CreateViews();
 	void LoadViews(Serializer::Reader &rd);
@@ -110,6 +113,8 @@ private:
 	TimeAccel m_timeAccel;
 	TimeAccel m_requestedTimeAccel;
 	bool m_forceTimeAccel;
+
+	GameEvents m_events;
 
 	static const float s_timeAccelRates[];
 };

@@ -50,6 +50,7 @@ noinst_HEADERS = \
 	GalacticView.h \
 	Game.h \
 	GameMenuView.h \
+	GameEvents.h \
 	GeoSphere.h \
 	HyperspaceCloud.h \
 	IniConfig.h \
