@@ -17,6 +17,7 @@ public:
 private:
 	static void ShipGearDown(Ship *ship);
 	static void ShipGearUp(Ship *ship);
+	static void ShipMissileLaunched(Ship *ship, Missile *missile);
 
 	std::vector<sigc::connection> m_connections;
 };

@@ -48,15 +48,6 @@ bool Player::OnDamage(Object *attacker, float kgDamage)
 	return r;
 }
 
-//XXX all ships should make this sound
-Missile * Player::SpawnMissile(ShipType::Id missile_type, int power)
-{
-	Missile * m = Ship::SpawnMissile(missile_type, power);
-	if (m)
-		Sound::PlaySfx("Missile_launch", 1.0f, 1.0f, 0);
-	return m;
-}
-
 //XXX do in lua, or use the alert concept for all ships
 void Player::SetAlertState(Ship::AlertState as)
 {

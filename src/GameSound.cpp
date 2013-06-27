@@ -6,6 +6,7 @@
 #include "GameEvents.h"
 #include "Sound.h"
 #include "Ship.h"
+#include "Missile.h"
 
 GameSound::GameSound(Game *game)
 {
@@ -13,6 +14,7 @@ GameSound::GameSound(Game *game)
 
 	m_connections.push_back(s.onShipGearDown.connect(sigc::ptr_fun(&GameSound::ShipGearDown)));
 	m_connections.push_back(s.onShipGearUp.connect(sigc::ptr_fun(&GameSound::ShipGearUp)));
+	m_connections.push_back(s.onShipMissileLaunched.connect(sigc::ptr_fun(&GameSound::ShipMissileLaunched)));
 }
 
 GameSound::~GameSound()
@@ -29,4 +31,9 @@ void GameSound::ShipGearDown(Ship *ship)
 void GameSound::ShipGearUp(Ship *ship)
 {
 	Sound::BodyMakeNoise(ship, "UC_in", 1.0f);
+}
+
+void GameSound::ShipMissileLaunched(Ship *ship, Missile *missile)
+{
+	Sound::BodyMakeNoise(ship, "Missile_launch", 1.0f);
 }

@@ -622,6 +622,9 @@ Missile * Ship::SpawnMissile(ShipType::Id missile_type, int power) {
 	missile->SetPosition(GetPosition()+pos);
 	missile->SetVelocity(GetVelocity()+vel);
 	Pi::game->GetSpace()->AddBody(missile);
+
+	Pi::game->Events().onShipMissileLaunched.emit(this, missile);
+
 	return missile;
 }
 
