@@ -18,13 +18,12 @@ namespace Graphics { class Renderer; }
 
 class ShipCpanel: public Gui::Fixed {
 public:
-	ShipCpanel(Graphics::Renderer *r);
-    ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r);
+	ShipCpanel(Game *game, Graphics::Renderer *r);
+    ShipCpanel(Serializer::Reader &rd, Game *game, Graphics::Renderer *r);
 	virtual ~ShipCpanel();
 	virtual void Draw();
 	void Update();
 	MsgLogWidget *MsgLog() { return m_msglog; }
-	void SetAlertState(Ship::AlertState as);
 
 	void TimeStepUpdate(float step);
 
@@ -60,6 +59,12 @@ private:
 	void OnMultiFuncGrabFocus(multifuncfunc_t);
 	void OnMultiFuncUngrabFocus(multifuncfunc_t);
 	void HideMapviewButtons();
+
+	Game *m_game;
+
+	sigc::connection m_connOnShipAlertStateChanged;
+	void ShipAlertStateChanged(Ship *ship);
+	Ship::AlertState m_prevAlertState;
 
 	enum MapView m_currentMapView;
 	multifuncfunc_t m_userSelectedMfuncWidget;

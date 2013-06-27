@@ -20,7 +20,6 @@ public:
 	Player(ShipType::Id shipId);
 	Player() { }; //default constructor used before Load
 	virtual bool OnDamage(Object *attacker, float kgDamage);
-	virtual void SetAlertState(Ship::AlertState as);
 	virtual void NotifyRemoved(const Body* const removedBody);
 
 	/* MarketAgent stuff */

@@ -833,6 +833,7 @@ void Ship::SetAlertState(AlertState as)
 {
 	m_alertState = as;
 	Properties().Set("alertStatus", EnumStrings::GetString("ShipAlertStatus", as));
+	Pi::game->Events().onShipAlertStateChanged.emit(this);
 }
 
 void Ship::UpdateAlertState()

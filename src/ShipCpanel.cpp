@@ -17,18 +17,23 @@
 #include "UIView.h"
 #include "Lang.h"
 #include "Game.h"
+#include "Sound.h"
 
 // XXX duplicated in WorldView. should probably be a theme variable
 static const Color s_hudTextColor(0.0f,1.0f,0.0f,0.8f);
 
-ShipCpanel::ShipCpanel(Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
+ShipCpanel::ShipCpanel(Game *game, Graphics::Renderer *r):
+	Gui::Fixed(float(Gui::Screen::GetWidth()), 80),
+	m_game(game)
 {
 	m_scanner = new ScannerWidget(r);
 
 	InitObject();
 }
 
-ShipCpanel::ShipCpanel(Serializer::Reader &rd, Graphics::Renderer *r): Gui::Fixed(float(Gui::Screen::GetWidth()), 80)
+ShipCpanel::ShipCpanel(Serializer::Reader &rd, Game *game, Graphics::Renderer *r):
+	Gui::Fixed(float(Gui::Screen::GetWidth()), 80),
+	m_game(game)
 {
 	m_scanner = new ScannerWidget(r, rd);
 
@@ -197,16 +202,19 @@ void ShipCpanel::InitObject()
 	img->SetToolTip(Lang::NO_ALERT);
 	img->SetRenderDimensions(20, 13);
 	Add(img, 780, 37);
+	img->Hide();
 	m_alertLights[0] = img;
 	img = new Gui::Image("icons/alert_yellow.png");
 	img->SetToolTip(Lang::SHIP_NEARBY);
 	img->SetRenderDimensions(20, 13);
 	Add(img, 780, 37);
+	img->Hide();
 	m_alertLights[1] = img;
 	img = new Gui::Image("icons/alert_red.png");
 	img->SetToolTip(Lang::LASER_FIRE_DETECTED);
 	img->SetRenderDimensions(20, 13);
 	Add(img, 780, 37);
+	img->Hide();
 	m_alertLights[2] = img;
 
 	m_overlay[OVERLAY_TOP_LEFT]     = (new Gui::Label(""))->Color(s_hudTextColor);
@@ -217,6 +225,9 @@ void ShipCpanel::InitObject()
 	Add(m_overlay[OVERLAY_TOP_RIGHT],    500.0f, 2.0f);
 	Add(m_overlay[OVERLAY_BOTTOM_LEFT],  150.0f, 62.0f);
 	Add(m_overlay[OVERLAY_BOTTOM_RIGHT], 580.0f, 62.0f);
+
+	m_connOnShipAlertStateChanged = m_game->Events().onShipAlertStateChanged.connect(sigc::mem_fun(this, &ShipCpanel::ShipAlertStateChanged));
+	m_prevAlertState = m_game->GetPlayer()->GetAlertState();
 
 	m_connOnDockingClearanceExpired =
 		Pi::onDockingClearanceExpired.connect(sigc::mem_fun(this, &ShipCpanel::OnDockingClearanceExpired));
@@ -234,6 +245,7 @@ ShipCpanel::~ShipCpanel()
 	delete m_useEquipWidget;
 	delete m_msglog;
 	delete m_mfsel;
+	m_connOnShipAlertStateChanged.disconnect();
 	m_connOnDockingClearanceExpired.disconnect();
 	m_connOnRotationDampingChanged.disconnect();
 }
@@ -278,8 +290,8 @@ void ShipCpanel::OnDockingClearanceExpired(const SpaceStation *s)
 
 void ShipCpanel::Update()
 {
-	int timeAccel = Pi::game->GetTimeAccel();
-	int requested = Pi::game->GetRequestedTimeAccel();
+	int timeAccel = m_game->GetTimeAccel();
+	int requested = m_game->GetRequestedTimeAccel();
 
 	for (int i=0; i<6; i++) {
 		m_timeAccelButtons[i]->SetSelected(timeAccel == i);
@@ -289,6 +301,15 @@ void ShipCpanel::Update()
 		m_timeAccelButtons[Clamp(requested,0,5)]->SetSelected((SDL_GetTicks() & 0x200) != 0);
 	}
 
+	switch (m_prevAlertState) {
+		case Ship::ALERT_NONE:
+			m_alertLights[0]->Show(); m_alertLights[1]->Hide(); m_alertLights[2]->Hide(); break;
+		case Ship::ALERT_SHIP_NEARBY:
+			m_alertLights[0]->Hide(); m_alertLights[1]->Show(); m_alertLights[2]->Hide(); break;
+		case Ship::ALERT_SHIP_FIRING:
+			m_alertLights[0]->Hide(); m_alertLights[1]->Hide(); m_alertLights[2]->Show(); break;
+	}
+
 	m_scanner->Update();
 	m_useEquipWidget->Update();
 	m_msglog->Update();
@@ -296,7 +317,7 @@ void ShipCpanel::Update()
 
 void ShipCpanel::Draw()
 {
-	std::string time = format_date(Pi::game->GetTime());
+	std::string time = format_date(m_game->GetTime());
 	m_clock->SetText(time);
 
 	View *cur = Pi::GetView();
@@ -356,7 +377,7 @@ void ShipCpanel::HideMapviewButtons()
 void ShipCpanel::OnClickTimeaccel(Game::TimeAccel val)
 {
 	Pi::BoinkNoise();
-	if ((Pi::game->GetTimeAccel() == val) && (val == Game::TIMEACCEL_PAUSED)) {
+	if ((m_game->GetTimeAccel() == val) && (val == Game::TIMEACCEL_PAUSED)) {
 		if (Pi::GetView() != Pi::gameMenuView)
 			Pi::SetView(Pi::gameMenuView);
 		else
@@ -365,7 +386,7 @@ void ShipCpanel::OnClickTimeaccel(Game::TimeAccel val)
 	else {
 		if (Pi::GetView() == Pi::gameMenuView)
 			Pi::SetView(Pi::worldView);
-		Pi::game->RequestTimeAccel(val, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
+		m_game->RequestTimeAccel(val, Pi::KeyState(SDLK_LCTRL) || Pi::KeyState(SDLK_RCTRL));
 	}
 }
 
@@ -387,27 +408,6 @@ void ShipCpanel::OnClickRotationDamping(Gui::MultiStateImageButton *b)
 void ShipCpanel::OnRotationDampingChanged()
 {
 	m_rotationDampingButton->SetActiveState(Pi::player->GetPlayerController()->GetRotationDamping());
-}
-
-void ShipCpanel::SetAlertState(Ship::AlertState as)
-{
-	switch (as) {
-		case Ship::ALERT_NONE:
-			m_alertLights[0]->Show();
-			m_alertLights[1]->Hide();
-			m_alertLights[2]->Hide();
-			break;
-		case Ship::ALERT_SHIP_NEARBY:
-			m_alertLights[0]->Hide();
-			m_alertLights[1]->Show();
-			m_alertLights[2]->Hide();
-			break;
-		case Ship::ALERT_SHIP_FIRING:
-			m_alertLights[0]->Hide();
-			m_alertLights[1]->Hide();
-			m_alertLights[2]->Show();
-			break;
-	}
 }
 
 void ShipCpanel::TimeStepUpdate(float step)
@@ -441,4 +441,33 @@ void ShipCpanel::ClearOverlay()
 		m_overlay[i]->SetText("");
 		m_overlay[i]->SetToolTip("");
 	}
+}
+
+void ShipCpanel::ShipAlertStateChanged(Ship *ship)
+{
+	if (ship != m_game->GetPlayer())
+		return;
+
+	Ship::AlertState newAlertState = ship->GetAlertState();
+	switch (newAlertState) {
+		case Ship::ALERT_NONE:
+			if (m_prevAlertState != Ship::ALERT_NONE)
+				MsgLog()->Message("", Lang::ALERT_CANCELLED);
+			break;
+
+		case Ship::ALERT_SHIP_NEARBY:
+			if (m_prevAlertState == Ship::ALERT_NONE)
+				MsgLog()->ImportantMessage("", Lang::SHIP_DETECTED_NEARBY);
+			else
+				MsgLog()->ImportantMessage("", Lang::DOWNGRADING_ALERT_STATUS);
+			Sound::PlaySfx("OK");
+			break;
+
+		case Ship::ALERT_SHIP_FIRING:
+			MsgLog()->ImportantMessage("", Lang::LASER_FIRE_DETECTED);
+			Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
+			break;
+	}
+
+	m_prevAlertState = newAlertState;
 }

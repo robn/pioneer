@@ -15,6 +15,7 @@ public:
 	sigc::signal<void,Ship*>          onShipGearDown;
 	sigc::signal<void,Ship*>          onShipGearUp;
 	sigc::signal<void,Ship*,Missile*> onShipMissileLaunched;
+	sigc::signal<void,Ship*>          onShipAlertStateChanged;
 };
 
 #endif
