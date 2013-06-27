@@ -231,6 +231,11 @@ void ShipCpanel::InitObject()
 
 	m_connOnDockingClearanceExpired =
 		Pi::onDockingClearanceExpired.connect(sigc::mem_fun(this, &ShipCpanel::OnDockingClearanceExpired));
+
+	m_connOnShipHyperspaceCountdownStarted =
+		m_game->Events().onShipHyperspaceCountdownStarted.connect(sigc::mem_fun(this, &ShipCpanel::OnShipHyperspaceCountdownStarted));
+	m_connOnShipHyperspaceCountdownAborted =
+		m_game->Events().onShipHyperspaceCountdownAborted.connect(sigc::mem_fun(this, &ShipCpanel::OnShipHyperspaceCountdownAborted));
 }
 
 ShipCpanel::~ShipCpanel()
@@ -248,6 +253,8 @@ ShipCpanel::~ShipCpanel()
 	m_connOnShipAlertStateChanged.disconnect();
 	m_connOnDockingClearanceExpired.disconnect();
 	m_connOnRotationDampingChanged.disconnect();
+	m_connOnShipHyperspaceCountdownStarted.disconnect();
+	m_connOnShipHyperspaceCountdownAborted.disconnect();
 }
 
 void ShipCpanel::OnUserChangeMultiFunctionDisplay(multifuncfunc_t f)
@@ -470,4 +477,16 @@ void ShipCpanel::ShipAlertStateChanged(Ship *ship)
 	}
 
 	m_prevAlertState = newAlertState;
+}
+
+void ShipCpanel::OnShipHyperspaceCountdownStarted(Ship *ship)
+{
+	if (ship != Pi::player) return;
+	m_soundHyperdrive.Play("Hyperdrive_Charge");
+}
+
+void ShipCpanel::OnShipHyperspaceCountdownAborted(Ship *ship)
+{
+	if (ship != Pi::player) return;
+	m_soundHyperdrive.Play("Hyperdrive_Abort");
 }

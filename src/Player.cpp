@@ -38,16 +38,6 @@ void Player::Load(Serializer::Reader &rd, Space *space)
 	MarketAgent::Load(rd);
 }
 
-//XXX perhaps remove this, the sound is very annoying
-bool Player::OnDamage(Object *attacker, float kgDamage)
-{
-	bool r = Ship::OnDamage(attacker, kgDamage);
-	if (!IsDead() && (GetPercentHull() < 25.0f)) {
-		Sound::BodyMakeNoise(this, "warning", .5f);
-	}
-	return r;
-}
-
 void Player::NotifyRemoved(const Body* const removedBody)
 {
 	if (GetNavTarget() == removedBody)
@@ -168,19 +158,3 @@ void Player::SetNavTarget(Body* const target, bool setSpeedTo)
 	Pi::onPlayerChangeTarget.emit();
 }
 //temporary targeting stuff ends
-
-Ship::HyperjumpStatus Player::StartHyperspaceCountdown(const SystemPath &dest)
-{
-	HyperjumpStatus status = Ship::StartHyperspaceCountdown(dest);
-
-	if (status == HYPERJUMP_OK)
-		s_soundHyperdrive.Play("Hyperdrive_Charge");
-
-	return status;
-}
-
-void Player::ResetHyperspaceCountdown()
-{
-	s_soundHyperdrive.Play("Hyperdrive_Abort");
-	Ship::ResetHyperspaceCountdown();
-}

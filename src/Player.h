@@ -19,7 +19,6 @@ public:
 	OBJDEF(Player, Ship, PLAYER);
 	Player(ShipType::Id shipId);
 	Player() { }; //default constructor used before Load
-	virtual bool OnDamage(Object *attacker, float kgDamage);
 	virtual void NotifyRemoved(const Body* const removedBody);
 
 	/* MarketAgent stuff */
@@ -36,9 +35,6 @@ public:
 	Body *GetSetSpeedTarget() const;
 	void SetCombatTarget(Body* const target, bool setSpeedTo = false);
 	void SetNavTarget(Body* const target, bool setSpeedTo = false);
-
-	virtual Ship::HyperjumpStatus StartHyperspaceCountdown(const SystemPath &dest);
-	virtual void ResetHyperspaceCountdown();
 
 protected:
 	virtual void Save(Serializer::Writer &wr, Space *space);

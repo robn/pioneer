@@ -562,6 +562,8 @@ Ship::HyperjumpStatus Ship::StartHyperspaceCountdown(const SystemPath &dest)
 	m_hyperspace.countdown = 1.0f + Equip::types[t].pval;
 	m_hyperspace.now = false;
 
+	Pi::game->Events().onShipHyperspaceCountdownStarted(this);
+
 	return Ship::HYPERJUMP_OK;
 }
 
@@ -569,6 +571,8 @@ void Ship::ResetHyperspaceCountdown()
 {
 	m_hyperspace.countdown = 0;
 	m_hyperspace.now = false;
+
+	Pi::game->Events().onShipHyperspaceCountdownAborted(this);
 }
 
 float Ship::GetECMRechargeTime()

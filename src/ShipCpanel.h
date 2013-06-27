@@ -11,6 +11,7 @@
 #include "Serializer.h"
 #include "Game.h"
 #include "WorldView.h"
+#include "Sound.h"
 
 class Body;
 class SpaceStation;
@@ -85,6 +86,12 @@ private:
 	Gui::Image *m_alertLights[3];
 
 	Gui::Label *m_overlay[4];
+
+	sigc::connection m_connOnShipHyperspaceCountdownStarted;
+	sigc::connection m_connOnShipHyperspaceCountdownAborted;
+	void OnShipHyperspaceCountdownStarted(Ship *ship);
+	void OnShipHyperspaceCountdownAborted(Ship *ship);
+	Sound::Event m_soundHyperdrive;
 };
 
 #endif /* _SHIP_CPANEL_H */
