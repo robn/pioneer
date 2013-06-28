@@ -456,7 +456,7 @@ void SpaceStation::DockingUpdate(const double timeStep)
 			m_doorAnimationStep = 0.3; // open door
 
 			if (dt.stagePos >= 1.0) {
-				if (dt.ship == static_cast<Ship*>(Pi::player)) Pi::onDockingClearanceExpired.emit(this);
+				Pi::game->Events().onStationDockingClearanceExpired(this, dt.ship);
 				dt.ship = 0;
 				dt.stage = 0;
 				m_doorAnimationStep = -0.3; // close door

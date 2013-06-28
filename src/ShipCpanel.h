@@ -52,7 +52,6 @@ private:
 	void OnChangeInfoView(Gui::MultiStateImageButton *b);
 	void OnClickTimeaccel(Game::TimeAccel val);
 	void OnClickComms(Gui::MultiStateImageButton *b);
-	void OnDockingClearanceExpired(const SpaceStation *);
 	void OnClickRotationDamping(Gui::MultiStateImageButton *b);
 
 	void OnUserChangeMultiFunctionDisplay(multifuncfunc_t f);
@@ -63,15 +62,10 @@ private:
 
 	Game *m_game;
 
-	sigc::connection m_connOnShipAlertStateChanged;
-	void ShipAlertStateChanged(Ship *ship);
-	Ship::AlertState m_prevAlertState;
-
 	enum MapView m_currentMapView;
 	multifuncfunc_t m_userSelectedMfuncWidget;
 	Gui::Label *m_clock;
 
-	sigc::connection m_connOnDockingClearanceExpired;
 	sigc::connection m_connOnRotationDampingChanged;
 
 	MultiFuncSelectorWidget *m_mfsel;
@@ -87,11 +81,19 @@ private:
 
 	Gui::Label *m_overlay[4];
 
+	sigc::connection m_connOnShipAlertStateChanged;
+	void ShipAlertStateChanged(Ship *ship);
+	Ship::AlertState m_prevAlertState;
+
 	sigc::connection m_connOnShipHyperspaceCountdownStarted;
 	sigc::connection m_connOnShipHyperspaceCountdownAborted;
 	void OnShipHyperspaceCountdownStarted(Ship *ship);
 	void OnShipHyperspaceCountdownAborted(Ship *ship);
 	Sound::Event m_soundHyperdrive;
+
+	sigc::connection m_connOnStationDockingClearanceExpired;
+	void OnStationDockingClearanceExpired(const SpaceStation *station, const Ship *ship);
+
 };
 
 #endif /* _SHIP_CPANEL_H */

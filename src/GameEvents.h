@@ -8,6 +8,7 @@
 
 class Ship;
 class Missile;
+class SpaceStation;
 
 class GameEvents {
 public:
@@ -18,6 +19,8 @@ public:
 	sigc::signal<void,Ship*>          onShipAlertStateChanged;
 	sigc::signal<void,Ship*>          onShipHyperspaceCountdownStarted;
 	sigc::signal<void,Ship*>          onShipHyperspaceCountdownAborted;
+
+	sigc::signal<void,SpaceStation*,Ship*> onStationDockingClearanceExpired;
 };
 
 #endif

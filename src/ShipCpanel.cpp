@@ -229,13 +229,13 @@ void ShipCpanel::InitObject()
 	m_connOnShipAlertStateChanged = m_game->Events().onShipAlertStateChanged.connect(sigc::mem_fun(this, &ShipCpanel::ShipAlertStateChanged));
 	m_prevAlertState = m_game->GetPlayer()->GetAlertState();
 
-	m_connOnDockingClearanceExpired =
-		Pi::onDockingClearanceExpired.connect(sigc::mem_fun(this, &ShipCpanel::OnDockingClearanceExpired));
-
 	m_connOnShipHyperspaceCountdownStarted =
 		m_game->Events().onShipHyperspaceCountdownStarted.connect(sigc::mem_fun(this, &ShipCpanel::OnShipHyperspaceCountdownStarted));
 	m_connOnShipHyperspaceCountdownAborted =
 		m_game->Events().onShipHyperspaceCountdownAborted.connect(sigc::mem_fun(this, &ShipCpanel::OnShipHyperspaceCountdownAborted));
+
+	m_connOnStationDockingClearanceExpired =
+		m_game->Events().onStationDockingClearanceExpired.connect(sigc::mem_fun(this, &ShipCpanel::OnStationDockingClearanceExpired));
 }
 
 ShipCpanel::~ShipCpanel()
@@ -250,9 +250,9 @@ ShipCpanel::~ShipCpanel()
 	delete m_useEquipWidget;
 	delete m_msglog;
 	delete m_mfsel;
-	m_connOnShipAlertStateChanged.disconnect();
-	m_connOnDockingClearanceExpired.disconnect();
 	m_connOnRotationDampingChanged.disconnect();
+	m_connOnShipAlertStateChanged.disconnect();
+	m_connOnStationDockingClearanceExpired.disconnect();
 	m_connOnShipHyperspaceCountdownStarted.disconnect();
 	m_connOnShipHyperspaceCountdownAborted.disconnect();
 }
@@ -290,9 +290,10 @@ void ShipCpanel::OnMultiFuncUngrabFocus(multifuncfunc_t f)
 	ChangeMultiFunctionDisplay(m_userSelectedMfuncWidget);
 }
 
-void ShipCpanel::OnDockingClearanceExpired(const SpaceStation *s)
+void ShipCpanel::OnStationDockingClearanceExpired(const SpaceStation *station, const Ship *ship)
 {
-	MsgLog()->ImportantMessage(s->GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED);
+	if (ship != Pi::player) return;
+	MsgLog()->ImportantMessage(station->GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED);
 }
 
 void ShipCpanel::Update()
