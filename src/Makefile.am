@@ -52,6 +52,7 @@ noinst_HEADERS = \
 	GameMenuView.h \
 	GeoSphere.h \
 	HyperspaceCloud.h \
+	HyperspaceModel.h \
 	IniConfig.h \
 	Intro.h \
 	JobQueue.h \
@@ -198,6 +199,7 @@ pioneer_SOURCES	= \
 	GeoPatchJobs.cpp \
 	GeoSphere.cpp \
 	HyperspaceCloud.cpp \
+	HyperspaceModel.cpp \
 	IniConfig.cpp \
 	Intro.cpp \
 	JobQueue.cpp \

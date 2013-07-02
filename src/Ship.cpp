@@ -17,6 +17,7 @@
 #include "Frame.h"
 #include "WorldView.h"
 #include "HyperspaceCloud.h"
+#include "HyperspaceModel.h"
 #include "graphics/Drawables.h"
 #include "graphics/Graphics.h"
 #include "graphics/Material.h"
@@ -458,8 +459,9 @@ void Ship::UpdateEquipStats()
 		if (!hyperclass) { // no drive
 			m_stats.hyperspace_range = m_stats.hyperspace_range_max = 0;
 		} else {
-			m_stats.hyperspace_range_max = Pi::CalcHyperspaceRangeMax(hyperclass, GetMass()/1000);
-			m_stats.hyperspace_range = Pi::CalcHyperspaceRange(hyperclass, GetMass()/1000, m_equipment.Count(Equip::SLOT_CARGO, fuelType));
+			HyperspaceModel hm(t, GetMass()/1000);
+			m_stats.hyperspace_range_max = hm.GetMaxRange();
+			m_stats.hyperspace_range = hm.GetRange(m_equipment.Count(Equip::SLOT_CARGO, fuelType));
 		}
 	} else {
 		m_stats.hyperspace_range = m_stats.hyperspace_range_max = 0;
@@ -518,15 +520,16 @@ Ship::HyperjumpStatus Ship::GetHyperspaceDetails(const SystemPath &dest, int &ou
 
 	float dist = distance_to_system(dest);
 
-	outFuelRequired = Pi::CalcHyperspaceFuelOut(hyperclass, dist, m_stats.hyperspace_range_max);
-	double m_totalmass = GetMass()/1000;
+	HyperspaceModel hm(t, GetMass()/1000);
+
+	outFuelRequired = hm.GetFuelRequired(dist);
 	if (dist > m_stats.hyperspace_range_max) {
 		outFuelRequired = 0;
 		return HYPERJUMP_OUT_OF_RANGE;
 	} else if (fuel < outFuelRequired) {
 		return HYPERJUMP_INSUFFICIENT_FUEL;
 	} else {
-		outDurationSecs = Pi::CalcHyperspaceDuration(hyperclass, m_totalmass, dist);
+		outDurationSecs = hm.GetDuration(dist);
 
 		if (outFuelRequired <= fuel) {
 			return HYPERJUMP_OK;

@@ -4,6 +4,7 @@
 #include "StationShipViewForm.h"
 #include "Pi.h"
 #include "Player.h"
+#include "HyperspaceModel.h"
 #include "ShipSpinnerWidget.h"
 #include "ShipCpanel.h"
 #include "FormController.h"
@@ -83,13 +84,12 @@ StationShipViewForm::StationShipViewForm(FormController *controller, int marketI
 		if (type.capacity < Equip::types[drivetype].mass)
 			break;
 
-		int hyperclass = Equip::types[drivetype].pval;
-		float range = Pi::CalcHyperspaceRangeMax(hyperclass, type.hullMass + type.capacity + type.fuelTankMass);
+		float range = HyperspaceModel(Equip::Type(drivetype), type.hullMass + type.capacity + type.fuelTankMass).GetMaxRange();
 
 		Gui::VBox *cell = new Gui::VBox();
 		row->PackEnd(cell);
 
-		cell->PackEnd(new Gui::Label(stringf(Lang::CLASS_NUMBER, formatarg("class", hyperclass))));
+		cell->PackEnd(new Gui::Label(stringf(Lang::CLASS_NUMBER, formatarg("class", Equip::types[drivetype].pval))));
 		if (type.capacity < Equip::types[drivetype].mass)
 			cell->PackEnd(new Gui::Label("---"));
 		else
