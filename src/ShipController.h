@@ -32,7 +32,7 @@ public:
 		AI = 0,
 		PLAYER = 1
 	};
-	ShipController() { }
+	ShipController(Ship *ship) : m_ship(ship) { }
 	virtual ~ShipController() { }
 	virtual Type GetType() { return AI; }
 	virtual void Save(Serializer::Writer &wr, Space *s) { }
@@ -40,6 +40,10 @@ public:
 	virtual void PostLoadFixup(Space *) { }
 	virtual void StaticUpdate(float timeStep);
 	virtual void SetFlightControlState(FlightControlState s) { }
+
+	Ship *GetShip() const { return m_ship; }
+
+private:
 	Ship *m_ship;
 };
 
@@ -47,7 +51,7 @@ public:
 class PlayerShipController : public ShipController
 {
 public:
-	PlayerShipController();
+	PlayerShipController(Ship *ship);
 	~PlayerShipController();
 	virtual Type GetType() { return PLAYER; }
 	void Save(Serializer::Writer &wr, Space *s);

@@ -149,9 +149,9 @@ void Ship::Load(Serializer::Reader &rd, Space *space)
 	m_controller = 0;
 	const ShipController::Type ctype = static_cast<ShipController::Type>(rd.Int32());
 	if (ctype == ShipController::PLAYER)
-		SetController(new PlayerShipController());
+		SetController(new PlayerShipController(this));
 	else
-		SetController(new ShipController());
+		SetController(new ShipController(this));
 	m_controller->Load(rd);
 
 	m_navLights->Load(rd);
@@ -223,7 +223,7 @@ Ship::Ship(ShipType::Id shipId): DynamicBody(),
 	m_skin.Apply(GetModel());
 
 	Init();
-	SetController(new ShipController());
+	SetController(new ShipController(this));
 }
 
 Ship::~Ship()
@@ -237,7 +237,6 @@ void Ship::SetController(ShipController *c)
 	assert(c != 0);
 	if (m_controller) delete m_controller;
 	m_controller = c;
-	m_controller->m_ship = this;
 }
 
 float Ship::GetPercentHull() const

@@ -22,7 +22,7 @@ static Sound::Event s_soundHyperdrive;
 
 Player::Player(ShipType::Id shipId): Ship(shipId)
 {
-	SetController(new PlayerShipController());
+	SetController(new PlayerShipController(this));
 }
 
 void Player::Save(Serializer::Writer &wr, Space *space)

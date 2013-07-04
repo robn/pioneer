@@ -15,12 +15,12 @@
 void ShipController::StaticUpdate(float timeStep)
 {
 	OS::EnableFPE();
-	m_ship->AITimeStep(timeStep);
+	GetShip()->AITimeStep(timeStep);
 	OS::DisableFPE();
 }
 
-PlayerShipController::PlayerShipController() :
-	ShipController(),
+PlayerShipController::PlayerShipController(Ship *ship) :
+	ShipController(ship),
 	m_combatTarget(0),
 	m_navTarget(0),
 	m_setSpeedTarget(0),
@@ -89,36 +89,36 @@ void PlayerShipController::StaticUpdate(const float timeStep)
 	vector3d v;
 	matrix4x4d m;
 
-	if (m_ship->GetFlightState() == Ship::FLYING) {
+	if (GetShip()->GetFlightState() == Ship::FLYING) {
 		switch (m_flightControlState) {
 		case CONTROL_FIXSPEED:
 			PollControls(timeStep, true);
 			if (IsAnyLinearThrusterKeyDown()) break;
-			v = -m_ship->GetOrient().VectorZ() * m_setSpeed;
+			v = -GetShip()->GetOrient().VectorZ() * m_setSpeed;
 			if (m_setSpeedTarget) {
-				v += m_setSpeedTarget->GetVelocityRelTo(m_ship->GetFrame());
+				v += m_setSpeedTarget->GetVelocityRelTo(GetShip()->GetFrame());
 			}
-			m_ship->AIMatchVel(v);
+			GetShip()->AIMatchVel(v);
 			break;
 		case CONTROL_FIXHEADING_FORWARD:
 		case CONTROL_FIXHEADING_BACKWARD:
 			PollControls(timeStep, true);
 			if (IsAnyAngularThrusterKeyDown()) break;
-			v = m_ship->GetVelocity().NormalizedSafe();
+			v = GetShip()->GetVelocity().NormalizedSafe();
 			if (m_flightControlState == CONTROL_FIXHEADING_BACKWARD)
 				v = -v;
-			m_ship->AIFaceDirection(v);
+			GetShip()->AIFaceDirection(v);
 			break;
 		case CONTROL_MANUAL:
 			PollControls(timeStep, false);
 			break;
 		case CONTROL_AUTOPILOT:
-			if (m_ship->AIIsActive()) break;
+			if (GetShip()->AIIsActive()) break;
 			Pi::game->RequestTimeAccel(Game::TIMEACCEL_1X);
 //			AIMatchVel(vector3d(0.0));			// just in case autopilot doesn't...
 						// actually this breaks last timestep slightly in non-relative target cases
-			m_ship->AIMatchAngVelObjSpace(vector3d(0.0));
-			if (m_ship->GetFrame()->IsRotFrame()) SetFlightControlState(CONTROL_FIXSPEED);
+			GetShip()->AIMatchAngVelObjSpace(vector3d(0.0));
+			if (GetShip()->GetFrame()->IsRotFrame()) SetFlightControlState(CONTROL_FIXSPEED);
 			else SetFlightControlState(CONTROL_MANUAL);
 			m_setSpeed = 0.0;
 			break;
@@ -129,7 +129,7 @@ void PlayerShipController::StaticUpdate(const float timeStep)
 
 	//call autopilot AI, if active (also applies to set speed and heading lock modes)
 	OS::EnableFPE();
-	m_ship->AITimeStep(timeStep);
+	GetShip()->AITimeStep(timeStep);
 	OS::DisableFPE();
 }
 
@@ -137,7 +137,7 @@ void PlayerShipController::CheckControlsLock()
 {
 	m_controlsLocked = (Pi::game->IsPaused())
 		|| Pi::player->IsDead()
-		|| (m_ship->GetFlightState() != Ship::FLYING)
+		|| (GetShip()->GetFlightState() != Ship::FLYING)
 		|| Pi::IsConsoleActive()
 		|| (Pi::GetView() != Pi::worldView); //to prevent moving the ship in starmap etc.
 }
@@ -160,9 +160,9 @@ void PlayerShipController::PollControls(const float timeStep, const bool force_r
 
 	// if flying
 	{
-		m_ship->ClearThrusterState();
-		m_ship->SetGunState(0,0);
-		m_ship->SetGunState(1,0);
+		GetShip()->ClearThrusterState();
+		GetShip()->SetGunState(0,0);
+		GetShip()->SetGunState(1,0);
 
 		vector3d wantAngVel(0.0);
 		double angThrustSoftness = 10.0;
@@ -174,7 +174,7 @@ void PlayerShipController::PollControls(const float timeStep, const bool force_r
 		SDL_GetRelativeMouseState (mouseMotion+0, mouseMotion+1);	// call to flush
 		if (Pi::MouseButtonState(SDL_BUTTON_RIGHT))
 		{
-			const matrix3x3d &rot = m_ship->GetOrient();
+			const matrix3x3d &rot = GetShip()->GetOrient();
 			if (!m_mouseActive) {
 				m_mouseDir = -rot.VectorZ();	// in world space
 				m_mouseX = m_mouseY = 0;
@@ -226,16 +226,16 @@ void PlayerShipController::PollControls(const float timeStep, const bool force_r
 			}
 		}
 
-		if (KeyBindings::thrustForward.IsActive()) m_ship->SetThrusterState(2, -linearThrustPower);
-		if (KeyBindings::thrustBackwards.IsActive()) m_ship->SetThrusterState(2, linearThrustPower);
-		if (KeyBindings::thrustUp.IsActive()) m_ship->SetThrusterState(1, linearThrustPower);
-		if (KeyBindings::thrustDown.IsActive()) m_ship->SetThrusterState(1, -linearThrustPower);
-		if (KeyBindings::thrustLeft.IsActive()) m_ship->SetThrusterState(0, -linearThrustPower);
-		if (KeyBindings::thrustRight.IsActive()) m_ship->SetThrusterState(0, linearThrustPower);
+		if (KeyBindings::thrustForward.IsActive()) GetShip()->SetThrusterState(2, -linearThrustPower);
+		if (KeyBindings::thrustBackwards.IsActive()) GetShip()->SetThrusterState(2, linearThrustPower);
+		if (KeyBindings::thrustUp.IsActive()) GetShip()->SetThrusterState(1, linearThrustPower);
+		if (KeyBindings::thrustDown.IsActive()) GetShip()->SetThrusterState(1, -linearThrustPower);
+		if (KeyBindings::thrustLeft.IsActive()) GetShip()->SetThrusterState(0, -linearThrustPower);
+		if (KeyBindings::thrustRight.IsActive()) GetShip()->SetThrusterState(0, linearThrustPower);
 
 		if (KeyBindings::fireLaser.IsActive() || (Pi::MouseButtonState(SDL_BUTTON_LEFT) && Pi::MouseButtonState(SDL_BUTTON_RIGHT))) {
 				//XXX worldview? madness, ask from ship instead
-				m_ship->SetGunState(Pi::worldView->GetActiveWeapon(), 1);
+				GetShip()->SetGunState(Pi::worldView->GetActiveWeapon(), 1);
 		}
 
 		if (KeyBindings::yawLeft.IsActive()) wantAngVel.y += 1.0;
@@ -265,9 +265,9 @@ void PlayerShipController::PollControls(const float timeStep, const bool force_r
 			for (int axis=0; axis<3; axis++)
 				wantAngVel[axis] = Clamp(wantAngVel[axis], -invTimeAccelRate, invTimeAccelRate);
 
-			m_ship->AIModelCoordsMatchAngVel(wantAngVel, angThrustSoftness);
+			GetShip()->AIModelCoordsMatchAngVel(wantAngVel, angThrustSoftness);
 		}
-		if (m_mouseActive) m_ship->AIFaceDirection(m_mouseDir);
+		if (m_mouseActive) GetShip()->AIFaceDirection(m_mouseDir);
 
 	}
 }
@@ -300,10 +300,10 @@ void PlayerShipController::SetFlightControlState(FlightControlState s)
 {
 	if (m_flightControlState != s) {
 		m_flightControlState = s;
-		m_ship->AIClearInstructions();
+		GetShip()->AIClearInstructions();
 		//set desired velocity to current actual
 		if (m_flightControlState == CONTROL_FIXSPEED) {
-			m_setSpeed = m_setSpeedTarget ? m_ship->GetVelocityRelTo(m_setSpeedTarget).Length() : m_ship->GetVelocity().Length();
+			m_setSpeed = m_setSpeedTarget ? GetShip()->GetVelocityRelTo(m_setSpeedTarget).Length() : GetShip()->GetVelocity().Length();
 		}
 		//XXX global stuff
 		Pi::onPlayerChangeFlightControlState.emit();
