@@ -62,6 +62,7 @@ local commodityMarket = function (args)
 			:SetColumnSpacing(10)
 			:SetHeadingRow({ "", "Name", "Price", "In stock" })
 			:SetHeadingFont("LARGE")
+			:SetMouseEnabled(true)
 
 	for i=1,#cargoTypes do
 		local e = cargoTypes[i]
