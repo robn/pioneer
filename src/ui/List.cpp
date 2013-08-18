@@ -34,7 +34,7 @@ List *List::AddOption(const std::string &text)
 
 	int index = m_optionBackgrounds.size();
 
-	ColorBackground *background = c->ColorBackground(Color(0,0,0, m_selected == index ? c->GetSkin().ListAlphaSelect() : c->GetSkin().ListAlphaNormal()));
+	ColorBackground *background = c->ColorBackground(Color(0,0,0, m_selected == index ? c->GetSkin().AlphaSelect() : c->GetSkin().AlphaNormal()));
 	vbox->PackEnd(background->SetInnerWidget(c->Label(text)));
 
 	background->onMouseOver.connect(sigc::bind(sigc::mem_fun(this, &List::HandleOptionMouseOver), index));
@@ -68,13 +68,13 @@ void List::Clear()
 
 bool List::HandleOptionMouseOver(int index)
 {
-	m_optionBackgrounds[index]->SetColor(Color(0,0,0, GetContext()->GetSkin().ListAlphaHover()));
+	m_optionBackgrounds[index]->SetColor(Color(0,0,0, GetContext()->GetSkin().AlphaHover()));
 	return false;
 }
 
 bool List::HandleOptionMouseOut(int index)
 {
-	m_optionBackgrounds[index]->SetColor(Color(0,0,0, m_selected == index ? GetContext()->GetSkin().ListAlphaSelect() : GetContext()->GetSkin().ListAlphaNormal()));
+	m_optionBackgrounds[index]->SetColor(Color(0,0,0, m_selected == index ? GetContext()->GetSkin().AlphaSelect() : GetContext()->GetSkin().AlphaNormal()));
 	return false;
 }
 
@@ -82,7 +82,7 @@ bool List::HandleOptionClick(int index)
 {
 	if (m_selected != index) {
 		if (m_selected >= 0)
-			m_optionBackgrounds[m_selected]->SetColor(Color(0,0,0, GetContext()->GetSkin().ListAlphaNormal()));
+			m_optionBackgrounds[m_selected]->SetColor(Color(0,0,0, GetContext()->GetSkin().AlphaNormal()));
 		m_selected = index;
 		onOptionSelected.emit(index, m_options[index]);
 	}
