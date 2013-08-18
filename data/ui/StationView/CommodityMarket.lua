@@ -64,10 +64,16 @@ local commodityMarket = function (args)
 			:SetHeadingFont("LARGE")
 			:SetMouseEnabled(true)
 
+	local rowEquip = {}
+	stationCargo.onRowClicked:Connect(function (row) print(rowEquip[row+1]) end)
+
+	local row = 1
 	for i=1,#cargoTypes do
 		local e = cargoTypes[i]
 		local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
 		stationCargo:AddRow({ icon, t(e), string.format("%.02f", station:GetEquipmentPrice(e)), station:GetEquipmentStock(e) })
+		rowEquip[row] = e
+		row = row + 1
 	end
 
 	local shipCargo =
