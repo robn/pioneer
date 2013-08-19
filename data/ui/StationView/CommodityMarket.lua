@@ -5,6 +5,7 @@ local Translate = import("Translate")
 local Engine = import("Engine")
 local Game = import("Game")
 local EquipDef = import("EquipDef")
+local Comms = import("Comms")
 
 local InfoGauge = import("ui/InfoGauge")
 
@@ -65,8 +66,6 @@ local commodityMarket = function (args)
 			:SetMouseEnabled(true)
 
 	local rowEquip = {}
-	stationCargo.onRowClicked:Connect(function (row) print(rowEquip[row+1]) end)
-
 	local row = 1
 	for i=1,#cargoTypes do
 		local e = cargoTypes[i]
@@ -83,23 +82,62 @@ local commodityMarket = function (args)
 			:SetHeadingRow({ "", "Name", "Amount" })
 			:SetHeadingFont("LARGE")
 
-	for i=1,#cargoTypes do
-		local e = cargoTypes[i]
-		local n = Game.player:GetEquipCount("CARGO", e)
-		if n > 0 then
-			local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
-			shipCargo:AddRow({ icon, t(e), n })
+	local function fillShipCargo ()
+		shipCargo:ClearRows()
+		for i=1,#cargoTypes do
+			local e = cargoTypes[i]
+			local n = Game.player:GetEquipCount("CARGO", e)
+			if n > 0 then
+				local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
+				shipCargo:AddRow({ icon, t(e), n })
+			end
 		end
 	end
+	fillShipCargo()
 
 	local cargoGauge = InfoGauge.New({
 		formatter = function (v)
 			local stats = Game.player:GetStats()
-			return string.format("%d/%dt", stats.usedCargo, stats.freeCapacity)
+			return string.format("%d/%dt", stats.usedCargo, stats.maxCapacity-stats.usedCapacity+stats.usedCargo)
 		end
 	})
 	local stats = Game.player:GetStats()
-	cargoGauge:SetValue(stats.usedCargo/stats.freeCapacity)
+	cargoGauge:SetValue(stats.usedCargo/(stats.maxCapacity-stats.usedCapacity+stats.usedCargo))
+
+	local cashLabel = ui:Label(string.format("$%.2f", Game.player:GetMoney()))
+
+	stationCargo.onRowClicked:Connect( function (row)
+		local e = rowEquip[row+1]
+
+		if station:GetEquipmentStock(e) <= 0 then
+			Comms.message(t("ITEM_IS_OUT_OF_STOCK"))
+			return
+		end
+
+		local stats = Game.player:GetStats()
+
+		-- XXX check slot capacity
+
+		if stats.freeCapacity <= 0 then
+			Comms.Message(t("SHIP_IS_FULLY_LADEN"))
+			return
+		end
+
+		if Game.player:GetMoney() < station:GetEquipmentPrice(e) then
+			Comms.Message(t("YOU_NOT_ENOUGH_MONEY"))
+			return
+		end
+
+		assert(Game.player:AddEquip(e) == 1)
+		Game.player:AddMoney(-station:GetEquipmentPrice(e))
+
+		fillShipCargo()
+
+		stats = Game.player:GetStats()
+		cargoGauge:SetValue(stats.usedCargo/(stats.maxCapacity-stats.usedCapacity+stats.usedCargo))
+		cashLabel:SetText(string.format("$%.2f", Game.player:GetMoney()))
+	end)
+
 
 	return
 		ui:Grid(2,1)
@@ -113,6 +151,10 @@ local commodityMarket = function (args)
 				ui:VBox():PackEnd({
 					ui:Label("In cargo hold"):SetFont("HEADING_LARGE"),
 					ui:Expand():SetInnerWidget(shipCargo),
+					ui:HBox():PackEnd({
+						"Cash: ",
+						cashLabel
+					}),
 					ui:HBox():PackEnd({
 						"Cargo space: ",
 						cargoGauge
