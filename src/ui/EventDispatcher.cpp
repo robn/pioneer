@@ -109,7 +109,7 @@ bool EventDispatcher::Dispatch(const Event &event)
 			const MouseButtonEvent mouseButtonEvent = static_cast<const MouseButtonEvent&>(event);
 			m_lastMousePosition = mouseButtonEvent.pos;
 
-			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 
 			switch (mouseButtonEvent.action) {
 
@@ -174,7 +174,7 @@ bool EventDispatcher::Dispatch(const Event &event)
 			}
 
 			// widget directly under the mouse
-			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 
 			bool ret = false;
 			if (!target->IsDisabled()) {
@@ -191,7 +191,7 @@ bool EventDispatcher::Dispatch(const Event &event)
 			const MouseWheelEvent mouseWheelEvent = static_cast<const MouseWheelEvent&>(event);
 			m_lastMousePosition = mouseWheelEvent.pos;
 
-			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 			return target->TriggerMouseWheel(mouseWheelEvent);
 		}
 
@@ -283,7 +283,7 @@ void EventDispatcher::DisableWidget(Widget *target)
 	// if the mouse is over the target, then the mouse is also over all of the
 	// children. find the top one and deliver a MouseOut event to them all
 	if (target->IsMouseOver()) {
-		RefCountedPtr<Widget> top(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+		RefCountedPtr<Widget> top(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 		top->TriggerMouseOut(top->GetAbsolutePosition(), true, target); // stop at target
 		m_lastMouseOverTarget.Reset(0);
 	}
@@ -291,7 +291,7 @@ void EventDispatcher::DisableWidget(Widget *target)
 
 void EventDispatcher::EnableWidget(Widget *target)
 {
-	RefCountedPtr<Widget> top(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+	RefCountedPtr<Widget> top(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 	DispatchMouseOverOut(top.Get(), m_lastMousePosition);
 }
 
@@ -300,7 +300,7 @@ void EventDispatcher::LayoutUpdated()
 	m_shortcuts.clear();
 	m_baseContainer->CollectShortcuts(m_shortcuts);
 
-	RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
+	RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAt(m_lastMousePosition));
 	DispatchMouseOverOut(target.Get(), m_lastMousePosition);
 }
 
