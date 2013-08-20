@@ -65,15 +65,23 @@ local commodityMarket = function (args)
 			:SetHeadingFont("LARGE")
 			:SetMouseEnabled(true)
 
-	local rowEquip = {}
-	local row = 1
-	for i=1,#cargoTypes do
-		local e = cargoTypes[i]
-		local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
-		stationCargo:AddRow({ icon, t(e), string.format("%.02f", station:GetEquipmentPrice(e)), station:GetEquipmentStock(e) })
-		rowEquip[row] = e
-		row = row + 1
+	local function fillStationTable ()
+		stationCargo:ClearRows()
+
+		local rowEquip = {}
+		local row = 1
+		for i=1,#cargoTypes do
+			local e = cargoTypes[i]
+			local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
+
+			stationCargo:AddRow({ icon, t(e), string.format("%.02f", station:GetEquipmentPrice(e)), station:GetEquipmentStock(e) })
+			rowEquip[row] = e
+			row = row + 1
+		end
+
+		return rowEquip
 	end
+	local stationRowEquip = fillStationTable()
 
 	local shipCargo =
 		ui:Table()
@@ -81,19 +89,28 @@ local commodityMarket = function (args)
 			:SetColumnSpacing(10)
 			:SetHeadingRow({ "", "Name", "Amount" })
 			:SetHeadingFont("LARGE")
+			:SetMouseEnabled(true)
 
-	local function fillShipCargo ()
+	local function fillShipTable ()
 		shipCargo:ClearRows()
+
+		local rowEquip = {}
+		local row = 1
 		for i=1,#cargoTypes do
 			local e = cargoTypes[i]
 			local n = Game.player:GetEquipCount("CARGO", e)
 			if n > 0 then
 				local icon = cargoIcon[e] and ui:Image("icons/goods/"..cargoIcon[e]..".png") or ""
 				shipCargo:AddRow({ icon, t(e), n })
+
+				rowEquip[row] = e
+				row = row + 1
 			end
 		end
+
+		return rowEquip
 	end
-	fillShipCargo()
+	local shipRowEquip = fillShipTable()
 
 	local cargoGauge = InfoGauge.New({
 		formatter = function (v)
@@ -101,13 +118,18 @@ local commodityMarket = function (args)
 			return string.format("%d/%dt", stats.usedCargo, stats.maxCapacity-stats.usedCapacity+stats.usedCargo)
 		end
 	})
-	local stats = Game.player:GetStats()
-	cargoGauge:SetValue(stats.usedCargo/(stats.maxCapacity-stats.usedCapacity+stats.usedCargo))
 
-	local cashLabel = ui:Label(string.format("$%.2f", Game.player:GetMoney()))
+	local cashLabel = ui:Label("")
+
+	local function updateStats ()
+		local stats = Game.player:GetStats()
+		cargoGauge:SetValue(stats.usedCargo/(stats.maxCapacity-stats.usedCapacity+stats.usedCargo))
+		cashLabel:SetText(string.format("$%.2f", Game.player:GetMoney()))
+	end
+	updateStats()
 
 	stationCargo.onRowClicked:Connect( function (row)
-		local e = rowEquip[row+1]
+		local e = stationRowEquip[row+1]
 
 		if station:GetEquipmentStock(e) <= 0 then
 			Comms.message(t("ITEM_IS_OUT_OF_STOCK"))
@@ -130,14 +152,26 @@ local commodityMarket = function (args)
 
 		assert(Game.player:AddEquip(e) == 1)
 		Game.player:AddMoney(-station:GetEquipmentPrice(e))
+		-- XXX remove from station stock
 
-		fillShipCargo()
+		stationRowEquip = fillStationTable()
+		shipRowEquip = fillShipTable()
 
-		stats = Game.player:GetStats()
-		cargoGauge:SetValue(stats.usedCargo/(stats.maxCapacity-stats.usedCapacity+stats.usedCargo))
-		cashLabel:SetText(string.format("$%.2f", Game.player:GetMoney()))
+		updateStats()
 	end)
 
+	shipCargo.onRowClicked:Connect( function (row)
+		local e = shipRowEquip[row+1]
+
+		Game.player:RemoveEquip(e)
+		Game.player:AddMoney(station:GetEquipmentPrice(e))
+		-- XXX add to station stock
+
+		stationRowEquip = fillStationTable()
+		shipRowEquip = fillShipTable()
+
+		updateStats()
+	end)
 
 	return
 		ui:Grid(2,1)
