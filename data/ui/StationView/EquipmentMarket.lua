@@ -7,8 +7,8 @@ local Engine = import("Engine")
 local ui = Engine.ui
 local t = Translate:GetTranslator()
 
-local shipyard = function (args)
-    return ui:Label("shipyard")
+local equipmentMarket = function (args)
+    return ui:Label("equipment market")
 end
 
-return shipyard
+return equipmentMarket
