@@ -5,6 +5,7 @@ local Translate = import("Translate")
 local Engine = import("Engine")
 local Game = import("Game")
 local EquipDef = import("EquipDef")
+local utils = import("utils")
 
 local ui = Engine.ui
 local t = Translate:GetTranslator()
@@ -43,6 +44,36 @@ local equipIcon = {
 	RADIOACTIVES =          "Radioactive_waste",
 }
 
+local stationColumnHeading = {
+	icon  = "",
+	name  = "Name",
+	price = "Price",
+	stock = "In stock",
+	mass  = "Mass",
+}
+local shipColumnHeading = {
+	icon      = "",
+	name      = "Name",
+	amount    = "Amount",
+	mass      = "Mass",
+	massTotal = "Total mass",
+}
+
+local stationColumnValue = {
+	icon  = function (c,e) return equipIcon[e] and ui:Image("icons/goods/"..equipIcon[e]..".png") or "" end,
+	name  = function (c,e) return t(e) end,
+	price = function (c,e) return string.format("%0.2f", c.station:GetEquipmentPrice(e)) end,
+	stock = function (c,e) return c.station:GetEquipmentStock(e) end,
+	mass  = function (c,e) return string.format("%dt", EquipDef[e].mass) end,
+}
+local shipColumnValue = {
+	icon      = function (c,e) return equipIcon[e] and ui:Image("icons/goods/"..equipIcon[e]..".png") or "" end,
+	name      = function (c,e) return t(e) end,
+	amount    = function (c,e) return Game.player:GetEquipCount(EquipDef[e].slot, e) end,
+	mass      = function (c,e) return string.format("%dt", EquipDef[e].mass) end,
+	massTotal = function (c,e) return string.format("%dt", Game.player:GetEquipCount(EquipDef[e].slot,e)*EquipDef[e].mass) end,
+}
+
 local EquipmentTableWidgets = {}
 
 function EquipmentTableWidgets.Pair (config)
@@ -58,7 +89,7 @@ function EquipmentTableWidgets.Pair (config)
 		ui:Table()
 			:SetRowSpacing(5)
 			:SetColumnSpacing(10)
-			:SetHeadingRow({ "", "Name", "Price", "In stock" })
+			:SetHeadingRow(utils.build_table(utils.map(function (k,v) return k,stationColumnHeading[v] end, ipairs(config.stationColumns))))
 			:SetHeadingFont("LARGE")
 			:SetMouseEnabled(true)
 
@@ -69,9 +100,7 @@ function EquipmentTableWidgets.Pair (config)
 		local row = 1
 		for i=1,#equipTypes do
 			local e = equipTypes[i]
-			local icon = equipIcon[e] and ui:Image("icons/goods/"..equipIcon[e]..".png") or ""
-
-			stationTable:AddRow({ icon, t(e), string.format("%.02f", config.station:GetEquipmentPrice(e)), config.station:GetEquipmentStock(e) })
+			stationTable:AddRow(utils.build_table(utils.map(function (k,v) return k,stationColumnValue[v](config,e) end, ipairs(config.stationColumns))))
 			rowEquip[row] = e
 			row = row + 1
 		end
@@ -84,7 +113,7 @@ function EquipmentTableWidgets.Pair (config)
 		ui:Table()
 			:SetRowSpacing(5)
 			:SetColumnSpacing(10)
-			:SetHeadingRow({ "", "Name", "Amount" })
+			:SetHeadingRow(utils.build_table(utils.map(function (k,v) return k,shipColumnHeading[v] end, ipairs(config.shipColumns))))
 			:SetHeadingFont("LARGE")
 			:SetMouseEnabled(true)
 
@@ -98,8 +127,7 @@ function EquipmentTableWidgets.Pair (config)
 			local n = Game.player:GetEquipCount(EquipDef[e].slot, e)
 			if n > 0 then
 				local icon = equipIcon[e] and ui:Image("icons/goods/"..equipIcon[e]..".png") or ""
-				shipTable:AddRow({ icon, t(e), n })
-
+				shipTable:AddRow(utils.build_table(utils.map(function (k,v) return k,shipColumnValue[v](config,e) end, ipairs(config.shipColumns))))
 				rowEquip[row] = e
 				row = row + 1
 			end
