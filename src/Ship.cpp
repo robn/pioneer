@@ -1139,6 +1139,20 @@ void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vect
 	//strncpy(params.pText[0], GetLabel().c_str(), sizeof(params.pText));
 	RenderModel(renderer, camera, viewCoords, viewTransform);
 
+	if (IsType(Object::PLAYER) && m_type->equipSlotCapacity[Equip::SLOT_LASER]) {
+		renderer->SetBlendMode(Graphics::BLEND_ADDITIVE);
+		for (int i = 0; i < m_type->equipSlotCapacity[Equip::SLOT_LASER]; i++) {
+			const vector3d gunPos(m_type->gunMount[i].pos);
+			const vector3d viewPos = viewCoords + gunPos;
+			matrix4x4f trans = matrix4x4f::Identity();
+			trans.Translate(viewPos.x, viewPos.y, viewPos.z);
+			renderer->SetTransform(trans);
+			Sfx::shieldEffect->GetMaterial()->diffuse = i & 0x1 ? Color::RED : Color::GREEN;
+			Sfx::shieldEffect->Draw(renderer);
+		}
+		renderer->SetBlendMode(Graphics::BLEND_SOLID);
+	}
+
 	// draw shield recharge bubble
 	if (m_stats.shield_mass_left < m_stats.shield_mass) {
 		const float shield = 0.01f*GetPercentShields();

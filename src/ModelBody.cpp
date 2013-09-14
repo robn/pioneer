@@ -310,7 +310,9 @@ void ModelBody::RenderModel(Graphics::Renderer *r, const Camera *camera, const v
 	trans[14] = viewCoords.z;
 	trans[15] = 1.0f;
 
+	if (IsType(Object::PLAYER)) r->SetWireFrameMode(1);
 	m_model->Render(trans);
+	if (IsType(Object::PLAYER)) r->SetWireFrameMode(0);
 
 	if (setLighting)
 		ResetLighting(r, oldLights, oldAmbient);
