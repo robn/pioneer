@@ -24,6 +24,12 @@ local shipTable =
 local shipInfo =
 	ui:Expand("VERTICAL")
 
+local function icon (manufacturer)
+	return manufacturer ~= ""
+		and ui:Image("icons/company/"..manufacturer..".png", { "PRESERVE_ASPECT" })
+		or ui:Margin(32)
+end
+
 shipTable.onRowClicked:Connect(function (row)
 	local station = Game.player:GetDockedWith()
 	local sos = SpaceStation.shipsOnSale[station][row+1]
@@ -31,7 +37,10 @@ shipTable.onRowClicked:Connect(function (row)
 
 	shipInfo:SetInnerWidget(
 		ui:VBox():PackEnd({
-			ui:Label(def.name):SetFont("HEADING_LARGE"),
+			ui:HBox():PackEnd({
+				ui:Align("LEFT", ui:Label(def.name):SetFont("HEADING_LARGE")),
+				ui:Expand("HORIZONTAL", ui:Align("RIGHT", icon(def.manufacturer))),
+			}),
 			ModelSpinner.New(ui, def.modelName, sos.skin),
 			ui:Align("MIDDLE", ui:Button("Buy Ship"):SetFont("HEADING_LARGE")),
 		})
