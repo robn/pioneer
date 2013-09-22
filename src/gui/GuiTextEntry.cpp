@@ -45,7 +45,7 @@ bool TextEntry::OnKeyPress(const SDL_Keysym *sym)
 	accepted = false;
 
 	bool changed = false;
-	Uint16 unicode = sym->unicode; // XXX SDL2 unicode now handled through SDL_TextInputEvent
+//	Uint16 unicode = sym->unicode; // XXX SDL2 unicode now handled through SDL_TextInputEvent
 
 	int oldNewlineCount = m_newlineCount;
 
@@ -116,7 +116,7 @@ bool TextEntry::OnKeyPress(const SDL_Keysym *sym)
 		accepted = true;
 	}
 
-	if ((unicode == '\n') || (unicode == '\r')) {
+	/*if ((unicode == '\n') || (unicode == '\r')) {
 		switch (m_newlineMode) {
 		case IgnoreNewline:
 			unicode = '\0';
@@ -139,7 +139,7 @@ bool TextEntry::OnKeyPress(const SDL_Keysym *sym)
 		SetCursorPos(m_cursPos+len);
 		changed = true;
 		accepted = true;
-	}
+	}*/
 
 	if (oldNewlineCount != m_newlineCount)
 		ResizeRequest();

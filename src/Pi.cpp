@@ -93,7 +93,7 @@ LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
 int Pi::keyModState;
-char Pi::keyState[512]; // XXX SDL2 SDLK_LAST
+std::map<SDL_Keycode,char> Pi::keyState;
 char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;
@@ -301,9 +301,6 @@ void Pi::Init()
 		fwrite(s.c_str(), 1, s.size(), f);
 		fclose(f);
 	}
-
-	OS::LoadWindowIcon();
-	//SDL_WM_SetCaption("Pioneer","Pioneer"); XXX SDL2 pass through settings
 
 	Pi::scrAspect = videoSettings.width / float(videoSettings.height);
 
@@ -745,12 +742,12 @@ void Pi::HandleEvents()
 							break; // This does nothing but it stops the compiler warnings
 					}
 				}
-				Pi::keyState[event.key.keysym.sym] = 1;
+				Pi::KeyState(event.key.keysym.sym, 1);
 				Pi::keyModState = event.key.keysym.mod;
 				Pi::onKeyPress.emit(&event.key.keysym);
 				break;
 			case SDL_KEYUP:
-				Pi::keyState[event.key.keysym.sym] = 0;
+				Pi::KeyState(event.key.keysym.sym, 0);
 				Pi::keyModState = event.key.keysym.mod;
 				Pi::onKeyRelease.emit(&event.key.keysym);
 				break;
@@ -823,7 +820,7 @@ void Pi::InitGame()
 
 	//reset input states
 	keyModState = 0;
-	std::fill(keyState, keyState + COUNTOF(keyState), 0);
+	//std::fill(keyState, keyState + COUNTOF(keyState), 0);
 	std::fill(mouseButton, mouseButton + COUNTOF(mouseButton), 0);
 	std::fill(mouseMotion, mouseMotion + COUNTOF(mouseMotion), 0);
 	for (std::vector<JoystickState>::iterator stick = joysticks.begin(); stick != joysticks.end(); ++stick) {

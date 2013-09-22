@@ -139,7 +139,7 @@ void LuaConsole::OnKeyPressed(const SDL_Keysym *sym) {
 	}
 
 
-	if (((sym->unicode == '\n') || (sym->unicode == '\r')) && ((sym->mod & KMOD_CTRL) == 0)) {
+	if (((sym->sym == '\n') || (sym->sym == SDLK_RETURN)) && ((sym->mod & KMOD_CTRL) == 0)) {
 		ExecOrContinue();
 	}
 }

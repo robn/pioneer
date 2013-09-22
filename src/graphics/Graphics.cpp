@@ -122,6 +122,8 @@ std::vector<VideoMode> GetAvailableVideoModes()
 	if( num_displays==0 ) {
 		modes.push_back(VideoMode(800, 600));
 	}
+
+	return modes;
 }
 
 }

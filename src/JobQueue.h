@@ -59,6 +59,7 @@ private:
 	SDL_Thread *m_threadId;
 
 	uint8_t m_threadIdx;
+	char m_threadName[12];
 };
 
 
