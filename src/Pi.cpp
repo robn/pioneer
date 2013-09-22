@@ -81,8 +81,8 @@
 
 float Pi::gameTickAlpha;
 float Pi::scrAspect;
-sigc::signal<void, SDL_keysym*> Pi::onKeyPress;
-sigc::signal<void, SDL_keysym*> Pi::onKeyRelease;
+sigc::signal<void, SDL_Keysym*> Pi::onKeyPress;
+sigc::signal<void, SDL_Keysym*> Pi::onKeyRelease;
 sigc::signal<void, int, int, int> Pi::onMouseButtonUp;
 sigc::signal<void, int, int, int> Pi::onMouseButtonDown;
 sigc::signal<void> Pi::onPlayerChangeTarget;
@@ -93,7 +93,7 @@ LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
 int Pi::keyModState;
-char Pi::keyState[SDLK_LAST];
+char Pi::keyState[512]; // XXX SDL2 SDLK_LAST
 char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;
@@ -131,6 +131,7 @@ Graphics::Renderer *Pi::renderer;
 RefCountedPtr<UI::Context> Pi::ui;
 ModelCache *Pi::modelCache;
 Intro *Pi::intro;
+SDLGraphics *Pi::sdl;
 
 #if WITH_OBJECTVIEWER
 ObjectViewerView *Pi::objectViewerView;
@@ -268,24 +269,6 @@ void Pi::Init()
 	Pi::detail.fracmult = config->Int("FractalMultiple");
 	Pi::detail.cities = config->Int("DetailCities");
 
-#ifdef __linux__
-	// there appears to be a bug in the Linux evdev input driver that stops
-	// DGA mouse grab restoring state correctly. SDL can use an alternative
-	// method, but its only configurable via environment variable. Here we set
-	// that environment variable (unless the user explicitly doesn't want it
-	// via config).
-	//
-	// we also enable warp-after-grab here, as the SDL alternative method
-	// doesn't restore the mouse pointer to its pre-grab position
-	//
-	// XXX SDL2 uses a different mechanism entirely and this environment
-	// variable doesn't exist there, so we can get rid of it when we go to SDL2
-	if (!config->Int("SDLUseDGAMouse")) {
-		Pi::warpAfterMouseGrab = true;
-		setenv("SDL_VIDEO_X11_DGAMOUSE", "0", 1);
-	}
-#endif
-
 	// Initialize SDL
 	Uint32 sdlInitFlags = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK;
 #if defined(DEBUG) || defined(_DEBUG)
@@ -294,9 +277,6 @@ void Pi::Init()
 	if (SDL_Init(sdlInitFlags) < 0) {
 		OS::Error("SDL initialization failed: %s\n", SDL_GetError());
 	}
-
-	// needed for the UI
-	SDL_EnableUNICODE(1);
 
 	// Do rest of SDL video initialization and create Renderer
 	Graphics::Settings videoSettings = {};
@@ -323,7 +303,7 @@ void Pi::Init()
 	}
 
 	OS::LoadWindowIcon();
-	SDL_WM_SetCaption("Pioneer","Pioneer");
+	//SDL_WM_SetCaption("Pioneer","Pioneer"); XXX SDL2 pass through settings
 
 	Pi::scrAspect = videoSettings.width / float(videoSettings.height);
 
@@ -660,7 +640,7 @@ void Pi::HandleEvents()
 								Pi::EndGame();
 							Pi::Quit();
 							break;
-						case SDLK_PRINT:	   // print
+						case SDLK_PRINTSCREEN: // print
 						case SDLK_KP_MULTIPLY: // screen
 						{
 							char buf[256];
@@ -823,7 +803,7 @@ void Pi::TombStoneLoop()
 	float _time = 0;
 	do {
 		Pi::HandleEvents();
-		Pi::SetMouseGrab(false);
+		Pi::renderer->GetWindow()->SetGrab(false);
 		Pi::renderer->BeginFrame();
 		tombstone->Draw(_time);
 		Pi::renderer->EndFrame();
@@ -1253,16 +1233,14 @@ void Pi::SetMouseGrab(bool on)
 {
 	if (!doingMouseGrab && on) {
 		SDL_ShowCursor(0);
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-		if (Pi::warpAfterMouseGrab)
-			SDL_GetMouseState(&mouseGrabWarpPos[0], &mouseGrabWarpPos[1]);
+		Pi::renderer->GetWindow()->SetGrab(true);
+//		SDL_SetRelativeMouseMode(true);
 		doingMouseGrab = true;
 	}
 	else if(doingMouseGrab && !on) {
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-		if (Pi::warpAfterMouseGrab)
-			SDL_WarpMouse(mouseGrabWarpPos[0], mouseGrabWarpPos[1]);
 		SDL_ShowCursor(1);
+		Pi::renderer->GetWindow()->SetGrab(false);
+//		SDL_SetRelativeMouseMode(false);
 		doingMouseGrab = false;
 	}
 }

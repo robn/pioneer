@@ -69,11 +69,11 @@ bool LuaConsole::IsActive() const {
 	return IsVisible() && m_entryField->IsFocused();
 }
 
-bool LuaConsole::OnFilterKeys(const SDL_keysym *sym) {
+bool LuaConsole::OnFilterKeys(const SDL_Keysym *sym) {
 	return !KeyBindings::toggleLuaConsole.binding.Matches(sym);
 }
 
-void LuaConsole::OnKeyPressed(const SDL_keysym *sym) {
+void LuaConsole::OnKeyPressed(const SDL_Keysym *sym) {
 	// XXX totally horrible doing this on every key press
 	ResizeRequest();
 
@@ -134,7 +134,7 @@ void LuaConsole::OnKeyPressed(const SDL_keysym *sym) {
 			m_entryField->SetText(m_precompletionStatement + m_completionList[m_currentCompletion]);
 			ResizeRequest();
 		}
-	} else if (!m_completionList.empty() && (sym->sym < SDLK_NUMLOCK || sym->sym > SDLK_COMPOSE)) {
+	} else if (!m_completionList.empty()) { // XXX SDL2 can't really range check keysyms anymore ...    && (sym->sym < SDLK_NUMLOCK || sym->sym > SDLK_COMPOSE)) {
 		m_completionList.clear();
 	}
 

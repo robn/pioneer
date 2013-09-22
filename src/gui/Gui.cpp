@@ -90,7 +90,6 @@ void Draw()
 
 void Init(Graphics::Renderer *renderer, int screen_width, int screen_height, int ui_width, int ui_height)
 {
-	SDL_EnableUNICODE(1);
 	Screen::Init(renderer, screen_width, screen_height, ui_width, ui_height);
 }
 
@@ -121,9 +120,9 @@ void MainLoopIteration()
 	}
 
 	SDL_ShowCursor(1);
-	SDL_WM_GrabInput(SDL_GRAB_OFF);
+	Gui::Screen::GetRenderer()->GetWindow()->SetGrab(false);
 	Gui::Draw();
-	SDL_GL_SwapBuffers();
+	Gui::Screen::GetRenderer()->GetWindow()->SwapBuffers();
 }
 
 namespace Theme {

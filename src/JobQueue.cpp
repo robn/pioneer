@@ -9,7 +9,7 @@ JobRunner::JobRunner(JobQueue *jq, const uint8_t idx) :
 	m_threadIdx(idx)
 {
 	m_jobLock = SDL_CreateMutex();
-	m_threadId = SDL_CreateThread(&JobRunner::Trampoline, this);
+	m_threadId = SDL_CreateThread(&JobRunner::Trampoline, this, 0);
 }
 
 JobRunner::~JobRunner()
