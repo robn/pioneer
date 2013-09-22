@@ -1,6 +1,7 @@
 #include "WindowSDL.h"
 
 #include "SDL.h"
+#include "SDLWrappers.h"
 
 #include "OS.h"
 
@@ -55,9 +56,9 @@ WindowSDL::WindowSDL(const Graphics::Settings &vs, const std::string &name)
 		OS::Error("Failed to set video mode: %s", SDL_GetError());
 	}
 
-	Uint32 rendererFlags = SDL_RENDERER_ACCELERATED;
-	if (vs.vsync) rendererFlags = SDL_RENDERER_PRESENTVSYNC;
-	m_renderer = SDL_CreateRenderer(m_window, -1, rendererFlags);
+	//Uint32 rendererFlags = SDL_RENDERER_ACCELERATED;
+	//if (vs.vsync) rendererFlags = SDL_RENDERER_PRESENTVSYNC;
+	m_opengl_context = SDL_GL_CreateContext(m_window);
 
 	int bpp;
 	Uint32 rmask, gmask, bmask, amask;
@@ -85,11 +86,18 @@ WindowSDL::WindowSDL(const Graphics::Settings &vs, const std::string &name)
 		if (vs.requestedSamples != actualSamples)
 			fprintf(stderr, "Requested AA mode: %dx, actual: %dx\n", vs.requestedSamples, actualSamples);
 	}
+
+	// SDL doc says "Win32 icons must be 32x32".
+	SDLSurfacePtr surface = LoadSurfaceFromFile("icons/badge32-8b.png");
+	if (surface) {
+		SDL_SetWindowIcon(m_window, surface.Get());
+	}
 }
 
 WindowSDL::~WindowSDL()
 {
-	SDL_DestroyRenderer(m_renderer);
+	SDL_GL_DeleteContext(m_opengl_context);
+
 	SDL_DestroyWindow(m_window);
 }
 
@@ -100,7 +108,7 @@ void WindowSDL::SetGrab(bool grabbed)
 
 void WindowSDL::SwapBuffers()
 {
-	SDL_RenderPresent(m_renderer);
+	SDL_GL_SwapWindow(m_window);
 }
 
 }

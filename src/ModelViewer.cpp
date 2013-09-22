@@ -139,10 +139,6 @@ void ModelViewer::Run(const std::string &modelName)
 	videoSettings.useTextureCompression = (config->Int("UseTextureCompression") != 0);
 	renderer = Graphics::Init(videoSettings);
 
-	OS::LoadWindowIcon();
-	// XXX SDL2 set window title through settings
-	//SDL_WM_SetCaption("Model viewer","Model viewer");
-
 	NavLights::Init(renderer);
 
 	//run main loop until quit
@@ -440,11 +436,11 @@ void ModelViewer::DrawDockingLocators()
 // Draw collision mesh as a wireframe overlay
 void ModelViewer::DrawCollisionMesh()
 {
-	CollMesh *mesh = m_model->GetCollisionMesh();
-	if(!mesh) return;
+	RefCountedPtr<CollMesh> mesh = m_model->GetCollisionMesh();
+	if (!mesh.Valid()) return;
 
-	std::vector<vector3f> &vertices = mesh->m_vertices;
-	std::vector<int> &indices = mesh->m_indices;
+	const std::vector<vector3f> &vertices = mesh->m_vertices;
+	const std::vector<int> &indices = mesh->m_indices;
 	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE, indices.size() * 3);
 	int trindex = -1;
 	for(unsigned int i=0; i<indices.size(); i++) {

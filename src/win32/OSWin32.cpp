@@ -10,13 +10,14 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <wchar.h>
+#include <windows.h>
 
 namespace OS {
 
 // Notify Windows that the window may become unresponsive
 void NotifyLoadBegin()
 {
-    // XXX MinGW doesn't know this function
+	// XXX MinGW doesn't know this function
 #ifndef __MINGW32__
 	// XXX Remove the following call when loading is moved to a background thread
 	DisableProcessWindowsGhosting(); // Prevent Windows from whiting out the screen for "not responding"
@@ -55,15 +56,6 @@ void Warning(const char *format, ...)
 	va_end(ap);
 	fprintf(stderr, "Warning: %s\n", buf);
 	MessageBoxW(0, transcode_utf8_to_utf16(buf, strlen(buf)).c_str(), L"Warning", MB_ICONWARNING|MB_OK);
-}
-
-void LoadWindowIcon()
-{
-	// SDL doc says "Win32 icons must be 32x32".
-	SDLSurfacePtr surface = LoadSurfaceFromFile("icons/badge32-8b.png");
-	if (surface) {
-		SDL_WM_SetIcon(surface.Get(), 0);
-	}
 }
 
 void RedirectStdio()
@@ -115,6 +107,13 @@ Uint64 HFTimer()
 	LARGE_INTEGER i;
 	QueryPerformanceCounter(&i);
 	return i.QuadPart;
+}
+
+int GetNumCores()
+{
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	return sysinfo.dwNumberOfProcessors;
 }
 
 } // namespace OS

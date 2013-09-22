@@ -78,7 +78,8 @@ public:
 	static float GetFrameTime() { return frameTime; }
 	static float GetGameTickAlpha() { return gameTickAlpha; }
 	static float GetScrAspect() { return scrAspect; }
-	static int KeyState(SDL_Keycode k) { return keyState[k]; }
+	static int KeyState(const SDL_Keycode k) { return keyState[k]; }
+	static void KeyState(const SDL_Keycode k, const char i) { keyState[k] = i; }
 	static int KeyModState() { return keyModState; }
 	static bool IsConsoleActive();
 	static int JoystickButtonState(int joystick, int button);
@@ -185,7 +186,7 @@ private:
 	static bool forceTimeAccel;
 	static float frameTime;
 	static float scrAspect;
-	static char keyState[512]; // XXX SDL2 SDLK_LAST
+	static std::map<SDL_Keycode,char> keyState;
 	static int keyModState;
 	static char mouseButton[6];
 	static int mouseMotion[2];

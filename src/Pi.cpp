@@ -76,7 +76,6 @@
 #include "scenegraph/Lua.h"
 #include "ui/Context.h"
 #include "ui/Lua.h"
-#include "CoreCount.h"
 #include <algorithm>
 #include <sstream>
 
@@ -94,7 +93,7 @@ LuaSerializer *Pi::luaSerializer;
 LuaTimer *Pi::luaTimer;
 LuaNameGen *Pi::luaNameGen;
 int Pi::keyModState;
-char Pi::keyState[512]; // XXX SDL2 SDLK_LAST
+std::map<SDL_Keycode,char> Pi::keyState;
 char Pi::mouseButton[6];
 int Pi::mouseMotion[2];
 bool Pi::doingMouseGrab = false;
@@ -141,16 +140,15 @@ ObjectViewerView *Pi::objectViewerView;
 Sound::MusicPlayer Pi::musicPlayer;
 ScopedPtr<JobQueue> Pi::jobQueue;
 
-static void draw_progress(float progress)
+static void draw_progress(UI::Gauge *gauge, UI::Label *label, float progress)
 {
-	float w, h;
+	gauge->SetValue(progress);
+	label->SetText(stringf(Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, formatarg("age", progress * 13.7f)));
+
 	Pi::renderer->BeginFrame();
 	Pi::renderer->EndFrame();
-	Gui::Screen::EnterOrtho();
-	std::string msg = stringf(Lang::SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS, formatarg("age", progress * 13.7f));
-	Gui::Screen::MeasureString(msg, w, h);
-	Gui::Screen::RenderString(msg, 0.5f*(Gui::Screen::GetWidth()-w), 0.5f*(Gui::Screen::GetHeight()-h));
-	Gui::Screen::LeaveOrtho();
+	Pi::ui->Update();
+	Pi::ui->Draw();
 	Pi::renderer->SwapBuffers();
 }
 
@@ -202,7 +200,7 @@ static void LuaInit()
 
 	// XXX load everything. for now, just modules
 	lua_State *l = Lua::manager->GetLuaState();
-	pi_lua_dofile_recursive(l, "libs");
+	pi_lua_dofile(l, "libs/autoload.lua");
 	pi_lua_dofile_recursive(l, "ui");
 	pi_lua_dofile_recursive(l, "modules");
 
@@ -289,6 +287,7 @@ void Pi::Init()
 	videoSettings.requestedSamples = config->Int("AntiAliasingMode");
 	videoSettings.vsync = (config->Int("VSync") != 0);
 	videoSettings.useTextureCompression = (config->Int("UseTextureCompression") != 0);
+	videoSettings.enableDebugMessages = (config->Int("EnableGLDebug") != 0);
 
 	Pi::renderer = Graphics::Init(videoSettings);
 	{
@@ -302,9 +301,6 @@ void Pi::Init()
 		fwrite(s.c_str(), 1, s.size(), f);
 		fclose(f);
 	}
-
-	OS::LoadWindowIcon();
-	//SDL_WM_SetCaption("Pioneer","Pioneer"); XXX SDL2 pass through settings
 
 	Pi::scrAspect = videoSettings.width / float(videoSettings.height);
 
@@ -320,9 +316,10 @@ void Pi::Init()
 	EnumStrings::Init();
 
 	// get threads up
-	uint32_t numThreads = config->Int("WorkerThreads");
-	uint32_t numCores = getNumCores();
-	if (numThreads == 0) numThreads = std::max(numCores-1,1U);
+	Uint32 numThreads = config->Int("WorkerThreads");
+	const int numCores = OS::GetNumCores();
+	assert(numCores > 0);
+	if (numThreads == 0) numThreads = std::max(Uint32(numCores) - 1, 1U);
 	jobQueue.Reset(new JobQueue(numThreads));
 	printf("started %d worker threads\n", numThreads);
 
@@ -341,39 +338,56 @@ void Pi::Init()
 	// that the capability exists. (Gui does not use VBOs so far)
 	Gui::Init(renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight(), 800, 600);
 
-	draw_progress(0.1f);
+	UI::Box *box = Pi::ui->VBox(5);
+	UI::Label *label = Pi::ui->Label("");
+	label->SetFont(UI::Widget::FONT_HEADING_NORMAL);
+	UI::Gauge *gauge = Pi::ui->Gauge();
+	Pi::ui->SetInnerWidget(
+		Pi::ui->Margin(10, UI::Margin::HORIZONTAL)->SetInnerWidget(
+			Pi::ui->Expand()->SetInnerWidget(
+				Pi::ui->Align(UI::Align::MIDDLE)->SetInnerWidget(
+					box->PackEnd(UI::WidgetSet(
+						label,
+						gauge
+					))
+				)
+			)
+		)
+	);
+
+	draw_progress(gauge, label, 0.1f);
 
 	Galaxy::Init();
-	draw_progress(0.2f);
+	draw_progress(gauge, label, 0.2f);
 
 	Faction::Init();
-	draw_progress(0.3f);
+	draw_progress(gauge, label, 0.3f);
 
 	CustomSystem::Init();
-	draw_progress(0.4f);
+	draw_progress(gauge, label, 0.4f);
 
 	modelCache = new ModelCache(Pi::renderer);
-	draw_progress(0.5f);
+	draw_progress(gauge, label, 0.5f);
 
 //unsigned int control_word;
 //_clearfp();
 //_controlfp_s(&control_word, _EM_INEXACT | _EM_UNDERFLOW | _EM_ZERODIVIDE, _MCW_EM);
 //double fpexcept = Pi::timeAccelRates[1] / Pi::timeAccelRates[0];
 
-	draw_progress(0.6f);
+	draw_progress(gauge, label, 0.6f);
 
 	GeoSphere::Init();
-	draw_progress(0.7f);
+	draw_progress(gauge, label, 0.7f);
 
 	CityOnPlanet::Init();
-	draw_progress(0.8f);
+	draw_progress(gauge, label, 0.8f);
 
 	SpaceStation::Init();
-	draw_progress(0.9f);
+	draw_progress(gauge, label, 0.9f);
 
 	NavLights::Init(Pi::renderer);
 	Sfx::Init(Pi::renderer);
-	draw_progress(0.95f);
+	draw_progress(gauge, label, 0.95f);
 
 	if (!config->Int("DisableSound")) {
 		Sound::Init();
@@ -386,7 +400,7 @@ void Pi::Init()
 		if (config->Int("SfxMuted")) Sound::SetSfxVolume(0.f);
 		if (config->Int("MusicMuted")) GetMusicPlayer().SetEnabled(false);
 	}
-	draw_progress(1.0f);
+	draw_progress(gauge, label, 1.0f);
 
 	OS::NotifyLoadEnd();
 
@@ -431,7 +445,6 @@ void Pi::Init()
 	c2->SwitchToFrame(p1);
 	vector3d vel4 = c2->GetVelocityRelTo(c1);
 	double speed4 = c2->GetVelocityRelTo(c1).Length();
-
 
 	root->UpdateOrbitRails(0, 1.0);
 
@@ -729,12 +742,12 @@ void Pi::HandleEvents()
 							break; // This does nothing but it stops the compiler warnings
 					}
 				}
-				Pi::keyState[event.key.keysym.sym] = 1;
+				Pi::KeyState(event.key.keysym.sym, 1);
 				Pi::keyModState = event.key.keysym.mod;
 				Pi::onKeyPress.emit(&event.key.keysym);
 				break;
 			case SDL_KEYUP:
-				Pi::keyState[event.key.keysym.sym] = 0;
+				Pi::KeyState(event.key.keysym.sym, 0);
 				Pi::keyModState = event.key.keysym.mod;
 				Pi::onKeyRelease.emit(&event.key.keysym);
 				break;
@@ -807,7 +820,7 @@ void Pi::InitGame()
 
 	//reset input states
 	keyModState = 0;
-	std::fill(keyState, keyState + COUNTOF(keyState), 0);
+	//std::fill(keyState, keyState + COUNTOF(keyState), 0);
 	std::fill(mouseButton, mouseButton + COUNTOF(mouseButton), 0);
 	std::fill(mouseMotion, mouseMotion + COUNTOF(mouseMotion), 0);
 	for (std::vector<JoystickState>::iterator stick = joysticks.begin(); stick != joysticks.end(); ++stick) {
@@ -879,8 +892,6 @@ void Pi::Start()
 		}
 
 		Pi::renderer->BeginFrame();
-		Pi::renderer->SetPerspectiveProjection(75, Pi::GetScrAspect(), 1.f, 10000.f);
-		Pi::renderer->SetTransform(matrix4x4f::Identity());
 		intro->Draw(_time);
 		Pi::renderer->EndFrame();
 

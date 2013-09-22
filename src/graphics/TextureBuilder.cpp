@@ -60,25 +60,25 @@ static inline bool GetTargetFormat(const SDL_PixelFormat *sourcePixelFormat, Tex
 {
 	if (!forceRGBA && sourcePixelFormat->BytesPerPixel == pixelFormatRGB.BytesPerPixel &&
 			sourcePixelFormat->Rmask == pixelFormatRGB.Rmask && sourcePixelFormat->Bmask == pixelFormatRGB.Bmask && sourcePixelFormat->Gmask == pixelFormatRGB.Gmask) {
-		*targetTextureFormat = TEXTURE_RGB;
+		*targetTextureFormat = TEXTURE_RGB_888;
 		*targetPixelFormat = &pixelFormatRGB;
 		return true;
 	}
 
 	if (sourcePixelFormat->BytesPerPixel == pixelFormatRGBA.BytesPerPixel &&
 			sourcePixelFormat->Rmask == pixelFormatRGBA.Rmask && sourcePixelFormat->Bmask == pixelFormatRGBA.Bmask && sourcePixelFormat->Gmask == pixelFormatRGBA.Gmask) {
-		*targetTextureFormat = TEXTURE_RGBA;
+		*targetTextureFormat = TEXTURE_RGBA_8888;
 		*targetPixelFormat = &pixelFormatRGBA;
 		return true;
 	}
 
 	if (!forceRGBA && sourcePixelFormat->BytesPerPixel == 3) {
-		*targetTextureFormat = TEXTURE_RGB;
+		*targetTextureFormat = TEXTURE_RGB_888;
 		*targetPixelFormat = &pixelFormatRGB;
 		return false;
 	}
 
-	*targetTextureFormat = TEXTURE_RGBA;
+	*targetTextureFormat = TEXTURE_RGBA_8888;
 	*targetPixelFormat = &pixelFormatRGBA;
 	return false;
 }
@@ -150,7 +150,7 @@ void TextureBuilder::LoadSurface()
 
 void TextureBuilder::UpdateTexture(Texture *texture)
 {
-	texture->Update(m_surface->pixels, vector2f(m_surface->w,m_surface->h), m_descriptor.format == TEXTURE_RGBA ? IMAGE_RGBA : IMAGE_RGB, IMAGE_UNSIGNED_BYTE);
+	texture->Update(m_surface->pixels, vector2f(m_surface->w,m_surface->h), m_descriptor.format == TEXTURE_RGBA_8888 ? TEXTURE_RGBA_8888 : TEXTURE_RGB_888);
 }
 
 Texture *TextureBuilder::GetWhiteTexture(Renderer *r)
