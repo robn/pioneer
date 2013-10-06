@@ -20,5 +20,10 @@ string.interp = function (s, t)
 	return (s:gsub('(%b{})', function(w) return t[w:sub(2,-2)] or w end))
 end
 
+-- money formatting
+util.format_money = function (x)
+	return string.format('$%.2f', x)
+end
+
 -- make import break. you should never import this file
 return nil
