@@ -265,6 +265,8 @@ protected:
 
 	bool IsSelected() const { return m_selected; }
 
+	Point GetMousePos() const;
+
 	void SetDisabled(bool disabled) { m_disabled = disabled; }
 
 	// internal event handlers. override to handle events. unlike the external

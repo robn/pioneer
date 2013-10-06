@@ -116,6 +116,8 @@ public:
 	// considers floating widgets also
 	virtual Widget *GetWidgetAt(const Point &pos);
 
+	Point GetMousePos() const { return m_eventDispatcher.GetMousePos(); }
+
 	// event dispatch delegates
 	bool Dispatch(const Event &event) { return m_eventDispatcher.Dispatch(event); }
 	bool DispatchSDLEvent(const SDL_Event &event) { return m_eventDispatcher.DispatchSDLEvent(event); }
