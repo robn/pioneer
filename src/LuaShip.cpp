@@ -76,6 +76,7 @@ static int l_ship_is_player(lua_State *l)
  *     freeCapacity - total space remaining (t)
  *     totalMass - total mass of the ship (cargo, equipment & hull) (t)
  *     hullMassLeft - remaining hull mass. when this reaches 0, the ship is destroyed (t)
+ *     hullPercent - remaining hull mass as a percentage (%)
  *     shieldMass - total mass equivalent of all shields (t)
  *     shieldMassLeft - remaining shield mass. when this reaches 0, the shields are depleted and the hull is exposed (t)
  *     hyperspaceRange - distance of furthest possible jump based on current contents (ly)
@@ -113,6 +114,7 @@ static int l_ship_get_stats(lua_State *l)
 	pi_lua_settable(l, "freeCapacity",       stats.free_capacity);
 	pi_lua_settable(l, "totalMass",          stats.total_mass);
 	pi_lua_settable(l, "hullMassLeft",       stats.hull_mass_left);
+	pi_lua_settable(l, "hullPercent",        s->GetPercentHull());
 	pi_lua_settable(l, "hyperspaceRange",    stats.hyperspace_range);
 	pi_lua_settable(l, "maxHyperspaceRange", stats.hyperspace_range_max);
 	pi_lua_settable(l, "shieldMass",         stats.shield_mass);
