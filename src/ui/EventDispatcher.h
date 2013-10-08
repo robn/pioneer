@@ -5,11 +5,11 @@
 #define UI_EVENTDISPATCHER_H
 
 #include "Event.h"
+#include "Widget.h"
 #include <map>
 
 namespace UI {
 
-class Widget;
 class Container;
 
 class EventDispatcher {
@@ -46,6 +46,8 @@ private:
 	RefCountedPtr<Widget> m_selected;
 
 	std::map<KeySym,Widget*> m_shortcuts;
+
+	Widget::UnhandledEventHandler m_unhandledEventHandler;
 };
 
 }

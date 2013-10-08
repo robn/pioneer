@@ -249,6 +249,9 @@ public:
 	sigc::signal<bool>::accumulated<EventHandlerResultAccumulator> onClick;
 
 
+	// type for function returned by GetUnhandledEventHandler
+	typedef sigc::slot<bool,const Event &> UnhandledEventHandler;
+
 protected:
 
 	// magic constant for PreferredSize to indicate "as much as possible"
@@ -359,6 +362,7 @@ private:
 
 	// called by Container::CollectShortcuts
 	const std::set<KeySym> &GetShortcuts() const { return m_shortcuts; }
+	virtual UnhandledEventHandler GetUnhandledEventHandler() const { return UnhandledEventHandler(); }
 
 
 	// Context is the top-level container and needs to set its own context

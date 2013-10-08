@@ -48,6 +48,8 @@ bool EventDispatcher::DispatchSDLEvent(const SDL_Event &event)
 
 bool EventDispatcher::Dispatch(const Event &event)
 {
+	bool ret = false;
+
 	switch (event.type) {
 
 		case Event::KEYBOARD: {
@@ -59,13 +61,16 @@ bool EventDispatcher::Dispatch(const Event &event)
 					if (m_selected)
 						return m_selected->TriggerKeyDown(keyEvent);
 
-					return m_baseContainer->TriggerKeyDown(keyEvent);
+					ret = m_baseContainer->TriggerKeyDown(keyEvent);
+					break;
 
 				case KeyboardEvent::KEY_UP: {
 
 					// all key events to the selected widget first
-					if (m_selected)
-						return m_selected->TriggerKeyUp(keyEvent);
+					if (m_selected) {
+						ret = m_selected->TriggerKeyUp(keyEvent);
+						break;
+					}
 
 					// any modifier coming in will be a specific key, eg left
 					// shift or right shift. shortcuts can't distinguish
@@ -84,14 +89,17 @@ bool EventDispatcher::Dispatch(const Event &event)
 					if (i != m_shortcuts.end()) {
 						(*i).second->TriggerClick();
 						DispatchSelect((*i).second);
-						return true;
+						ret = true;
+						break;
 					}
 
-					return m_baseContainer->TriggerKeyUp(keyEvent);
+					ret = m_baseContainer->TriggerKeyUp(keyEvent);
+					break;
 				}
 
 			}
-			return false;
+
+			break;
 		}
 
 		case Event::TEXT_INPUT: {
@@ -99,10 +107,13 @@ bool EventDispatcher::Dispatch(const Event &event)
 			const TextInputEvent textInputEvent = static_cast<const TextInputEvent&>(event);
 
 			// selected widgets get all the text input events
-			if (m_selected)
-				return m_selected->TriggerTextInput(textInputEvent);
+			if (m_selected) {
+				ret = m_selected->TriggerTextInput(textInputEvent);
+				break;
+			}
 
-			return m_baseContainer->TriggerTextInput(textInputEvent);
+			ret = m_baseContainer->TriggerTextInput(textInputEvent);
+			break;
 		}
 
 		case Event::MOUSE_BUTTON: {
@@ -115,7 +126,7 @@ bool EventDispatcher::Dispatch(const Event &event)
 
 				case MouseButtonEvent::BUTTON_DOWN: {
 					if (target->IsDisabled())
-						return false;
+						break;
 
 					// activate widget and remember it
 					if (!m_mouseActiveReceiver) {
@@ -125,7 +136,8 @@ bool EventDispatcher::Dispatch(const Event &event)
 					}
 
 					MouseButtonEvent translatedEvent = MouseButtonEvent(mouseButtonEvent.action, mouseButtonEvent.button, m_lastMousePosition-target->GetAbsolutePosition());
-					return target->TriggerMouseDown(translatedEvent);
+					ret = target->TriggerMouseDown(translatedEvent);
+					break;
 				}
 
 				case MouseButtonEvent::BUTTON_UP: {
@@ -143,7 +155,6 @@ bool EventDispatcher::Dispatch(const Event &event)
 						m_mouseActiveReceiver.Reset();
 
 						// send the straight up event too
-						bool ret = false;
 						if (!target->IsDisabled()) {
 							MouseButtonEvent translatedEvent = MouseButtonEvent(mouseButtonEvent.action, mouseButtonEvent.button, m_lastMousePosition-target->GetAbsolutePosition());
 							ret = target->TriggerMouseUp(translatedEvent);
@@ -151,15 +162,16 @@ bool EventDispatcher::Dispatch(const Event &event)
 
 						DispatchMouseOverOut(target.Get(), m_lastMousePosition);
 
-						return ret;
+						break;
 					}
 
 					MouseButtonEvent translatedEvent = MouseButtonEvent(mouseButtonEvent.action, mouseButtonEvent.button, m_lastMousePosition-target->GetAbsolutePosition());
-					return target->TriggerMouseUp(translatedEvent);
+					ret = target->TriggerMouseUp(translatedEvent);
+					break;
 				}
 
 				default:
-					return false;
+					break;
 			}
 		}
 
@@ -170,13 +182,13 @@ bool EventDispatcher::Dispatch(const Event &event)
 			// if there's a mouse-active widget, just send motion events directly into it
 			if (m_mouseActiveReceiver) {
 				MouseMotionEvent translatedEvent = MouseMotionEvent(m_lastMousePosition-m_mouseActiveReceiver->GetAbsolutePosition(), mouseMotionEvent.rel);
-				return m_mouseActiveReceiver->TriggerMouseMove(translatedEvent);
+				ret = m_mouseActiveReceiver->TriggerMouseMove(translatedEvent);
+				break;
 			}
 
 			// widget directly under the mouse
 			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
 
-			bool ret = false;
 			if (!target->IsDisabled()) {
 				MouseMotionEvent translatedEvent = MouseMotionEvent(m_lastMousePosition-target->GetAbsolutePosition(), mouseMotionEvent.rel);
 				ret = target->TriggerMouseMove(translatedEvent);
@@ -184,7 +196,7 @@ bool EventDispatcher::Dispatch(const Event &event)
 
 			DispatchMouseOverOut(target.Get(), m_lastMousePosition);
 
-			return ret;
+			break;
 		}
 
 		case Event::MOUSE_WHEEL: {
@@ -192,14 +204,18 @@ bool EventDispatcher::Dispatch(const Event &event)
 			m_lastMousePosition = mouseWheelEvent.pos;
 
 			RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
-			return target->TriggerMouseWheel(mouseWheelEvent);
+			ret = target->TriggerMouseWheel(mouseWheelEvent);
+			break;
 		}
 
 		default:
-			return false;
+			break;
 	}
 
-	return false;
+	if (!ret)
+		ret = m_unhandledEventHandler(event);
+
+	return ret;
 }
 
 void EventDispatcher::DispatchMouseOverOut(Widget *target, const Point &mousePos)
@@ -295,6 +311,8 @@ void EventDispatcher::LayoutUpdated()
 {
 	m_shortcuts.clear();
 	m_baseContainer->CollectShortcuts(m_shortcuts);
+
+	m_unhandledEventHandler = m_baseContainer->GetUnhandledEventHandler();
 
 	RefCountedPtr<Widget> target(m_baseContainer->GetWidgetAtAbsolute(m_lastMousePosition));
 	DispatchMouseOverOut(target.Get(), m_lastMousePosition);

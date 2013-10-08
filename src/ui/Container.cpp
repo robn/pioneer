@@ -168,4 +168,15 @@ void Container::CollectShortcuts(std::map<KeySym,Widget*> &shortcuts)
 	}
 }
 
+Widget::UnhandledEventHandler Container::GetUnhandledEventHandler() const
+{
+	Widget::UnhandledEventHandler handler;
+	for (WidgetIterator i = WidgetsBegin(); i != WidgetsEnd(); ++i) {
+		handler = (*i)->GetUnhandledEventHandler();
+		if (handler)
+			return handler;
+	}
+	return handler;
+}
+
 }

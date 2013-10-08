@@ -63,6 +63,10 @@ private:
 	friend class EventDispatcher;
 	void CollectShortcuts(std::map<KeySym,Widget*> &shortcuts);
 
+	// and here to get a handler for unhandled events (if there's more than
+	// one, then you get the first one we find
+	virtual Widget::UnhandledEventHandler GetUnhandledEventHandler() const;
+
 
 	void EnableChildren();
 	void DisableChildren();
