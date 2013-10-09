@@ -84,6 +84,7 @@ namespace UI {
 
 class Context;
 class Container;
+class Layer;
 
 class Widget : public RefCounted {
 protected:
@@ -147,9 +148,6 @@ public:
 
 	// fast way to determine if the widget is a container
 	virtual bool IsContainer() const { return false; }
-
-	// are we floating
-	bool IsFloating() const { return m_floating; }
 
 	// selectable widgets may receive keyboard focus
 	virtual bool IsSelectable() const { return false; }
@@ -361,12 +359,6 @@ private:
 	friend class Context;
 	void SetSize(const Point &size) { m_size = size; SetActiveArea(size); }
 
-
-	// FloatContainer needs to change floating state
-	friend class FloatContainer;
-	void SetFloating(bool floating) { m_floating = floating; }
-
-
 	Context *m_context;
 	Container *m_container;
 
@@ -381,8 +373,6 @@ private:
 	Point m_activeArea;
 
 	Font m_font;
-
-	bool m_floating;
 
 	bool m_disabled;
 

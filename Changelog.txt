@@ -3,11 +3,17 @@ October 2013
    * New features
      * New ship "Xylophis Short Range Shuttle" (#2442)
      * New ship "Kanara Interceptor" (civilian version) (#2454, #2461)
+     * Vertical speed is shown with altitude, up to 10000 km or half the
+       planet's radius (#2446)
 
    * Minor changes and tweaks
      * Improved ship textures (#2450)
      * Resized DSMiner
      * Updated the Deneb to use new camera and gun tag-points (#2460)
+     * Set Speed mode is now initialised with the ship's forward speed (#2469)
+
+   * Script and UI API changes
+     * UI now uses a stack of layers instead of floating widgets (#2475, #2478)
 
    * Fixes
      * Modelviewer now correctly reloads tag-points when switching models
@@ -17,6 +23,9 @@ October 2013
        (#2459, #2432)
      * Fix window/GL setup when multisampled antialiasing is requested but not
        available (#2425)
+     * Fix a thread shutdown race condition that caused crashes at game exit
+       (#2464)
+     * Fix crash when game load fails (#2467, #2466)
 
    * Model changes
      * Pattern textures can now have alpha channels (#2449)
@@ -24,6 +33,8 @@ October 2013
    * Internal changes
      * Lua blobs will now be correctly serialized (#2463)
      * Removed many unnecessary uses of reinterpret_cast (#2465)
+     * Fix some problems reported by valgrind (#2472)
+     * Miscellaneous code improvements (#2474)
 
 September 2013
 
