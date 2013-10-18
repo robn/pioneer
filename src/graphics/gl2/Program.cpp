@@ -83,6 +83,24 @@ struct Shader {
 		AppendSource(logzCode->AsStringRange().StripUTF8BOM());
 		AppendSource(libsCode->AsStringRange().StripUTF8BOM());
 		AppendSource(code->AsStringRange().StripUTF8BOM());
+
+		char *tmpfile = tmpnam(0);
+		FILE *tmp = fopen(tmpfile, "w+");
+		for (unsigned int i = 0; i < blocks.size(); i++)
+			fprintf(tmp, "%.*s", block_sizes[i], blocks[i]);
+		fclose(tmp);
+		static char buf[65536];
+		sprintf(buf, "%s %s %s", getenv("GLSLOPT"), type == GL_VERTEX_SHADER ? "-v" : "-f", tmpfile);
+		system(buf);
+		sprintf(buf, "%s.out", tmpfile);
+		tmp = fopen(buf, "r");
+		int size = fread(buf, sizeof(buf), 1, tmp);
+		fclose(tmp);
+		blocks.clear();
+		blocks.push_back(buf);
+		block_sizes.clear();
+		block_sizes.push_back(size-1);
+
 		shader = glCreateShader(type);
 		Compile(shader);
 
