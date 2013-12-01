@@ -596,6 +596,8 @@ bool RendererGL2::DrawStaticMesh(StaticMesh *t)
 
 void RendererGL2::EnableClientStates(const VertexArray *v)
 {
+	PROFILE_SCOPED();
+
 	if (!v) return;
 	assert(v->position.size() > 0); //would be strange
 
@@ -626,6 +628,8 @@ void RendererGL2::EnableClientStates(const VertexArray *v)
 
 void RendererGL2::DisableClientStates()
 {
+	PROFILE_SCOPED();
+
 	for (std::vector<GLenum>::const_iterator i = m_clientStates.begin(); i != m_clientStates.end(); ++i)
 		glDisableClientState(*i);
 	m_clientStates.clear();
@@ -633,6 +637,8 @@ void RendererGL2::DisableClientStates()
 
 bool RendererGL2::BufferStaticMesh(StaticMesh *mesh)
 {
+	PROFILE_SCOPED();
+
 	const AttributeSet set = mesh->GetAttributeSet();
 	bool background = false;
 	bool model = false;
@@ -718,6 +724,7 @@ bool RendererGL2::BufferStaticMesh(StaticMesh *mesh)
 
 Material *RendererGL2::CreateMaterial(const MaterialDescriptor &d)
 {
+	PROFILE_SCOPED()
 	MaterialDescriptor desc = d;
 
 	GL2::Material *mat = 0;
