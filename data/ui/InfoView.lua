@@ -6,6 +6,7 @@ local Lang = import("Lang")
 local Event = import("Event")
 
 local TabGroup = import("ui/TabGroup")
+local PlayerTabFooter = import("ui/PlayerTabFooter")
 
 local shipInfo        = import("InfoView/ShipInfo")
 local personalInfo    = import("InfoView/PersonalInfo")
@@ -32,6 +33,8 @@ ui.templates.InfoView = function (args)
 	tabGroup:AddTab({ id = "missions",        title = l.MISSIONS,             icon = "Star",      template = missions,        })
 	tabGroup:AddTab({ id = "crew",            title = l.CREW_ROSTER,          icon = "Agenda",    template = crewRoster,      })
 	--tabGroup:AddTab({ id = "orbitalAnalysis", title = l.ORBITAL_ANALYSIS,     icon = "Planet",    template = orbitalAnalysis, })
+
+	tabGroup:SetFooter(PlayerTabFooter.New())
 
 	return tabGroup.widget
 end
