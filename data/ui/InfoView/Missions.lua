@@ -93,7 +93,7 @@ local missions = function (tabGroup)
 		moreButton.button.onClick:Connect(function ()
 			MissionScreen:SetInnerWidget(ui:VBox(10)
 				:PackEnd({ui:Label(l.MISSION_DETAILS):SetFont('HEADING_LARGE')})
-				:PackEnd((mission:GetClick())(mission)))
+				:PackEnd(ui:Expand("BOTH", mission:GetClick()(mission))))
 		end)
 
 		local description = mission:GetTypeDescription()

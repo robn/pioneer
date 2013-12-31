@@ -501,7 +501,7 @@ local onClick = function (mission)
 											}),
 		})})
 		:SetColumn(1, {
-			ui:VBox(10):PackEnd(InfoFace.New(mission.client))
+			InfoFace.New(mission.client)
 		})
 end
 
