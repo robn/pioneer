@@ -245,7 +245,7 @@ void Camera::Draw(const Body *excludeBody, ShipCockpit* cockpit)
 			Graphics::Renderer::MatrixTicket mt(m_renderer, Graphics::MatrixMode::MODELVIEW);
 			m_renderer->SetTransform(matrix4x4d::Identity());
 			m_billboardMaterial->diffuse = attrs->billboardColor;
-			m_renderer->DrawPointSprites(1, &attrs->billboardPos, Sfx::additiveAlphaState, m_billboardMaterial.get(), attrs->billboardSize);
+			m_renderer->DrawPointSprites(1, &attrs->billboardPos, nullptr, Sfx::additiveAlphaState, m_billboardMaterial.get(), attrs->billboardSize);
 		}
 		else
 			attrs->body->Render(m_renderer, this, attrs->viewCoords, attrs->viewTransform);

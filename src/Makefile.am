@@ -429,6 +429,7 @@ particletest_LDADD = \
 	graphics/libgraphics.a \
 	posix/libposix.a \
 	../contrib/PicoDDS/libpicodds.a \
+	../contrib/jenkins/libjenkins.a \
 	../contrib/json/libjson.a \
 	../contrib/glew/libglew.a \
 	../contrib/profiler/libprofiler.a

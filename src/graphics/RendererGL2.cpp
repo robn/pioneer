@@ -430,11 +430,11 @@ bool RendererGL2::DrawTriangles(const VertexArray *v, RenderState *rs, Material 
 	return true;
 }
 
-bool RendererGL2::DrawPointSprites(int count, const vector3f *positions, RenderState *rs, Material *material, float size)
+bool RendererGL2::DrawPointSprites(int count, const vector3f *positions, const Color *colors, RenderState *rs, Material *material, float size)
 {
 	if (count < 1 || !material || !material->texture0) return false;
 
-	VertexArray va(ATTRIB_POSITION | ATTRIB_UV0, count * 6);
+	VertexArray va(ATTRIB_POSITION | ATTRIB_UV0 | (colors ? ATTRIB_DIFFUSE : 0), count * 6);
 
 	matrix4x4f rot(GetCurrentModelView());
 	rot.ClearToRotOnly();
@@ -449,16 +449,33 @@ bool RendererGL2::DrawPointSprites(int count, const vector3f *positions, RenderS
 	//do two-triangle quads. Could also do indexed surfaces.
 	//GL2 renderer should use actual point sprites
 	//(see history of Render.cpp for point code remnants)
-	for (int i=0; i<count; i++) {
-		const vector3f &pos = positions[i];
 
-		va.Add(pos+rotv4, vector2f(0.f, 0.f)); //top left
-		va.Add(pos+rotv3, vector2f(0.f, 1.f)); //bottom left
-		va.Add(pos+rotv1, vector2f(1.f, 0.f)); //top right
+	if (colors) {
+		for (int i=0; i<count; i++) {
+			const vector3f &pos = positions[i];
+			const Color &color = colors[i];
 
-		va.Add(pos+rotv1, vector2f(1.f, 0.f)); //top right
-		va.Add(pos+rotv3, vector2f(0.f, 1.f)); //bottom left
-		va.Add(pos+rotv2, vector2f(1.f, 1.f)); //bottom right
+			va.Add(pos+rotv4, color, vector2f(0.f, 0.f)); //top left
+			va.Add(pos+rotv3, color, vector2f(0.f, 1.f)); //bottom left
+			va.Add(pos+rotv1, color, vector2f(1.f, 0.f)); //top right
+
+			va.Add(pos+rotv1, color, vector2f(1.f, 0.f)); //top right
+			va.Add(pos+rotv3, color, vector2f(0.f, 1.f)); //bottom left
+			va.Add(pos+rotv2, color, vector2f(1.f, 1.f)); //bottom right
+		}
+	}
+	else {
+		for (int i=0; i<count; i++) {
+			const vector3f &pos = positions[i];
+
+			va.Add(pos+rotv4, vector2f(0.f, 0.f)); //top left
+			va.Add(pos+rotv3, vector2f(0.f, 1.f)); //bottom left
+			va.Add(pos+rotv1, vector2f(1.f, 0.f)); //top right
+
+			va.Add(pos+rotv1, vector2f(1.f, 0.f)); //top right
+			va.Add(pos+rotv3, vector2f(0.f, 1.f)); //bottom left
+			va.Add(pos+rotv2, vector2f(1.f, 1.f)); //bottom right
+		}
 	}
 
 	DrawTriangles(&va, rs, material);

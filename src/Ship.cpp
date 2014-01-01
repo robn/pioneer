@@ -1328,7 +1328,7 @@ void Ship::Render(Graphics::Renderer *renderer, const Camera *camera, const vect
 		}
 
 		Sfx::ecmParticle->diffuse = c;
-		renderer->DrawPointSprites(100, v, Sfx::additiveAlphaState, Sfx::ecmParticle, 50.f);
+		renderer->DrawPointSprites(100, v, nullptr, Sfx::additiveAlphaState, Sfx::ecmParticle, 50.f);
 	}
 }
 

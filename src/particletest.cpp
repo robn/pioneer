@@ -35,7 +35,6 @@ int main(int argc, char **argv)
     r->SetPerspectiveProjection(85, r->GetDisplayAspect(), 0.1f, 10000.f);
 	r->SetTransform(matrix4x4f::Identity());
 	r->SetClearColor(Color::BLACK);
-	r->SetDepthTest(false);
 
 	Graphics::MaterialDescriptor desc;
 	desc.textures = 1;

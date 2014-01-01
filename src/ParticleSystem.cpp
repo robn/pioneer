@@ -2,6 +2,7 @@
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ParticleSystem.h"
+#include "graphics/RenderState.h"
 
 static const size_t NUM_PARTICLES = 256;
 
@@ -11,9 +12,17 @@ ParticleSystem::ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Ma
 	m_particles(NUM_PARTICLES),
 	m_spritePositions(NUM_PARTICLES)
 {
-	for (size_t i = 0; i < NUM_PARTICLES; i++)
+	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		ResetParticle(m_particles[i]);
 		//m_particles[i].energy = 0;
+	}
+
+
+	Graphics::RenderStateDesc rsd;
+	rsd.blendMode = Graphics::BLEND_ALPHA;
+	rsd.depthWrite = false;
+	rsd.cullMode = Graphics::CULL_NONE;
+	m_renderState = r->CreateRenderState(rsd);
 }
 
 inline float rang(int max) {
@@ -61,6 +70,5 @@ void ParticleSystem::Draw(const matrix4x4f &trans)
 	}
 
 	m_renderer->SetTransform(trans);
-	m_renderer->SetBlendMode(Graphics::BLEND_ALPHA);
-	m_renderer->DrawPointSprites(si, &m_spritePositions[0], m_material.Get(), 1.f);
+	m_renderer->DrawPointSprites(si, &m_spritePositions[0], nullptr, m_renderState, m_material.Get(), 1.f);
 }

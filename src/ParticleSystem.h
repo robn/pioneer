@@ -31,6 +31,7 @@ public:
 private:
 	Graphics::Renderer *m_renderer;
 	RefCountedPtr<Graphics::Material> m_material;
+	Graphics::RenderState *m_renderState;
 
 	std::vector<Particle> m_particles;
 
