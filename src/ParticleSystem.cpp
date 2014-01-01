@@ -10,7 +10,8 @@ ParticleSystem::ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Ma
 	m_renderer(r),
 	m_material(material),
 	m_particles(NUM_PARTICLES),
-	m_spritePositions(NUM_PARTICLES)
+	m_positions(NUM_PARTICLES),
+	m_colors(NUM_PARTICLES)
 {
 	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		ResetParticle(m_particles[i]);
@@ -39,7 +40,7 @@ void ParticleSystem::ResetParticle(Particle &p)
 		.pos    = vector3f(0.f),
 		.oldPos = vector3f(0.f),
 		.vel    = vel,
-		.color  = Color::WHITE,
+		.color  = Color(rand() % 256, rand() % 256, rand() % 256),
 		.energy = 255,
 		.size   = 1.f,
 	};
@@ -66,9 +67,11 @@ void ParticleSystem::Draw(const matrix4x4f &trans)
 	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		Particle &p = m_particles[i];
 		if (p.energy == 0) continue;
-		m_spritePositions[si++] = p.pos;
+		m_positions[si] = p.pos;
+		m_colors[si] = p.color;
+		si++;
 	}
 
 	m_renderer->SetTransform(trans);
-	m_renderer->DrawPointSprites(si, &m_spritePositions[0], nullptr, m_renderState, m_material.Get(), 1.f);
+	m_renderer->DrawPointSprites(si, &m_positions[0], &m_colors[0], nullptr, m_material.Get(), 1.f);
 }

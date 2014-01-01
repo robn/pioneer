@@ -35,7 +35,8 @@ private:
 
 	std::vector<Particle> m_particles;
 
-	std::vector<vector3f> m_spritePositions;
+	std::vector<vector3f> m_positions;
+	std::vector<Color> m_colors;
 };
 
 #endif
