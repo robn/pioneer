@@ -10,11 +10,12 @@
 
 class Particle {
 public:
+	bool     enabled;
 	vector3f pos;
 	vector3f oldPos;
 	vector3f vel;
 	Color    color;
-	Uint32   energy;
+	Uint8    energy;
 	float    size;
 };
 

@@ -37,12 +37,13 @@ void ParticleSystem::ResetParticle(Particle &p)
 	vel.ArbRotate(vector3f(0.f,1.f,0.f), rang(360));
 	vel.ArbRotate(vector3f(1.f,0.f,0.f), rang(360));
 	p = {
-		.pos    = vector3f(0.f),
-		.oldPos = vector3f(0.f),
-		.vel    = vel,
-		.color  = Color(rand() % 256, rand() % 256, rand() % 256),
-		.energy = 255,
-		.size   = 1.f,
+		.enabled = true,
+		.pos     = vector3f(0.f),
+		.oldPos  = vector3f(0.f),
+		.vel     = vel,
+		.color   = Color(rand() % 256, rand() % 256, rand() % 256),
+		.energy  = 255,
+		.size    = 1.f,
 	};
 }
 
@@ -50,14 +51,22 @@ void ParticleSystem::Update()
 {
 	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		Particle &p = m_particles[i];
-		if (p.energy == 0) continue;
+		if (!p.enabled) continue;
+
+		p.energy -= 1;
+		if (p.energy == 0) {
+			p.enabled = false;
+			continue;
+		}
+
+		p.color.a = p.energy;
 
 		p.oldPos = p.pos;
+
 		p.pos += p.vel;
 		p.vel.ArbRotate(vector3f(0.f,0.f,1.f), rang(30));
 		p.vel.ArbRotate(vector3f(0.f,1.f,0.f), rang(30));
 		p.vel.ArbRotate(vector3f(1.f,0.f,0.f), rang(30));
-		//p.energy -= 1;
 	}
 }
 
@@ -66,7 +75,7 @@ void ParticleSystem::Draw(const matrix4x4f &trans)
 	size_t si = 0;
 	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		Particle &p = m_particles[i];
-		if (p.energy == 0) continue;
+		if (!p.enabled) continue;
 		m_positions[si] = p.pos;
 		m_colors[si] = p.color;
 		si++;
