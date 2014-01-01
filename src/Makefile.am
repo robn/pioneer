@@ -97,6 +97,7 @@ noinst_HEADERS = \
 	ObjectViewerView.h \
 	Orbit.h \
 	OS.h \
+	ParticleSystem.h \
 	PersistSystemData.h \
 	Pi.h \
 	Planet.h \
@@ -238,6 +239,7 @@ pioneer_SOURCES	= \
 	NavLights.cpp \
 	ObjectViewerView.cpp \
 	Orbit.cpp \
+	ParticleSystem.cpp \
 	Pi.cpp \
 	Planet.cpp \
 	Player.cpp \
@@ -319,7 +321,7 @@ all-local: $(bin_PROGRAMS)
 endif
 
 
-check_PROGRAMS = tests uitest textstress
+check_PROGRAMS = tests uitest textstress particletest
 tests_SOURCES = \
 	StringF.cpp \
 	tests.cpp \
@@ -409,7 +411,38 @@ if !HAVE_LUA
 textstress_LDADD += ../contrib/lua/liblua.a
 endif
 
+particletest_SOURCES = \
+	particletest.cpp \
+	ParticleSystem.cpp \
+	Color.cpp \
+	FileSystem.cpp \
+	SDLWrappers.cpp \
+	FontCache.cpp \
+	IniConfig.cpp \
+	StringF.cpp \
+	Lang.cpp \
+	PngWriter.cpp \
+	utils.cpp
+particletest_LDADD = \
+	gui/libgui.a \
+	text/libtext.a \
+	graphics/libgraphics.a \
+	posix/libposix.a \
+	../contrib/PicoDDS/libpicodds.a \
+	../contrib/json/libjson.a \
+	../contrib/glew/libglew.a \
+	../contrib/profiler/libprofiler.a
+
+particletest_LDADD += \
+	$(FREETYPE_LIBS) $(GL_LIBS) \
+	$(SDL2_LIBS) $(SIGC_LIBS) $(LUA_LIBS) $(PNG_LIBS)
+
+if !HAVE_LUA
+particletest_LDADD += ../contrib/lua/liblua.a
+endif
+
 AM_CPPFLAGS += -isystem @top_srcdir@/contrib
+
 if !HAVE_LUA
 AM_CPPFLAGS += -isystem @top_srcdir@/contrib/lua
 endif
