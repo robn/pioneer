@@ -2,13 +2,16 @@
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ParticleSystem.h"
+#include "Easing.h"
 #include "graphics/RenderState.h"
 
 static const size_t NUM_PARTICLES = 256;
 
-ParticleSystem::ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Material> material) :
+ParticleSystem::ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Material> material, float spawnFrequency) :
 	m_renderer(r),
 	m_material(material),
+	m_spawnFrequency(spawnFrequency),
+	m_spawnTime(0.f),
 	m_particles(NUM_PARTICLES),
 	m_positions(NUM_PARTICLES),
 	m_colors(NUM_PARTICLES)
@@ -18,6 +21,8 @@ ParticleSystem::ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Ma
 		//m_particles[i].energy = 0;
 	}
 
+	for (size_t i = 0; i < NUM_PARTICLES; i++)
+		m_particles[i].enabled = false;
 
 	Graphics::RenderStateDesc rsd;
 	rsd.blendMode = Graphics::BLEND_ALPHA;
@@ -32,41 +37,48 @@ inline float rang(int max) {
 
 void ParticleSystem::ResetParticle(Particle &p)
 {
-	vector3f vel = vector3f(0.f,0.2f,0.f);
-	vel.ArbRotate(vector3f(0.f,0.f,1.f), rang(360));
-	vel.ArbRotate(vector3f(0.f,1.f,0.f), rang(360));
-	vel.ArbRotate(vector3f(1.f,0.f,0.f), rang(360));
 	p = {
 		.enabled = true,
 		.pos     = vector3f(0.f),
-		.oldPos  = vector3f(0.f),
-		.vel     = vel,
-		.color   = Color(rand() % 256, rand() % 256, rand() % 256),
-		.energy  = 255,
-		.size    = 1.f,
+		.color   = Color(rand() % 255, rand() % 255, rand() % 255),
+		.energy  = 100.0f,
 	};
 }
 
-void ParticleSystem::Update()
+Particle *ParticleSystem::SpawnParticle()
 {
+	for (size_t i = 0; i < NUM_PARTICLES; i++) {
+		Particle &p = m_particles[i];
+		if (p.enabled) continue;
+		return &p;
+	}
+	return nullptr;
+}
+
+void ParticleSystem::TimeStepUpdate(const float timeStep)
+{
+	m_spawnTime += timeStep;
+    if (m_spawnTime >= m_spawnFrequency) {
+		ResetParticle(*SpawnParticle());
+		m_spawnTime = 0;
+	}
+
 	for (size_t i = 0; i < NUM_PARTICLES; i++) {
 		Particle &p = m_particles[i];
 		if (!p.enabled) continue;
 
-		p.energy -= 1;
-		if (p.energy == 0) {
+		p.energy -= timeStep;
+		if (p.energy <= 0) {
 			p.enabled = false;
 			continue;
 		}
 
-		p.color.a = p.energy;
+		p.color.a = (p.energy/100.0f) * 255;
 
-		p.oldPos = p.pos;
+		p.pos.x = Easing::Sine::EaseInOut(100.f-p.energy, 0.f, 4.f, 1.f) - 2.0f;
+		p.pos.z = Easing::Sine::EaseInOut(100.5f-p.energy, 0.f, 4.f, 1.f) - 2.0f;
 
-		p.pos += p.vel;
-		p.vel.ArbRotate(vector3f(0.f,0.f,1.f), rang(30));
-		p.vel.ArbRotate(vector3f(0.f,1.f,0.f), rang(30));
-		p.vel.ArbRotate(vector3f(1.f,0.f,0.f), rang(30));
+		p.pos.y = (100.f-p.energy)*2.f-8.f;
 	}
 }
 

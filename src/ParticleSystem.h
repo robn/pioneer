@@ -12,27 +12,29 @@ class Particle {
 public:
 	bool     enabled;
 	vector3f pos;
-	vector3f oldPos;
-	vector3f vel;
 	Color    color;
-	Uint8    energy;
-	float    size;
+	float    energy;
 };
 
 class ParticleSystem {
 public:
-	ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Material> material);
+	ParticleSystem(Graphics::Renderer *r, RefCountedPtr<Graphics::Material> material, float spawnFrequency);
 	virtual ~ParticleSystem() {}
 
+	Particle *SpawnParticle();
 	virtual void ResetParticle(Particle &p);
 
-	void Update();
+	void TimeStepUpdate(const float timeStep);
 	void Draw(const matrix4x4f &trans);
 
 private:
 	Graphics::Renderer *m_renderer;
 	RefCountedPtr<Graphics::Material> m_material;
 	Graphics::RenderState *m_renderState;
+
+	float m_spawnFrequency;
+
+	float m_spawnTime;
 
 	std::vector<Particle> m_particles;
 

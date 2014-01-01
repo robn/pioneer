@@ -42,7 +42,13 @@ int main(int argc, char **argv)
 	Graphics::Material *mat = r->CreateMaterial(desc);
 	mat->texture0 = Graphics::TextureBuilder::Billboard("textures/smoke.png").GetOrCreateTexture(r, "billboard");
 
-	ParticleSystem *ps = new ParticleSystem(r, RefCountedPtr<Graphics::Material>(mat));
+	ParticleSystem *ps = new ParticleSystem(r, RefCountedPtr<Graphics::Material>(mat), 0.1f);
+
+	const double TIMESTEP = 1.0/60.0;
+
+	double currentTime = 0.001 * double(SDL_GetTicks());
+	double frameTime = 0.0;
+	double accumulator = TIMESTEP;
 
 	while (1) {
 		bool done = false;
@@ -55,11 +61,19 @@ int main(int argc, char **argv)
 		if (done)
 			break;
 
+		const Uint32 newTicks = SDL_GetTicks();
+		double newTime = 0.001 * double(newTicks);
+		frameTime = newTime - currentTime;
+		currentTime = newTime;
+		accumulator += frameTime;
+
+		while (accumulator >= TIMESTEP) {
+			ps->TimeStepUpdate(TIMESTEP);
+			accumulator -= TIMESTEP;
+		}
+
 		r->ClearScreen();
-
-		ps->Update();
 		ps->Draw(matrix4x4f::Translation(0.0f, 0.0f, -10.0f));
-
 		r->SwapBuffers();
 	}
 
