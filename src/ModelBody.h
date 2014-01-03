@@ -7,6 +7,7 @@
 #include "libs.h"
 #include "Body.h"
 #include "CollMesh.h"
+#include "AtmosphericLightingModel.h"
 
 class Geom;
 class Camera;
@@ -42,8 +43,6 @@ protected:
 	virtual void Save(Serializer::Writer &wr, Space *space);
 	virtual void Load(Serializer::Reader &rd, Space *space);
 
-	void SetLighting(Graphics::Renderer *r, const Camera *camera, std::vector<Graphics::Light> &oldLights, Color &oldAmbient);
-	void ResetLighting(Graphics::Renderer *r, const std::vector<Graphics::Light> &oldLights, const Color &oldAmbient);
 
 private:
 	void RebuildCollisionMesh();
@@ -51,7 +50,6 @@ private:
 	void AddGeomsToFrame(Frame*);
 	void RemoveGeomsFromFrame(Frame*);
 	void MoveGeoms(const matrix4x4d&, const vector3d&);
-	void CalcLighting(double &ambient, double &direct, const Camera *camera);
 
 	bool m_isStatic;
 	bool m_colliding;
@@ -61,6 +59,7 @@ private:
 	SceneGraph::Model *m_model;
 	std::vector<Geom*> m_dynGeoms;
 	SceneGraph::Animation *m_idleAnimation;
+	AtmosphericLightingModel m_lightModel;
 };
 
 #endif /* _MODELBODY_H */

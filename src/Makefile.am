@@ -18,6 +18,7 @@ noinst_HEADERS = \
 	Aabb.h \
 	AmbientSounds.h \
 	AnimationCurves.h \
+	AtmosphericLightModel.h \
 	Background.h \
 	Body.h \
 	ByteRange.h \
@@ -149,6 +150,7 @@ noinst_HEADERS = \
 
 pioneer_SOURCES	= \
 	AmbientSounds.cpp \
+	AtmosphericLightModel.cpp \
 	Background.cpp \
 	Body.cpp \
 	Camera.cpp \
