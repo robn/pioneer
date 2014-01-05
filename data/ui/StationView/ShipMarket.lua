@@ -16,35 +16,14 @@ local ModelSpinner = import("UI.Game.ModelSpinner")
 
 local SmallLabeledButton = import("ui/SmallLabeledButton")
 
+local ShipNameHeader = import("ui/ShipNameHeader")
+
 local ui = Engine.ui
 
 local l = Lang.GetResource("ui-core")
 
 -- XXX equipment strings are in core. this sucks
 local lcore = Lang.GetResource("core")
-
-local shipClassString = {
-	light_cargo_shuttle        = l.LIGHT_CARGO_SHUTTLE,
-	light_courier              = l.LIGHT_COURIER,
-	light_fighter              = l.LIGHT_FIGHTER,
-	light_freighter            = l.LIGHT_FREIGHTER,
-	light_passenger_shuttle    = l.LIGHT_PASSENGER_SHUTTLE,
-	light_passenger_transport  = l.LIGHT_PASSENGER_TRANSPORT,
-	medium_cargo_shuttle       = l.MEDIUM_CARGO_SHUTTLE,
-	medium_courier             = l.MEDIUM_COURIER,
-	medium_fighter             = l.MEDIUM_FIGHTER,
-	medium_freighter           = l.MEDIUM_FREIGHTER,
-	medium_passenger_shuttle   = l.MEDIUM_PASSENGER_SHUTTLE,
-	medium_passenger_transport = l.MEDIUM_PASSENGER_TRANSPORT,
-	heavy_cargo_shuttle        = l.HEAVY_CARGO_SHUTTLE,
-	heavy_courier              = l.HEAVY_COURIER,
-	heavy_fighter              = l.HEAVY_FIGHTER,
-	heavy_freighter            = l.HEAVY_FREIGHTER,
-	heavy_passenger_shuttle    = l.HEAVY_PASSENGER_SHUTTLE,
-	heavy_passenger_transport  = l.HEAVY_PASSENGER_TRANSPORT,
-
-	unknown                    = "",
-}
 
 local shipTable =
 	ui:Table()
@@ -61,12 +40,6 @@ local shipInfo =
 local function shipClassIcon (shipClass)
 	return shipClass ~= "unknown"
 		and ui:Image("icons/shipclass/"..shipClass..".png", { "PRESERVE_ASPECT" })
-		or ui:Margin(32)
-end
-
-local function manufacturerIcon (manufacturer)
-	return manufacturer ~= "unknown"
-		and ui:Image("icons/manufacturer/"..manufacturer..".png", { "PRESERVE_ASPECT" })
 		or ui:Margin(32)
 end
 
@@ -126,16 +99,8 @@ shipTable.onRowClicked:Connect(function (row)
 
 	shipInfo:SetInnerWidget(
 		ui:VBox():PackEnd({
-			ui:HBox():PackEnd({
-				ui:Align("LEFT",
-					ui:VBox():PackEnd({
-						ui:Label(def.name):SetFont("HEADING_LARGE"),
-						ui:Label(shipClassString[def.shipClass]):SetFont("HEADING_SMALL"),
-					})
-				),
-				ui:Expand("HORIZONTAL", ui:Align("RIGHT", manufacturerIcon(def.manufacturer))),
-			}),
-			ui:HBox(20):PackEnd({
+			ShipNameHeader.New(def),
+			ui:Grid(2,1):SetRow(0, {
 				l.PRICE..": "..Format.Money(def.basePrice),
 				l.AFTER_TRADE_IN..": "..Format.Money(def.basePrice - tradeInValue(ShipDef[Game.player.shipId])),
 				ui:Expand("HORIZONTAL", ui:Align("RIGHT", buyButton)),

@@ -9,6 +9,8 @@ local ShipDef = import("ShipDef")
 
 local ModelSpinner = import("UI.Game.ModelSpinner")
 
+local ShipNameHeader = import("ui/ShipNameHeader")
+
 local ui = Engine.ui
 local l = Lang.GetResource("ui-core");
 
@@ -102,9 +104,10 @@ local shipInfo = function (args)
 				})
 			})
 			:SetColumn(2, {
-				ui:VBox(10)
-					:PackEnd(ui:Label(shipDef.name):SetFont("HEADING_LARGE"))
-					:PackEnd(ModelSpinner.New(ui, shipDef.modelName, Game.player:GetSkin()))
+				ui:VBox(10):PackEnd({
+					ShipNameHeader.New(shipDef),
+					ModelSpinner.New(ui, shipDef.modelName, Game.player:GetSkin()),
+				})
 			})
 end
 
