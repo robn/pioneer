@@ -8,6 +8,8 @@
 #include "../Camera.h"
 #include <memory>
 
+class Body;
+
 namespace GameUI {
 
 class Camera : public UI::Widget {
@@ -20,6 +22,7 @@ public:
 
 private:
 	std::unique_ptr<::Camera> m_camera;
+	Body *m_body;
 };
 
 }
