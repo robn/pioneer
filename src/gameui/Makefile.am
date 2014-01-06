@@ -13,17 +13,20 @@ noinst_LIBRARIES = libgameui.a
 noinst_HEADERS = \
 	GameUI.h \
 	Lua.h \
+	Camera.h \
 	Panel.h \
 	Face.h \
 	ModelSpinner.h \
 	BindingCapture.h
 
 libgameui_a_SOURCES = \
+	Camera.cpp \
 	Panel.cpp \
 	Face.cpp \
 	ModelSpinner.cpp \
 	BindingCapture.cpp \
 	Lua.cpp \
+	LuaCamera.cpp \
 	LuaFace.cpp \
 	LuaModelSpinner.cpp \
 	LuaBindingCapture.cpp

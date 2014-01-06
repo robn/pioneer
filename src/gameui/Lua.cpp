@@ -8,6 +8,7 @@ namespace Lua {
 
 void Init()
 {
+	LuaObject<GameUI::Camera>::RegisterClass();
 	LuaObject<GameUI::Face>::RegisterClass();
 	LuaObject<GameUI::ModelSpinner>::RegisterClass();
 	LuaObject<GameUI::KeyBindingCapture>::RegisterClass();
