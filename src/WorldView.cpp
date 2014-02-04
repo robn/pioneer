@@ -35,6 +35,7 @@
 #include "matrix4x4.h"
 #include "Quaternion.h"
 #include "LuaObject.h"
+#include "Comms.h"
 #include <algorithm>
 #include <sstream>
 #include <SDL_stdinc.h>
@@ -449,7 +450,7 @@ void WorldView::OnClickHyperspace()
 	if (Pi::player->IsHyperspaceActive()) {
 		// Hyperspace countdown in effect.. abort!
 		Pi::player->AbortHyperjump();
-		m_game->log->Add(Lang::HYPERSPACE_JUMP_ABORTED);
+		Comms::Message(Lang::HYPERSPACE_JUMP_ABORTED);
 	} else {
 		// Initiate hyperspace drive
 		SystemPath path = m_game->GetSectorView()->GetHyperspaceTarget();
@@ -986,7 +987,7 @@ void WorldView::RefreshButtonStateAndVisibility()
 
 bool WorldView::OnClickHeadingLabel(void) {
 	m_curPlane = m_curPlane == ROTATIONAL ? PARENT : ROTATIONAL;
-	m_game->log->Add(m_curPlane == ROTATIONAL ? Lang::SWITCHED_TO_ROTATIONAL : Lang::SWITCHED_TO_PARENT);
+	Comms::Message(m_curPlane == ROTATIONAL ? Lang::SWITCHED_TO_ROTATIONAL : Lang::SWITCHED_TO_PARENT);
 	return true;
 }
 
@@ -1226,7 +1227,7 @@ static void PlayerRequestDockingClearance(SpaceStation *s)
 {
 	std::string msg;
 	s->GetDockingClearance(Pi::player, msg);
-	Pi::game->log->Add(s->GetLabel(), msg);
+	Comms::ImportantMessage(msg, s->GetLabel());
 }
 
 // XXX paying fine remotely can't really be done until crime and
@@ -1238,18 +1239,18 @@ static void PlayerPayFine()
 	Sint64 crime, fine;
 	Polit::GetCrime(&crime, &fine);
 	if (Pi::player->GetMoney() == 0) {
-		m_game->log->Add(Lang::YOU_NO_MONEY);
+		Comms::Message(Lang::YOU_NO_MONEY);
 	} else if (fine > Pi::player->GetMoney()) {
 		Polit::AddCrime(0, -Pi::player->GetMoney());
 		Polit::GetCrime(&crime, &fine);
-		m_game->log->Add(stringf(
+		Comms::Message(stringf(
 			Lang::FINE_PAID_N_BUT_N_REMAINING,
 				formatarg("paid", format_money(Pi::player->GetMoney())),
 				formatarg("fine", format_money(fine))));
 		Pi::player->SetMoney(0);
 	} else {
 		Pi::player->SetMoney(Pi::player->GetMoney() - fine);
-		m_game->log->Add(stringf(Lang::FINE_PAID_N,
+		Comms::Message(stringf(Lang::FINE_PAID_N,
 				formatarg("fine", format_money(fine))));
 		Polit::AddCrime(0, -fine);
 	}
@@ -1261,7 +1262,7 @@ void WorldView::OnHyperspaceTargetChanged()
 {
 	if (Pi::player->IsHyperspaceActive()) {
 		Pi::player->AbortHyperjump();
-		m_game->log->Add(Lang::HYPERSPACE_JUMP_ABORTED);
+		Comms::Message(Lang::HYPERSPACE_JUMP_ABORTED);
 	}
 }
 

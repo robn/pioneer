@@ -14,6 +14,7 @@
 #include "SpaceStation.h"
 #include "WorldView.h"
 #include "StringF.h"
+#include "Comms.h"
 
 //Some player specific sounds
 static Sound::Event s_soundUndercarriage;
@@ -133,19 +134,19 @@ void Player::SetAlertState(Ship::AlertState as)
 	switch (as) {
 		case ALERT_NONE:
 			if (prev != ALERT_NONE)
-				Pi::game->log->Add(Lang::ALERT_CANCELLED);
+				Comms::Message(Lang::ALERT_CANCELLED);
 			break;
 
 		case ALERT_SHIP_NEARBY:
 			if (prev == ALERT_NONE)
-				Pi::game->log->Add(Lang::SHIP_DETECTED_NEARBY);
+				Comms::ImportantMessage(Lang::SHIP_DETECTED_NEARBY);
 			else
-				Pi::game->log->Add(Lang::DOWNGRADING_ALERT_STATUS);
+				Comms::ImportantMessage(Lang::DOWNGRADING_ALERT_STATUS);
 			Sound::PlaySfx("OK");
 			break;
 
 		case ALERT_SHIP_FIRING:
-			Pi::game->log->Add(Lang::LASER_FIRE_DETECTED);
+			Comms::ImportantMessage(Lang::LASER_FIRE_DETECTED);
 			Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
 			break;
 	}

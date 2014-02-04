@@ -17,6 +17,7 @@
 #include "Sound.h"
 #include "Space.h"
 #include "StringF.h"
+#include "Comms.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 #include "graphics/VertexArray.h"
@@ -504,7 +505,7 @@ void UseEquipWidget::GetSizeRequested(float size[2])
 void UseEquipWidget::FireMissile(int idx)
 {
 	if (!Pi::player->GetCombatTarget()) {
-		Pi::game->log->Add(Lang::SELECT_A_TARGET);
+		Comms::Message(Lang::SELECT_A_TARGET);
 		return;
 	}
 	LuaObject<Ship>::CallMethod(Pi::player, "FireMissileAt", idx+1, static_cast<Ship*>(Pi::player->GetCombatTarget()));

@@ -23,6 +23,7 @@
 #include "graphics/Renderer.h"
 #include "gui/Gui.h"
 #include "KeyBindings.h"
+#include "Comms.h"
 #include <algorithm>
 #include <sstream>
 #include <SDL_stdinc.h>
@@ -441,6 +442,7 @@ void SectorView::OnSearchBoxKeyPress(const SDL_Keysym *keysym)
 
 	if (gotMatch) {
 		m_statusLabel->SetText(stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
+		Comms::Message(stringf(Lang::NOT_FOUND_BEST_MATCH_X, formatarg("system", *bestMatchName)));
 		GotoSystem(bestMatch);
 	}
 

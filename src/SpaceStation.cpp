@@ -19,6 +19,7 @@
 #include "Space.h"
 #include "StringF.h"
 #include "ShipCpanel.h"
+#include "Comms.h"
 #include "galaxy/StarSystem.h"
 #include "graphics/Graphics.h"
 #include "scenegraph/ModelSkin.h"
@@ -407,7 +408,7 @@ void SpaceStation::DockingUpdate(const double timeStep)
 
 			if (dt.stagePos >= 1.0) {
 				if (dt.ship == Pi::player)
-					Pi::game->log->Add(GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED);
+					Comms::ImportantMessage(Lang::DOCKING_CLEARANCE_EXPIRED, GetLabel());
 				dt.ship = 0;
 				dt.stage = 0;
 				m_doorAnimationStep = -0.3; // close door

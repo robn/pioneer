@@ -13,6 +13,7 @@
 #include "FloatComparison.h"
 #include "Game.h"
 #include "AnimationCurves.h"
+#include "Comms.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureBuilder.h"
@@ -376,11 +377,11 @@ void SystemView::OnClickObject(const SystemBody *b)
 			if(Pi::player->GetNavTarget() == body) {
 				Pi::player->SetNavTarget(body);
 				Pi::player->SetNavTarget(0);
-				m_game->log->Add(Lang::UNSET_NAVTARGET);
+				Comms::Message(Lang::UNSET_NAVTARGET);
 			}
 			else {
 				Pi::player->SetNavTarget(body);
-				m_game->log->Add(Lang::SET_NAVTARGET_TO + body->GetLabel());
+				Comms::Message(Lang::SET_NAVTARGET_TO + body->GetLabel());
 			}
 		}
 	}
@@ -414,12 +415,12 @@ void SystemView::OnClickShip(Ship *s) {
 	if(!s) { printf("clicked on ship label but ship wasn't there\n"); return; }
 	if(Pi::player->GetNavTarget() == s) { //un-select ship if already selected
 		Pi::player->SetNavTarget(0); // remove current
-		m_game->log->Add(Lang::UNSET_NAVTARGET);
+		Comms::Message(Lang::UNSET_NAVTARGET);
 		m_infoLabel->SetText("");    // remove lingering text
 		m_infoText->SetText("");
 	} else {
 		Pi::player->SetNavTarget(s);
-		m_game->log->Add(Lang::SET_NAVTARGET_TO + s->GetLabel());
+		Comms::Message(Lang::SET_NAVTARGET_TO + s->GetLabel());
 
 		// always show label of selected ship...
 		std::string text;

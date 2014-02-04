@@ -17,6 +17,7 @@
 #include "Lang.h"
 #include "StringF.h"
 #include "Game.h"
+#include "Comms.h"
 
 namespace Polit {
 
@@ -138,9 +139,9 @@ void NotifyOfCrime(Ship *s, enum Crime crime)
 		// too far away for crime to be noticed :)
 		if (dist > 100000.0) return;
 		const int crimeIdx = GetCrimeIdxFromEnum(crime);
-		Pi::game->log->Add(station->GetLabel(),
-				stringf(Lang::X_CANNOT_BE_TOLERATED_HERE, formatarg("crime", crimeNames[crimeIdx])));
-
+		Comms::ImportantMessage(
+			stringf(Lang::X_CANNOT_BE_TOLERATED_HERE, formatarg("crime", crimeNames[crimeIdx])),
+			station->GetLabel());
 		float lawlessness = Pi::game->GetSpace()->GetStarSystem()->GetSysPolit().lawlessness.ToFloat();
 		Sint64 oldCrimes, oldFine;
 		GetCrime(&oldCrimes, &oldFine);

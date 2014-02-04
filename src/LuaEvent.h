@@ -33,6 +33,19 @@ namespace LuaEvent {
 		}
 	};
 
+	template <>
+	class Args<LuaRef,void> : public ArgsBase {
+	public:
+		Args(LuaRef *_arg0) : arg0(*_arg0) { }
+		virtual ~Args() {}
+
+		LuaRef arg0;
+
+		inline void PrepareStack() const {
+			arg0.PushCopyToStack();
+		}
+	};
+
 	template <typename T0>
 	class Args<T0,void> : public ArgsBase {
 	public:
@@ -88,6 +101,11 @@ namespace LuaEvent {
 	template <typename T0>
 	void Queue(const char *event, T0 *arg0) {
 		Queue(event, Args<T0>(arg0));
+	}
+
+	template <typename T0>
+	void Queue(const char *event, LuaRef &arg0) {
+		Queue(event, Args<LuaRef>(&arg0));
 	}
 
 	inline void Queue(const char *event) {

@@ -63,6 +63,7 @@
 #include "KeyBindings.h"
 #include "EnumStrings.h"
 #include "ServerAgent.h"
+#include "Comms.h"
 #include "galaxy/CustomSystem.h"
 #include "galaxy/GalaxyGenerator.h"
 #include "galaxy/StarSystem.h"
@@ -889,19 +890,19 @@ void Pi::HandleEvents()
 						{
 							if(Pi::game) {
 								if (Pi::game->IsHyperspace())
-									Pi::game->log->Add(Lang::CANT_SAVE_IN_HYPERSPACE);
+									Comms::Message(Lang::CANT_SAVE_IN_HYPERSPACE);
 
 								else {
 									const std::string name = "_quicksave";
 									const std::string path = FileSystem::JoinPath(GetSaveDir(), name);
 									try {
 										Game::SaveGame(name, Pi::game);
-										Pi::game->log->Add(Lang::GAME_SAVED_TO + path);
+										Comms::Message(Lang::GAME_SAVED_TO + path);
 									} catch (CouldNotOpenFileException) {
-										Pi::game->log->Add(stringf(Lang::COULD_NOT_OPEN_FILENAME, formatarg("path", path)));
+										Comms::Message(stringf(Lang::COULD_NOT_OPEN_FILENAME, formatarg("path", path)));
 									}
 									catch (CouldNotWriteToFileException) {
-										Pi::game->log->Add(Lang::GAME_SAVE_CANNOT_WRITE);
+										Comms::Message(Lang::GAME_SAVE_CANNOT_WRITE);
 									}
 								}
 							}
