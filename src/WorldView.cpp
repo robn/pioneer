@@ -40,6 +40,7 @@
 #include <SDL_stdinc.h>
 
 const double WorldView::PICK_OBJECT_RECT_SIZE = 20.0;
+
 namespace {
 	static const Color s_hudTextColor(0,255,0,230);
 	static const float ZOOM_SPEED = 1.f;
@@ -52,13 +53,13 @@ namespace {
 	static const Color red(255, 0, 0, 128);
 }
 
-WorldView::WorldView(Game* game): UIView(), m_game(game)
+WorldView::WorldView(Game *game): UIView("WorldView"), m_game(game)
 {
 	m_camType = CAM_INTERNAL;
 	InitObject();
 }
 
-WorldView::WorldView(Serializer::Reader &rd, Game* game): UIView(), m_game(game)
+WorldView::WorldView(Serializer::Reader &rd, Game *game): UIView("WorldView"), m_game(game)
 {
 	m_camType = CamType(rd.Int32());
 	InitObject();
