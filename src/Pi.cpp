@@ -16,7 +16,6 @@
 #include "BaseSphere.h"
 #include "Intro.h"
 #include "Lang.h"
-#include "LuaComms.h"
 #include "LuaConsole.h"
 #include "LuaConstants.h"
 #include "LuaDev.h"
@@ -274,7 +273,6 @@ static void LuaInit()
 	LuaFileSystem::Register();
 	LuaServerAgent::Register();
 	LuaGame::Register();
-	LuaComms::Register();
 	LuaFormat::Register();
 	LuaSpace::Register();
 	LuaShipDef::Register();

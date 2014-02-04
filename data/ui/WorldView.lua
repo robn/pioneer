@@ -8,6 +8,27 @@ local Event = import("Event")
 local ui = Engine.ui
 local l = Lang.GetResource("ui-core");
 
+local widget
+
+local text
+
 ui.templates.WorldView = function (args)
-	return ""
+	if widget then return widget end
+
+	text = ui:MultiLineText(""):SetFont("XSMALL")
+
+	widget =
+		ui:ColorBackground(0,0,0,0.5,
+			text
+		)
+
+	return widget
 end
+
+Event.Register("onCommsMessage", function (m)
+	text:AppendText(string.format("%s %s %s\n", m.priority, m.message, m.from))
+end)
+
+Event.Register("onGameEnd", function ()
+    text:SetText("")
+end)

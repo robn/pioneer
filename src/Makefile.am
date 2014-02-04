@@ -58,7 +58,6 @@ noinst_HEADERS = \
 	Lang.h \
 	LangStrings.inc.h \
 	Lua.h \
-	LuaComms.h \
 	LuaConsole.h \
 	LuaConstants.h \
 	LuaDev.h \
@@ -196,7 +195,6 @@ pioneer_SOURCES	= \
 	Lua.cpp \
 	LuaBody.cpp \
 	LuaCargoBody.cpp \
-	LuaComms.cpp \
 	LuaConsole.cpp \
 	LuaConstants.cpp \
 	LuaDev.cpp \
