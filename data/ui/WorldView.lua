@@ -17,11 +17,19 @@ ui.templates.WorldView = function (args)
 
 	text = ui:MultiLineText(""):SetFont("XSMALL")
 
-	widget =
-		ui:ColorBackground(0,0,0,0.5,
-			text
-		)
+	local tg =
+		ui:TabGroup()
+			:SetTransparent(true)
+			:SetHeaderCollapsible(true)
 
+	tg:NewTab(ui:Label("COMMS"):SetFont("HEADING_XSMALL"))
+		:SetInnerWidget(text)
+
+	local grid =
+		ui:Grid(1,5)
+			:SetRow(0, {tg})
+
+	widget = grid
 	return widget
 end
 
@@ -30,5 +38,5 @@ Event.Register("onCommsMessage", function (m)
 end)
 
 Event.Register("onGameEnd", function ()
-    text:SetText("")
+	widget = nil
 end)
