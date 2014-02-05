@@ -6,6 +6,7 @@
 
 #include "Container.h"
 #include "Single.h"
+#include "Label.h"
 
 namespace UI {
 
@@ -22,13 +23,13 @@ public:
 	class Tab: public Single {
 	protected:
 		friend class TabGroup;
-		Tab(Context *context, const std::string &title): Single(context), m_title(title) {}
+		Tab(Context *context, const std::string &title);
 
 	public:
-		const std::string &GetTitle() const { return m_title; }
+		UI::Label *GetLabel() const { return m_label.Get(); }
 
 	private:
-		std::string m_title;
+		RefCountedPtr<UI::Label> m_label;
 	};
 
 	Tab *NewTab(const std::string &title);
