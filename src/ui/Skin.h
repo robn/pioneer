@@ -123,6 +123,18 @@ public:
 		DrawRectElement(m_gaugeFillCritical, pos, size, Graphics::BLEND_DEST_ALPHA);
 	}
 
+	void DrawTabHeaderDisabled(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderDisabled, pos, size);
+	}
+	void DrawTabHeaderNormal(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderNormal, pos, size);
+	}
+	void DrawTabHeaderHover(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderHover, pos, size);
+	}
+	void DrawTabHeaderActive(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderActive, pos, size);
+	}
 
 	void DrawRectColor(const Color &col, const Point &pos, const Point &size) const;
 	void DrawRectNormal(const Point &pos, const Point &size) const {
@@ -198,7 +210,13 @@ public:
 	const RectElement &GaugeFillWarning()     const { return m_gaugeFillWarning; }
 	const RectElement &GaugeFillCritical()    const { return m_gaugeFillCritical; }
 
+	const BorderedRectElement &TabHeaderDisabled() const { return m_tabHeaderDisabled; }
+	const BorderedRectElement &TabHeaderNormal()   const { return m_tabHeaderNormal; }
+	const BorderedRectElement &TabHeaderHover()    const { return m_tabHeaderHover; }
+	const BorderedRectElement &TabHeaderActive()   const { return m_tabHeaderActive; }
+
 	unsigned int ButtonMinInnerSize() const { return m_buttonMinInnerSize; }
+	unsigned int TabHeaderMinInnerSize() const { return m_tabHeaderMinInnerSize; }
 
 	float AlphaNormal() const { return m_alphaNormal; }
 	float AlphaSelect() const { return m_alphaSelect; }
@@ -273,7 +291,13 @@ private:
 	RectElement m_gaugeFillWarning;
 	RectElement m_gaugeFillCritical;
 
+	BorderedRectElement m_tabHeaderDisabled;
+	BorderedRectElement m_tabHeaderNormal;
+	BorderedRectElement m_tabHeaderHover;
+	BorderedRectElement m_tabHeaderActive;
+
 	unsigned int m_buttonMinInnerSize;
+	unsigned int m_tabHeaderMinInnerSize;
 
 	float m_alphaNormal;
 	float m_alphaSelect;

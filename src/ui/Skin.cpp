@@ -19,6 +19,7 @@ Skin::Skin(const std::string &filename, Graphics::Renderer *renderer, float scal
 	IniConfig cfg;
 	// set defaults
 	cfg.SetInt("ButtonMinInnerSize", 16);
+	cfg.SetInt("TabHeaderMinInnerSize", 16);
 	cfg.SetFloat("AlphaNormal", 0.0);
 	cfg.SetFloat("AlphaHover", 0.4);
 	cfg.SetFloat("AlphaSelect", 0.6);
@@ -85,7 +86,13 @@ Skin::Skin(const std::string &filename, Graphics::Renderer *renderer, float scal
 	m_gaugeFillWarning = LoadRectElement(cfg.String("GaugeFillWarning"));
 	m_gaugeFillCritical = LoadRectElement(cfg.String("GaugeFillCritical"));
 
-	m_buttonMinInnerSize      = cfg.Int("ButtonMinInnerSize");
+	m_tabHeaderDisabled = LoadBorderedRectElement(cfg.String("TabHeaderDisabled"));
+	m_tabHeaderNormal   = LoadBorderedRectElement(cfg.String("TabHeaderNormal"));
+	m_tabHeaderHover    = LoadBorderedRectElement(cfg.String("TabHeaderHover"));
+	m_tabHeaderActive   = LoadBorderedRectElement(cfg.String("TabHeaderActive"));
+
+	m_buttonMinInnerSize    = cfg.Int("ButtonMinInnerSize");
+	m_tabHeaderMinInnerSize = cfg.Int("TabHeaderMinInnerSize");
 
 	m_alphaNormal = cfg.Float("AlphaNormal");
 	m_alphaSelect = cfg.Float("AlphaSelect");
