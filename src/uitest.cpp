@@ -105,10 +105,12 @@ static bool remove_floating_widget(UI::Context *c, UI::Widget *widget)
 }
 #endif
 
+#if 0
 static void animation_callback(int n)
 {
 	printf("%d animation completed\n", n);
 }
+#endif
 
 int main(int argc, char **argv)
 {
@@ -138,6 +140,15 @@ int main(int argc, char **argv)
 
 	RefCountedPtr<UI::Context> c(new UI::Context(Lua::manager, r, WIDTH, HEIGHT));
 
+	UI::TabGroup *tg = c->TabGroup();
+
+	tg->NewTab("one")->SetInnerWidget(c->Label("foo"));
+	tg->NewTab("two")->SetInnerWidget(c->Label("two"));
+	tg->NewTab("three")->SetInnerWidget(c->Label("three"));
+
+	c->GetTopLayer()->SetInnerWidget(tg);
+
+#if 0
 	UI::Grid *g = c->Grid(3,3);
 	UI::Image *img[9];
 	for (int y = 0; y < 3; y++)
@@ -180,6 +191,7 @@ int main(int argc, char **argv)
 	);
 
 	c->GetAnimationController().Add(UI::Animation(cb, UI::Animation::TYPE_IN_OUT, UI::Animation::EASING_SINE, UI::Animation::TARGET_OPACITY, 4.0f, true));
+#endif
 #endif
 
 #if 0

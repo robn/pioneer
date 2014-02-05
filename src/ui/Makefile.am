@@ -45,6 +45,7 @@ noinst_HEADERS = \
 	Skin.h \
 	Slider.h \
 	SmallButton.h \
+	TabGroup.h \
 	Table.h \
 	TextEntry.h \
 	TextLayout.h \
@@ -82,6 +83,7 @@ libui_a_SOURCES = \
 	Skin.cpp \
 	Slider.cpp \
 	SmallButton.cpp \
+	TabGroup.cpp \
 	Table.cpp \
 	TextEntry.cpp \
 	TextLayout.cpp \
