@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 	tg->NewTab("two")->SetInnerWidget(c->Label("two"));
 	tg->NewTab("three")->SetInnerWidget(c->Label("three"));
 
-	c->GetTopLayer()->SetInnerWidget(tg);
+	c->GetTopLayer()->SetInnerWidget(c->Margin(10)->SetInnerWidget(tg));
 
 #if 0
 	UI::Grid *g = c->Grid(3,3);

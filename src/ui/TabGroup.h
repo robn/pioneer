@@ -44,6 +44,10 @@ public:
 private:
 	std::list<Tab*> m_tabs;
 	Tab *m_selected;
+	Point m_tabPos;
+	Point m_tabSize;
+	Point m_paddingPos;
+	Point m_paddingSize;
 };
 
 }

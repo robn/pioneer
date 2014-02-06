@@ -25,7 +25,7 @@ void TabGroup::Layout()
 	const unsigned int minInnerSize = skin.TabHeaderMinInnerSize();
 
 	int tabX = 0;
-	Point tabPos(0);
+	m_tabPos = Point(0);
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto tab = (*i);
 
@@ -34,7 +34,7 @@ void TabGroup::Layout()
 
 		labelPreferred.x = std::max(labelPreferred.x, int(minInnerSize));
 		labelPreferred.y = std::max(labelPreferred.y, int(minInnerSize));
-		tabPos.y = std::max(tabPos.y, int(std::max(labelPreferred.y + elem.paddingY*2, elem.borderHeight*2)));
+		m_tabPos.y = std::max(m_tabPos.y, int(std::max(labelPreferred.y + elem.paddingY*2, elem.borderHeight*2)));
 
 		Point tabHeaderPos(tabX, 0);
 		Point tabHeaderSize(labelPreferred.x + elem.paddingX*2, 0); // no Y, we don't know it yet
@@ -46,14 +46,21 @@ void TabGroup::Layout()
 		tab->SetHeaderSize(tabHeaderSize);
 	}
 
-	if (m_selected) {
-		Point tabSize(size.x, std::max(size.y-tabPos.y, 0));
-		SetWidgetDimensions(m_selected, tabPos, tabSize);
-	}
+	m_paddingPos  = Point(tabX, 0);
+	m_paddingSize = Point(size.x-m_paddingPos.x, m_tabPos.y);
 
 	for (auto i =  m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto *tab = (*i);
-		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, tabPos.y));
+		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, m_tabPos.y));
+	}
+
+	m_tabSize = Point(size.x, std::max(size.y-m_tabPos.y, 0));
+	if (m_selected) {
+		const Skin::BorderedRectElement &background(skin.TabBackground());
+
+		const Point tabInnerPos(m_tabPos.x+background.paddingX, m_tabPos.y+background.paddingY);
+		const Point tabInnerSize(m_tabSize.x-background.paddingX*2, m_tabSize.y-background.paddingY*2);
+		SetWidgetDimensions(m_selected, tabInnerPos, tabInnerSize);
 	}
 
 	LayoutChildren();
@@ -71,6 +78,10 @@ void TabGroup::Draw()
 			skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
 	}
 
+    skin.DrawTabHeaderPadding(m_paddingPos, m_paddingSize);
+
+	if (m_selected)
+		skin.DrawTabBackground(m_tabPos, m_tabSize);
 
 	Container::Draw();
 	return;

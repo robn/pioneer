@@ -90,6 +90,9 @@ Skin::Skin(const std::string &filename, Graphics::Renderer *renderer, float scal
 	m_tabHeaderNormal   = LoadBorderedRectElement(cfg.String("TabHeaderNormal"));
 	m_tabHeaderHover    = LoadBorderedRectElement(cfg.String("TabHeaderHover"));
 	m_tabHeaderActive   = LoadBorderedRectElement(cfg.String("TabHeaderActive"));
+	m_tabHeaderPadding  = LoadBorderedRectElement(cfg.String("TabHeaderPadding"));
+
+	m_tabBackground = LoadBorderedRectElement(cfg.String("TabBackground"));
 
 	m_buttonMinInnerSize    = cfg.Int("ButtonMinInnerSize");
 	m_tabHeaderMinInnerSize = cfg.Int("TabHeaderMinInnerSize");

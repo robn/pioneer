@@ -135,6 +135,13 @@ public:
 	void DrawTabHeaderActive(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabHeaderActive, pos, size);
 	}
+	void DrawTabHeaderPadding(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderPadding, pos, size);
+	}
+
+	void DrawTabBackground(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabBackground, pos, size);
+	}
 
 	void DrawRectColor(const Color &col, const Point &pos, const Point &size) const;
 	void DrawRectNormal(const Point &pos, const Point &size) const {
@@ -214,6 +221,9 @@ public:
 	const BorderedRectElement &TabHeaderNormal()   const { return m_tabHeaderNormal; }
 	const BorderedRectElement &TabHeaderHover()    const { return m_tabHeaderHover; }
 	const BorderedRectElement &TabHeaderActive()   const { return m_tabHeaderActive; }
+	const BorderedRectElement &TabHeaderPadding()  const { return m_tabHeaderPadding; }
+
+	const BorderedRectElement &TabBackground()     const { return m_tabBackground; }
 
 	unsigned int ButtonMinInnerSize() const { return m_buttonMinInnerSize; }
 	unsigned int TabHeaderMinInnerSize() const { return m_tabHeaderMinInnerSize; }
@@ -295,6 +305,9 @@ private:
 	BorderedRectElement m_tabHeaderNormal;
 	BorderedRectElement m_tabHeaderHover;
 	BorderedRectElement m_tabHeaderActive;
+	BorderedRectElement m_tabHeaderPadding;
+
+	BorderedRectElement m_tabBackground;
 
 	unsigned int m_buttonMinInnerSize;
 	unsigned int m_tabHeaderMinInnerSize;
