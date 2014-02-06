@@ -20,17 +20,30 @@ void TabGroup::Layout()
 {
 	Point size(GetSize());
 
-	int labelX = 0;
+	const Skin &skin(GetContext()->GetSkin());
+	const Skin::BorderedRectElement &elem(skin.TabHeaderNormal());
+	const unsigned int minInnerSize = skin.TabHeaderMinInnerSize();
+
+	int tabX = 0;
 	Point tabPos(0);
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto tab = (*i);
 
 		auto label = tab->GetLabel();
 		Point labelPreferred(label->PreferredSize());
-		tabPos.y = std::max(tabPos.y, labelPreferred.y);
 
-		SetWidgetDimensions(label, Point(labelX, 0), labelPreferred);
-		labelX += labelPreferred.x;
+		labelPreferred.x = std::max(labelPreferred.x, int(minInnerSize));
+		labelPreferred.y = std::max(labelPreferred.y, int(minInnerSize));
+		tabPos.y = std::max(tabPos.y, int(std::max(labelPreferred.y + elem.paddingY*2, elem.borderHeight*2)));
+
+		Point tabHeaderPos(tabX, 0);
+		Point tabHeaderSize(labelPreferred.x + elem.paddingX*2, 0); // no Y, we don't know it yet
+
+		SetWidgetDimensions(label, Point(tabX + elem.paddingX, elem.paddingY), labelPreferred);
+		tabX += tabHeaderSize.x;
+
+		tab->SetHeaderPosition(tabHeaderPos);
+		tab->SetHeaderSize(tabHeaderSize);
 	}
 
 	if (m_selected) {
@@ -38,21 +51,29 @@ void TabGroup::Layout()
 		SetWidgetDimensions(m_selected, tabPos, tabSize);
 	}
 
+	for (auto i =  m_tabs.begin(); i != m_tabs.end(); ++i) {
+		auto *tab = (*i);
+		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, tabPos.y));
+	}
+
 	LayoutChildren();
 }
 
 void TabGroup::Draw()
 {
-	Container::Draw();
-	return;
+	const Skin &skin = GetContext()->GetSkin();
 
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
-		printf("%s %d,%d\n", (*i)->GetLabel()->GetText().c_str(), (*i)->GetLabel()->GetPosition().x, (*i)->GetLabel()->GetPosition().y);
-		(*i)->GetLabel()->Draw();
+		Tab *tab = (*i);
+		if (tab == m_selected)
+			skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+		else
+			skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
 	}
 
-	if (m_selected)
-		m_selected->Draw();
+
+	Container::Draw();
+	return;
 }
 
 TabGroup::Tab *TabGroup::NewTab(const std::string &title)

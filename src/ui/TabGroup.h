@@ -24,12 +24,18 @@ public:
 	protected:
 		friend class TabGroup;
 		Tab(Context *context, const std::string &title);
+		void SetHeaderPosition(const Point &pos) { m_pos = pos; }
+		void SetHeaderSize(const Point &size) { m_size = size; }
+		Point GetHeaderPosition() const { return m_pos; }
+		Point GetHeaderSize() const { return m_size; }
 
 	public:
 		UI::Label *GetLabel() const { return m_label.Get(); }
 
 	private:
 		RefCountedPtr<UI::Label> m_label;
+		Point m_pos;
+		Point m_size;
 	};
 
 	Tab *NewTab(const std::string &title);
