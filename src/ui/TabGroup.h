@@ -41,6 +41,9 @@ public:
 	Tab *NewTab(const std::string &title);
 	void RemoveTab(Tab *tab);
 
+protected:
+	virtual void HandleClick();
+
 private:
 	std::list<RefCountedPtr<Tab>> m_tabs;
 	Tab *m_selected;

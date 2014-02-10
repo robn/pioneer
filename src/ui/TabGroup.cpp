@@ -124,6 +124,25 @@ void TabGroup::RemoveTab(Tab *tab)
 	}
 }
 
+void TabGroup::HandleClick()
+{
+	const Point mousePos(GetMousePos());
+	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
+		auto tab = (*i).Get();
+		const Point pos(tab->GetHeaderPosition());
+		const Point size(tab->GetHeaderSize());
+		if (mousePos.x >= pos.x && mousePos.y >= pos.y &&
+		    mousePos.x < pos.x+size.x && mousePos.y < pos.y+size.y) {
+
+			if (m_selected)
+				Container::RemoveWidget(m_selected);
+			Container::AddWidget(tab);
+			m_selected = tab;
+			return;
+		}
+	}
+}
+
 TabGroup::Tab::Tab(Context *context, const std::string &title): Single(context),
 	m_label(context->Label(title))
 {
