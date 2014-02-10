@@ -124,23 +124,36 @@ void TabGroup::RemoveTab(Tab *tab)
 	}
 }
 
-void TabGroup::HandleClick()
+void TabGroup::SelectTab(Tab *tab)
 {
-	const Point mousePos(GetMousePos());
+	if (tab == m_selected)
+		return;
+
+	if (m_selected)
+		Container::RemoveWidget(m_selected);
+
+	Container::AddWidget(tab);
+
+	m_selected = tab;
+}
+
+TabGroup::Tab *TabGroup::GetTabAt(const Point &pos)
+{
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto tab = (*i).Get();
-		const Point pos(tab->GetHeaderPosition());
-		const Point size(tab->GetHeaderSize());
-		if (mousePos.x >= pos.x && mousePos.y >= pos.y &&
-		    mousePos.x < pos.x+size.x && mousePos.y < pos.y+size.y) {
-
-			if (m_selected)
-				Container::RemoveWidget(m_selected);
-			Container::AddWidget(tab);
-			m_selected = tab;
-			return;
-		}
+		const Point hpos(tab->GetHeaderPosition());
+		const Point hsize(tab->GetHeaderSize());
+		if (pos.x >= hpos.x && pos.y >= hpos.y && pos.x < hpos.x+hsize.x && pos.y < hpos.y+hsize.y)
+			return tab;
 	}
+	return nullptr;
+}
+
+void TabGroup::HandleClick()
+{
+	Tab *tab = GetTabAt(GetMousePos());
+	if (tab)
+		SelectTab(tab);
 }
 
 TabGroup::Tab::Tab(Context *context, const std::string &title): Single(context),

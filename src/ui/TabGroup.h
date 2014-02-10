@@ -41,10 +41,14 @@ public:
 	Tab *NewTab(const std::string &title);
 	void RemoveTab(Tab *tab);
 
+	void SelectTab(Tab *tab);
+
 protected:
 	virtual void HandleClick();
 
 private:
+	Tab *GetTabAt(const Point &pos);
+
 	std::list<RefCountedPtr<Tab>> m_tabs;
 	Tab *m_selected;
 	Point m_tabPos;
