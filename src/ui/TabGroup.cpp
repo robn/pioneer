@@ -27,7 +27,7 @@ void TabGroup::Layout()
 	int tabX = 0;
 	m_tabPos = Point(0);
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
-		auto tab = (*i);
+		auto tab = (*i).Get();
 
 		auto label = tab->GetLabel();
 		Point labelPreferred(label->PreferredSize());
@@ -50,7 +50,7 @@ void TabGroup::Layout()
 	m_paddingSize = Point(size.x-m_paddingPos.x, m_tabPos.y);
 
 	for (auto i =  m_tabs.begin(); i != m_tabs.end(); ++i) {
-		auto *tab = (*i);
+		auto tab = (*i).Get();
 		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, m_tabPos.y));
 	}
 
@@ -71,7 +71,7 @@ void TabGroup::Draw()
 	const Skin &skin = GetContext()->GetSkin();
 
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
-		Tab *tab = (*i);
+		auto tab = (*i).Get();
 		if (tab == m_selected)
 			skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
 		else
@@ -90,7 +90,7 @@ void TabGroup::Draw()
 TabGroup::Tab *TabGroup::NewTab(const std::string &title)
 {
 	Tab *tab = new Tab(GetContext(), title);
-	m_tabs.push_back(tab);
+	m_tabs.push_back(RefCountedPtr<Tab>(tab));
 
 	Container::AddWidget(tab->GetLabel());
 
@@ -104,7 +104,12 @@ TabGroup::Tab *TabGroup::NewTab(const std::string &title)
 
 void TabGroup::RemoveTab(Tab *tab)
 {
-	m_tabs.remove(tab);
+	auto i = m_tabs.begin();
+	for (; i != m_tabs.end(); ++i)
+		if ((*i).Get() == tab) break;
+	if (i == m_tabs.end())
+		return;
+	m_tabs.erase(i);
 
 	Container::RemoveWidget(tab->GetLabel());
 
@@ -113,7 +118,7 @@ void TabGroup::RemoveTab(Tab *tab)
 		if (m_tabs.empty())
 			m_selected = nullptr;
 		else {
-			m_selected = *(m_tabs.begin());
+			m_selected = m_tabs.begin()->Get();
 			Container::AddWidget(m_selected);
 		}
 	}

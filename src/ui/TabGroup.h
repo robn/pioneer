@@ -42,7 +42,7 @@ public:
 	void RemoveTab(Tab *tab);
 
 private:
-	std::list<Tab*> m_tabs;
+	std::list<RefCountedPtr<Tab>> m_tabs;
 	Tab *m_selected;
 	Point m_tabPos;
 	Point m_tabSize;
