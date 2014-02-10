@@ -45,12 +45,15 @@ public:
 
 protected:
 	virtual void HandleClick();
+	virtual void HandleMouseMove(const MouseMotionEvent &event);
+	virtual void HandleMouseOut();
 
 private:
 	Tab *GetTabAt(const Point &pos);
 
 	std::list<RefCountedPtr<Tab>> m_tabs;
 	Tab *m_selected;
+	Tab *m_hover;
 	Point m_tabPos;
 	Point m_tabSize;
 	Point m_paddingPos;

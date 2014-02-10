@@ -7,7 +7,8 @@
 namespace UI {
 
 TabGroup::TabGroup(Context *context) : Container(context),
-	m_selected(nullptr)
+	m_selected(nullptr),
+	m_hover(nullptr)
 {
 }
 
@@ -74,6 +75,8 @@ void TabGroup::Draw()
 		auto tab = (*i).Get();
 		if (tab == m_selected)
 			skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+		else if (tab == m_hover)
+			skin.DrawTabHeaderHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
 		else
 			skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
 	}
@@ -154,6 +157,16 @@ void TabGroup::HandleClick()
 	Tab *tab = GetTabAt(GetMousePos());
 	if (tab)
 		SelectTab(tab);
+}
+
+void TabGroup::HandleMouseMove(const MouseMotionEvent &event)
+{
+	m_hover = GetTabAt(event.pos);
+}
+
+void TabGroup::HandleMouseOut()
+{
+	m_hover = GetTabAt(GetMousePos());
 }
 
 TabGroup::Tab::Tab(Context *context, const std::string &title): Single(context),
