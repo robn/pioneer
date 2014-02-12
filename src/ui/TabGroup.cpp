@@ -93,6 +93,7 @@ void TabGroup::Draw()
 TabGroup::Tab *TabGroup::NewTab(const std::string &title)
 {
 	Tab *tab = new Tab(GetContext(), title);
+	tab->SetHeaderFont(m_headerFont);
 	m_tabs.push_back(RefCountedPtr<Tab>(tab));
 
 	Container::AddWidget(tab->GetLabel());
@@ -167,6 +168,14 @@ void TabGroup::HandleMouseMove(const MouseMotionEvent &event)
 void TabGroup::HandleMouseOut()
 {
 	m_hover = GetTabAt(GetMousePos());
+}
+
+TabGroup *TabGroup::SetHeaderFont(Font font)
+{
+	m_headerFont = font;
+	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i)
+		(*i)->SetHeaderFont(font);
+	return this;
 }
 
 TabGroup::Tab::Tab(Context *context, const std::string &title): Single(context),

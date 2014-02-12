@@ -20,6 +20,8 @@ public:
 	virtual void Layout();
 	virtual void Draw();
 
+	TabGroup *SetHeaderFont(Font font);
+
 	class Tab: public Single {
 	protected:
 		friend class TabGroup;
@@ -28,6 +30,7 @@ public:
 		void SetHeaderSize(const Point &size) { m_size = size; }
 		Point GetHeaderPosition() const { return m_pos; }
 		Point GetHeaderSize() const { return m_size; }
+		void SetHeaderFont(Font font) { m_label->SetFont(font); }
 
 	public:
 		UI::Label *GetLabel() const { return m_label.Get(); }
@@ -58,6 +61,7 @@ private:
 	Point m_tabSize;
 	Point m_paddingPos;
 	Point m_paddingSize;
+	Font m_headerFont;
 };
 
 }
