@@ -103,14 +103,18 @@ static bool remove_floating_widget(UI::Context *c, UI::Widget *widget)
 	c->RemoveFloatingWidget(widget);
 	return true;
 }
-#endif
 
-#if 0
 static void animation_callback(int n)
 {
 	printf("%d animation completed\n", n);
 }
 #endif
+
+static bool toggle_collapsed(UI::TabGroup *tg)
+{
+	tg->ToggleCollapsed();
+	return true;
+}
 
 int main(int argc, char **argv)
 {
@@ -147,7 +151,17 @@ int main(int argc, char **argv)
 	tg->NewTab("two")->SetInnerWidget(c->Label("two")->SetFont(UI::Widget::FONT_NORMAL));
 	tg->NewTab("three")->SetInnerWidget(c->Label("three")->SetFont(UI::Widget::FONT_NORMAL));
 
-	c->GetTopLayer()->SetInnerWidget(c->Margin(10)->SetInnerWidget(tg));
+	UI::SmallButton *b = c->SmallButton();
+	b->onClick.connect(sigc::bind(sigc::ptr_fun(&toggle_collapsed), tg));
+
+	c->GetTopLayer()->SetInnerWidget(
+		c->Margin(10)->SetInnerWidget(
+			c->VBox()->PackEnd(UI::WidgetSet(
+				tg,
+				b
+			))
+		)
+	);
 
 #if 0
 	UI::Grid *g = c->Grid(3,3);

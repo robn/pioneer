@@ -8,7 +8,8 @@ namespace UI {
 
 TabGroup::TabGroup(Context *context) : Container(context),
 	m_selected(nullptr),
-	m_hover(nullptr)
+	m_hover(nullptr),
+	m_collapsed(false)
 {
 }
 
@@ -55,13 +56,15 @@ void TabGroup::Layout()
 		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, m_tabPos.y));
 	}
 
-	m_tabSize = Point(size.x, std::max(size.y-m_tabPos.y, 0));
-	if (m_selected) {
-		const Skin::BorderedRectElement &background(skin.TabBackground());
+	if (!m_collapsed) {
+		m_tabSize = Point(size.x, std::max(size.y-m_tabPos.y, 0));
+		if (m_selected) {
+			const Skin::BorderedRectElement &background(skin.TabBackground());
 
-		const Point tabInnerPos(m_tabPos.x+background.paddingX, m_tabPos.y+background.paddingY);
-		const Point tabInnerSize(m_tabSize.x-background.paddingX*2, m_tabSize.y-background.paddingY*2);
-		SetWidgetDimensions(m_selected, tabInnerPos, tabInnerSize);
+			const Point tabInnerPos(m_tabPos.x+background.paddingX, m_tabPos.y+background.paddingY);
+			const Point tabInnerSize(m_tabSize.x-background.paddingX*2, m_tabSize.y-background.paddingY*2);
+			SetWidgetDimensions(m_selected, tabInnerPos, tabInnerSize);
+		}
 	}
 
 	LayoutChildren();
@@ -83,7 +86,7 @@ void TabGroup::Draw()
 
     skin.DrawTabHeaderPadding(m_paddingPos, m_paddingSize);
 
-	if (m_selected)
+	if (!m_collapsed && m_selected)
 		skin.DrawTabBackground(m_tabPos, m_tabSize);
 
 	Container::Draw();
@@ -99,7 +102,8 @@ TabGroup::Tab *TabGroup::NewTab(Widget *headerWidget)
 
 	if (!m_selected) {
 		m_selected = tab;
-		Container::AddWidget(tab);
+		if (!m_collapsed)
+			Container::AddWidget(tab);
 	}
 
 	return tab;
@@ -122,12 +126,15 @@ void TabGroup::RemoveTab(Tab *tab)
 	Container::RemoveWidget(tab->GetHeaderWidget());
 
 	if (m_selected == tab) {
-		Container::RemoveWidget(tab);
+		if (!m_collapsed)
+			Container::RemoveWidget(tab);
+
 		if (m_tabs.empty())
 			m_selected = nullptr;
 		else {
 			m_selected = m_tabs.begin()->Get();
-			Container::AddWidget(m_selected);
+			if (!m_collapsed)
+				Container::AddWidget(m_selected);
 		}
 	}
 }
@@ -137,10 +144,12 @@ void TabGroup::SelectTab(Tab *tab)
 	if (tab == m_selected)
 		return;
 
-	if (m_selected)
-		Container::RemoveWidget(m_selected);
+	if (!m_collapsed) {
+		if (m_selected)
+			Container::RemoveWidget(m_selected);
 
-	Container::AddWidget(tab);
+		Container::AddWidget(tab);
+	}
 
 	m_selected = tab;
 }
@@ -172,6 +181,20 @@ void TabGroup::HandleMouseMove(const MouseMotionEvent &event)
 void TabGroup::HandleMouseOut()
 {
 	m_hover = GetTabAt(GetMousePos());
+}
+
+void TabGroup::SetCollapsed(bool collapsed)
+{
+	if (m_collapsed == collapsed) return;
+
+	if (collapsed)
+		Container::RemoveWidget(m_selected);
+	else
+		Container::AddWidget(m_selected);
+
+	GetContext()->RequestLayout();
+
+	m_collapsed = collapsed;
 }
 
 TabGroup::Tab::Tab(Context *context, Widget *headerWidget): Single(context),

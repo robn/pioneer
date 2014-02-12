@@ -44,6 +44,10 @@ public:
 
 	void SelectTab(Tab *tab);
 
+	void SetCollapsed(bool collapsed);
+	void ToggleCollapsed() { SetCollapsed(!m_collapsed); }
+	bool IsCollapsed() const { return m_collapsed; }
+
 protected:
 	virtual void HandleClick();
 	virtual void HandleMouseMove(const MouseMotionEvent &event);
@@ -55,10 +59,13 @@ private:
 	std::list<RefCountedPtr<Tab>> m_tabs;
 	Tab *m_selected;
 	Tab *m_hover;
+
 	Point m_tabPos;
 	Point m_tabSize;
 	Point m_paddingPos;
 	Point m_paddingSize;
+
+	bool m_collapsed;
 };
 
 }
