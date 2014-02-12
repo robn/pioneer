@@ -140,11 +140,12 @@ int main(int argc, char **argv)
 
 	RefCountedPtr<UI::Context> c(new UI::Context(Lua::manager, r, WIDTH, HEIGHT));
 
-	UI::TabGroup *tg = c->TabGroup()->SetHeaderFont(UI::Widget::FONT_HEADING_XSMALL);
+	UI::TabGroup *tg = c->TabGroup();
+	tg->SetFont(UI::Widget::FONT_HEADING_XSMALL);
 
-	tg->NewTab("one")->SetInnerWidget(c->Label("foo"));
-	tg->NewTab("two")->SetInnerWidget(c->Label("two"));
-	tg->NewTab("three")->SetInnerWidget(c->Label("three"));
+	tg->NewTab("one")->SetInnerWidget(c->Label("foo")->SetFont(UI::Widget::FONT_NORMAL));
+	tg->NewTab("two")->SetInnerWidget(c->Label("two")->SetFont(UI::Widget::FONT_NORMAL));
+	tg->NewTab("three")->SetInnerWidget(c->Label("three")->SetFont(UI::Widget::FONT_NORMAL));
 
 	c->GetTopLayer()->SetInnerWidget(c->Margin(10)->SetInnerWidget(tg));
 

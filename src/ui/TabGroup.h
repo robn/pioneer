@@ -20,28 +20,26 @@ public:
 	virtual void Layout();
 	virtual void Draw();
 
-	TabGroup *SetHeaderFont(Font font);
-
 	class Tab: public Single {
 	protected:
 		friend class TabGroup;
-		Tab(Context *context, const std::string &title);
+		Tab(Context *context, Widget *headerWidget);
 		void SetHeaderPosition(const Point &pos) { m_pos = pos; }
 		void SetHeaderSize(const Point &size) { m_size = size; }
 		Point GetHeaderPosition() const { return m_pos; }
 		Point GetHeaderSize() const { return m_size; }
-		void SetHeaderFont(Font font) { m_label->SetFont(font); }
 
 	public:
-		UI::Label *GetLabel() const { return m_label.Get(); }
+		UI::Widget *GetHeaderWidget() const { return m_headerWidget.Get(); }
 
 	private:
-		RefCountedPtr<UI::Label> m_label;
+		RefCountedPtr<UI::Widget> m_headerWidget;
 		Point m_pos;
 		Point m_size;
 	};
 
-	Tab *NewTab(const std::string &title);
+	Tab *NewTab(Widget *headerWidget);
+	Tab *NewTab(const std::string &headerText);
 	void RemoveTab(Tab *tab);
 
 	void SelectTab(Tab *tab);
@@ -61,7 +59,6 @@ private:
 	Point m_tabSize;
 	Point m_paddingPos;
 	Point m_paddingSize;
-	Font m_headerFont;
 };
 
 }

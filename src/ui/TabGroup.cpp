@@ -30,17 +30,17 @@ void TabGroup::Layout()
 	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto tab = (*i).Get();
 
-		auto label = tab->GetLabel();
-		Point labelPreferred(label->PreferredSize());
+		auto headerWidget = tab->GetHeaderWidget();
+		Point headerWidgetPreferred(headerWidget->PreferredSize());
 
-		labelPreferred.x = std::max(labelPreferred.x, int(minInnerSize));
-		labelPreferred.y = std::max(labelPreferred.y, int(minInnerSize));
-		m_tabPos.y = std::max(m_tabPos.y, int(std::max(labelPreferred.y + elem.paddingY*2, elem.borderHeight*2)));
+		headerWidgetPreferred.x = std::max(headerWidgetPreferred.x, int(minInnerSize));
+		headerWidgetPreferred.y = std::max(headerWidgetPreferred.y, int(minInnerSize));
+		m_tabPos.y = std::max(m_tabPos.y, int(std::max(headerWidgetPreferred.y + elem.paddingY*2, elem.borderHeight*2)));
 
 		Point tabHeaderPos(tabX, 0);
-		Point tabHeaderSize(labelPreferred.x + elem.paddingX*2, 0); // no Y, we don't know it yet
+		Point tabHeaderSize(headerWidgetPreferred.x + elem.paddingX*2, 0); // no Y, we don't know it yet
 
-		SetWidgetDimensions(label, Point(tabX + elem.paddingX, elem.paddingY), labelPreferred);
+		SetWidgetDimensions(headerWidget, Point(tabX + elem.paddingX, elem.paddingY), headerWidgetPreferred);
 		tabX += tabHeaderSize.x;
 
 		tab->SetHeaderPosition(tabHeaderPos);
@@ -90,13 +90,12 @@ void TabGroup::Draw()
 	return;
 }
 
-TabGroup::Tab *TabGroup::NewTab(const std::string &title)
+TabGroup::Tab *TabGroup::NewTab(Widget *headerWidget)
 {
-	Tab *tab = new Tab(GetContext(), title);
-	tab->SetHeaderFont(m_headerFont);
+	Tab *tab = new Tab(GetContext(), headerWidget);
 	m_tabs.push_back(RefCountedPtr<Tab>(tab));
 
-	Container::AddWidget(tab->GetLabel());
+	Container::AddWidget(tab->GetHeaderWidget());
 
 	if (!m_selected) {
 		m_selected = tab;
@@ -104,6 +103,11 @@ TabGroup::Tab *TabGroup::NewTab(const std::string &title)
 	}
 
 	return tab;
+}
+
+TabGroup::Tab *TabGroup::NewTab(const std::string &headerText)
+{
+	return NewTab(GetContext()->Label(headerText));
 }
 
 void TabGroup::RemoveTab(Tab *tab)
@@ -115,7 +119,7 @@ void TabGroup::RemoveTab(Tab *tab)
 		return;
 	m_tabs.erase(i);
 
-	Container::RemoveWidget(tab->GetLabel());
+	Container::RemoveWidget(tab->GetHeaderWidget());
 
 	if (m_selected == tab) {
 		Container::RemoveWidget(tab);
@@ -170,16 +174,8 @@ void TabGroup::HandleMouseOut()
 	m_hover = GetTabAt(GetMousePos());
 }
 
-TabGroup *TabGroup::SetHeaderFont(Font font)
-{
-	m_headerFont = font;
-	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i)
-		(*i)->SetHeaderFont(font);
-	return this;
-}
-
-TabGroup::Tab::Tab(Context *context, const std::string &title): Single(context),
-	m_label(context->Label(title))
+TabGroup::Tab::Tab(Context *context, Widget *headerWidget): Single(context),
+	m_headerWidget(headerWidget)
 {
 }
 
