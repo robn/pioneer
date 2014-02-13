@@ -103,14 +103,27 @@ void TabGroup::Draw()
 {
 	const Skin &skin = GetContext()->GetSkin();
 
-	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
-		auto tab = (*i).Get();
-		if (tab == m_selected)
-			skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
-		else if (tab == m_hover)
-			skin.DrawTabHeaderHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
-		else
-			skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+	if (m_collapsed) {
+		for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
+			auto tab = (*i).Get();
+			if (tab == m_selected)
+				skin.DrawTabHeaderCollapsedActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			else if (tab == m_hover)
+				skin.DrawTabHeaderCollapsedHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			else
+				skin.DrawTabHeaderCollapsedNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+		}
+	}
+	else {
+		for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
+			auto tab = (*i).Get();
+			if (tab == m_selected)
+				skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			else if (tab == m_hover)
+				skin.DrawTabHeaderHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			else
+				skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+		}
 	}
 
     skin.DrawTabHeaderPadding(m_paddingPos, m_paddingSize);

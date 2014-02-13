@@ -135,10 +135,23 @@ public:
 	void DrawTabHeaderActive(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabHeaderActive, pos, size);
 	}
+
+	void DrawTabHeaderCollapsedDisabled(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedDisabled, pos, size);
+	}
+	void DrawTabHeaderCollapsedNormal(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedNormal, pos, size);
+	}
+	void DrawTabHeaderCollapsedHover(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedHover, pos, size);
+	}
+	void DrawTabHeaderCollapsedActive(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedActive, pos, size);
+	}
+
 	void DrawTabHeaderPadding(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabHeaderPadding, pos, size);
 	}
-
 	void DrawTabBackground(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabBackground, pos, size);
 	}
@@ -221,8 +234,13 @@ public:
 	const BorderedRectElement &TabHeaderNormal()   const { return m_tabHeaderNormal; }
 	const BorderedRectElement &TabHeaderHover()    const { return m_tabHeaderHover; }
 	const BorderedRectElement &TabHeaderActive()   const { return m_tabHeaderActive; }
-	const BorderedRectElement &TabHeaderPadding()  const { return m_tabHeaderPadding; }
 
+	const BorderedRectElement &TabHeaderCollapsedDisabled() const { return m_tabHeaderCollapsedDisabled; }
+	const BorderedRectElement &TabHeaderCollapsedNormal()   const { return m_tabHeaderCollapsedNormal; }
+	const BorderedRectElement &TabHeaderCollapsedHover()    const { return m_tabHeaderCollapsedHover; }
+	const BorderedRectElement &TabHeaderCollapsedActive()   const { return m_tabHeaderCollapsedActive; }
+
+	const BorderedRectElement &TabHeaderPadding()  const { return m_tabHeaderPadding; }
 	const BorderedRectElement &TabBackground()     const { return m_tabBackground; }
 
 	unsigned int ButtonMinInnerSize() const { return m_buttonMinInnerSize; }
@@ -305,8 +323,13 @@ private:
 	BorderedRectElement m_tabHeaderNormal;
 	BorderedRectElement m_tabHeaderHover;
 	BorderedRectElement m_tabHeaderActive;
-	BorderedRectElement m_tabHeaderPadding;
 
+	BorderedRectElement m_tabHeaderCollapsedDisabled;
+	BorderedRectElement m_tabHeaderCollapsedNormal;
+	BorderedRectElement m_tabHeaderCollapsedHover;
+	BorderedRectElement m_tabHeaderCollapsedActive;
+
+	BorderedRectElement m_tabHeaderPadding;
 	BorderedRectElement m_tabBackground;
 
 	unsigned int m_buttonMinInnerSize;
