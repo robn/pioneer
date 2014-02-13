@@ -54,6 +54,7 @@ protected:
 	virtual void HandleMouseOut();
 
 private:
+	void CalcHeader();
 	Tab *GetTabAt(const Point &pos);
 
 	std::list<RefCountedPtr<Tab>> m_tabs;
@@ -66,6 +67,7 @@ private:
 	Point m_paddingSize;
 
 	bool m_collapsed;
+	bool m_dirty;
 };
 
 }

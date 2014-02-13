@@ -9,18 +9,14 @@ namespace UI {
 TabGroup::TabGroup(Context *context) : Container(context),
 	m_selected(nullptr),
 	m_hover(nullptr),
-	m_collapsed(false)
+	m_collapsed(false),
+	m_dirty(true)
 {
 }
 
-Point TabGroup::PreferredSize()
+void TabGroup::CalcHeader()
 {
-	return Point(SIZE_EXPAND);
-}
-
-void TabGroup::Layout()
-{
-	Point size(GetSize());
+	if (!m_dirty) return;
 
 	const Skin &skin(GetContext()->GetSkin());
 	const Skin::BorderedRectElement &elem(skin.TabHeaderNormal());
@@ -40,21 +36,54 @@ void TabGroup::Layout()
 
 		Point tabHeaderPos(tabX, 0);
 		Point tabHeaderSize(headerWidgetPreferred.x + elem.paddingX*2, 0); // no Y, we don't know it yet
-
-		SetWidgetDimensions(headerWidget, Point(tabX + elem.paddingX, elem.paddingY), headerWidgetPreferred);
 		tabX += tabHeaderSize.x;
 
 		tab->SetHeaderPosition(tabHeaderPos);
 		tab->SetHeaderSize(tabHeaderSize);
 	}
 
-	m_paddingPos  = Point(tabX, 0);
-	m_paddingSize = Point(size.x-m_paddingPos.x, m_tabPos.y);
-
 	for (auto i =  m_tabs.begin(); i != m_tabs.end(); ++i) {
 		auto tab = (*i).Get();
 		tab->SetHeaderSize(Point(tab->GetHeaderSize().x, m_tabPos.y));
 	}
+
+	m_paddingPos  = Point(tabX, 0);
+
+	m_dirty = false;
+}
+
+Point TabGroup::PreferredSize()
+{
+	CalcHeader();
+
+	Point preferred(m_paddingPos.x, SIZE_EXPAND);
+
+	if (m_collapsed)
+		preferred.y = m_tabPos.y;
+
+	return preferred;
+}
+
+void TabGroup::Layout()
+{
+	CalcHeader();
+
+	const Skin &skin(GetContext()->GetSkin());
+	const Skin::BorderedRectElement &elem(skin.TabHeaderNormal());
+	const unsigned int headerBorderWidth = elem.borderWidth;
+	const unsigned int headerBorderHeight = elem.borderHeight;
+
+	for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
+		Tab *tab = (*i).Get();
+		const Point &pos(tab->GetHeaderPosition());
+		Widget *w = tab->GetHeaderWidget();
+		const Point &preferred(w->PreferredSize());
+		SetWidgetDimensions(w, Point(pos.x + headerBorderWidth, headerBorderHeight), preferred);
+	}
+
+	const Point &size(GetSize());
+
+	m_paddingSize = Point(size.x-m_paddingPos.x, m_tabPos.y);
 
 	if (!m_collapsed) {
 		m_tabSize = Point(size.x, std::max(size.y-m_tabPos.y, 0));
@@ -106,6 +135,8 @@ TabGroup::Tab *TabGroup::NewTab(Widget *headerWidget)
 			Container::AddWidget(tab);
 	}
 
+	m_dirty = true;
+
 	return tab;
 }
 
@@ -137,6 +168,8 @@ void TabGroup::RemoveTab(Tab *tab)
 				Container::AddWidget(m_selected);
 		}
 	}
+
+	m_dirty = true;
 }
 
 void TabGroup::SelectTab(Tab *tab)
@@ -195,6 +228,7 @@ void TabGroup::SetCollapsed(bool collapsed)
 	GetContext()->RequestLayout();
 
 	m_collapsed = collapsed;
+	m_dirty = true;
 }
 
 TabGroup::Tab::Tab(Context *context, Widget *headerWidget): Single(context),
