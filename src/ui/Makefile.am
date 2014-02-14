@@ -115,6 +115,7 @@ libui_a_SOURCES = \
 	LuaSingle.cpp \
 	LuaSlider.cpp \
 	LuaSmallButton.cpp \
+	LuaTabGroup.cpp \
 	LuaTable.cpp \
 	LuaTextEntry.cpp \
 	LuaWidget.cpp

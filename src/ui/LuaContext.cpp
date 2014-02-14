@@ -105,6 +105,12 @@ public:
 		return 1;
 	}
 
+	static int l_tabgroup(lua_State *l) {
+		UI::Context *c = LuaObject<UI::Context>::CheckFromLua(1);
+		LuaObject<UI::TabGroup>::PushToLua(c->TabGroup());
+		return 1;
+	}
+
 	static int l_background(lua_State *l) {
 		UI::Context *c = LuaObject<UI::Context>::CheckFromLua(1);
 		UI::Background *b = c->Background();
@@ -392,6 +398,7 @@ template <> void LuaObject<UI::Context>::RegisterClass()
 		{ "VBox",            LuaContext::l_vbox            },
 		{ "Grid",            LuaContext::l_grid            },
 		{ "Table",           LuaContext::l_table           },
+		{ "TabGroup",        LuaContext::l_tabgroup        },
 		{ "Background",      LuaContext::l_background      },
 		{ "ColorBackground", LuaContext::l_colorbackground },
 		{ "Gradient",        LuaContext::l_gradient        },
