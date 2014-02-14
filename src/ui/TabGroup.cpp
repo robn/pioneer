@@ -215,8 +215,14 @@ TabGroup::Tab *TabGroup::GetTabAt(const Point &pos)
 void TabGroup::HandleClick()
 {
 	Tab *tab = GetTabAt(GetMousePos());
-	if (tab)
+	if (!tab) return;
+
+	if (tab == m_selected)
+		ToggleCollapsed();
+	else {
 		SelectTab(tab);
+		SetCollapsed(false);
+	}
 }
 
 void TabGroup::HandleMouseMove(const MouseMotionEvent &event)
