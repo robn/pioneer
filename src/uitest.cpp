@@ -146,6 +146,7 @@ int main(int argc, char **argv)
 
 	UI::TabGroup *tg = c->TabGroup();
 	tg->SetFont(UI::Widget::FONT_HEADING_XSMALL);
+	tg->SetHeaderCollapsible(true);
 
 	tg->NewTab("one")->SetInnerWidget(c->Label("foo")->SetFont(UI::Widget::FONT_NORMAL));
 	tg->NewTab("two")->SetInnerWidget(c->Label("two")->SetFont(UI::Widget::FONT_NORMAL));

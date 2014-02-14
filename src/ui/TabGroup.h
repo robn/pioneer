@@ -38,6 +38,11 @@ public:
 		Point m_size;
 	};
 
+	TabGroup *SetHeaderCollapsible(bool collapsible) {
+		m_collapsible = collapsible;
+		return this;
+	}
+
 	Tab *NewTab(Widget *headerWidget);
 	Tab *NewTab(const std::string &headerText);
 	void RemoveTab(Tab *tab);
@@ -66,6 +71,7 @@ private:
 	Point m_paddingPos;
 	Point m_paddingSize;
 
+	bool m_collapsible;
 	bool m_collapsed;
 	bool m_dirty;
 };

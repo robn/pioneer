@@ -9,6 +9,7 @@ namespace UI {
 TabGroup::TabGroup(Context *context) : Container(context),
 	m_selected(nullptr),
 	m_hover(nullptr),
+	m_collapsible(false),
 	m_collapsed(false),
 	m_dirty(true)
 {
@@ -217,11 +218,12 @@ void TabGroup::HandleClick()
 	Tab *tab = GetTabAt(GetMousePos());
 	if (!tab) return;
 
-	if (tab == m_selected)
-		ToggleCollapsed();
+	if (tab == m_selected) {
+		if (m_collapsible) ToggleCollapsed();
+	}
 	else {
 		SelectTab(tab);
-		SetCollapsed(false);
+		if (m_collapsible) SetCollapsed(false);
 	}
 }
 
