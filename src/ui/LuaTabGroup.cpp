@@ -47,6 +47,14 @@ public:
 		return 1;
 	}
 
+	static int l_set_transparent(lua_State *l) {
+		auto tg = LuaObject<UI::TabGroup>::CheckFromLua(1);
+		bool transparent = lua_toboolean(l, 2);
+		tg->SetTransparent(transparent);
+		lua_pushvalue(l, 1);
+		return 1;
+	}
+
 	static int l_set_collapsed(lua_State *l) {
 		auto tg = LuaObject<UI::TabGroup>::CheckFromLua(1);
 		bool collapsed = lua_toboolean(l, 2);
@@ -94,6 +102,7 @@ template <> void LuaObject<UI::TabGroup>::RegisterClass()
 		{ "NewTab",               UI::LuaTabGroup::l_new_tab                },
 		{ "RemoveTab",            UI::LuaTabGroup::l_remove_tab             },
 		{ "SelectTab",            UI::LuaTabGroup::l_select_tab             },
+		{ "SetTransparent",       UI::LuaTabGroup::l_set_transparent        },
 		{ "SetHeaderCollapsible", UI::LuaTabGroup::l_set_header_collapsible },
 		{ "SetCollapsed",         UI::LuaTabGroup::l_set_collapsed          },
 		{ "ToggleCollapsed",      UI::LuaTabGroup::l_toggle_collapsed       },

@@ -146,6 +146,7 @@ int main(int argc, char **argv)
 
 	UI::TabGroup *tg = c->TabGroup();
 	tg->SetFont(UI::Widget::FONT_HEADING_XSMALL);
+	tg->SetTransparent(true);
 	tg->SetHeaderCollapsible(true);
 
 	tg->NewTab("one")->SetInnerWidget(c->Label("foo")->SetFont(UI::Widget::FONT_NORMAL));
@@ -158,7 +159,7 @@ int main(int argc, char **argv)
 	c->GetTopLayer()->SetInnerWidget(
 		c->Margin(10)->SetInnerWidget(
 			c->VBox()->PackEnd(UI::WidgetSet(
-				tg,
+				c->ColorBackground(Color(0xff,0xff,0xff))->SetInnerWidget(tg),
 				b
 			))
 		)

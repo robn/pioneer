@@ -149,11 +149,40 @@ public:
 		DrawBorderedRectElement(m_tabHeaderCollapsedActive, pos, size);
 	}
 
+	void DrawTabHeaderDisabledTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderDisabledTransparent, pos, size);
+	}
+	void DrawTabHeaderNormalTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderNormalTransparent, pos, size);
+	}
+	void DrawTabHeaderHoverTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderHoverTransparent, pos, size);
+	}
+	void DrawTabHeaderActiveTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderActiveTransparent, pos, size);
+	}
+
+	void DrawTabHeaderCollapsedDisabledTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedDisabledTransparent, pos, size);
+	}
+	void DrawTabHeaderCollapsedNormalTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedNormalTransparent, pos, size);
+	}
+	void DrawTabHeaderCollapsedHoverTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedHoverTransparent, pos, size);
+	}
+	void DrawTabHeaderCollapsedActiveTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabHeaderCollapsedActiveTransparent, pos, size);
+	}
+
 	void DrawTabHeaderPadding(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabHeaderPadding, pos, size);
 	}
 	void DrawTabBackground(const Point &pos, const Point &size) const {
 		DrawBorderedRectElement(m_tabBackground, pos, size);
+	}
+	void DrawTabBackgroundTransparent(const Point &pos, const Point &size) const {
+		DrawBorderedRectElement(m_tabBackgroundTransparent, pos, size);
 	}
 
 	void DrawRectColor(const Color &col, const Point &pos, const Point &size) const;
@@ -241,7 +270,9 @@ public:
 	const BorderedRectElement &TabHeaderCollapsedActive()   const { return m_tabHeaderCollapsedActive; }
 
 	const BorderedRectElement &TabHeaderPadding()  const { return m_tabHeaderPadding; }
-	const BorderedRectElement &TabBackground()     const { return m_tabBackground; }
+
+	const BorderedRectElement &TabBackground()            const { return m_tabBackground; }
+	const BorderedRectElement &TabBackgroundTransparent() const { return m_tabBackgroundTransparent; }
 
 	unsigned int ButtonMinInnerSize() const { return m_buttonMinInnerSize; }
 	unsigned int TabHeaderMinInnerSize() const { return m_tabHeaderMinInnerSize; }
@@ -329,8 +360,20 @@ private:
 	BorderedRectElement m_tabHeaderCollapsedHover;
 	BorderedRectElement m_tabHeaderCollapsedActive;
 
+	BorderedRectElement m_tabHeaderDisabledTransparent;
+	BorderedRectElement m_tabHeaderNormalTransparent;
+	BorderedRectElement m_tabHeaderHoverTransparent;
+	BorderedRectElement m_tabHeaderActiveTransparent;
+
+	BorderedRectElement m_tabHeaderCollapsedDisabledTransparent;
+	BorderedRectElement m_tabHeaderCollapsedNormalTransparent;
+	BorderedRectElement m_tabHeaderCollapsedHoverTransparent;
+	BorderedRectElement m_tabHeaderCollapsedActiveTransparent;
+
 	BorderedRectElement m_tabHeaderPadding;
+
 	BorderedRectElement m_tabBackground;
+	BorderedRectElement m_tabBackgroundTransparent;
 
 	unsigned int m_buttonMinInnerSize;
 	unsigned int m_tabHeaderMinInnerSize;

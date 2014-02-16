@@ -38,6 +38,11 @@ public:
 		Point m_size;
 	};
 
+	TabGroup *SetTransparent(bool transparent) {
+		m_transparent = transparent;
+		return this;
+	}
+
 	TabGroup *SetHeaderCollapsible(bool collapsible) {
 		m_collapsible = collapsible;
 		return this;
@@ -70,6 +75,8 @@ private:
 	Point m_tabSize;
 	Point m_paddingPos;
 	Point m_paddingSize;
+
+    bool m_transparent;
 
 	bool m_collapsible;
 	bool m_collapsed;

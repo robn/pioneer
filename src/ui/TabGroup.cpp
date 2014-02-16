@@ -9,6 +9,7 @@ namespace UI {
 TabGroup::TabGroup(Context *context) : Container(context),
 	m_selected(nullptr),
 	m_hover(nullptr),
+	m_transparent(false),
 	m_collapsible(false),
 	m_collapsed(false),
 	m_dirty(true)
@@ -104,33 +105,62 @@ void TabGroup::Draw()
 {
 	const Skin &skin = GetContext()->GetSkin();
 
+	// XXX combinatorial nightmare. maybe a jump table would be better
 	if (m_collapsed) {
 		for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 			auto tab = (*i).Get();
-			if (tab == m_selected)
-				skin.DrawTabHeaderCollapsedActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
-			else if (tab == m_hover)
-				skin.DrawTabHeaderCollapsedHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
-			else
-				skin.DrawTabHeaderCollapsedNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			if (tab == m_selected) {
+				if (m_transparent)
+					skin.DrawTabHeaderCollapsedActiveTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderCollapsedActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
+			else if (tab == m_hover) {
+				if (m_transparent)
+					skin.DrawTabHeaderCollapsedHoverTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderCollapsedHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
+			else {
+				if (m_transparent)
+					skin.DrawTabHeaderCollapsedNormalTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderCollapsedNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
 		}
 	}
 	else {
 		for (auto i = m_tabs.begin(); i != m_tabs.end(); ++i) {
 			auto tab = (*i).Get();
-			if (tab == m_selected)
-				skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
-			else if (tab == m_hover)
-				skin.DrawTabHeaderHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
-			else
-				skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			if (tab == m_selected) {
+				if (m_transparent)
+					skin.DrawTabHeaderActiveTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderActive(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
+			else if (tab == m_hover) {
+				if (m_transparent)
+					skin.DrawTabHeaderHoverTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderHover(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
+			else {
+				if (m_transparent)
+					skin.DrawTabHeaderNormalTransparent(tab->GetHeaderPosition(), tab->GetHeaderSize());
+				else
+					skin.DrawTabHeaderNormal(tab->GetHeaderPosition(), tab->GetHeaderSize());
+			}
 		}
 	}
 
-    skin.DrawTabHeaderPadding(m_paddingPos, m_paddingSize);
+	skin.DrawTabHeaderPadding(m_paddingPos, m_paddingSize);
 
-	if (!m_collapsed && m_selected)
-		skin.DrawTabBackground(m_tabPos, m_tabSize);
+	if (!m_collapsed && m_selected) {
+		if (m_transparent)
+			skin.DrawTabBackgroundTransparent(m_tabPos, m_tabSize);
+		else
+			skin.DrawTabBackground(m_tabPos, m_tabSize);
+	}
 
 	Container::Draw();
 	return;

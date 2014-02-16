@@ -96,8 +96,20 @@ Skin::Skin(const std::string &filename, Graphics::Renderer *renderer, float scal
 	m_tabHeaderCollapsedHover    = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedHover"));
 	m_tabHeaderCollapsedActive   = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedActive"));
 
+	m_tabHeaderDisabledTransparent = LoadBorderedRectElement(cfg.String("TabHeaderDisabledTransparent"));
+	m_tabHeaderNormalTransparent   = LoadBorderedRectElement(cfg.String("TabHeaderNormalTransparent"));
+	m_tabHeaderHoverTransparent    = LoadBorderedRectElement(cfg.String("TabHeaderHoverTransparent"));
+	m_tabHeaderActiveTransparent   = LoadBorderedRectElement(cfg.String("TabHeaderActiveTransparent"));
+
+	m_tabHeaderCollapsedDisabledTransparent = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedDisabledTransparent"));
+	m_tabHeaderCollapsedNormalTransparent   = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedNormalTransparent"));
+	m_tabHeaderCollapsedHoverTransparent    = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedHoverTransparent"));
+	m_tabHeaderCollapsedActiveTransparent   = LoadBorderedRectElement(cfg.String("TabHeaderCollapsedActiveTransparent"));
+
 	m_tabHeaderPadding = LoadBorderedRectElement(cfg.String("TabHeaderPadding"));
-	m_tabBackground    = LoadBorderedRectElement(cfg.String("TabBackground"));
+
+	m_tabBackground            = LoadBorderedRectElement(cfg.String("TabBackground"));
+	m_tabBackgroundTransparent = LoadBorderedRectElement(cfg.String("TabBackgroundTransparent"));
 
 	m_buttonMinInnerSize    = cfg.Int("ButtonMinInnerSize");
 	m_tabHeaderMinInnerSize = cfg.Int("TabHeaderMinInnerSize");
