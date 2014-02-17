@@ -10,20 +10,19 @@ local l = Lang.GetResource("ui-core");
 
 local widget
 
-local text
+local commsTable
 
 ui.templates.WorldView = function (args)
 	if widget then return widget end
-
-	text = ui:MultiLineText(""):SetFont("XSMALL")
 
 	local tg =
 		ui:TabGroup()
 			:SetTransparent(true)
 			:SetHeaderCollapsible(true)
+			:SetFont("XSMALL")
 
-	tg:NewTab(ui:Label("COMMS"):SetFont("HEADING_XSMALL"))
-		:SetInnerWidget(text)
+	commsTable = ui:Table()
+	tg:NewTab(ui:Label("COMMS"):SetFont("HEADING_XSMALL"), commsTable)
 
 	local grid =
 		ui:Grid(1,5)
@@ -34,7 +33,7 @@ ui.templates.WorldView = function (args)
 end
 
 Event.Register("onCommsMessage", function (m)
-	text:AppendText(string.format("%s %s %s\n", m.priority, m.message, m.from))
+	commsTable:AddRow({ string.format("%s %s %s", m.priority, m.from, m.message) })
 end)
 
 Event.Register("onGameEnd", function ()
