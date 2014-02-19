@@ -21,7 +21,11 @@ ui.templates.WorldView = function (args)
 			:SetHeaderCollapsible(true)
 			:SetFont("XSMALL")
 
-	commsTable = ui:Table()
+	commsTable =
+		ui:Table()
+			:SetColumnSpacing(5)
+			:SetRowSpacing(5)
+			:SetRowAlignment("CENTER")
 	tg:NewTab(ui:Label("COMMS"):SetFont("HEADING_XSMALL"), commsTable)
 
 	local grid =
@@ -32,8 +36,15 @@ ui.templates.WorldView = function (args)
 	return widget
 end
 
+local priorityIcons = {
+	normal    = "icons/comms/normal_message.png",
+	important = "icons/comms/important_message.png",
+	urgent    = "icons/comms/urgent_message.png",
+}
+
 Event.Register("onCommsMessage", function (m)
-	commsTable:AddRow({ string.format("%s %s %s", m.priority, m.from, m.message) })
+	local icon = m.priority and ui:Image(priorityIcons[m.priority]):SetHeightLines(1) or ""
+	commsTable:AddRow({ icon, string.format("%s %s", m.from, m.message) })
 end)
 
 Event.Register("onGameEnd", function ()
