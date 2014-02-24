@@ -16,6 +16,7 @@ public:
 	virtual Point PreferredSize();
 	virtual void Draw();
 
+	Image *SetTint(const Color &color);
 	Image *SetHeightLines(Uint32 lines);
 
 protected:

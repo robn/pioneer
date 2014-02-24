@@ -19,6 +19,7 @@ Image::Image(Context *context, const std::string &filename, Uint32 sizeControlFl
 	material_desc.textures = 1;
 	m_material.Reset(GetContext()->GetRenderer()->CreateMaterial(material_desc));
 	m_material->texture0 = m_texture.Get();
+	m_material->diffuse = Color::WHITE;
 
 	SetSizeControlFlags(sizeControlFlags);
 }
@@ -26,6 +27,12 @@ Image::Image(Context *context, const std::string &filename, Uint32 sizeControlFl
 Point Image::PreferredSize()
 {
 	return m_initialSize;
+}
+
+Image *Image::SetTint(const Color &color)
+{
+	m_material->diffuse = color;
+	return this;
 }
 
 Image *Image::SetHeightLines(Uint32 lines)
