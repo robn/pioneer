@@ -42,9 +42,16 @@ local priorityIcons = {
 	urgent    = "icons/comms/urgent_message.png",
 }
 
+local priorityColors = {
+	normal    = { r = 1.0, g = 1.0, b = 1.0 },
+	important = { r = 1.0, g = 0.6, b = 0.0 },
+	urgent    = { r = 1.0, g = 0.0, b = 0.0 },
+}
+
 Event.Register("onCommsMessage", function (m)
-	local icon = m.priority and ui:Image(priorityIcons[m.priority]):SetHeightLines(1) or ""
-	commsTable:AddRow({ icon, string.format("%s %s", m.from, m.message) })
+	local icon = m.priority and ui:Image(priorityIcons[m.priority]):SetHeightLines(1):SetTint(priorityColors[m.priority]) or ""
+	local label = ui:Label(string.format("%s %s", m.from, m.message))
+	commsTable:AddRow({ icon, label })
 end)
 
 Event.Register("onGameEnd", function ()
