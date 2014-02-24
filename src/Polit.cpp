@@ -141,7 +141,7 @@ void NotifyOfCrime(Ship *s, enum Crime crime)
 		const int crimeIdx = GetCrimeIdxFromEnum(crime);
 		Comms::ImportantMessage(
 			stringf(Lang::X_CANNOT_BE_TOLERATED_HERE, formatarg("crime", crimeNames[crimeIdx])),
-			station->GetLabel());
+			station);
 		float lawlessness = Pi::game->GetSpace()->GetStarSystem()->GetSysPolit().lawlessness.ToFloat();
 		Sint64 oldCrimes, oldFine;
 		GetCrime(&oldCrimes, &oldFine);

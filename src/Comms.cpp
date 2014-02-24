@@ -8,7 +8,7 @@
 
 namespace Comms {
 
-static void AddMessage(const std::string &priority, const std::string &message, const std::string &from)
+static void AddMessage(const std::string &priority, const std::string &message, const std::string &from, Body *body)
 {
 	lua_State *l = Lua::manager->GetLuaState();
 	LuaTable t(l);
@@ -16,6 +16,8 @@ static void AddMessage(const std::string &priority, const std::string &message, 
 	t.Set("message", message);
 	if (!from.empty())
 		t.Set("from", from);
+	if (body)
+		t.Set("target", body);
 
 	LuaRef ref(l, t.GetIndex());
 	LuaEvent::Queue("onCommsMessage", &ref);
@@ -23,12 +25,22 @@ static void AddMessage(const std::string &priority, const std::string &message, 
 
 void Message(const std::string &message, const std::string &from)
 {
-	AddMessage("normal", message, from);
+	AddMessage("normal", message, from, nullptr);
+}
+
+void Message(const std::string &message, Body *body)
+{
+	AddMessage("normal", message, body->GetLabel(), body);
 }
 
 void ImportantMessage(const std::string &message, const std::string &from)
 {
-	AddMessage("important", message, from);
+	AddMessage("important", message, from, nullptr);
+}
+
+void ImportantMessage(const std::string &message, Body *body)
+{
+	AddMessage("important", message, body->GetLabel(), body);
 }
 
 }

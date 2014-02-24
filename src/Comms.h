@@ -6,9 +6,13 @@
 
 #include "libs.h"
 
+class Body;
+
 namespace Comms {
 
 void Message(const std::string &message, const std::string &from = std::string());
+void Message(const std::string &message, Body *body);
 void ImportantMessage(const std::string &message, const std::string &from = std::string());
+void ImportantMessage(const std::string &message, Body *body);
 
 }
