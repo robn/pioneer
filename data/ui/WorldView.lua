@@ -4,6 +4,7 @@
 local Engine = import("Engine")
 local Lang = import("Lang")
 local Event = import("Event")
+local Game = import("Game")
 
 local ui = Engine.ui
 local l = Lang.GetResource("ui-core");
@@ -51,10 +52,34 @@ local priorityColors = {
 	urgent    = { r = 1.0, g = 0.0, b = 0.0 },
 }
 
+local fromColor   = { r = 1.0, g = 1.0, b = 0.4 }
+local targetColor = { r = 0.4, g = 1.0, b = 0.4 }
+
 Event.Register("onCommsMessage", function (m)
 	local icon = m.priority and ui:Image(priorityIcons[m.priority]):SetHeightLines(1):SetTint(priorityColors[m.priority]) or ""
-	local label = ui:Label(string.format("%s %s", m.from, m.message))
-	commsTable:AddRow({ icon, label })
+	local text = ui:Label(m.message)
+
+	local info
+	if m.from then
+		local from = ui:Label(m.from):SetColor(fromColor)
+		if m.target then
+			from:SetColor(targetColor)
+			from.onClick:Connect(function ()
+				if m.target:exists() then
+					if m.target:IsDynamic() then
+						Game.player:SetCombatTarget(m.target)
+					else
+						Game.player:SetNavTarget(m.target)
+					end
+				end
+			end)
+		end
+		info = ui:HBox(3):PackEnd({ from, text })
+	else
+		info = text
+	end
+
+	commsTable:AddRow({ icon, info })
 	commsTable:ScrollToBottom()
 end)
 
