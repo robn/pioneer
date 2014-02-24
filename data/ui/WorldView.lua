@@ -13,7 +13,10 @@ local widget
 local commsTable
 
 ui.templates.WorldView = function (args)
-	if widget then return widget end
+	if widget then
+		commsTable:ScrollToBottom()
+		return widget
+	end
 
 	local tg =
 		ui:TabGroup()
@@ -52,6 +55,7 @@ Event.Register("onCommsMessage", function (m)
 	local icon = m.priority and ui:Image(priorityIcons[m.priority]):SetHeightLines(1):SetTint(priorityColors[m.priority]) or ""
 	local label = ui:Label(string.format("%s %s", m.from, m.message))
 	commsTable:AddRow({ icon, label })
+	commsTable:ScrollToBottom()
 end)
 
 Event.Register("onGameEnd", function ()
