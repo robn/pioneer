@@ -20,7 +20,7 @@ static void AddMessage(const std::string &priority, const std::string &message, 
 		t.Set("target", body);
 
 	LuaRef ref(l, t.GetIndex());
-	LuaEvent::Queue("onCommsMessage", &ref);
+	LuaEvent::Queue("onCoreCommsMessage", &ref);
 }
 
 void Message(const std::string &message, const std::string &from)

@@ -13,13 +13,7 @@ local Comms = {}
 
 local messages = {}
 
-local function addMessage (priority, message, from, target)
-	local m = {
-		priority = priority,
-		message  = message,
-		from     = from,
-		target   = target,
-	}
+local function addMessage (m)
 	table.insert(messages, m)
 	Event.Queue("onCommsMessage", m)
 end
@@ -52,9 +46,9 @@ end
 
 function Comms.Message (message, from)
 	if type(from) == "userdata" then
-		return addMessage("normal", message, from.label, from)
+		return addMessage({ priority = "normal", message = message, from = from.label, target = from })
 	end
-	return addMessage("normal", message, from)
+	return addMessage({ priority = "normal", message = message, from = from })
 end
 
 --
@@ -90,11 +84,12 @@ end
 
 function Comms.ImportantMessage (message, from)
 	if type(from) == "userdata" then
-		return addMessage("important", message, from.label, from)
+		return addMessage({ priority = "importang", message = message, from = from.label, target = from })
 	end
-	return addMessage("important", message, from)
+	return addMessage({ priority = "importang", message = message, from = from })
 end
 
+Event.Register("onCoreCommsMessage", addMessage)
 Event.Register("onGameStart", function ()
     messages = {}
 end)
