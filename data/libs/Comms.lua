@@ -2,6 +2,7 @@
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Event = import("Event")
+local Engine = import("Engine")
 
 --
 -- Interface: Comms
@@ -11,11 +12,17 @@ local Event = import("Event")
 
 local Comms = {}
 
-local messages = {}
+local history = {}
+local last = 0
 
 local function addMessage (m)
-	table.insert(messages, m)
-	Event.Queue("onCommsMessage", m)
+	local key = util.hash_random(string.format("%s:%s:%s:%s", m.priority, m.message, m.from or "", m.target or "")) -- XXX use a crypto hash?
+	local now = Engine.ticks
+	if (last ~= key and (history[key] or 0) + 5000 < now) then -- 5 seconds
+		history[key] = now
+		last = key
+		Event.Queue("onCommsMessage", m)
+	end
 end
 
 --
@@ -84,14 +91,15 @@ end
 
 function Comms.ImportantMessage (message, from)
 	if type(from) == "userdata" then
-		return addMessage({ priority = "importang", message = message, from = from.label, target = from })
+		return addMessage({ priority = "important", message = message, from = from.label, target = from })
 	end
-	return addMessage({ priority = "importang", message = message, from = from })
+	return addMessage({ priority = "important", message = message, from = from })
 end
 
 Event.Register("onCoreCommsMessage", addMessage)
 Event.Register("onGameStart", function ()
-    messages = {}
+	history = {}
+	last = 0
 end)
 
 -- XXX serializer
