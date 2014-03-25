@@ -229,6 +229,8 @@ void TabGroup::SelectTab(Tab *tab)
 	}
 
 	m_selected = tab;
+
+	tab->onSelect.emit();
 }
 
 TabGroup::Tab *TabGroup::GetTabAt(const Point &pos)
@@ -270,16 +272,19 @@ void TabGroup::HandleMouseOut()
 void TabGroup::SetCollapsed(bool collapsed)
 {
 	if (m_collapsed == collapsed) return;
-
-	if (collapsed)
-		Container::RemoveWidget(m_selected);
-	else
-		Container::AddWidget(m_selected);
-
-	GetContext()->RequestLayout();
-
 	m_collapsed = collapsed;
 	m_dirty = true;
+
+	if (collapsed) {
+		Container::RemoveWidget(m_selected);
+		onCollapse.emit();
+	}
+	else {
+		Container::AddWidget(m_selected);
+		onExpand.emit();
+	}
+
+	GetContext()->RequestLayout();
 }
 
 TabGroup::Tab::Tab(Context *context, Widget *headerWidget): Single(context),

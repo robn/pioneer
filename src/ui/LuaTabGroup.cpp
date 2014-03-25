@@ -74,6 +74,19 @@ public:
 		return 1;
 	}
 
+	static int l_attr_on_collapse(lua_State *l) {
+		auto tg = LuaObject<UI::TabGroup>::CheckFromLua(1);
+		LuaSignal<>().Wrap(l, tg->onCollapse);
+		return 1;
+	}
+
+	static int l_attr_on_expand(lua_State *l) {
+		auto tg = LuaObject<UI::TabGroup>::CheckFromLua(1);
+		LuaSignal<>().Wrap(l, tg->onExpand);
+		return 1;
+	}
+
+
 class Tab {
 public:
 
@@ -81,6 +94,12 @@ public:
 		auto tab = LuaObject<UI::TabGroup::Tab>::CheckFromLua(1);
 		auto w = tab->GetHeaderWidget();
 		LuaObject<UI::Widget>::PushToLua(w);
+		return 1;
+	}
+
+	static int l_attr_on_select(lua_State *l) {
+		auto tab = LuaObject<UI::TabGroup::Tab>::CheckFromLua(1);
+		LuaSignal<>().Wrap(l, tab->onSelect);
 		return 1;
 	}
 
@@ -111,6 +130,8 @@ template <> void LuaObject<UI::TabGroup>::RegisterClass()
 
 	static const luaL_Reg l_attrs[] = {
 		{ "collapsed",            UI::LuaTabGroup::l_attr_collapsed         },
+		{ "onCollapse",           UI::LuaTabGroup::l_attr_on_collapse       },
+		{ "onExpand",             UI::LuaTabGroup::l_attr_on_expand         },
 		{ 0, 0 }
 	};
 
@@ -126,6 +147,7 @@ template <> void LuaObject<UI::TabGroup::Tab>::RegisterClass()
 
 	static const luaL_Reg l_attrs[] = {
 		{ "headerWidget", UI::LuaTabGroup::Tab::l_attr_header_widget },
+		{ "onSelect",     UI::LuaTabGroup::Tab::l_attr_on_select     },
 		{ 0, 0 }
 	};
 

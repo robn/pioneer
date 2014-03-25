@@ -32,6 +32,8 @@ public:
 	public:
 		UI::Widget *GetHeaderWidget() const { return m_headerWidget.Get(); }
 
+		sigc::signal<void> onSelect;
+
 	private:
 		RefCountedPtr<UI::Widget> m_headerWidget;
 		Point m_pos;
@@ -57,6 +59,9 @@ public:
 	void SetCollapsed(bool collapsed);
 	void ToggleCollapsed() { SetCollapsed(!m_collapsed); }
 	bool IsCollapsed() const { return m_collapsed; }
+
+	sigc::signal<void> onCollapse;
+	sigc::signal<void> onExpand;
 
 protected:
 	virtual void HandleClick();

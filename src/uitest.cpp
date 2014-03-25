@@ -116,6 +116,21 @@ static bool toggle_collapsed(UI::TabGroup *tg)
 	return true;
 }
 
+static void tabgroup_collapse_handler()
+{
+	printf("collapse\n");
+}
+
+static void tabgroup_expand_handler()
+{
+	printf("expand\n");
+}
+
+static void tab_select_handler()
+{
+	printf("select\n");
+}
+
 int main(int argc, char **argv)
 {
 	FileSystem::Init();
@@ -149,9 +164,16 @@ int main(int argc, char **argv)
 	tg->SetTransparent(true);
 	tg->SetHeaderCollapsible(true);
 
-	tg->NewTab("one")->SetInnerWidget(c->Label("foo")->SetFont(UI::Widget::FONT_NORMAL));
-	tg->NewTab("two")->SetInnerWidget(c->Label("two")->SetFont(UI::Widget::FONT_NORMAL));
-	tg->NewTab("three")->SetInnerWidget(c->Label("three")->SetFont(UI::Widget::FONT_NORMAL));
+	auto t1 = tg->NewTab("one");   t1->SetInnerWidget(c->Label("foo")->SetFont(UI::Widget::FONT_NORMAL));
+	auto t2 = tg->NewTab("two");   t2->SetInnerWidget(c->Label("two")->SetFont(UI::Widget::FONT_NORMAL));
+	auto t3 = tg->NewTab("three"); t3->SetInnerWidget(c->Label("three")->SetFont(UI::Widget::FONT_NORMAL));
+
+	tg->onCollapse.connect(sigc::ptr_fun(&tabgroup_collapse_handler));
+	tg->onExpand.connect(sigc::ptr_fun(&tabgroup_expand_handler));
+
+	t1->onSelect.connect(sigc::ptr_fun(&tab_select_handler));
+	t2->onSelect.connect(sigc::ptr_fun(&tab_select_handler));
+	t3->onSelect.connect(sigc::ptr_fun(&tab_select_handler));
 
 	UI::SmallButton *b = c->SmallButton();
 	b->onClick.connect(sigc::bind(sigc::ptr_fun(&toggle_collapsed), tg));
