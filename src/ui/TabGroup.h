@@ -55,6 +55,7 @@ public:
 	void RemoveTab(Tab *tab);
 
 	void SelectTab(Tab *tab);
+	Tab *GetSelectedTab() const { return m_selected; }
 
 	void SetCollapsed(bool collapsed);
 	void ToggleCollapsed() { SetCollapsed(!m_collapsed); }

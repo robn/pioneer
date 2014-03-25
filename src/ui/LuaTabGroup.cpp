@@ -86,6 +86,16 @@ public:
 		return 1;
 	}
 
+	static int l_attr_selected_tab(lua_State *l) {
+		auto tg = LuaObject<UI::TabGroup>::CheckFromLua(1);
+		auto tab = tg->GetSelectedTab();
+		if (tab)
+			LuaObject<UI::TabGroup::Tab>::PushToLua(tab);
+		else
+			lua_pushnil(l);
+		return 1;
+	}
+
 
 class Tab {
 public:
@@ -132,6 +142,7 @@ template <> void LuaObject<UI::TabGroup>::RegisterClass()
 		{ "collapsed",            UI::LuaTabGroup::l_attr_collapsed         },
 		{ "onCollapse",           UI::LuaTabGroup::l_attr_on_collapse       },
 		{ "onExpand",             UI::LuaTabGroup::l_attr_on_expand         },
+		{ "selectedTab",          UI::LuaTabGroup::l_attr_selected_tab      },
 		{ 0, 0 }
 	};
 
