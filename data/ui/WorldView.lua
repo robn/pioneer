@@ -9,9 +9,13 @@ local Game = import("Game")
 local ui = Engine.ui
 local l = Lang.GetResource("ui-core");
 
+local tabGroup
+
 local widget
 
 local commsTable
+local commsIcon
+local commsAnim
 
 ui.templates.WorldView = function (args)
 	if widget then
@@ -19,7 +23,7 @@ ui.templates.WorldView = function (args)
 		return widget
 	end
 
-	local tg =
+	tabGroup =
 		ui:TabGroup()
 			:SetTransparent(true)
 			:SetHeaderCollapsible(true)
@@ -30,11 +34,23 @@ ui.templates.WorldView = function (args)
 			:SetColumnSpacing(5)
 			:SetRowSpacing(5)
 			:SetRowAlignment("CENTER")
-	tg:NewTab(ui:Label("COMMS"):SetFont("HEADING_XSMALL"), commsTable)
+
+	commsIcon = ui:Image("icons/comms/normal_message.png"):SetHeightLines(1)
+	local commsTab = tabGroup:NewTab(
+		ui:HBox(3):PackEnd({ commsIcon, ui:Label("COMMS"):SetFont("HEADING_XSMALL") }),
+		commsTable)
+
+	commsAnim = nil
+	tabGroup.onExpand:Connect(function ()
+		if tabGroup.selectedTab == commsTab and commsAnim then
+			commsAnim:Finish()
+			commsAnim = nil
+		end
+	end)
 
 	local grid =
 		ui:Grid(1,5)
-			:SetRow(0, {tg})
+			:SetRow(0, {tabGroup})
 
 	widget = grid
 	return widget
@@ -81,6 +97,18 @@ Event.Register("onCommsMessage", function (m)
 
 	commsTable:AddRow({ icon, info })
 	commsTable:ScrollToBottom()
+
+	if tabGroup.collapsed and not commsAnim then
+		commsAnim = ui:NewAnimation({
+			widget = commsIcon,
+			type = "IN_OUT",
+			easing = "SINE",
+			target = "OPACITY",
+			duration = 1.0,
+			continuous = true,
+		})
+		ui:Animate(commsAnim)
+	end
 end)
 
 Event.Register("onGameEnd", function ()
