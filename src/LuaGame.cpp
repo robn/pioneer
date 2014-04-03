@@ -250,6 +250,24 @@ static int l_game_attr_time(lua_State *l)
 	return 1;
 }
 
+static int l_game_attr_is_paused(lua_State *l)
+{
+	if (!Pi::game)
+		lua_pushnil(l);
+	else
+		lua_pushboolean(l, Pi::game->IsPaused());
+	return 1;
+}
+
+static int l_game_set_paused(lua_State *l)
+{
+	if (!Pi::game)
+		return luaL_error(l, "can't change paused state when no game is running");
+	bool doPause = lua_toboolean(l, -1);
+	Pi::game->RequestTimeAccel(doPause ? Game::TIMEACCEL_PAUSED : Game::TIMEACCEL_1X);
+	return 0;
+}
+
 // XXX temporary to support StationView "Launch" button
 // remove once WorldView has been converted to the new UI
 static int l_game_switch_to_world_view(lua_State *l)
@@ -272,15 +290,18 @@ void LuaGame::Register()
 		{ "SaveGame",  l_game_save_game  },
 		{ "EndGame",   l_game_end_game   },
 
+		{ "SetPaused", l_game_set_paused },
+
 		{ "SwitchToWorldView", l_game_switch_to_world_view },
 
 		{ 0, 0 }
 	};
 
 	static const luaL_Reg l_attrs[] = {
-		{ "player", l_game_attr_player },
-		{ "system", l_game_attr_system },
-		{ "time",   l_game_attr_time   },
+		{ "player",   l_game_attr_player    },
+		{ "system",   l_game_attr_system    },
+		{ "time",     l_game_attr_time      },
+		{ "isPaused", l_game_attr_is_paused },
 		{ 0, 0 }
 	};
 
