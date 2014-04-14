@@ -7,7 +7,6 @@
 #include "libs.h"
 #include "Camera.h"
 #include "DynamicBody.h"
-#include "EquipSet.h"
 #include "galaxy/SystemPath.h"
 #include "HudTrail.h"
 #include "NavLights.h"
@@ -46,12 +45,6 @@ struct shipstats_t {
 	float shield_mass;
 	float shield_mass_left;
 	float fuel_tank_mass_left;
-};
-
-class SerializableEquipSet: public EquipSet {
-public:
-	void Save(Serializer::Writer &wr);
-	void Load(Serializer::Reader &rd);
 };
 
 class Ship: public DynamicBody {
@@ -205,8 +198,6 @@ public:
 	void AIHoldPosition();
 
 	void AIBodyDeleted(const Body* const body) {};		// todo: signals
-
-	SerializableEquipSet m_equipment;			// shouldn't be public?...
 
 	virtual void PostLoadFixup(Space *space);
 
