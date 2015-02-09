@@ -49,7 +49,9 @@ local optionList = function (getter, setter, settingCaption, captions, values)
 	return optionListOrDropDown('List', getter, setter, settingCaption, captions, values)
 end
 
-ui.templates.Settings = function (args)
+local Settings = {}
+
+function Settings.New (args)
 	local videoTemplate = function()
 		local videoModes = Engine.GetVideoModeList()
 		local videoModeLabels = {}
@@ -361,11 +363,20 @@ ui.templates.Settings = function (args)
 		close_buttons = close_buttons[1]
 	end
 
-	return ui:VBox():PackEnd({setTabs, ui:Margin(10, "ALL", close_buttons)})
+	local self = {
+		widget = ui:VBox():PackEnd({setTabs, ui:Margin(10, "ALL", close_buttons)})
+	}
+
+	setmetatable(self, {
+		__index = Settings,
+		class = "UI.Settings",
+	})
+
+	return self
 end
 
-ui.templates.SettingsInGame = function ()
-	return ui.templates.Settings({
+function Settings.NewInGame ()
+	return Settings.New({
 		closeButtons = {
 			{
 				text = l.SAVE,
@@ -400,3 +411,8 @@ ui.templates.SettingsInGame = function ()
 		}
 	})
 end
+
+-- XXX temporary
+ui.templates.SettingsInGame = function (args) return Settings.NewInGame().widget end
+
+return Settings

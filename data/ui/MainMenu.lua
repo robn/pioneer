@@ -10,6 +10,7 @@ local Player = import("Player")
 local SystemPath = import("SystemPath")
 local ErrorScreen = import("ErrorScreen")
 local FileDialog = import("ui/FileDialog")
+local Settings = import("Settings")
 local equipment = import("Equipment")
 local cargo = equipment.cargo
 local misc = equipment.misc
@@ -76,7 +77,7 @@ end
 
 local doSettingsScreen = function()
 	ui.layer:SetInnerWidget(
-		ui.templates.Settings({
+		Settings.New({
 			closeButtons = {
 				{ text = l.RETURN_TO_MENU, onClick = function () ui.layer:SetInnerWidget(ui.templates.MainMenu()) end }
 			}
