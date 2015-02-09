@@ -9,6 +9,7 @@ local ShipDef = import("ShipDef")
 local Player = import("Player")
 local SystemPath = import("SystemPath")
 local ErrorScreen = import("ErrorScreen")
+local FileDialog = import("ui/FileDialog")
 local equipment = import("Equipment")
 local cargo = equipment.cargo
 local misc = equipment.misc
@@ -62,13 +63,13 @@ end
 
 local doLoadDialog = function ()
 	ui:NewLayer(
-		ui.templates.FileDialog({
+		FileDialog.New({
 			title       = l.LOAD,
 			helpText    = l.SELECT_GAME_TO_LOAD,
 			path        = "savefiles",
 			selectLabel = l.LOAD_GAME,
-			onSelect    = loadGame,
-			onCancel    = function () ui:DropLayer() end
+			onSelect    = function () ui:DropLayer() loadGame() end,
+			onCancel    = function () ui:DropLayer() end,
 		})
 	)
 end

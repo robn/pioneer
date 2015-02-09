@@ -7,6 +7,7 @@ local Lang = import("Lang")
 local utils = import("utils")
 local TabView = import("ui/TabView")
 local SmallLabeledButton = import("ui/SmallLabeledButton")
+local FileDialog = import("ui/FileDialog")
 local KeyBindingCapture = import("UI.Game.KeyBindingCapture")
 local AxisBindingCapture = import("UI.Game.AxisBindingCapture")
 local ErrorScreen = import("ErrorScreen")
@@ -371,18 +372,18 @@ ui.templates.SettingsInGame = function ()
 				onClick = function ()
 					local settings_view = ui.layer.innerWidget
 					ui:NewLayer(
-						ui.templates.FileDialog({
+						FileDialog.New({
 							title        = l.SAVE,
 							helpText     = l.SELECT_A_FILE_TO_SAVE_TO_OR_ENTER_A_NEW_FILENAME,
 							path         = "savefiles",
 							allowNewFile = true,
 							selectLabel  = l.SAVE,
 							onSelect     = function (filename)
+								ui:DropLayer()
 								local ok, err = pcall(Game.SaveGame, filename)
 								if not ok then
 									ErrorScreen.ShowError(err)
 								end
-								ui:DropLayer()
 							end,
 							onCancel    = function ()
 								ui:DropLayer()
