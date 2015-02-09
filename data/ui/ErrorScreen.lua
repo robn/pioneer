@@ -7,7 +7,9 @@ local Lang = import("Lang")
 local ui = Engine.ui
 local l = Lang.GetResource("ui-core");
 
-ui.templates.ErrorScreen = function (args)
+local ErrorScreen = {}
+
+function ErrorScreen.New (args)
 	local title     = args.title    or l.ERROR
 	local message   = args.message  or l.AN_ERROR_HAS_OCCURRED
 	local onOk      = args.onOk     or function (name) end
@@ -27,19 +29,24 @@ ui.templates.ErrorScreen = function (args)
 			)
 		)
 
-	return dialog
+	local self = { widget = dialog }
+
+	setmetatable(self, {
+		__index = ErrorScreen,
+		class = "UI.ErrorScreeen",
+	})
+
+	return self;
 end
 
-local ErrorScreen = {}
-
-ErrorScreen.ShowError = function (title, message)
+function ErrorScreen.ShowError (title, message)
 	if message == nil then
 		message = title
 		title = l.ERROR
 	end
 
 	ui:NewLayer(
-		ui.templates.ErrorScreen({
+		ErrorScreen.New({
 			title    = title,
 			message  = message,
 			onOk     = function () ui:DropLayer() end,
