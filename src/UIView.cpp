@@ -8,30 +8,28 @@
 
 void UIView::OnSwitchTo()
 {
+	Pi::ui->DropAllLayers();
+
 	UI::VBox *box = Pi::ui->VBox();
 	UI::Expand *expander = Pi::ui->Expand();
-	BuildUI(expander);
+
+	if (m_templateName) {
+		UI::Widget *view = Pi::ui->CallTemplate(m_templateName);
+		if (view)
+			expander->SetInnerWidget(view);
+	}
+
 	box->PackEnd(expander);
 	box->PackEnd(new GameUI::Panel(Pi::ui.Get()));
 
-	Pi::ui->DropAllLayers();
-	Pi::ui->GetTopLayer()->SetInnerWidget(box);
+	UI::Layer *layer = Pi::ui->NewLayer();
+	layer->SetInnerWidget(box);
+
+	Pi::ui->Layout();
 }
 
 void UIView::OnSwitchFrom()
 {
 	Pi::ui->DropAllLayers();
 	Pi::ui->Layout(); // UI does important things on layout, like updating keyboard shortcuts
-}
-
-void UIView::BuildUI(UI::Single *container) {
-	UI::Widget *w = BuildTemplateUI();
-	if (w) container->SetInnerWidget(w);
-}
-
-UI::Widget *UIView::BuildTemplateUI() {
-	if (m_templateName)
-		return Pi::ui->CallTemplate(m_templateName);
-	else
-		return nullptr;
 }

@@ -22,11 +22,8 @@ public:
 	virtual void Draw3D() {}
 
 protected:
-	virtual void BuildUI(UI::Single *container);
 	virtual void OnSwitchTo();
 	virtual void OnSwitchFrom();
-
-	UI::Widget *BuildTemplateUI();
 
 private:
 	const char *m_templateName;
